@@ -45,7 +45,7 @@ class ParametroSeeder extends Seeder
         'modalidades' => [
             18 => 'PRESENCIAL',
             19 => 'VIRTUAL',
-            20 => 'MIXTA',
+            20 => 'A DISTANCIA',
         ],
         'niveles_formacion' => [
             21 => 'TÉCNICO',

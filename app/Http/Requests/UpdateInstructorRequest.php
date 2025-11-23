@@ -43,7 +43,7 @@ class UpdateInstructorRequest extends FormRequest
             'experiencia_laboral' => 'nullable|string|max:1000',
             
             // Formación académica
-            'nivel_academico_id' => 'nullable|integer|exists:parametros_temas,id',
+            'nivel_academico_id' => 'nullable|integer|exists:parametros,id',
             'formacion_pedagogia' => 'nullable|string|max:500',
             'titulos_obtenidos' => 'nullable|array',
             'titulos_obtenidos.*' => 'nullable|string|max:255',

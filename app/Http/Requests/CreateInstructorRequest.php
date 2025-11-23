@@ -83,7 +83,7 @@ class CreateInstructorRequest extends FormRequest
             'nivel_academico_id' => [
                 'nullable',
                 'integer',
-                'exists:parametros_temas,id'
+                'exists:parametros,id'
             ],
             'titulos_obtenidos' => [
                 'nullable',

@@ -91,6 +91,22 @@ class AsignacionInstructorService
                         $asignacionExistente->resultadosAprendizaje()->sync($instructorData['resultados_aprendizaje']);
                     }
                     
+                    // Asegurar que el instructor tenga el rol INSTRUCTOR
+                    $instructor = Instructor::with('persona.user')->find($instructorData['instructor_id']);
+                    if ($instructor && $instructor->persona && $instructor->persona->user) {
+                        $rolInstructor = \Spatie\Permission\Models\Role::firstOrCreate(['name' => 'INSTRUCTOR']);
+                        if (!$instructor->persona->user->hasRole('INSTRUCTOR')) {
+                            $instructor->persona->user->assignRole('INSTRUCTOR');
+                            
+                            Log::info('Rol INSTRUCTOR asignado al usuario al actualizar asignación de instructor', [
+                                'user_id' => $instructor->persona->user->id,
+                                'persona_id' => $instructor->persona_id,
+                                'instructor_id' => $instructor->id,
+                                'ficha_id' => $fichaId
+                            ]);
+                        }
+                    }
+                    
                     // Eliminar días existentes
                     $asignacionExistente->instructorFichaDias()->delete();
                     
@@ -336,6 +352,22 @@ class AsignacionInstructorService
             }
         }
 
+        // Asignar el rol INSTRUCTOR al usuario si tiene usuario asociado
+        $instructor = Instructor::with('persona.user')->find($instructorData['instructor_id']);
+        if ($instructor && $instructor->persona && $instructor->persona->user) {
+            $rolInstructor = \Spatie\Permission\Models\Role::firstOrCreate(['name' => 'INSTRUCTOR']);
+            if (!$instructor->persona->user->hasRole('INSTRUCTOR')) {
+                $instructor->persona->user->assignRole('INSTRUCTOR');
+                
+                Log::info('Rol INSTRUCTOR asignado al usuario al asignar instructor a ficha', [
+                    'user_id' => $instructor->persona->user->id,
+                    'persona_id' => $instructor->persona_id,
+                    'instructor_id' => $instructor->id,
+                    'ficha_id' => $fichaId
+                ]);
+            }
+        }
+
         return $instructorFicha;
     }
 
@@ -567,6 +599,28 @@ class AsignacionInstructorService
             
             // Finalmente eliminar la asignación
             $asignacion->delete();
+
+            // Verificar si el instructor tiene otras asignaciones antes de remover el rol
+            if ($instructor) {
+                $instructor->load('persona.user');
+                $tieneOtrasAsignaciones = InstructorFichaCaracterizacion::where('instructor_id', $instructorId)
+                    ->where('id', '!=', $asignacion->id)
+                    ->exists();
+                
+                // Remover el rol INSTRUCTOR solo si no está asignado a ninguna otra ficha
+                if (!$tieneOtrasAsignaciones && $instructor->persona && $instructor->persona->user) {
+                    if ($instructor->persona->user->hasRole('INSTRUCTOR')) {
+                        $instructor->persona->user->removeRole('INSTRUCTOR');
+                        
+                        Log::info('Rol INSTRUCTOR removido del usuario al desasignar instructor de todas las fichas', [
+                            'user_id' => $instructor->persona->user->id,
+                            'persona_id' => $instructor->persona_id,
+                            'instructor_id' => $instructorId,
+                            'ficha_id' => $fichaId
+                        ]);
+                    }
+                }
+            }
 
             DB::commit();
 
