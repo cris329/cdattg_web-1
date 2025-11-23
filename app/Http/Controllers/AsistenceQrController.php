@@ -11,7 +11,6 @@ use App\Models\JornadaFormacion;
 use App\Models\FichaCaracterizacion;
 use Herramientas;
 use Illuminate\Support\Facades\Log;
-use App\Models\AprendizFicha;
 use App\Models\Aprendiz;
 use App\Models\Persona;
 use App\Models\Instructor;
@@ -531,19 +530,15 @@ class AsistenceQrController extends Controller
                 ], 404);
             }
 
-            // 5. Encontrar el aprendiz_ficha_id para este aprendiz y esta ficha
-            $aprendizFicha = AprendizFicha::where('aprendiz_id', $aprendiz->id)
-                ->where('ficha_id', $fichaId)
-                ->first();
-
-            if (!$aprendizFicha) {
+            // 5. Verificar que el aprendiz pertenece a esta ficha
+            if ($aprendiz->ficha_caracterizacion_id != $fichaId) {
                 DB::rollBack();
                 return response()->json([
                     'status' => 'not_in_ficha',
                     'message' => 'El aprendiz ' . $persona->getNombreCompletoAttribute() . ' no pertenece a esta ficha.'
                 ], 404);
             }
-            $aprendizFichaId = $aprendizFicha->id;
+            $aprendizFichaId = $aprendiz->id; // Usar directamente el ID del aprendiz
 
             // 6. Verificar si el aprendiz ya tiene una asistencia de entrada para hoy con este instructor_ficha_id
             $asistenciaExistente = AsistenciaAprendiz::where('aprendiz_ficha_id', $aprendizFichaId)

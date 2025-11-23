@@ -94,8 +94,8 @@
                             </div>
                         </td>
                         <td class="px-4 text-center">
-                            @if($ficha->aprendices && $ficha->aprendices->count() > 0)
-                            <span class="badge badge-primary">{{ $ficha->aprendices->count() }}</span>
+                            @if($ficha->aprendices_count > 0)
+                            <span class="badge badge-primary">{{ $ficha->aprendices_count }}</span>
                             @else
                             <span class="badge badge-secondary">0</span>
                             @endif

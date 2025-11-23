@@ -59,13 +59,13 @@ class RegistroAsistenciaController extends Controller
 
             // Cargar relaciones para obtener toda la información
             $asistencia->load([
-                'aprendizFicha.aprendiz.persona',
-                'aprendizFicha.ficha.jornadaFormacion',
+                'aprendiz.persona',
+                'aprendiz.fichaCaracterizacion.jornadaFormacion',
                 'instructorFichaCaracterizacion.instructor.persona'
             ]);
 
-            $nombreAprendiz = $asistencia->aprendizFicha->aprendiz->persona->getNombreCompletoAttribute();
-            $ficha = $asistencia->aprendizFicha->ficha;
+            $nombreAprendiz = $asistencia->aprendiz->persona->getNombreCompletoAttribute();
+            $ficha = $asistencia->aprendiz->fichaCaracterizacion;
             $jornada = $ficha->jornadaFormacion->jornada ?? 'No especificada';
 
             // Disparar evento de WebSocket
@@ -141,13 +141,13 @@ class RegistroAsistenciaController extends Controller
 
             // Cargar relaciones para obtener toda la información
             $asistencia->load([
-                'aprendizFicha.aprendiz.persona',
-                'aprendizFicha.ficha.jornadaFormacion',
+                'aprendiz.persona',
+                'aprendiz.fichaCaracterizacion.jornadaFormacion',
                 'instructorFichaCaracterizacion.instructor.persona'
             ]);
 
-            $nombreAprendiz = $asistencia->aprendizFicha->aprendiz->persona->getNombreCompletoAttribute();
-            $ficha = $asistencia->aprendizFicha->ficha;
+            $nombreAprendiz = $asistencia->aprendiz->persona->getNombreCompletoAttribute();
+            $ficha = $asistencia->aprendiz->fichaCaracterizacion;
             $jornada = $ficha->jornadaFormacion->jornada ?? 'No especificada';
 
             // Disparar evento de WebSocket
@@ -201,15 +201,15 @@ class RegistroAsistenciaController extends Controller
             $fecha = $request->input('fecha', Carbon::today()->format('Y-m-d'));
 
             $query = AsistenciaAprendiz::with([
-                'aprendizFicha.aprendiz.persona',
-                'aprendizFicha.ficha.jornadaFormacion',
+                'aprendiz.persona',
+                'aprendiz.fichaCaracterizacion.jornadaFormacion',
                 'instructorFichaCaracterizacion.instructor.persona'
             ])->whereDate('created_at', $fecha);
 
             // Filtrar por jornada si se especifica
             if ($jornadaId) {
-                $query->whereHas('aprendizFicha.ficha', function ($q) use ($jornadaId) {
-                    $q->where('jornada_id', $jornadaId);
+                $query->whereHas('aprendiz.fichaCaracterizacion', function ($q) use ($jornadaId) {
+                    $q->where('jornada_formacion_id', $jornadaId);
                 });
             }
 
@@ -217,11 +217,11 @@ class RegistroAsistenciaController extends Controller
 
             // Formatear datos
             $asistenciasFormateadas = $asistencias->map(function ($asistencia) {
-                $ficha = $asistencia->aprendizFicha->ficha;
+                $ficha = $asistencia->aprendiz->fichaCaracterizacion;
                 return [
                     'id' => $asistencia->id,
-                    'aprendiz' => $asistencia->aprendizFicha->aprendiz->persona->getNombreCompletoAttribute(),
-                    'numero_documento' => $asistencia->aprendizFicha->aprendiz->persona->numero_documento,
+                    'aprendiz' => $asistencia->aprendiz->persona->getNombreCompletoAttribute(),
+                    'numero_documento' => $asistencia->aprendiz->persona->numero_documento,
                     'hora_ingreso' => $asistencia->hora_ingreso,
                     'hora_salida' => $asistencia->hora_salida,
                     'ficha' => $ficha->ficha,

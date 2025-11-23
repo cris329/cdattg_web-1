@@ -3,7 +3,6 @@
 namespace App\Console\Commands;
 
 use App\Events\NuevaAsistenciaRegistrada;
-use App\Models\AprendizFicha;
 use App\Models\AsistenciaAprendiz;
 use App\Models\InstructorFichaCaracterizacion;
 use Carbon\Carbon;
@@ -42,13 +41,13 @@ class RegistrarAsistenciaPrueba extends Command
         }
 
         try {
-            // Obtener cualquier aprendiz_ficha disponible
-            $aprendizFicha = AprendizFicha::with([
-                'aprendiz.persona',
-                'ficha.jornadaFormacion'
-            ])->inRandomOrder()->first();
+            // Obtener cualquier aprendiz disponible
+            $aprendiz = \App\Models\Aprendiz::with([
+                'persona',
+                'fichaCaracterizacion.jornadaFormacion'
+            ])->whereNotNull('ficha_caracterizacion_id')->inRandomOrder()->first();
             
-            if (!$aprendizFicha) {
+            if (!$aprendiz) {
                 $this->error('❌ No se encontró ningún aprendiz en la base de datos.');
                 $this->info('💡 Por favor, crea al menos un aprendiz primero.');
                 return 1;
@@ -67,7 +66,7 @@ class RegistrarAsistenciaPrueba extends Command
                 // Registrar entrada
                 $asistencia = AsistenciaAprendiz::create([
                     'instructor_ficha_id' => $instructorFicha->id,
-                    'aprendiz_ficha_id' => $aprendizFicha->id,
+                    'aprendiz_ficha_id' => $aprendiz->id,
                     'evidencia_id' => null,
                     'hora_ingreso' => Carbon::now()->format('H:i:s'),
                     'hora_salida' => null,
@@ -76,7 +75,7 @@ class RegistrarAsistenciaPrueba extends Command
                 $this->info('✅ Asistencia de ENTRADA registrada con éxito!');
             } else {
                 // Buscar última asistencia sin salida
-                $asistencia = AsistenciaAprendiz::where('aprendiz_ficha_id', $aprendizFicha->id)
+                $asistencia = AsistenciaAprendiz::where('aprendiz_ficha_id', $aprendiz->id)
                     ->whereNull('hora_salida')
                     ->whereDate('created_at', Carbon::today())
                     ->latest()
@@ -97,13 +96,13 @@ class RegistrarAsistenciaPrueba extends Command
 
             // Cargar relaciones
             $asistencia->load([
-                'aprendizFicha.aprendiz.persona',
-                'aprendizFicha.ficha.jornadaFormacion'
+                'aprendiz.persona',
+                'aprendiz.fichaCaracterizacion.jornadaFormacion'
             ]);
 
             // Obtener información
-            $nombreAprendiz = $asistencia->aprendizFicha->aprendiz->persona->getNombreCompletoAttribute();
-            $ficha = $asistencia->aprendizFicha->ficha;
+            $nombreAprendiz = $asistencia->aprendiz->persona->getNombreCompletoAttribute();
+            $ficha = $asistencia->aprendiz->fichaCaracterizacion;
             $jornada = $ficha->jornadaFormacion->jornada ?? 'No especificada';
 
             // Mostrar información en tabla

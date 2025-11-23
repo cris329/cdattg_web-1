@@ -521,10 +521,11 @@ trait ValidacionesSena
             $limiteMaximo = $limitesPorTipo[$tipoPrograma] ?? 30;
 
             // Contar aprendices actuales en el programa
-            $aprendicesActuales = DB::table('aprendiz_fichas_caracterizacion')
-                ->join('fichas_caracterizacion', 'aprendiz_fichas_caracterizacion.ficha_id', '=', 'fichas_caracterizacion.id')
+            $aprendicesActuales = DB::table('aprendices')
+                ->join('fichas_caracterizacion', 'aprendices.ficha_caracterizacion_id', '=', 'fichas_caracterizacion.id')
                 ->where('fichas_caracterizacion.programa_formacion_id', $programaId)
                 ->where('fichas_caracterizacion.status', true)
+                ->whereNull('aprendices.deleted_at')
                 ->count();
 
             if ($aprendicesActuales >= $limiteMaximo) {

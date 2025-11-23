@@ -6,6 +6,7 @@ use App\Core\Traits\HasCache;
 use App\Models\FichaCaracterizacion;
 use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Contracts\Pagination\LengthAwarePaginator;
+use Illuminate\Support\Facades\DB;
 
 class FichaRepository
 {
@@ -44,7 +45,13 @@ class FichaRepository
             'jornadaFormacion',
             'modalidadFormacion',
             'ambiente.piso.bloque.sede',
-            'regional'
+            'regional',
+            'instructor.persona',
+            'sede'
+        ])->withCount([
+            'aprendices' => function ($query) {
+                $query->whereNull('aprendices.deleted_at');
+            }
         ]);
 
         if (!empty($filtros['search'])) {

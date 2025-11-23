@@ -4,7 +4,6 @@ namespace App\Services;
 
 use App\Repositories\FichaRepository;
 use App\Repositories\InstructorFichaRepository;
-use App\Repositories\AprendizFichaRepository;
 use App\Models\FichaCaracterizacion;
 use App\Events\FichaAsignadaAInstructor;
 use Illuminate\Contracts\Pagination\LengthAwarePaginator;
@@ -15,16 +14,13 @@ class FichaService
 {
     protected FichaRepository $fichaRepo;
     protected InstructorFichaRepository $instructorFichaRepo;
-    protected AprendizFichaRepository $aprendizFichaRepo;
 
     public function __construct(
         FichaRepository $fichaRepo,
-        InstructorFichaRepository $instructorFichaRepo,
-        AprendizFichaRepository $aprendizFichaRepo
+        InstructorFichaRepository $instructorFichaRepo
     ) {
         $this->fichaRepo = $fichaRepo;
         $this->instructorFichaRepo = $instructorFichaRepo;
-        $this->aprendizFichaRepo = $aprendizFichaRepo;
     }
 
     /**
@@ -155,7 +151,9 @@ class FichaService
         }
 
         $instructores = $this->instructorFichaRepo->obtenerPorFicha($fichaId);
-        $aprendices = $this->aprendizFichaRepo->obtenerPorFicha($fichaId);
+        $aprendices = \App\Models\Aprendiz::where('ficha_caracterizacion_id', $fichaId)
+            ->whereNull('deleted_at')
+            ->get();
 
         return [
             'disponible' => $ficha->status,

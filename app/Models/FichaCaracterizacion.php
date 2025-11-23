@@ -167,32 +167,17 @@ class FichaCaracterizacion extends Model
         return $this->belongsTo(InstructorFichaCaracterizacion::class, 'ficha_id');
     }
 
-    /**
-     * Relación con la tabla pivot AprendizFicha.
-     * Obtiene todos los registros de la tabla intermedia.
-     *
-     * @return \Illuminate\Database\Eloquent\Relations\HasMany
-     */
-    public function aprendicesFicha(): HasMany
-    {
-        return $this->hasMany(AprendizFicha::class, 'ficha_id', 'id');
-    }
 
     /**
-     * Relación Many-to-Many con Aprendiz.
+     * Relación One-to-Many con Aprendiz.
      * Obtiene directamente los aprendices asignados a esta ficha.
      * Laravel automáticamente excluye aprendices eliminados (soft deleted).
      *
-     * @return \Illuminate\Database\Eloquent\Relations\BelongsToMany
+     * @return \Illuminate\Database\Eloquent\Relations\HasMany
      */
-    public function aprendices(): BelongsToMany
+    public function aprendices(): HasMany
     {
-        return $this->belongsToMany(
-            Aprendiz::class,
-            'aprendiz_fichas_caracterizacion',
-            'ficha_id',
-            'aprendiz_id'
-        )->withTimestamps();
+        return $this->hasMany(Aprendiz::class, 'ficha_caracterizacion_id', 'id');
     }
 
     public function asignacionesInstructor(): HasMany
@@ -204,9 +189,9 @@ class FichaCaracterizacion extends Model
     /**
      * Obtiene solo los aprendices activos de esta ficha.
      *
-     * @return \Illuminate\Database\Eloquent\Relations\BelongsToMany
+     * @return \Illuminate\Database\Eloquent\Relations\HasMany
      */
-    public function aprendicesActivos(): BelongsToMany
+    public function aprendicesActivos(): HasMany
     {
         return $this->aprendices()->where('aprendices.estado', 1);
     }

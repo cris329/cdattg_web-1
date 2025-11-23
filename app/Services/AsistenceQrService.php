@@ -97,18 +97,17 @@ class AsistenceQrService
         }
 
         // Obtener aprendices con asistencias
-        $aprendicesFicha = \App\Models\AprendizFicha::where('ficha_id', $fichaCaracterizacion->id)->get();
+        $aprendicesFicha = \App\Models\Aprendiz::where('ficha_caracterizacion_id', $fichaCaracterizacion->id)->get();
         $aprendizPersonaConAsistencia = collect();
         $fechaActual = \Carbon\Carbon::now()->format('Y-m-d');
 
-        foreach ($aprendicesFicha as $af) {
-            $aprendiz = \App\Models\Aprendiz::find($af->aprendiz_id);
+        foreach ($aprendicesFicha as $aprendiz) {
             if ($aprendiz && $aprendiz->persona) {
                 $persona = $aprendiz->persona;
 
                 $asistenciaHoy = null;
                 if ($instructorFichaId) {
-                    $asistenciaHoy = \App\Models\AsistenciaAprendiz::where('aprendiz_ficha_id', $af->id)
+                    $asistenciaHoy = \App\Models\AsistenciaAprendiz::where('aprendiz_ficha_id', $aprendiz->id)
                         ->where('instructor_ficha_id', $instructorFichaId)
                         ->whereDate('created_at', $fechaActual)
                         ->first();

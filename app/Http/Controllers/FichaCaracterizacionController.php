@@ -522,8 +522,9 @@ class FichaCaracterizacionController extends Controller
 
             // Verificar si tiene asistencias
             $tieneAsistencias = DB::table('asistencia_aprendices')
-                ->join('aprendiz_fichas_caracterizacion', 'asistencia_aprendices.aprendiz_ficha_id', '=', 'aprendiz_fichas_caracterizacion.id')
-                ->where('aprendiz_fichas_caracterizacion.ficha_id', $id)
+                ->join('aprendices', 'asistencia_aprendices.aprendiz_id', '=', 'aprendices.id')
+                ->where('aprendices.ficha_caracterizacion_id', $id)
+                ->whereNull('aprendices.deleted_at')
                 ->exists();
             
             Log::info('Verificando asistencias registradas', [
@@ -1817,8 +1818,9 @@ class FichaCaracterizacionController extends Controller
         try {
             // Buscar asistencias relacionadas con aprendices de esta ficha
             $tieneAsistencias = DB::table('asistencia_aprendices')
-                ->join('aprendiz_fichas_caracterizacion', 'asistencia_aprendices.aprendiz_id', '=', 'aprendiz_fichas_caracterizacion.aprendiz_id')
-                ->where('aprendiz_fichas_caracterizacion.ficha_id', $fichaId)
+                ->join('aprendices', 'asistencia_aprendices.aprendiz_id', '=', 'aprendices.id')
+                ->where('aprendices.ficha_caracterizacion_id', $fichaId)
+                ->whereNull('aprendices.deleted_at')
                 ->exists();
 
             return $tieneAsistencias;
@@ -2790,8 +2792,8 @@ class FichaCaracterizacionController extends Controller
             ])->findOrFail($id);
 
             // Obtener todas las personas que NO están asignadas a esta ficha
-            // Estrategia: obtener personas que no están en la tabla pivot para esta ficha
-            $aprendicesAsignadosIds = $ficha->aprendices()->pluck('id')->toArray();
+            // Estrategia: obtener personas que no están asignadas a esta ficha
+            $aprendicesAsignadosIds = $ficha->aprendices()->pluck('id');
             
             $personasDisponibles = \App\Models\Persona::with('user', 'aprendiz')
                 ->where('status', 1) // Solo personas activas
@@ -2916,22 +2918,22 @@ class FichaCaracterizacionController extends Controller
                     ]);
                 }
                 
-                // Verificar que el aprendiz no esté ya asignado a esta ficha en la tabla pivot
-                $existeEnPivot = DB::table('aprendiz_fichas_caracterizacion')
-                    ->where('ficha_id', $id)
-                    ->where('aprendiz_id', $aprendiz->id)
-                    ->exists();
-                    
-                if ($existeEnPivot) {
-                    continue; // Ya está asignado, continuar con el siguiente
-                }
-                
-                // Asignar aprendiz a la ficha en la tabla pivot
-                $ficha->aprendices()->attach($aprendiz->id);
-                
-                // Sincronizar solo el rol APRENDIZ al usuario si tiene usuario asociado
+                // Asignar el rol APRENDIZ al usuario si tiene usuario asociado
+                // Esto se hace siempre, independientemente de si ya estaba asignado o no
                 if ($persona->user) {
-                    $persona->user->syncRoles(['APRENDIZ']);
+                    // Verificar que el rol APRENDIZ existe
+                    $rolAprendiz = \Spatie\Permission\Models\Role::firstOrCreate(['name' => 'APRENDIZ']);
+                    // Asignar rol si no lo tiene (usar assignRole en lugar de syncRoles para no eliminar otros roles)
+                    if (!$persona->user->hasRole('APRENDIZ')) {
+                        $persona->user->assignRole('APRENDIZ');
+                        
+                        Log::info('Rol APRENDIZ asignado al usuario', [
+                            'user_id' => $persona->user->id,
+                            'persona_id' => $personaId,
+                            'aprendiz_id' => $aprendiz->id,
+                            'ficha_id' => $id
+                        ]);
+                    }
                 }
             }
 
@@ -3066,24 +3068,21 @@ class FichaCaracterizacionController extends Controller
                     'user_id' => Auth::id()
                 ]);
 
-                // Desasignar aprendices de la ficha
-                $resultadoDetach = $ficha->aprendices()->detach($aprendicesIds);
-                
-                Log::info('Desasignación de ficha completada', [
-                    'ficha_id' => $id,
-                    'aprendices_desasignados' => $aprendicesIds->toArray(),
-                    'resultado_detach' => $resultadoDetach,
-                    'user_id' => Auth::id()
-                ]);
-
-                // Actualizar registros de aprendiz: limpiar ficha_caracterizacion_id y desactivar
+                // Desasignar aprendices de la ficha: limpiar ficha_caracterizacion_id y desactivar
                 $aprendicesActualizados = [];
                 foreach ($aprendicesIds as $aprendizId) {
                     try {
-                        $aprendiz = \App\Models\Aprendiz::find($aprendizId);
+                        $aprendiz = \App\Models\Aprendiz::with('persona.user')->find($aprendizId);
                         if ($aprendiz) {
                             $estadoAnterior = $aprendiz->estado;
                             $fichaAnterior = $aprendiz->ficha_caracterizacion_id;
+                            
+                            // Verificar si el aprendiz está asignado a alguna otra ficha antes de actualizar
+                            $tieneOtraFicha = \App\Models\Aprendiz::where('persona_id', $aprendiz->persona_id)
+                                ->where('id', '!=', $aprendiz->id)
+                                ->whereNotNull('ficha_caracterizacion_id')
+                                ->whereNull('deleted_at')
+                                ->exists();
                             
                             $aprendiz->update([
                                 'ficha_caracterizacion_id' => null, // Limpiar la ficha asignada
@@ -3091,11 +3090,26 @@ class FichaCaracterizacionController extends Controller
                                 'user_edit_id' => Auth::id(),
                             ]);
                             
+                            // Remover el rol APRENDIZ solo si no está asignado a ninguna otra ficha
+                            if (!$tieneOtraFicha && $aprendiz->persona && $aprendiz->persona->user) {
+                                if ($aprendiz->persona->user->hasRole('APRENDIZ')) {
+                                    $aprendiz->persona->user->removeRole('APRENDIZ');
+                                    
+                                    Log::info('Rol APRENDIZ removido del usuario al desasignar aprendiz', [
+                                        'user_id' => $aprendiz->persona->user->id,
+                                        'persona_id' => $aprendiz->persona_id,
+                                        'aprendiz_id' => $aprendiz->id,
+                                        'ficha_id' => $id
+                                    ]);
+                                }
+                            }
+                            
                             $aprendicesActualizados[] = [
                                 'aprendiz_id' => $aprendiz->id,
                                 'persona_id' => $aprendiz->persona_id,
                                 'estado_anterior' => $estadoAnterior,
-                                'ficha_anterior' => $fichaAnterior
+                                'ficha_anterior' => $fichaAnterior,
+                                'rol_removido' => !$tieneOtraFicha && $aprendiz->persona && $aprendiz->persona->user && $aprendiz->persona->user->hasRole('APRENDIZ')
                             ];
                             
                             Log::info('Aprendiz desactivado exitosamente', [
@@ -3105,6 +3119,7 @@ class FichaCaracterizacionController extends Controller
                                 'estado_nuevo' => 0,
                                 'ficha_anterior' => $fichaAnterior,
                                 'ficha_caracterizacion_id_nuevo' => null,
+                                'tiene_otra_ficha' => $tieneOtraFicha,
                                 'user_id' => Auth::id()
                             ]);
                         } else {

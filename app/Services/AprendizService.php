@@ -67,6 +67,22 @@ class AprendizService
                 event(new AprendizAsignadoAFicha($aprendiz, $datos['ficha_caracterizacion_id']));
             }
 
+            // Asignar el rol APRENDIZ al usuario si tiene usuario asociado
+            $aprendiz->load('persona.user');
+            if ($aprendiz->persona && $aprendiz->persona->user) {
+                $rolAprendiz = \Spatie\Permission\Models\Role::firstOrCreate(['name' => 'APRENDIZ']);
+                if (!$aprendiz->persona->user->hasRole('APRENDIZ')) {
+                    $aprendiz->persona->user->assignRole('APRENDIZ');
+                    
+                    Log::info('Rol APRENDIZ asignado al usuario al crear aprendiz', [
+                        'user_id' => $aprendiz->persona->user->id,
+                        'persona_id' => $aprendiz->persona_id,
+                        'aprendiz_id' => $aprendiz->id,
+                        'ficha_id' => $datos['ficha_caracterizacion_id'] ?? null
+                    ]);
+                }
+            }
+
             Log::info('Aprendiz creado exitosamente', [
                 'aprendiz_id' => $aprendiz->id,
                 'persona_id' => $datos['persona_id'],
@@ -95,6 +111,7 @@ class AprendizService
             }
 
             $fichaAnterior = $aprendiz->ficha_caracterizacion_id;
+            $fichaNueva = $datos['ficha_caracterizacion_id'] ?? null;
             
             // Actualizar el aprendiz
             $actualizado = $this->repository->actualizar($id, $datos);
@@ -103,14 +120,58 @@ class AprendizService
             $this->repository->invalidarCache();
 
             // Disparar evento si cambió la ficha
-            if (!empty($datos['ficha_caracterizacion_id']) && $datos['ficha_caracterizacion_id'] != $fichaAnterior) {
-                event(new AprendizAsignadoAFicha($aprendiz->fresh(), $datos['ficha_caracterizacion_id']));
+            if (!empty($fichaNueva) && $fichaNueva != $fichaAnterior) {
+                event(new AprendizAsignadoAFicha($aprendiz->fresh(), $fichaNueva));
+            }
+
+            // Manejar el rol APRENDIZ según los cambios en la ficha
+            $aprendiz->refresh();
+            $aprendiz->load('persona.user');
+            
+            if ($aprendiz->persona && $aprendiz->persona->user) {
+                $rolAprendiz = \Spatie\Permission\Models\Role::firstOrCreate(['name' => 'APRENDIZ']);
+                
+                // Si se asignó una ficha (ficha anterior era null y nueva no es null)
+                if (empty($fichaAnterior) && !empty($fichaNueva)) {
+                    // Asignar el rol si no lo tiene
+                    if (!$aprendiz->persona->user->hasRole('APRENDIZ')) {
+                        $aprendiz->persona->user->assignRole('APRENDIZ');
+                        
+                        Log::info('Rol APRENDIZ asignado al usuario al asignar ficha al aprendiz', [
+                            'user_id' => $aprendiz->persona->user->id,
+                            'persona_id' => $aprendiz->persona_id,
+                            'aprendiz_id' => $aprendiz->id,
+                            'ficha_id' => $fichaNueva
+                        ]);
+                    }
+                }
+                // Si se desasignó la ficha (ficha anterior no era null y nueva es null)
+                elseif (!empty($fichaAnterior) && empty($fichaNueva)) {
+                    // Verificar si el aprendiz está asignado a alguna otra ficha
+                    $tieneOtraFicha = Aprendiz::where('persona_id', $aprendiz->persona_id)
+                        ->where('id', '!=', $aprendiz->id)
+                        ->whereNotNull('ficha_caracterizacion_id')
+                        ->whereNull('deleted_at')
+                        ->exists();
+                    
+                    // Remover el rol solo si no está asignado a ninguna otra ficha
+                    if (!$tieneOtraFicha && $aprendiz->persona->user->hasRole('APRENDIZ')) {
+                        $aprendiz->persona->user->removeRole('APRENDIZ');
+                        
+                        Log::info('Rol APRENDIZ removido del usuario al desasignar ficha del aprendiz', [
+                            'user_id' => $aprendiz->persona->user->id,
+                            'persona_id' => $aprendiz->persona_id,
+                            'aprendiz_id' => $aprendiz->id,
+                            'ficha_anterior' => $fichaAnterior
+                        ]);
+                    }
+                }
             }
 
             Log::info('Aprendiz actualizado exitosamente', [
                 'aprendiz_id' => $id,
                 'ficha_anterior' => $fichaAnterior,
-                'ficha_nueva' => $datos['ficha_caracterizacion_id'] ?? null,
+                'ficha_nueva' => $fichaNueva,
             ]);
 
             return $actualizado;
@@ -127,11 +188,34 @@ class AprendizService
     public function eliminar(int $id): bool
     {
         return DB::transaction(function () use ($id) {
+            // Obtener el aprendiz antes de eliminarlo para verificar el rol
+            $aprendiz = $this->repository->encontrarConRelaciones($id);
+            
             $eliminado = $this->repository->eliminar($id);
 
             if ($eliminado) {
                 // Invalidar caché
                 $this->repository->invalidarCache();
+                
+                // Verificar si el aprendiz está asignado a alguna otra ficha antes de remover el rol
+                if ($aprendiz && $aprendiz->persona && $aprendiz->persona->user) {
+                    $tieneOtraFicha = Aprendiz::where('persona_id', $aprendiz->persona_id)
+                        ->where('id', '!=', $aprendiz->id)
+                        ->whereNotNull('ficha_caracterizacion_id')
+                        ->whereNull('deleted_at')
+                        ->exists();
+                    
+                    // Remover el rol solo si no está asignado a ninguna otra ficha
+                    if (!$tieneOtraFicha && $aprendiz->persona->user->hasRole('APRENDIZ')) {
+                        $aprendiz->persona->user->removeRole('APRENDIZ');
+                        
+                        Log::info('Rol APRENDIZ removido del usuario al eliminar aprendiz', [
+                            'user_id' => $aprendiz->persona->user->id,
+                            'persona_id' => $aprendiz->persona_id,
+                            'aprendiz_id' => $id
+                        ]);
+                    }
+                }
                 
                 Log::info('Aprendiz eliminado exitosamente', [
                     'aprendiz_id' => $id,

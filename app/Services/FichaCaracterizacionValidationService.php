@@ -297,8 +297,9 @@ class FichaCaracterizacionValidationService
 
             // 2. Verificar si tiene asistencias registradas
             $tieneAsistencias = DB::table('asistencia_aprendices')
-                ->join('aprendiz_fichas_caracterizacion', 'asistencia_aprendices.aprendiz_id', '=', 'aprendiz_fichas_caracterizacion.aprendiz_id')
-                ->where('aprendiz_fichas_caracterizacion.ficha_id', $fichaId)
+                ->join('aprendices', 'asistencia_aprendices.aprendiz_id', '=', 'aprendices.id')
+                ->where('aprendices.ficha_caracterizacion_id', $fichaId)
+                ->whereNull('aprendices.deleted_at')
                 ->exists();
 
             if ($tieneAsistencias) {
@@ -372,8 +373,9 @@ class FichaCaracterizacionValidationService
 
             // 3. Verificar si tiene asistencias registradas
             $tieneAsistencias = DB::table('asistencia_aprendices')
-                ->join('aprendiz_fichas_caracterizacion', 'asistencia_aprendices.aprendiz_id', '=', 'aprendiz_fichas_caracterizacion.aprendiz_id')
-                ->where('aprendiz_fichas_caracterizacion.ficha_id', $fichaId)
+                ->join('aprendices', 'asistencia_aprendices.aprendiz_id', '=', 'aprendices.id')
+                ->where('aprendices.ficha_caracterizacion_id', $fichaId)
+                ->whereNull('aprendices.deleted_at')
                 ->exists();
 
             if ($tieneAsistencias) {

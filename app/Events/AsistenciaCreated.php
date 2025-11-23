@@ -53,17 +53,17 @@ class AsistenciaCreated implements ShouldBroadcast
                 'created_at' => $this->asistencia->created_at,
                 'updated_at' => $this->asistencia->updated_at,
                 // Información del aprendiz si está disponible
-                'aprendiz' => $this->asistencia->aprendizFicha ? [
-                    'id' => $this->asistencia->aprendizFicha->aprendiz->id,
+                'aprendiz' => $this->asistencia->aprendiz ? [
+                    'id' => $this->asistencia->aprendiz->id,
                     'persona' => [
-                        'nombre_completo' => $this->asistencia->aprendizFicha->aprendiz->persona->getNombreCompletoAttribute(),
-                        'numero_documento' => $this->asistencia->aprendizFicha->aprendiz->persona->numero_documento,
+                        'nombre_completo' => $this->asistencia->aprendiz->persona->getNombreCompletoAttribute(),
+                        'numero_documento' => $this->asistencia->aprendiz->persona->numero_documento,
                     ]
                 ] : null,
                 // Información de la ficha si está disponible
-                'ficha' => $this->asistencia->aprendizFicha ? [
-                    'id' => $this->asistencia->aprendizFicha->ficha->id,
-                    'numero_ficha' => $this->asistencia->aprendizFicha->ficha->ficha,
+                'ficha' => $this->asistencia->aprendiz && $this->asistencia->aprendiz->fichaCaracterizacion ? [
+                    'id' => $this->asistencia->aprendiz->fichaCaracterizacion->id,
+                    'numero_ficha' => $this->asistencia->aprendiz->fichaCaracterizacion->ficha,
                 ] : null,
             ],
             'timestamp' => now()->toISOString(),

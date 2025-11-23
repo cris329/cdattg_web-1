@@ -14,7 +14,7 @@ class AsistenciaAprendiz extends Model
 
     protected $fillable = [
         'instructor_ficha_id',
-        'aprendiz_ficha_id',
+        'aprendiz_ficha_id', // Ahora apunta directamente a aprendices.id
         'evidencia_id',
         'hora_ingreso',
         'hora_salida',
@@ -29,11 +29,20 @@ class AsistenciaAprendiz extends Model
     }
 
     /**
-     * Relación con AprendizFicha
+     * Relación con Aprendiz (aprendiz_ficha_id ahora apunta directamente a aprendices.id)
+     */
+    public function aprendiz(): BelongsTo
+    {
+        return $this->belongsTo(Aprendiz::class, 'aprendiz_ficha_id');
+    }
+
+    /**
+     * Relación con AprendizFicha (deprecated - usar aprendiz() en su lugar)
+     * @deprecated Usar aprendiz() en su lugar
      */
     public function aprendizFicha(): BelongsTo
     {
-        return $this->belongsTo(AprendizFicha::class, 'aprendiz_ficha_id');
+        return $this->aprendiz();
     }
 
     /**
