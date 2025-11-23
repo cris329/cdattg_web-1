@@ -364,28 +364,30 @@ class InscripcionComplementarioController extends Controller
             ]);
         } else {
             // Crear nueva persona
-            $persona = Persona::create($request->only([
-                'tipo_documento',
-                'numero_documento',
-                'primer_nombre',
-                'segundo_nombre',
-                'primer_apellido',
-                'segundo_apellido',
-                'fecha_nacimiento',
-                'genero',
-                'telefono',
-                'celular',
-                'email',
-                'pais_id',
-                'departamento_id',
-                'municipio_id',
-                'direccion',
-                'caracterizacion_id',
-                'status'
-            ]) + ['user_create_id' => 1, 'user_edit_id' => 1]);
+            $persona = Persona::create([
+                'tipo_documento' => $validatedData['tipo_documento'],
+                'numero_documento' => $validatedData['numero_documento'],
+                'primer_nombre' => $validatedData['primer_nombre'],
+                'segundo_nombre' => $validatedData['segundo_nombre'],
+                'primer_apellido' => $validatedData['primer_apellido'],
+                'segundo_apellido' => $validatedData['segundo_apellido'],
+                'fecha_nacimiento' => $validatedData['fecha_nacimiento'],
+                'genero' => $validatedData['genero'],
+                'telefono' => $validatedData['telefono'],
+                'celular' => $validatedData['celular'],
+                'email' => $validatedData['email'],
+                'pais_id' => $validatedData['pais_id'],
+                'departamento_id' => $validatedData['departamento_id'],
+                'municipio_id' => $validatedData['municipio_id'],
+                'direccion' => $validatedData['direccion'],
+                'caracterizacion_id' => $validatedData['parametro_id'] ?? null,
+                'status' => 1,
+                'user_create_id' => 1,
+                'user_edit_id' => 1
+            ]);
         }
 
-        return Persona::create($validatedData + ['user_create_id' => 1, 'user_edit_id' => 1]);
+        return $persona;
     }
 
     /**
@@ -401,11 +403,12 @@ class InscripcionComplementarioController extends Controller
                 'password' => Hash::make($validatedData['numero_documento']),
                 'status' => 1,
                 'persona_id' => $persona->id,
+                'email_verified_at' => now(), // Marcar como verificado automáticamente
             ]);
             $user->assignRole('ASPIRANTE');
             
-            // Enviar email de verificación automáticamente
-            $user->sendEmailVerificationNotification();
+            // Deshabilitar temporalmente el envío de email de verificación
+            // $user->sendEmailVerificationNotification();
         } elseif ($existingUser->hasRole('VISITANTE')) {
             $existingUser->removeRole('VISITANTE');
             $existingUser->assignRole('ASPIRANTE');
@@ -417,6 +420,21 @@ class InscripcionComplementarioController extends Controller
      */
     private function createAspirante(Persona $persona, $programaId, array $validatedData)
     {
+        // Verificar si ya existe un registro para esta persona y programa
+        $existingAspirante = AspiranteComplementario::where('persona_id', $persona->id)
+            ->where('complementario_id', $programaId)
+            ->first();
+
+        if ($existingAspirante) {
+            // Si ya existe, actualizar los datos si es necesario
+            $existingAspirante->update([
+                'observaciones' => $validatedData['observaciones'] ?? $existingAspirante->observaciones,
+                'estado' => 1, // Estado "En proceso"
+            ]);
+            return $existingAspirante;
+        }
+
+        // Si no existe, crear nuevo registro
         return AspiranteComplementario::create([
             'persona_id' => $persona->id,
             'complementario_id' => $programaId,
@@ -431,12 +449,6 @@ class InscripcionComplementarioController extends Controller
     private function processDocumento(Request $request, AspiranteComplementario $aspirante, Persona $persona)
     {
         try {
-            Log::info('Procesando documento de identidad', [
-                'aspirante_id' => $aspirante->id,
-                'persona_id' => $persona->id,
-                'file_name' => $request->file('documento_identidad')->getClientOriginalName()
-            ]);
-
             if ($request->hasFile('documento_identidad')) {
                 $file = $request->file('documento_identidad');
 
@@ -449,25 +461,20 @@ class InscripcionComplementarioController extends Controller
                 $fileName = "{$tipoDocumento}_{$numeroDocumento}_{$primerNombre}_" .
                            "{$primerApellido}_{$timestamp}.{$file->getClientOriginalExtension()}";
 
-                Log::info('Subiendo archivo a Google Drive', [
-                    'file_name' => $fileName,
-                    'file_size' => $file->getSize()
-                ]);
+                // Verificar que el archivo sea válido
+                if (!$file->isValid()) {
+                    throw new \Exception('El archivo no es válido: ' . $file->getErrorMessage());
+                }
 
                 $path = Storage::disk('google')->putFileAs('documentos_aspirantes', $file, $fileName);
-
-                Log::info('Archivo subido exitosamente', ['path' => $path]);
 
                 $aspirante->update([
                     'documento_identidad_path' => $path,
                     'documento_identidad_nombre' => $fileName,
                     'estado' => 2, // Estado "Completo"
                 ]);
-
-                Log::info('Aspirante actualizado con documento', [
-                    'aspirante_id' => $aspirante->id,
-                    'estado' => $aspirante->estado
-                ]);
+            } else {
+                throw new \Exception('No se encontró el archivo de documento de identidad');
             }
 
             return redirect()->route('login.index')->with(
@@ -477,12 +484,6 @@ class InscripcionComplementarioController extends Controller
             );
 
         } catch (\Exception $e) {
-            Log::error('Error al procesar documento: ' . $e->getMessage(), [
-                'exception' => $e,
-                'aspirante_id' => $aspirante->id,
-                'trace' => $e->getTraceAsString()
-            ]);
-
             $aspirante->update(['estado' => 1]);
 
             return back()->withInput()->with(

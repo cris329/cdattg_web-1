@@ -24,7 +24,7 @@ class AppServiceProvider extends ServiceProvider
     /**
      * Bootstrap any application services.
      */
-    public function boot()
+    public function boot(): void
     {
         setlocale(LC_ALL, 'es_ES', 'es', 'ES', 'es_ES.utf8');
         \Carbon\Carbon::setLocale(config('app.locale', 'es'));
@@ -37,7 +37,7 @@ class AppServiceProvider extends ServiceProvider
 
         // Registrar driver de Google Drive
         try {
-            Storage::extend('google', function ($config) {
+            Storage::extend('google', function ($app, $config) {
                 $options = [];
 
                 if (!empty($config['teamDriveId'] ?? null)) {

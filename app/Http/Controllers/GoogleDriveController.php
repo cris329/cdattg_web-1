@@ -72,7 +72,6 @@ class GoogleDriveController extends Controller
         $token = $client->fetchAccessTokenWithAuthCode($code);
 
         if (isset($token['error'])) {
-            Log::error('Google OAuth error on callback', ['error' => $token]);
             return response()->json(['success' => false, 'error' => $token], 500);
         }
 
@@ -93,7 +92,7 @@ class GoogleDriveController extends Controller
             ];
             Storage::disk('local')->put('google-token.json', json_encode($toStore, JSON_PRETTY_PRINT));
         } catch (\Throwable $e) {
-            Log::warning('No se pudo escribir storage/app/google-token.json', ['exception' => $e->getMessage()]);
+            // Silently ignore storage write errors
         }
 
         $message = "Copia y pega el siguiente valor en tu .env como GOOGLE_DRIVE_REFRESH_TOKEN y luego ejecuta: php artisan config:clear";
@@ -114,10 +113,35 @@ class GoogleDriveController extends Controller
     {
         try {
             $path = 'documentos_aspirantes/_connectivity_check_' . time() . '.txt';
-            Storage::disk('google')->put($path, 'Drive connectivity OK at ' . now()->toDateTimeString());
+            $content = 'Drive connectivity OK at ' . now()->toDateTimeString();
+            
+            Storage::disk('google')->put($path, $content);
+            
             return response()->json(['success' => true, 'path' => $path]);
         } catch (\Throwable $e) {
-            Log::error('Drive test upload failed', ['message' => $e->getMessage()]);
+            return response()->json(['success' => false, 'error' => $e->getMessage()], 500);
+        }
+    }
+
+    /**
+     * Verificar configuración de Google Drive
+     */
+    public function checkConfig(Request $request)
+    {
+        try {
+            $config = config('filesystems.disks.google');
+
+            return response()->json([
+                'success' => true,
+                'config' => [
+                    'client_id' => $config['clientId'] ? 'SET' : 'NOT SET',
+                    'client_secret' => $config['clientSecret'] ? 'SET' : 'NOT SET',
+                    'refresh_token' => $config['refreshToken'] ? 'SET' : 'NOT SET',
+                    'folder_id' => $config['folderId'] ? 'SET' : 'NOT SET',
+                    'team_drive_id' => $config['teamDriveId'] ? 'SET' : 'NOT SET'
+                ]
+            ]);
+        } catch (\Throwable $e) {
             return response()->json(['success' => false, 'error' => $e->getMessage()], 500);
         }
     }
