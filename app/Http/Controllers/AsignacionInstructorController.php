@@ -156,7 +156,7 @@ class AsignacionInstructorController extends Controller
             ->with('success', 'Asignación actualizada correctamente.');
     }
 
-    public function competenciasPorFicha(FichaCaracterizacion $ficha): JsonResponse
+    public function competenciasPorFicha(FichaCaracterizacion $ficha, Request $request): JsonResponse
     {
         if (!$ficha->programaFormacion) {
             return response()->json([
@@ -164,10 +164,30 @@ class AsignacionInstructorController extends Controller
             ]);
         }
 
+        // Si estamos editando, obtener el instructor_ficha_id
+        $instructorFichaId = $request->input('instructor_ficha_id');
+        $competenciaAsignadaId = null;
+
+        // Si estamos editando, obtener la competencia asignada al instructor
+        if ($instructorFichaId) {
+            $instructorFicha = \App\Models\InstructorFichaCaracterizacion::find($instructorFichaId);
+            if ($instructorFicha && $instructorFicha->competencia_id) {
+                $competenciaAsignadaId = $instructorFicha->competencia_id;
+            }
+        }
+
         // Obtener todos los resultados de aprendizaje ya asignados en esta ficha
-        $resultadosAsignados = \DB::table('instructor_ficha_resultados_aprendizaje')
+        // Excluir los resultados asignados al instructor actual si estamos editando
+        $queryResultadosAsignados = \DB::table('instructor_ficha_resultados_aprendizaje')
             ->join('instructor_fichas_caracterizacion', 'instructor_ficha_resultados_aprendizaje.instructor_ficha_id', '=', 'instructor_fichas_caracterizacion.id')
-            ->where('instructor_fichas_caracterizacion.ficha_id', $ficha->id)
+            ->where('instructor_fichas_caracterizacion.ficha_id', $ficha->id);
+        
+        if ($instructorFichaId) {
+            // Excluir resultados asignados al instructor actual
+            $queryResultadosAsignados->where('instructor_fichas_caracterizacion.id', '!=', $instructorFichaId);
+        }
+        
+        $resultadosAsignados = $queryResultadosAsignados
             ->pluck('instructor_ficha_resultados_aprendizaje.resultado_aprendizaje_id')
             ->toArray();
 
@@ -181,7 +201,13 @@ class AsignacionInstructorController extends Controller
             ->get();
 
         // Filtrar competencias que tengan al menos un resultado sin asignar
-        $competenciasConResultadosSinAsignar = $competencias->filter(function($competencia) use ($resultadosAsignados) {
+        // O incluir la competencia asignada al instructor actual si estamos editando
+        $competenciasConResultadosSinAsignar = $competencias->filter(function($competencia) use ($resultadosAsignados, $competenciaAsignadaId) {
+            // Si es la competencia asignada al instructor actual, siempre incluirla
+            if ($competenciaAsignadaId && $competencia->id == $competenciaAsignadaId) {
+                return true;
+            }
+            
             // Obtener IDs de resultados de esta competencia
             $resultadosCompetencia = $competencia->resultadosAprendizaje->pluck('id')->toArray();
             
@@ -206,8 +232,9 @@ class AsignacionInstructorController extends Controller
 
     public function resultadosPorCompetencia(Competencia $competencia, Request $request): JsonResponse
     {
-        // Obtener el ficha_id de la solicitud (query parameter)
+        // Obtener el ficha_id y instructor_ficha_id de la solicitud (query parameters)
         $fichaId = $request->input('ficha_id');
+        $instructorFichaId = $request->input('instructor_ficha_id');
         
         // Obtener todos los resultados de aprendizaje de la competencia
         $resultados = $competencia->resultadosAprendizaje()
@@ -218,14 +245,37 @@ class AsignacionInstructorController extends Controller
         // Si se proporciona ficha_id, filtrar resultados ya asignados
         if ($fichaId) {
             // Obtener resultados ya asignados en esta ficha
-            $resultadosAsignados = \DB::table('instructor_ficha_resultados_aprendizaje')
+            // Excluir los resultados asignados al instructor actual si estamos editando
+            $queryResultadosAsignados = \DB::table('instructor_ficha_resultados_aprendizaje')
                 ->join('instructor_fichas_caracterizacion', 'instructor_ficha_resultados_aprendizaje.instructor_ficha_id', '=', 'instructor_fichas_caracterizacion.id')
-                ->where('instructor_fichas_caracterizacion.ficha_id', $fichaId)
+                ->where('instructor_fichas_caracterizacion.ficha_id', $fichaId);
+            
+            if ($instructorFichaId) {
+                // Excluir resultados asignados al instructor actual
+                $queryResultadosAsignados->where('instructor_fichas_caracterizacion.id', '!=', $instructorFichaId);
+            }
+            
+            $resultadosAsignados = $queryResultadosAsignados
                 ->pluck('instructor_ficha_resultados_aprendizaje.resultado_aprendizaje_id')
                 ->toArray();
 
             // Filtrar solo los resultados que no estén asignados
-            $resultados = $resultados->reject(function($resultado) use ($resultadosAsignados) {
+            // O incluir los resultados asignados al instructor actual si estamos editando
+            $resultados = $resultados->reject(function($resultado) use ($resultadosAsignados, $instructorFichaId) {
+                // Si estamos editando, verificar si este resultado está asignado al instructor actual
+                if ($instructorFichaId) {
+                    $resultadoAsignadoAlInstructor = \DB::table('instructor_ficha_resultados_aprendizaje')
+                        ->where('instructor_ficha_id', $instructorFichaId)
+                        ->where('resultado_aprendizaje_id', $resultado->id)
+                        ->exists();
+                    
+                    // Si está asignado al instructor actual, incluirlo
+                    if ($resultadoAsignadoAlInstructor) {
+                        return false; // No rechazar (incluir)
+                    }
+                }
+                
+                // Rechazar si está asignado a otro instructor
                 return in_array($resultado->id, $resultadosAsignados);
             })->values();
         }

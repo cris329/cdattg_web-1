@@ -162,6 +162,7 @@ class AsignarInstructoresRequest extends FormRequest
             $this->validarEspecialidadesRequeridas($validator);
             $this->validarDisponibilidadHoraria($validator);
             $this->validarReglasSENA($validator);
+            $this->validarCoherenciaHorasCompetencia($validator);
             
             // Las sugerencias han sido removidas por solicitud del usuario
         });
@@ -690,6 +691,181 @@ class AsignarInstructoresRequest extends FormRequest
             $resultado = \App\Models\ResultadosAprendizaje::find($resultadoId);
             $resultadoNombre = $resultado ? $resultado->nombre : 'Resultado desconocido';
             $fail("El resultado de aprendizaje '{$resultadoNombre}' no pertenece a la competencia seleccionada.");
+        }
+    }
+
+    /**
+     * Validar que las horas trabajadas sean coherentes con la duración de la competencia o resultados de aprendizaje
+     */
+    private function validarCoherenciaHorasCompetencia($validator): void
+    {
+        $instructores = $this->input('instructores', []);
+        $fichaId = $this->route('id');
+        $ficha = FichaCaracterizacion::with(['diasFormacion', 'jornadaFormacion'])->find($fichaId);
+        
+        if (!$ficha) {
+            return;
+        }
+
+        foreach ($instructores as $index => $instructorData) {
+            $competenciaId = $instructorData['competencia_id'] ?? null;
+            $resultadosIds = $instructorData['resultados_aprendizaje'] ?? [];
+            
+            // Solo validar si tiene competencia o resultados asignados
+            if (!$competenciaId && empty($resultadosIds)) {
+                continue;
+            }
+
+            // Calcular horas totales que se trabajarán
+            $horasTrabajadas = $this->calcularHorasTrabajadas($instructorData, $ficha);
+            
+            // Obtener duración esperada
+            $duracionEsperada = 0;
+            
+            if (!empty($resultadosIds)) {
+                // Si hay resultados asignados, sumar sus duraciones
+                $resultados = \App\Models\ResultadosAprendizaje::whereIn('id', $resultadosIds)->get();
+                $duracionEsperada = $resultados->sum('duracion');
+            } elseif ($competenciaId) {
+                // Si solo hay competencia, usar su duración
+                $competencia = \App\Models\Competencia::find($competenciaId);
+                if ($competencia) {
+                    $duracionEsperada = $competencia->duracion;
+                }
+            }
+
+            if ($duracionEsperada <= 0) {
+                continue; // No se puede validar sin duración
+            }
+
+            // Calcular diferencia porcentual (margen de tolerancia del 10%)
+            $diferencia = abs($horasTrabajadas - $duracionEsperada);
+            $porcentajeDiferencia = ($diferencia / $duracionEsperada) * 100;
+            
+            // Si la diferencia es mayor al 10%, mostrar advertencia
+            if ($porcentajeDiferencia > 10) {
+                $competenciaNombre = $competenciaId 
+                    ? (\App\Models\Competencia::find($competenciaId)->nombre ?? 'Competencia')
+                    : 'Resultados de aprendizaje';
+                
+                $validator->errors()->add(
+                    "instructores.{$index}.fecha_inicio",
+                    "⚠️ INCOHERENCIA DE HORAS: Las horas trabajadas ({$horasTrabajadas}h) no son coherentes con la duración esperada ({$duracionEsperada}h) de {$competenciaNombre}. Diferencia: {$diferencia}h ({$porcentajeDiferencia}%). Ajuste las fechas, días u horarios para que coincidan."
+                );
+            }
+        }
+    }
+
+    /**
+     * Calcular horas totales trabajadas basándose en fechas, días y horarios
+     */
+    private function calcularHorasTrabajadas(array $instructorData, FichaCaracterizacion $ficha): int
+    {
+        try {
+            $fechaInicio = Carbon::parse($instructorData['fecha_inicio']);
+            $fechaFin = Carbon::parse($instructorData['fecha_fin']);
+            
+            // Obtener días seleccionados
+            $diasSeleccionados = [];
+            $diasConHorarios = [];
+            
+            if (isset($instructorData['dias']) && is_array($instructorData['dias'])) {
+                // Formato con horarios específicos
+                foreach ($instructorData['dias'] as $diaId => $diaInfo) {
+                    $diasSeleccionados[] = $diaId;
+                    if (isset($diaInfo['hora_inicio']) && isset($diaInfo['hora_fin'])) {
+                        $diasConHorarios[$diaId] = [
+                            'hora_inicio' => $diaInfo['hora_inicio'],
+                            'hora_fin' => $diaInfo['hora_fin']
+                        ];
+                    }
+                }
+            } elseif (isset($instructorData['dias_semana']) && is_array($instructorData['dias_semana'])) {
+                $diasSeleccionados = $instructorData['dias_semana'];
+            } elseif (isset($instructorData['dias_formacion']) && is_array($instructorData['dias_formacion'])) {
+                $diasSeleccionados = collect($instructorData['dias_formacion'])->pluck('dia_id')->filter()->toArray();
+            }
+            
+            if (empty($diasSeleccionados)) {
+                return 0;
+            }
+
+            // Preparar datos de días con horarios
+            $diasParaCalculo = [];
+            foreach ($diasSeleccionados as $diaId) {
+                if (isset($diasConHorarios[$diaId])) {
+                    // Usar horarios del formulario
+                    $diasParaCalculo[] = [
+                        'dia_id' => $diaId,
+                        'hora_inicio' => $diasConHorarios[$diaId]['hora_inicio'],
+                        'hora_fin' => $diasConHorarios[$diaId]['hora_fin']
+                    ];
+                } else {
+                    // Buscar horario del día en la configuración de la ficha
+                    $diaFormacionFicha = $ficha->diasFormacion->firstWhere('dia_id', $diaId);
+                    $horaInicio = $diaFormacionFicha->hora_inicio ?? ($ficha->jornadaFormacion->hora_inicio ?? '08:00');
+                    $horaFin = $diaFormacionFicha->hora_fin ?? ($ficha->jornadaFormacion->hora_fin ?? '12:00');
+                    
+                    $diasParaCalculo[] = [
+                        'dia_id' => $diaId,
+                        'hora_inicio' => $horaInicio,
+                        'hora_fin' => $horaFin
+                    ];
+                }
+            }
+
+            // Crear objeto temporal para el cálculo
+            $instructorFichaTemp = new \stdClass();
+            $instructorFichaTemp->fecha_inicio = $fechaInicio->format('Y-m-d');
+            $instructorFichaTemp->fecha_fin = $fechaFin->format('Y-m-d');
+            $instructorFichaTemp->ficha = $ficha;
+
+            // Usar el servicio para generar fechas efectivas
+            $diasService = app(\App\Services\InstructorFichaDiasService::class);
+            $fechasEfectivas = $diasService->generarFechasEfectivas($instructorFichaTemp, $diasParaCalculo);
+            
+            // Calcular horas totales
+            $totalHoras = 0;
+            foreach ($fechasEfectivas as $fecha) {
+                if ($fecha['hora_inicio'] && $fecha['hora_fin']) {
+                    $horas = $this->convertirTiempoAHoras($fecha['hora_inicio'], $fecha['hora_fin']);
+                    $totalHoras += $horas;
+                }
+            }
+            
+            return (int) round($totalHoras);
+            
+        } catch (\Exception $e) {
+            \Log::error('Error calculando horas trabajadas en validación', [
+                'error' => $e->getMessage(),
+                'instructor_data' => $instructorData
+            ]);
+            return 0;
+        }
+    }
+
+    /**
+     * Convertir tiempo de inicio y fin a horas decimales
+     */
+    private function convertirTiempoAHoras(?string $horaInicio, ?string $horaFin): float
+    {
+        if (!$horaInicio || !$horaFin) {
+            return 0;
+        }
+
+        try {
+            $inicio = Carbon::parse($horaInicio);
+            $fin = Carbon::parse($horaFin);
+            
+            // Si la hora fin es menor que inicio, asumir que es del día siguiente
+            if ($fin->lt($inicio)) {
+                $fin->addDay();
+            }
+            
+            $diferencia = $inicio->diffInMinutes($fin);
+            return $diferencia / 60; // Convertir minutos a horas
+        } catch (\Exception $e) {
+            return 0;
         }
     }
 

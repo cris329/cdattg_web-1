@@ -2080,6 +2080,7 @@ class FichaCaracterizacionController extends Controller
 
             // Obtener instructores ya asignados a esta ficha
             $instructoresAsignados = $ficha->instructorFicha()
+                ->with(['competencia', 'resultadosAprendizaje'])
                 ->with(['instructor.persona', 'instructorFichaDias.dia'])
                 ->get();
 
@@ -3492,6 +3493,184 @@ class FichaCaracterizacionController extends Controller
     }
 
     /**
+     * Obtiene la competencia y resultados asignados a un instructor para edición.
+     *
+     * @param string $fichaId
+     * @param string $instructorFichaId
+     * @return \Illuminate\Http\JsonResponse
+     */
+    public function obtenerCompetenciaYResultadosInstructor(string $fichaId, string $instructorFichaId)
+    {
+        try {
+            $instructorFicha = \App\Models\InstructorFichaCaracterizacion::with(['competencia', 'resultadosAprendizaje'])
+                ->findOrFail($instructorFichaId);
+            
+            // Verificar que pertenezca a la ficha
+            if ($instructorFicha->ficha_id != $fichaId) {
+                return response()->json([
+                    'success' => false,
+                    'message' => 'El instructor no pertenece a esta ficha'
+                ], 422);
+            }
+
+            $competencia = null;
+            if ($instructorFicha->competencia) {
+                $competencia = [
+                    'id' => $instructorFicha->competencia->id,
+                    'codigo' => $instructorFicha->competencia->codigo,
+                    'nombre' => $instructorFicha->competencia->nombre,
+                ];
+            }
+
+            $resultados = $instructorFicha->resultadosAprendizaje->map(function($resultado) {
+                return [
+                    'id' => $resultado->id,
+                    'codigo' => $resultado->codigo,
+                    'nombre' => $resultado->nombre,
+                    'duracion' => $resultado->duracion ?? 0,
+                ];
+            })->values();
+
+            return response()->json([
+                'success' => true,
+                'data' => [
+                    'competencia' => $competencia,
+                    'resultados' => $resultados,
+                ]
+            ]);
+
+        } catch (\Exception $e) {
+            Log::error('Error al obtener competencia y resultados del instructor', [
+                'ficha_id' => $fichaId,
+                'instructor_ficha_id' => $instructorFichaId,
+                'error' => $e->getMessage()
+            ]);
+
+            return response()->json([
+                'success' => false,
+                'message' => 'Error al obtener los datos del instructor'
+            ], 500);
+        }
+    }
+
+    /**
+     * Actualiza las competencias y resultados de aprendizaje de un instructor asignado.
+     *
+     * @param Request $request
+     * @param string $fichaId
+     * @param string $instructorFichaId
+     * @return \Illuminate\Http\JsonResponse
+     */
+    public function actualizarCompetenciasInstructor(Request $request, string $fichaId, string $instructorFichaId)
+    {
+        try {
+            $validated = $request->validate([
+                'competencia_id' => 'nullable|integer|exists:competencias,id',
+                'resultados_aprendizaje' => 'nullable|array',
+                'resultados_aprendizaje.*' => 'required|integer|exists:resultados_aprendizajes,id',
+            ]);
+
+            $instructorFicha = \App\Models\InstructorFichaCaracterizacion::with(['ficha.programaFormacion', 'competencia', 'resultadosAprendizaje'])
+                ->findOrFail($instructorFichaId);
+
+            // Verificar que el instructor pertenezca a la ficha
+            if ($instructorFicha->ficha_id != $fichaId) {
+                return response()->json([
+                    'success' => false,
+                    'message' => 'El instructor no pertenece a esta ficha'
+                ], 422);
+            }
+
+            // Validar que la competencia pertenezca al programa de formación
+            if ($validated['competencia_id']) {
+                $ficha = $instructorFicha->ficha;
+                if (!$ficha->programaFormacion) {
+                    return response()->json([
+                        'success' => false,
+                        'message' => 'La ficha no tiene un programa de formación asociado.'
+                    ], 422);
+                }
+
+                $competenciaPertenece = $ficha->programaFormacion->competencias->contains('id', $validated['competencia_id']);
+                if (!$competenciaPertenece) {
+                    $competencia = \App\Models\Competencia::find($validated['competencia_id']);
+                    $competenciaNombre = $competencia ? $competencia->nombre : 'Competencia desconocida';
+                    return response()->json([
+                        'success' => false,
+                        'message' => "La competencia '{$competenciaNombre}' no pertenece al programa de formación de esta ficha."
+                    ], 422);
+                }
+
+                // Validar que los resultados pertenezcan a la competencia
+                if (!empty($validated['resultados_aprendizaje'])) {
+                    $competencia = \App\Models\Competencia::with('resultadosAprendizaje')->find($validated['competencia_id']);
+                    if ($competencia) {
+                        foreach ($validated['resultados_aprendizaje'] as $resultadoId) {
+                            $resultadoPertenece = $competencia->resultadosAprendizaje->contains('id', $resultadoId);
+                            if (!$resultadoPertenece) {
+                                $resultado = \App\Models\ResultadosAprendizaje::find($resultadoId);
+                                $resultadoNombre = $resultado ? $resultado->nombre : 'Resultado desconocido';
+                                return response()->json([
+                                    'success' => false,
+                                    'message' => "El resultado de aprendizaje '{$resultadoNombre}' no pertenece a la competencia seleccionada."
+                                ], 422);
+                            }
+                        }
+                    }
+                }
+            }
+
+            DB::beginTransaction();
+
+            // Actualizar competencia
+            $instructorFicha->competencia_id = $validated['competencia_id'] ?? null;
+            $instructorFicha->save();
+
+            // Sincronizar resultados de aprendizaje
+            if (!empty($validated['resultados_aprendizaje'])) {
+                $instructorFicha->resultadosAprendizaje()->sync($validated['resultados_aprendizaje']);
+            } else {
+                $instructorFicha->resultadosAprendizaje()->detach();
+            }
+
+            DB::commit();
+
+            Log::info('Competencias y resultados actualizados exitosamente', [
+                'instructor_ficha_id' => $instructorFichaId,
+                'competencia_id' => $validated['competencia_id'] ?? null,
+                'resultados_count' => count($validated['resultados_aprendizaje'] ?? [])
+            ]);
+
+            return response()->json([
+                'success' => true,
+                'message' => 'Competencias y resultados de aprendizaje actualizados correctamente'
+            ]);
+
+        } catch (\Illuminate\Validation\ValidationException $e) {
+            return response()->json([
+                'success' => false,
+                'message' => 'Error de validación',
+                'errors' => $e->errors()
+            ], 422);
+
+        } catch (\Exception $e) {
+            DB::rollBack();
+            
+            Log::error('Error al actualizar competencias y resultados', [
+                'ficha_id' => $fichaId,
+                'instructor_ficha_id' => $instructorFichaId,
+                'error' => $e->getMessage(),
+                'trace' => $e->getTraceAsString()
+            ]);
+
+            return response()->json([
+                'success' => false,
+                'message' => 'Error al actualizar competencias y resultados: ' . $e->getMessage()
+            ], 500);
+        }
+    }
+
+    /**
      * Genera preview de fechas efectivas para un instructor.
      *
      * @param Request $request
@@ -3523,6 +3702,216 @@ class FichaCaracterizacionController extends Controller
             return response()->json([
                 'success' => false,
                 'message' => 'Error al generar preview de fechas'
+            ], 500);
+        }
+    }
+
+    /**
+     * Actualiza la asignación completa de un instructor (fechas, días, competencias y resultados).
+     * Incluye todas las validaciones de AsignarInstructoresRequest.
+     *
+     * @param Request $request
+     * @param string $fichaId
+     * @param string $instructorFichaId
+     * @return \Illuminate\Http\JsonResponse
+     */
+    public function actualizarAsignacionInstructor(Request $request, string $fichaId, string $instructorFichaId)
+    {
+        try {
+            // Obtener el instructor-ficha
+            $instructorFicha = \App\Models\InstructorFichaCaracterizacion::with(['instructor', 'ficha'])->findOrFail($instructorFichaId);
+            
+            // Verificar que pertenezca a la ficha
+            if ($instructorFicha->ficha_id != $fichaId) {
+                return response()->json([
+                    'success' => false,
+                    'message' => 'El instructor no pertenece a esta ficha'
+                ], 422);
+            }
+
+            // Crear un request simulado para usar las validaciones de AsignarInstructoresRequest
+            $instructorData = [
+                'instructor_id' => $instructorFicha->instructor_id,
+                'fecha_inicio' => $request->input('fecha_inicio'),
+                'fecha_fin' => $request->input('fecha_fin'),
+                'competencia_id' => $request->input('competencia_id'),
+                'resultados_aprendizaje' => $request->input('resultados_aprendizaje', []),
+                'dias' => $request->input('dias', []),
+            ];
+
+            // Convertir días al formato esperado
+            // El JavaScript envía: {dia_id: {hora_inicio: X, hora_fin: Y}, ...}
+            // Necesitamos mantener ese formato para el servicio
+            $diasFormato = [];
+            if (is_array($instructorData['dias'])) {
+                foreach ($instructorData['dias'] as $key => $dia) {
+                    if (is_array($dia)) {
+                        // Si la clave es el dia_id directamente (formato esperado)
+                        if (is_numeric($key)) {
+                            $diasFormato[$key] = [
+                                'hora_inicio' => $dia['hora_inicio'] ?? null,
+                                'hora_fin' => $dia['hora_fin'] ?? null
+                            ];
+                        }
+                        // Si viene con dia_id dentro del objeto
+                        elseif (isset($dia['dia_id'])) {
+                            $diasFormato[$dia['dia_id']] = [
+                                'hora_inicio' => $dia['hora_inicio'] ?? null,
+                                'hora_fin' => $dia['hora_fin'] ?? null
+                            ];
+                        }
+                    }
+                }
+            }
+            $instructorData['dias'] = $diasFormato;
+
+            // Validar usando las mismas reglas que AsignarInstructoresRequest
+            $validator = \Validator::make([
+                'instructores' => [$instructorData]
+            ], [
+                'instructores' => 'required|array|min:1',
+                'instructores.0.instructor_id' => 'required|integer|exists:instructors,id',
+                'instructores.0.fecha_inicio' => 'required|date|after_or_equal:today',
+                'instructores.0.fecha_fin' => 'required|date|after_or_equal:instructores.0.fecha_inicio',
+                'instructores.0.competencia_id' => 'nullable|integer|exists:competencias,id',
+                'instructores.0.resultados_aprendizaje' => 'nullable|array',
+                'instructores.0.resultados_aprendizaje.*' => 'required|integer|exists:resultados_aprendizajes,id',
+                'instructores.0.dias' => 'required|array|min:1',
+            ]);
+
+            // Validaciones personalizadas adicionales
+            $validator->after(function ($validator) use ($instructorData, $fichaId, $instructorFicha) {
+                $ficha = \App\Models\FichaCaracterizacion::find($fichaId);
+                
+                // Validar fecha inicio dentro del rango de la ficha
+                if ($ficha && $ficha->fecha_inicio) {
+                    $fechaInicioFicha = \Carbon\Carbon::parse($ficha->fecha_inicio);
+                    $fechaInicioInstructor = \Carbon\Carbon::parse($instructorData['fecha_inicio']);
+                    
+                    if ($fechaInicioInstructor->lt($fechaInicioFicha)) {
+                        $validator->errors()->add('instructores.0.fecha_inicio', 
+                            "La fecha de inicio del instructor debe ser posterior o igual a la fecha de inicio de la ficha ({$fechaInicioFicha->format('d/m/Y')}).");
+                    }
+                }
+
+                // Validar fecha fin dentro del rango de la ficha
+                if ($ficha && $ficha->fecha_fin) {
+                    $fechaFinFicha = \Carbon\Carbon::parse($ficha->fecha_fin);
+                    $fechaFinInstructor = \Carbon\Carbon::parse($instructorData['fecha_fin']);
+                    
+                    if ($fechaFinInstructor->gt($fechaFinFicha)) {
+                        $validator->errors()->add('instructores.0.fecha_fin', 
+                            "La fecha de fin del instructor debe ser anterior o igual a la fecha de fin de la ficha ({$fechaFinFicha->format('d/m/Y')}).");
+                    }
+                }
+
+                // Validar competencia pertenece al programa
+                if ($instructorData['competencia_id'] && $ficha && $ficha->programaFormacion) {
+                    $competenciaPertenece = $ficha->programaFormacion->competencias->contains('id', $instructorData['competencia_id']);
+                    if (!$competenciaPertenece) {
+                        $competencia = \App\Models\Competencia::find($instructorData['competencia_id']);
+                        $competenciaNombre = $competencia ? $competencia->nombre : 'Competencia desconocida';
+                        $validator->errors()->add('instructores.0.competencia_id', 
+                            "La competencia '{$competenciaNombre}' no pertenece al programa de formación de esta ficha.");
+                    }
+                }
+
+                // Validar resultados pertenecen a la competencia
+                if (!empty($instructorData['resultados_aprendizaje']) && $instructorData['competencia_id']) {
+                    $competencia = \App\Models\Competencia::with('resultadosAprendizaje')->find($instructorData['competencia_id']);
+                    if ($competencia) {
+                        foreach ($instructorData['resultados_aprendizaje'] as $resultadoId) {
+                            $resultadoPertenece = $competencia->resultadosAprendizaje->contains('id', $resultadoId);
+                            if (!$resultadoPertenece) {
+                                $resultado = \App\Models\ResultadosAprendizaje::find($resultadoId);
+                                $resultadoNombre = $resultado ? $resultado->nombre : 'Resultado desconocido';
+                                $validator->errors()->add('instructores.0.resultados_aprendizaje', 
+                                    "El resultado de aprendizaje '{$resultadoNombre}' no pertenece a la competencia seleccionada.");
+                            }
+                        }
+                    }
+                }
+            });
+
+            if ($validator->fails()) {
+                return response()->json([
+                    'success' => false,
+                    'message' => 'Error de validación',
+                    'errors' => $validator->errors()
+                ], 422);
+            }
+
+            DB::beginTransaction();
+
+            // Actualizar fechas
+            $instructorFicha->fecha_inicio = $instructorData['fecha_inicio'];
+            $instructorFicha->fecha_fin = $instructorData['fecha_fin'];
+            $instructorFicha->competencia_id = $instructorData['competencia_id'] ?? null;
+            $instructorFicha->total_horas_instructor = 12; // Fijado en 12h
+            $instructorFicha->save();
+
+            // Actualizar resultados de aprendizaje
+            if (!empty($instructorData['resultados_aprendizaje'])) {
+                $instructorFicha->resultadosAprendizaje()->sync($instructorData['resultados_aprendizaje']);
+            } else {
+                $instructorFicha->resultadosAprendizaje()->detach();
+            }
+
+            // Actualizar días usando el servicio (que incluye validaciones)
+            $diasService = app(\App\Services\InstructorFichaDiasService::class);
+            $diasParaServicio = [];
+            foreach ($instructorData['dias'] as $diaId => $diaInfo) {
+                $diasParaServicio[] = [
+                    'dia_id' => $diaId,
+                    'hora_inicio' => $diaInfo['hora_inicio'] ?? null,
+                    'hora_fin' => $diaInfo['hora_fin'] ?? null
+                ];
+            }
+
+            $resultadoDias = $diasService->asignarDiasInstructor($instructorFichaId, $diasParaServicio);
+            
+            if (!$resultadoDias['success']) {
+                DB::rollBack();
+                return response()->json([
+                    'success' => false,
+                    'message' => $resultadoDias['message'],
+                    'conflictos' => $resultadoDias['conflictos'] ?? []
+                ], 422);
+            }
+
+            DB::commit();
+
+            Log::info('Asignación de instructor actualizada exitosamente', [
+                'instructor_ficha_id' => $instructorFichaId,
+                'ficha_id' => $fichaId,
+                'instructor_id' => $instructorFicha->instructor_id
+            ]);
+
+            return response()->json([
+                'success' => true,
+                'message' => 'Asignación actualizada correctamente con todas las validaciones aplicadas'
+            ]);
+
+        } catch (\Illuminate\Validation\ValidationException $e) {
+            return response()->json([
+                'success' => false,
+                'message' => 'Error de validación',
+                'errors' => $e->errors()
+            ], 422);
+
+        } catch (\Exception $e) {
+            DB::rollBack();
+            
+            Log::error('Error al actualizar asignación de instructor', [
+                'ficha_id' => $fichaId,
+                'instructor_ficha_id' => $instructorFichaId,
+                'error' => $e->getMessage(),
+                'trace' => $e->getTraceAsString()
+            ]);
+
+            return response()->json([
+                'success' => false,
+                'message' => 'Error al actualizar la asignación: ' . $e->getMessage()
             ], 500);
         }
     }

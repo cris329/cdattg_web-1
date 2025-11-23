@@ -34,6 +34,9 @@ route::middleware('can:VER FICHA CARACTERIZACION')->group(function () {
     Route::post('/fichaCaracterizacion/{fichaId}/instructor/{instructorFichaId}/asignar-dias', [FichaCaracterizacionController::class, 'asignarDiasInstructor'])->name('fichaCaracterizacion.legacy.instructor.asignarDias');
     Route::get('/fichaCaracterizacion/{fichaId}/instructor/{instructorFichaId}/obtener-dias', [FichaCaracterizacionController::class, 'obtenerDiasInstructor'])->name('fichaCaracterizacion.legacy.instructor.obtenerDias');
     Route::delete('/fichaCaracterizacion/{fichaId}/instructor/{instructorFichaId}/eliminar-dias', [FichaCaracterizacionController::class, 'eliminarDiasInstructor'])->name('fichaCaracterizacion.legacy.instructor.eliminarDias');
+    Route::get('/fichaCaracterizacion/{fichaId}/instructor/{instructorFichaId}/competencia-resultados', [FichaCaracterizacionController::class, 'obtenerCompetenciaYResultadosInstructor'])->name('fichaCaracterizacion.legacy.instructor.obtenerCompetenciaResultados');
+    Route::post('/fichaCaracterizacion/{fichaId}/instructor/{instructorFichaId}/actualizar-competencias', [FichaCaracterizacionController::class, 'actualizarCompetenciasInstructor'])->name('fichaCaracterizacion.legacy.instructor.actualizarCompetencias');
+    Route::post('/fichaCaracterizacion/{fichaId}/instructor/{instructorFichaId}/actualizar-asignacion', [FichaCaracterizacionController::class, 'actualizarAsignacionInstructor'])->name('fichaCaracterizacion.legacy.instructor.actualizarAsignacion');
     Route::post('/fichaCaracterizacion/{fichaId}/instructor/{instructorFichaId}/preview-fechas', [FichaCaracterizacionController::class, 'previewFechasInstructor'])->name('fichaCaracterizacion.legacy.instructor.previewFechas');
     
     // Rutas para gestión de días de formación

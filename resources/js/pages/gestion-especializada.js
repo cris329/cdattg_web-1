@@ -282,7 +282,10 @@ document.addEventListener('DOMContentLoaded', () => {
 
         // Crear HTML para el nuevo instructor
         const instructorHTML = `
-            <div class="instructor-row border rounded p-3 mb-3 bg-light position-relative" data-index="${nuevoIndice}">                
+            <div class="instructor-row border rounded p-3 mb-3 bg-light position-relative" data-index="${nuevoIndice}">
+                <button type="button" class="btn btn-sm btn-danger position-absolute" style="top: 10px; right: 10px; z-index: 10;" onclick="eliminarInstructor(this)" title="Eliminar instructor">
+                    <i class="fas fa-times"></i>
+                </button>                
                 <div class="row">
                     <div class="col-md-6">
                         <label class="form-label font-weight-bold">
@@ -348,6 +351,25 @@ document.addEventListener('DOMContentLoaded', () => {
                             </div>
                             <div class="mt-2 text-center">
                                 <span class="badge badge-secondary dias-count-${nuevoIndice}">0 días seleccionados</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- Panel de Información y Consejos -->
+                <div class="row mt-3">
+                    <div class="col-md-12">
+                        <div class="card border-info" id="info-panel-${nuevoIndice}">
+                            <div class="card-header bg-info text-white">
+                                <h6 class="mb-0">
+                                    <i class="fas fa-info-circle mr-2"></i>Información y Consejos de Asignación
+                                </h6>
+                            </div>
+                            <div class="card-body" id="info-content-${nuevoIndice}">
+                                <div class="text-muted text-center">
+                                    <i class="fas fa-arrow-up mr-2"></i>
+                                    Complete los campos arriba para ver información y consejos
+                                </div>
                             </div>
                         </div>
                     </div>
@@ -536,6 +558,9 @@ document.addEventListener('DOMContentLoaded', () => {
                         });
                     }
                     
+                    // Actualizar panel de información
+                    setTimeout(() => actualizarPanelInformacion(indice), 600);
+                    
                     // Continuar con el siguiente instructor
                     indiceActual++;
                     setTimeout(restaurarSiguienteInstructor, 300);
@@ -664,11 +689,33 @@ document.addEventListener('DOMContentLoaded', () => {
 
     // Función para eliminar instructor
     window.eliminarInstructor = function(button) {
-        const instructorRow = button.closest('.instructor-row');
-        if (instructorRow) {
-            instructorRow.remove();
-            console.log('Instructor eliminado');
-        }
+        Swal.fire({
+            title: '¿Está seguro?',
+            html: `<div class="text-left">
+                <p class="text-warning"><i class="fas fa-exclamation-triangle"></i> Esta acción eliminará este instructor del formulario de asignación.</p>
+            </div>`,
+            icon: 'warning',
+            showCancelButton: true,
+            confirmButtonColor: '#d33',
+            cancelButtonColor: '#3085d6',
+            confirmButtonText: 'Sí, eliminar',
+            cancelButtonText: 'Cancelar'
+        }).then((result) => {
+            if (result.isConfirmed) {
+                const instructorRow = button.closest('.instructor-row');
+                if (instructorRow) {
+                    // Destruir Select2 antes de eliminar
+                    const selects = instructorRow.querySelectorAll('.select2');
+                    selects.forEach(select => {
+                        if (typeof $ !== 'undefined' && $(select).data('select2')) {
+                            $(select).select2('destroy');
+                        }
+                    });
+                    instructorRow.remove();
+                    console.log('Instructor eliminado del formulario');
+                }
+            }
+        });
     };
 
     // Función para validar días según fechas en una fila de instructor
@@ -873,13 +920,32 @@ document.addEventListener('DOMContentLoaded', () => {
         diasCheckboxes.forEach(checkbox => {
             checkbox.addEventListener('change', function() {
                 actualizarContadorDias(indice);
+                actualizarPanelInformacion(indice);
             });
+        });
+        
+        // Actualizar panel de información cuando cambien los resultados de aprendizaje
+        if (resultadosSelect) {
+            $(resultadosSelect).on('change', function() {
+                actualizarPanelInformacion(indice);
+            });
+        }
+        
+        // Actualizar panel de información cuando cambien las fechas
+        fechaInicio.addEventListener('change', function() {
+            setTimeout(() => actualizarPanelInformacion(indice), 100);
+        });
+        fechaFin.addEventListener('change', function() {
+            setTimeout(() => actualizarPanelInformacion(indice), 100);
         });
         
         // Validar días al cargar si ya hay fechas
         if (fechaInicio.value && fechaFin.value) {
             validarDias();
         }
+        
+        // Actualizar panel inicialmente
+        setTimeout(() => actualizarPanelInformacion(indice), 500);
     }
 
     // Función para actualizar contador de días seleccionados
@@ -1505,7 +1571,9 @@ document.addEventListener('DOMContentLoaded', () => {
                 
                 if (response.data && response.data.length > 0) {
                     response.data.forEach(function(resultado) {
-                        $select.append(`<option value="${resultado.id}">${resultado.codigo} - ${resultado.nombre}</option>`);
+                        const duracion = resultado.duracion || 0;
+                        const duracionText = duracion > 0 ? ` (${duracion}h)` : '';
+                        $select.append(`<option value="${resultado.id}" data-duracion="${duracion}">${resultado.codigo} - ${resultado.nombre}${duracionText}</option>`);
                     });
                 } else {
                     $select.append('<option value="">No hay resultados de aprendizaje disponibles</option>');
@@ -1531,6 +1599,14 @@ document.addEventListener('DOMContentLoaded', () => {
                 });
                 
                 $select.trigger('change');
+                
+                // Actualizar panel de información después de cargar resultados
+                setTimeout(() => {
+                    const indice = $select.data('index');
+                    if (indice !== undefined) {
+                        actualizarPanelInformacion(indice);
+                    }
+                }, 300);
             },
             error: function(xhr, status, error) {
                 console.error('Error al cargar resultados de aprendizaje:', error, xhr);
@@ -1556,6 +1632,317 @@ document.addEventListener('DOMContentLoaded', () => {
                 $select.trigger('change');
             }
         });
+    }
+
+    // Función para actualizar el panel de información y consejos
+    function actualizarPanelInformacion(indice) {
+        const panel = document.getElementById(`info-content-${indice}`);
+        if (!panel) {
+            return;
+        }
+
+        const instructorRow = document.querySelector(`.instructor-row[data-index="${indice}"]`);
+        if (!instructorRow) {
+            return;
+        }
+
+        // Obtener datos
+        const fechaInicio = instructorRow.querySelector('.fecha-inicio')?.value;
+        const fechaFin = instructorRow.querySelector('.fecha-fin')?.value;
+        const resultadosSelect = instructorRow.querySelector('.resultados-select');
+        const competenciaSelect = instructorRow.querySelector('.competencia-select');
+        const diasCheckboxes = instructorRow.querySelectorAll('.dia-check:checked');
+
+        let html = '';
+        let tieneInfo = false;
+
+        // 1. Información de resultados de aprendizaje seleccionados
+        if (resultadosSelect) {
+            const $resultadosSelect = $(resultadosSelect);
+            const resultadosSeleccionados = $resultadosSelect.val() || [];
+            
+            if (resultadosSeleccionados.length > 0) {
+                tieneInfo = true;
+                let totalHorasResultados = 0;
+                let detallesResultados = [];
+
+                resultadosSeleccionados.forEach(resultadoId => {
+                    const option = resultadosSelect.querySelector(`option[value="${resultadoId}"]`);
+                    if (option) {
+                        const duracion = parseFloat(option.getAttribute('data-duracion')) || 0;
+                        totalHorasResultados += duracion;
+                        const texto = option.textContent.split(' (')[0]; // Remover duración del texto
+                        detallesResultados.push({
+                            nombre: texto,
+                            horas: duracion
+                        });
+                    }
+                });
+
+                html += `
+                    <div class="mb-3">
+                        <h6 class="text-primary">
+                            <i class="fas fa-graduation-cap mr-2"></i>Resultados de Aprendizaje Seleccionados
+                        </h6>
+                        <div class="table-responsive">
+                            <table class="table table-sm table-bordered">
+                                <thead class="thead-light">
+                                    <tr>
+                                        <th>Resultado</th>
+                                        <th class="text-center">Horas</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    ${detallesResultados.map(r => `
+                                        <tr>
+                                            <td>${r.nombre}</td>
+                                            <td class="text-center"><strong>${r.horas}h</strong></td>
+                                        </tr>
+                                    `).join('')}
+                                    <tr class="table-info">
+                                        <td><strong>TOTAL</strong></td>
+                                        <td class="text-center"><strong>${totalHorasResultados.toFixed(2)}h</strong></td>
+                                    </tr>
+                                </tbody>
+                            </table>
+                        </div>
+                        <div class="alert alert-info mb-0 mt-2">
+                            <i class="fas fa-info-circle mr-2"></i>
+                            <strong>Total de horas requeridas:</strong> ${totalHorasResultados.toFixed(2)} horas
+                        </div>
+                    </div>
+                `;
+            }
+        }
+
+        // 2. Información de horas trabajadas según fechas y días
+        if (fechaInicio && fechaFin && diasCheckboxes.length > 0) {
+            tieneInfo = true;
+            const horasTrabajadas = calcularHorasTrabajadas(indice, fechaInicio, fechaFin, diasCheckboxes);
+            
+            html += `
+                <div class="mb-3">
+                    <h6 class="text-success">
+                        <i class="fas fa-calendar-check mr-2"></i>Horas Programadas
+                    </h6>
+                    <div class="card bg-light">
+                        <div class="card-body">
+                            <div class="row">
+                                <div class="col-md-6">
+                                    <p class="mb-1"><strong>Fecha Inicio:</strong> ${formatearFecha(fechaInicio)}</p>
+                                    <p class="mb-1"><strong>Fecha Fin:</strong> ${formatearFecha(fechaFin)}</p>
+                                    <p class="mb-0"><strong>Días seleccionados:</strong> ${diasCheckboxes.length}</p>
+                                </div>
+                                <div class="col-md-6">
+                                    <p class="mb-1"><strong>Horas por día:</strong> ${calcularHorasPorDia(indice, diasCheckboxes).toFixed(2)}h</p>
+                                    <p class="mb-0"><strong>Total de horas programadas:</strong> <span class="badge badge-success">${horasTrabajadas.toFixed(2)}h</span></p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            `;
+
+            // 3. Comparación y consejos
+            if (resultadosSelect) {
+                const $resultadosSelect = $(resultadosSelect);
+                const resultadosSeleccionados = $resultadosSelect.val() || [];
+                
+                if (resultadosSeleccionados.length > 0) {
+                    let totalHorasResultados = 0;
+                    resultadosSeleccionados.forEach(resultadoId => {
+                        const option = resultadosSelect.querySelector(`option[value="${resultadoId}"]`);
+                        if (option) {
+                            const duracion = parseFloat(option.getAttribute('data-duracion')) || 0;
+                            totalHorasResultados += duracion;
+                        }
+                    });
+
+                    const diferencia = Math.abs(horasTrabajadas - totalHorasResultados);
+                    const porcentajeDiferencia = totalHorasResultados > 0 
+                        ? (diferencia / totalHorasResultados) * 100 
+                        : 0;
+
+                    let alertClass = 'alert-success';
+                    let icon = 'fa-check-circle';
+                    let mensaje = '';
+                    let consejos = [];
+
+                    if (porcentajeDiferencia <= 5) {
+                        mensaje = 'Las horas programadas coinciden perfectamente con las horas requeridas.';
+                    } else if (porcentajeDiferencia <= 10) {
+                        alertClass = 'alert-warning';
+                        icon = 'fa-exclamation-triangle';
+                        mensaje = `Las horas programadas tienen una diferencia del ${porcentajeDiferencia.toFixed(1)}% con las horas requeridas.`;
+                        consejos.push('Ajuste ligeramente las fechas o días de formación para una mejor coincidencia.');
+                    } else {
+                        alertClass = 'alert-danger';
+                        icon = 'fa-times-circle';
+                        mensaje = `Las horas programadas tienen una diferencia significativa (${porcentajeDiferencia.toFixed(1)}%) con las horas requeridas.`;
+                        
+                        if (horasTrabajadas < totalHorasResultados) {
+                            const horasFaltantes = totalHorasResultados - horasTrabajadas;
+                            consejos.push(`Faltan ${horasFaltantes.toFixed(2)} horas. Considere:`);
+                            consejos.push('- Extender el rango de fechas');
+                            consejos.push('- Agregar más días de formación');
+                            consejos.push('- Aumentar las horas diarias si es posible');
+                        } else {
+                            const horasExcedentes = horasTrabajadas - totalHorasResultados;
+                            consejos.push(`Hay ${horasExcedentes.toFixed(2)} horas excedentes. Considere:`);
+                            consejos.push('- Reducir el rango de fechas');
+                            consejos.push('- Reducir días de formación');
+                            consejos.push('- Seleccionar más resultados de aprendizaje');
+                        }
+                    }
+
+                    html += `
+                        <div class="mb-3">
+                            <h6 class="text-warning">
+                                <i class="fas fa-balance-scale mr-2"></i>Comparación y Recomendaciones
+                            </h6>
+                            <div class="alert ${alertClass}">
+                                <h6><i class="fas ${icon} mr-2"></i>${mensaje}</h6>
+                                <hr>
+                                <div class="row">
+                                    <div class="col-md-6">
+                                        <p class="mb-1"><strong>Horas requeridas:</strong> ${totalHorasResultados.toFixed(2)}h</p>
+                                        <p class="mb-0"><strong>Horas programadas:</strong> ${horasTrabajadas.toFixed(2)}h</p>
+                                    </div>
+                                    <div class="col-md-6">
+                                        <p class="mb-1"><strong>Diferencia:</strong> ${diferencia.toFixed(2)}h</p>
+                                        <p class="mb-0"><strong>Porcentaje:</strong> ${porcentajeDiferencia.toFixed(1)}%</p>
+                                    </div>
+                                </div>
+                                ${consejos.length > 0 ? `
+                                    <hr>
+                                    <p class="mb-1"><strong>Consejos:</strong></p>
+                                    <ul class="mb-0">
+                                        ${consejos.map(c => `<li>${c}</li>`).join('')}
+                                    </ul>
+                                ` : ''}
+                            </div>
+                        </div>
+                    `;
+                }
+            }
+        }
+
+        // Si no hay información, mostrar mensaje
+        if (!tieneInfo) {
+            html = `
+                <div class="text-muted text-center">
+                    <i class="fas fa-arrow-up mr-2"></i>
+                    Complete los campos arriba para ver información y consejos
+                </div>
+            `;
+        }
+
+        panel.innerHTML = html;
+    }
+
+    // Función para calcular horas trabajadas según fechas y días
+    function calcularHorasTrabajadas(indice, fechaInicio, fechaFin, diasCheckboxes) {
+        try {
+            const fechaInicioObj = new Date(fechaInicio + 'T00:00:00');
+            const fechaFinObj = new Date(fechaFin + 'T00:00:00');
+            
+            if (fechaInicioObj > fechaFinObj) {
+                return 0;
+            }
+
+            // Mapeo de IDs de días a números de día de la semana
+            const mapeoDias = {
+                12: 1, // LUNES -> 1
+                13: 2, // MARTES -> 2
+                14: 3, // MIÉRCOLES -> 3
+                15: 4, // JUEVES -> 4
+                16: 5, // VIERNES -> 5
+                17: 6, // SÁBADO -> 6
+                18: 0  // DOMINGO -> 0
+            };
+
+            // Obtener días seleccionados
+            const diasSeleccionados = Array.from(diasCheckboxes).map(cb => parseInt(cb.value));
+            
+            // Obtener horas por día desde la configuración de la ficha
+            const horasPorDia = calcularHorasPorDia(indice, diasCheckboxes);
+            
+            // Contar días efectivos en el rango
+            let diasEfectivos = 0;
+            const fechaActual = new Date(fechaInicioObj);
+            
+            while (fechaActual <= fechaFinObj) {
+                const diaSemana = fechaActual.getDay(); // 0=Domingo, 1=Lunes, ..., 6=Sábado
+                
+                // Verificar si este día de la semana está en los días seleccionados
+                const diaSeleccionado = diasSeleccionados.find(diaId => mapeoDias[diaId] === diaSemana);
+                if (diaSeleccionado) {
+                    diasEfectivos++;
+                }
+                
+                fechaActual.setDate(fechaActual.getDate() + 1);
+            }
+
+            return diasEfectivos * horasPorDia;
+        } catch (e) {
+            console.error('Error calculando horas trabajadas:', e);
+            return 0;
+        }
+    }
+
+    // Función para calcular horas por día
+    function calcularHorasPorDia(indice, diasCheckboxes) {
+        if (!diasCheckboxes || diasCheckboxes.length === 0) {
+            return 0;
+        }
+
+        // Obtener horarios desde la configuración de la ficha
+        const diasData = window.diasSemanaData || {};
+        let totalHoras = 0;
+        let diasConHorario = 0;
+
+        Array.from(diasCheckboxes).forEach(checkbox => {
+            const diaId = parseInt(checkbox.value);
+            const diaData = diasData[diaId];
+            
+            if (diaData && diaData.hora_inicio && diaData.hora_fin) {
+                const horas = convertirTiempoAHoras(diaData.hora_inicio, diaData.hora_fin);
+                totalHoras += horas;
+                diasConHorario++;
+            }
+        });
+
+        // Retornar promedio de horas por día
+        return diasConHorario > 0 ? totalHoras / diasConHorario : 0;
+    }
+
+    // Función para convertir tiempo a horas
+    function convertirTiempoAHoras(horaInicio, horaFin) {
+        try {
+            const inicio = new Date(`2000-01-01T${horaInicio}:00`);
+            let fin = new Date(`2000-01-01T${horaFin}:00`);
+            
+            // Si la hora fin es menor que inicio, asumir que es del día siguiente
+            if (fin < inicio) {
+                fin = new Date(fin.getTime() + 24 * 60 * 60 * 1000);
+            }
+            
+            const diferencia = fin - inicio;
+            return diferencia / (1000 * 60 * 60); // Convertir milisegundos a horas
+        } catch (e) {
+            return 0;
+        }
+    }
+
+    // Función para formatear fecha
+    function formatearFecha(fechaStr) {
+        try {
+            const fecha = new Date(fechaStr + 'T00:00:00');
+            const opciones = { year: 'numeric', month: '2-digit', day: '2-digit' };
+            return fecha.toLocaleDateString('es-ES', opciones);
+        } catch (e) {
+            return fechaStr;
+        }
     }
 
 });

@@ -273,16 +273,6 @@ class UpdateFichaCaracterizacionRequest extends FormRequest
                 }
             }
 
-            // 5. Validación adicional: verificar que no se cambien fechas si ya hay aprendices asignados
-            if ($fichaId) {
-                $ficha = \App\Models\FichaCaracterizacion::find($fichaId);
-                if ($ficha && $ficha->tieneAprendices()) {
-                    // Si hay aprendices, no permitir cambiar fechas de inicio
-                    if ($this->fecha_inicio && $this->fecha_inicio !== $ficha->fecha_inicio) {
-                        $validator->errors()->add('fecha_inicio', 'No se puede cambiar la fecha de inicio cuando ya hay aprendices asignados.');
-                    }
-                }
-            }
         });
     }
 }

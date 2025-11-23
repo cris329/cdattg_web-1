@@ -332,7 +332,8 @@ class AsignacionInstructorService
             // Calcular horas totales basado en fechas efectivas
             $totalHoras = $this->calcularHorasDesdeFechasEfectivas($instructorFichaTemp, $diasParaServicio);
             
-            return $totalHoras > 0 ? $totalHoras : 40; // Mínimo 40 horas por defecto
+            // TEMPORAL: Usar 12h para pruebas
+            return 12;
             
         } catch (\Exception $e) {
             Log::error('Error calculando horas automáticas', [

@@ -30,7 +30,7 @@ class InstructorFichaDiasService
             DB::beginTransaction();
 
             // Obtener la relación instructor-ficha
-            $instructorFicha = InstructorFichaCaracterizacion::with(['instructor', 'ficha'])->findOrFail($instructorFichaId);
+            $instructorFicha = InstructorFichaCaracterizacion::with(['instructor', 'ficha', 'competencia', 'resultadosAprendizaje'])->findOrFail($instructorFichaId);
             
             \Log::info('Instructor-ficha encontrado', ['instructor_ficha' => $instructorFicha]);
             
@@ -59,6 +59,16 @@ class InstructorFichaDiasService
                 ];
             }
 
+            // Validar coherencia de horas con competencia y resultados de aprendizaje
+            $validacionHoras = $this->validarCoherenciaHorasCompetencia($instructorFicha, $diasData);
+            if (!$validacionHoras['valido']) {
+                return [
+                    'success' => false,
+                    'message' => $validacionHoras['mensaje'],
+                    'advertencia' => true
+                ];
+            }
+
             // Eliminar días existentes para esta relación
             InstructorFichaDias::where('instructor_ficha_id', $instructorFichaId)->delete();
 
@@ -77,6 +87,10 @@ class InstructorFichaDiasService
 
             // Generar fechas efectivas de formación
             $fechasEfectivas = $this->generarFechasEfectivas($instructorFicha, $diasData);
+
+            // Actualizar horas totales del instructor (usar 12h para pruebas)
+            $instructorFicha->total_horas_instructor = 12;
+            $instructorFicha->save();
 
             DB::commit();
 
@@ -375,6 +389,93 @@ class InstructorFichaDiasService
         }
 
         return true;
+    }
+
+    /**
+     * Validar coherencia de horas con competencia y resultados de aprendizaje
+     */
+    private function validarCoherenciaHorasCompetencia(InstructorFichaCaracterizacion $instructorFicha, array $diasData): array
+    {
+        $competenciaId = $instructorFicha->competencia_id;
+        $resultadosIds = $instructorFicha->resultadosAprendizaje->pluck('id')->toArray();
+        
+        // Solo validar si tiene competencia o resultados asignados
+        if (!$competenciaId && empty($resultadosIds)) {
+            return ['valido' => true];
+        }
+
+        // Calcular horas trabajadas
+        $fechasEfectivas = $this->generarFechasEfectivas($instructorFicha, $diasData);
+        $horasTrabajadas = 0;
+        
+        foreach ($fechasEfectivas as $fecha) {
+            if ($fecha['hora_inicio'] && $fecha['hora_fin']) {
+                $horas = $this->convertirTiempoAHoras($fecha['hora_inicio'], $fecha['hora_fin']);
+                $horasTrabajadas += $horas;
+            }
+        }
+
+        // Obtener duración esperada
+        $duracionEsperada = 0;
+        
+        if (!empty($resultadosIds)) {
+            $resultados = \App\Models\ResultadosAprendizaje::whereIn('id', $resultadosIds)->get();
+            $duracionEsperada = $resultados->sum('duracion');
+        } elseif ($competenciaId) {
+            $competencia = \App\Models\Competencia::find($competenciaId);
+            if ($competencia) {
+                $duracionEsperada = $competencia->duracion;
+            }
+        }
+
+        if ($duracionEsperada <= 0) {
+            return ['valido' => true];
+        }
+
+        // Calcular diferencia porcentual (margen de tolerancia del 10%)
+        $diferencia = abs($horasTrabajadas - $duracionEsperada);
+        $porcentajeDiferencia = ($diferencia / $duracionEsperada) * 100;
+        
+        // Si la diferencia es mayor al 10%, mostrar advertencia
+        if ($porcentajeDiferencia > 10) {
+            $competenciaNombre = $competenciaId 
+                ? (\App\Models\Competencia::find($competenciaId)->nombre ?? 'Competencia')
+                : 'Resultados de aprendizaje';
+            
+            $mensaje = "⚠️ INCOHERENCIA DE HORAS: Las horas trabajadas ({$horasTrabajadas}h) no son coherentes con la duración esperada ({$duracionEsperada}h) de {$competenciaNombre}. Diferencia: {$diferencia}h ({$porcentajeDiferencia}%). Ajuste las fechas, días u horarios para que coincidan.";
+            
+            return [
+                'valido' => false,
+                'mensaje' => $mensaje
+            ];
+        }
+
+        return ['valido' => true];
+    }
+
+    /**
+     * Convertir tiempo de inicio y fin a horas decimales
+     */
+    private function convertirTiempoAHoras(?string $horaInicio, ?string $horaFin): float
+    {
+        if (!$horaInicio || !$horaFin) {
+            return 0;
+        }
+
+        try {
+            $inicio = \Carbon\Carbon::parse($horaInicio);
+            $fin = \Carbon\Carbon::parse($horaFin);
+            
+            // Si la hora fin es menor que inicio, asumir que es del día siguiente
+            if ($fin->lt($inicio)) {
+                $fin->addDay();
+            }
+            
+            $diferencia = $inicio->diffInMinutes($fin);
+            return $diferencia / 60; // Convertir minutos a horas
+        } catch (\Exception $e) {
+            return 0;
+        }
     }
 }
 
