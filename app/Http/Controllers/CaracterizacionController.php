@@ -6,7 +6,7 @@ use App\Models\AsistenciaAprendiz;
 use App\Models\CaracterizacionPrograma;
 use App\Models\FichaCaracterizacion;
 use App\Models\Instructor;
-use App\Models\JornadaFormacion;
+use App\Models\ParametroTema;
 use App\Models\Persona;
 use App\Models\ProgramaFormacion;
 use App\Models\Sede;
@@ -70,7 +70,13 @@ class CaracterizacionController extends Controller
 
         $sede = Sede::find($sedePrograma);
         $instructors = Instructor::all();
-        $jornadas = JornadaFormacion::all();
+        $jornadas = ParametroTema::whereHas('tema', function($q) {
+            $q->where('name', 'LIKE', '%JORNADAS%');
+        })->whereHas('parametro', function($query) {
+            $query->where('status', true);
+        })->where('status', true)
+          ->with('parametro')
+          ->get();
 
 
 
@@ -129,7 +135,13 @@ class CaracterizacionController extends Controller
             'fichas' => FichaCaracterizacion::all(),
             'programas' => ProgramaFormacion::all(),
             'instructores' => Instructor::all(),
-            'jornadas' => JornadaFormacion::all(),
+            'jornadas' => ParametroTema::whereHas('tema', function($q) {
+                $q->where('name', 'LIKE', '%JORNADAS%');
+            })->whereHas('parametro', function($query) {
+                $query->where('status', true);
+            })->where('status', true)
+              ->with('parametro')
+              ->get(),
             'sedes' => Sede::all(),
         ]);
     }

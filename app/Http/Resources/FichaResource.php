@@ -25,9 +25,7 @@ class FichaResource extends JsonResource
             ],
             'jornada' => [
                 'id' => $this->jornadaFormacion->id ?? null,
-                'nombre' => $this->jornadaFormacion->jornada ?? 'N/A',
-                'hora_inicio' => $this->jornadaFormacion->hora_inicio ?? null,
-                'hora_fin' => $this->jornadaFormacion->hora_fin ?? null,
+                'nombre' => $this->jornadaFormacion->parametro->name ?? 'N/A',
             ],
             'modalidad' => [
                 'id' => $this->modalidadFormacion->id ?? null,

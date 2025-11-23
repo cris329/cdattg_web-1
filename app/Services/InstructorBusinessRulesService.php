@@ -163,7 +163,7 @@ class InstructorBusinessRulesService
     private function obtenerFichasActivasConDetalles(Instructor $instructor)
     {
         return $instructor->instructorFichas()
-            ->with(['ficha.jornadaFormacion', 'instructorFichaDias.dia'])
+            ->with(['ficha.jornadaFormacion.parametro', 'instructorFichaDias.dia'])
             ->whereHas('ficha', function ($q) {
                 $q->where('status', true);
             })
@@ -252,7 +252,7 @@ class InstructorBusinessRulesService
             'fecha_inicio' => $ficha->fecha_inicio,
             'fecha_fin' => $ficha->fecha_fin,
             'programa' => $ficha->programaFormacion->nombre ?? self::TEXTO_SIN_PROGRAMA,
-            'jornada' => $ficha->jornadaFormacion->jornada ?? 'Sin jornada'
+            'jornada' => $ficha->jornadaFormacion->parametro->name ?? 'Sin jornada'
         ];
 
         return array_merge($conflicto, $extra);

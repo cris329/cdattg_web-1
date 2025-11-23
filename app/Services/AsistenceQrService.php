@@ -57,7 +57,7 @@ class AsistenceQrService
             'diasFormacion.dia',
             'programaFormacion',
             'instructor.persona',
-            'jornadaFormacion'
+            'jornadaFormacion.parametro'
         ])->find($caracterizacionId);
 
         if (!$fichaCaracterizacion) {

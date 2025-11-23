@@ -35,7 +35,7 @@ class ProbarRelacionesAprendiz extends Command
             $aprendiz = Aprendiz::with([
                 'persona.tipoDocumento',
                 'fichaCaracterizacion.programaFormacion',
-                'fichaCaracterizacion.jornadaFormacion',
+                'fichaCaracterizacion.jornadaFormacion.parametro',
             ])->findOrFail($id);
             
             $this->info('✅ Aprendiz encontrado');
@@ -54,7 +54,7 @@ class ProbarRelacionesAprendiz extends Command
             // Probar jornada
             $this->info('🕐 Jornada:');
             if ($aprendiz->fichaCaracterizacion?->jornadaFormacion) {
-                $this->line("   ✅ Relación cargada: " . $aprendiz->fichaCaracterizacion->jornadaFormacion->jornada);
+                $this->line("   ✅ Relación cargada: " . $aprendiz->fichaCaracterizacion->jornadaFormacion->parametro->name);
             } else {
                 $this->warn("   ⚠️  No se pudo cargar la jornada");
                 $this->line("   ID jornada_id en ficha: " . ($aprendiz->fichaCaracterizacion?->jornada_id ?? 'NULL'));

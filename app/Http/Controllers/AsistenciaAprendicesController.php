@@ -6,7 +6,7 @@ use App\Services\AsistenciaService;
 use App\Services\JornadaValidationService;
 use App\Models\FichaCaracterizacion;
 use App\Models\AsistenciaAprendiz;
-use App\Models\JornadaFormacion;
+use App\Models\ParametroTema;
 use Carbon\Carbon;
 use Exception;
 use Illuminate\Http\Request;
@@ -316,16 +316,20 @@ class AsistenciaAprendicesController extends Controller
         $horaEjecucion = Carbon::now()->format('H:i:s'); 
         $fechaActual = Carbon::now()->format('Y-m-d');
 
-        // Obtiene la jornada de formación correspondiente
-        $obJornada = JornadaFormacion::where('jornada', $jornada)->first();
+        // Obtiene la jornada de formación correspondiente desde parametros_temas
+        $obJornada = ParametroTema::whereHas('tema', function($q) {
+            $q->where('name', 'LIKE', '%JORNADAS%');
+        })->whereHas('parametro', function($query) use ($jornada) {
+            $query->where('name', $jornada);
+        })->with('parametro')->first();
 
         Log::info('Jornada: '.json_encode($obJornada));
         
-        // Formatea las horas de inicio y fin de la jornada
-        $h1Ini = Carbon::parse($obJornada->hora_inicio)->format('H'); 
-        $m1Ini = Carbon::parse($obJornada->hora_inicio)->format('i');
-        $h2Ini = Carbon::parse($obJornada->hora_fin)->format('H');
-        $m2Fin = Carbon::parse($obJornada->hora_fin)->format('i');
+        // Usar horarios por defecto si no se encuentra la jornada (las jornadas en parametros_temas no tienen hora_inicio/hora_fin)
+        $h1Ini = 8; // Hora inicio por defecto
+        $m1Ini = 0;
+        $h2Ini = 12; // Hora fin por defecto
+        $m2Fin = 0;
 
         // Obtiene las asistencias para la ficha y jornada especificadas en la fecha actual
         $asistencias = AsistenciaAprendiz::whereHas('caracterizacion', function ($query) use ($ficha, $jornada) {

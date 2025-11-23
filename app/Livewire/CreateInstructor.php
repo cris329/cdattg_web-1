@@ -210,15 +210,9 @@ class CreateInstructor extends Component
                     ->with('parametro')
                     ->get();
                 
-                // Mapear nombres de parámetros a IDs de jornadas_formacion
+                // Usar directamente los IDs de parametros_temas
                 foreach ($parametrosTemas as $parametroTema) {
-                    $nombreJornada = $parametroTema->parametro->name ?? null;
-                    if ($nombreJornada) {
-                        $jornadaFormacion = JornadaFormacion::where('jornada', $nombreJornada)->first();
-                        if ($jornadaFormacion) {
-                            $jornadasIds[] = $jornadaFormacion->id;
-                        }
-                    }
+                    $jornadasIds[] = $parametroTema->id;
                 }
             }
             

@@ -175,7 +175,7 @@
                                         <!-- Los horarios se generarán dinámicamente aquí -->
                                     </div>
                                 </div>
-                            </div>
+                                        </div>
                                     </div>
 
                         <!-- Formulario para Guardar -->

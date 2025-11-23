@@ -106,7 +106,7 @@ class FichaCaracterizacionFlutterController extends Controller
                     'programaFormacion:id,nombre,codigo',
                     'instructor.persona:id,primer_nombre,primer_apellido',
                     'sede:id,nombre',
-                    'jornadaFormacion:id,name'
+                    'jornadaFormacion.parametro:id,name'
                 ])
                 ->orderBy('id', 'desc')
                 ->get();

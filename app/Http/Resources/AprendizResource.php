@@ -28,7 +28,7 @@ class AprendizResource extends JsonResource
                 'id' => $this->fichaCaracterizacion->id ?? null,
                 'numero' => $this->fichaCaracterizacion->ficha ?? 'N/A',
                 'programa' => $this->fichaCaracterizacion->programaFormacion->nombre ?? 'N/A',
-                'jornada' => $this->fichaCaracterizacion->jornadaFormacion->jornada ?? 'N/A',
+                'jornada' => $this->fichaCaracterizacion->jornadaFormacion->parametro->name ?? 'N/A',
                 'fecha_inicio' => $this->fichaCaracterizacion->fecha_inicio ?? null,
                 'fecha_fin' => $this->fichaCaracterizacion->fecha_fin ?? null,
             ],

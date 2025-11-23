@@ -44,7 +44,7 @@ class RegistrarAsistenciaPrueba extends Command
             // Obtener cualquier aprendiz disponible
             $aprendiz = \App\Models\Aprendiz::with([
                 'persona',
-                'fichaCaracterizacion.jornadaFormacion'
+                'fichaCaracterizacion.jornadaFormacion.parametro'
             ])->whereNotNull('ficha_caracterizacion_id')->inRandomOrder()->first();
             
             if (!$aprendiz) {
@@ -103,7 +103,7 @@ class RegistrarAsistenciaPrueba extends Command
             // Obtener información
             $nombreAprendiz = $asistencia->aprendiz->persona->getNombreCompletoAttribute();
             $ficha = $asistencia->aprendiz->fichaCaracterizacion;
-            $jornada = $ficha->jornadaFormacion->jornada ?? 'No especificada';
+            $jornada = $ficha->jornadaFormacion->parametro->name ?? 'No especificada';
 
             // Mostrar información en tabla
             $this->newLine();

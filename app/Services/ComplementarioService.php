@@ -5,7 +5,6 @@ namespace App\Services;
 use App\Models\Ambiente;
 use App\Models\AspiranteComplementario;
 use App\Models\ComplementarioOfertado;
-use App\Models\JornadaFormacion;
 use App\Models\ParametroTema;
 use App\Repositories\TemaRepository;
 use Illuminate\Database\Eloquent\Collection;
@@ -130,7 +129,13 @@ class ComplementarioService
             ->with('parametro')
             ->get();
 
-        $jornadas = JornadaFormacion::query()->get();
+        $jornadas = ParametroTema::whereHas('tema', function($q) {
+            $q->where('name', 'LIKE', '%JORNADAS%');
+        })->whereHas('parametro', function($query) {
+            $query->where('status', true);
+        })->where('status', true)
+          ->with('parametro')
+          ->get();
 
         $ambientes = Ambiente::query()
             ->with('piso')

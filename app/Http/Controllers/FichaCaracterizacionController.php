@@ -68,7 +68,17 @@ class FichaCaracterizacionController extends Controller
             $modalidades = \App\Models\Parametro::whereHas('parametrosTemas', function($query) {
                 $query->where('tema_id', 5);
             })->orderBy('name', 'asc')->get();
-            $jornadas = \App\Models\JornadaFormacion::orderBy('jornada', 'asc')->get();
+            $jornadas = \App\Models\ParametroTema::whereHas('tema', function($q) {
+                $q->where('name', 'LIKE', '%JORNADAS%');
+            })->whereHas('parametro', function($query) {
+                $query->where('status', true);
+            })->where('status', true)
+              ->with('parametro')
+              ->get()
+              ->sortBy(function($pt) {
+                  return $pt->parametro->name ?? '';
+              })
+              ->values();
 
             return view('fichas.index', compact('fichas', 'programas', 'instructores', 'ambientes', 'sedes', 'modalidades', 'jornadas'))
                 ->with('filters', $request->all());
@@ -114,7 +124,17 @@ class FichaCaracterizacionController extends Controller
             $modalidades = \App\Models\Parametro::whereHas('parametrosTemas', function($query) {
                 $query->where('tema_id', 5);
             })->orderBy('name', 'asc')->get(); // MODALIDADES DE FORMACION (tema_id = 5)
-            $jornadas = \App\Models\JornadaFormacion::orderBy('jornada', 'asc')->get();
+            $jornadas = \App\Models\ParametroTema::whereHas('tema', function($q) {
+                $q->where('name', 'LIKE', '%JORNADAS%');
+            })->whereHas('parametro', function($query) {
+                $query->where('status', true);
+            })->where('status', true)
+              ->with('parametro')
+              ->get()
+              ->sortBy(function($pt) {
+                  return $pt->parametro->name ?? '';
+              })
+              ->values();
 
             Log::info('Datos cargados para creación de ficha', [
                 'total_programas' => $programas->count(),
@@ -289,7 +309,17 @@ class FichaCaracterizacionController extends Controller
             $modalidades = \App\Models\Parametro::whereHas('parametrosTemas', function($query) {
                 $query->where('tema_id', 5);
             })->orderBy('name', 'asc')->get(); // MODALIDADES DE FORMACION (tema_id = 5)
-            $jornadas = \App\Models\JornadaFormacion::orderBy('jornada', 'asc')->get();
+            $jornadas = \App\Models\ParametroTema::whereHas('tema', function($q) {
+                $q->where('name', 'LIKE', '%JORNADAS%');
+            })->whereHas('parametro', function($query) {
+                $query->where('status', true);
+            })->where('status', true)
+              ->with('parametro')
+              ->get()
+              ->sortBy(function($pt) {
+                  return $pt->parametro->name ?? '';
+              })
+              ->values();
 
             Log::info('Datos cargados para edición de ficha', [
                 'ficha_id' => $ficha->id,
@@ -802,7 +832,7 @@ class FichaCaracterizacionController extends Controller
                 'ambiente.piso.bloque',
                 'modalidadFormacion',
                 'sede',
-                'jornadaFormacion',
+                'jornadaFormacion.parametro',
                 'aprendices'
             ]);
 
@@ -1013,7 +1043,7 @@ class FichaCaracterizacionController extends Controller
                 'programaFormacion',
                 'instructor.persona',
                 'instructorFicha.instructor.persona',
-                'jornadaFormacion',
+                'jornadaFormacion.parametro',
                 'ambiente',
                 'modalidadFormacion',
                 'sede',
@@ -1067,7 +1097,7 @@ class FichaCaracterizacionController extends Controller
             $fichas = FichaCaracterizacion::with([
                 'programaFormacion',
                 'instructor.persona',
-                'jornadaFormacion',
+                'jornadaFormacion.parametro',
                 'ambiente.piso.bloque',
                 'modalidadFormacion',
                 'sede',
@@ -1105,7 +1135,7 @@ class FichaCaracterizacionController extends Controller
                     ],
                     'jornada_formacion' => [
                         'id' => $ficha->jornadaFormacion->id ?? null,
-                        'jornada' => $ficha->jornadaFormacion->jornada ?? 'N/A',
+                        'jornada' => $ficha->jornadaFormacion->parametro->name ?? 'N/A',
                     ],
                     'ambiente' => [
                         'id' => $ficha->ambiente->id ?? null,
@@ -1197,7 +1227,7 @@ class FichaCaracterizacionController extends Controller
             $ficha = FichaCaracterizacion::with([
                 'programaFormacion',
                 'instructor.persona',
-                'jornadaFormacion',
+                'jornadaFormacion.parametro',
                 'ambiente.piso.bloque',
                 'modalidadFormacion',
                 'sede',
@@ -1373,7 +1403,7 @@ class FichaCaracterizacionController extends Controller
             $fichas = FichaCaracterizacion::with([
                 'programaFormacion',
                 'instructor.persona',
-                'jornadaFormacion',
+                'jornadaFormacion.parametro',
                 'ambiente.piso.bloque',
                 'modalidadFormacion',
                 'sede',
@@ -1422,7 +1452,7 @@ class FichaCaracterizacionController extends Controller
                     ],
                     'jornada_formacion' => [
                         'id' => $ficha->jornadaFormacion->id ?? null,
-                        'jornada' => $ficha->jornadaFormacion->jornada ?? 'N/A',
+                        'jornada' => $ficha->jornadaFormacion->parametro->name ?? 'N/A',
                     ],
                     'ambiente' => [
                         'id' => $ficha->ambiente->id ?? null,
@@ -1517,7 +1547,7 @@ class FichaCaracterizacionController extends Controller
             $fichas = FichaCaracterizacion::with([
                 'programaFormacion',
                 'instructor.persona',
-                'jornadaFormacion',
+                'jornadaFormacion.parametro',
                 'ambiente.piso.bloque',
                 'modalidadFormacion',
                 'sede',
@@ -1569,7 +1599,7 @@ class FichaCaracterizacionController extends Controller
                     ],
                     'jornada_formacion' => [
                         'id' => $ficha->jornadaFormacion->id ?? null,
-                        'jornada' => $ficha->jornadaFormacion->jornada ?? 'N/A',
+                        'jornada' => $ficha->jornadaFormacion->parametro->name ?? 'N/A',
                     ],
                     'ambiente' => [
                         'id' => $ficha->ambiente->id ?? null,
@@ -2394,7 +2424,7 @@ class FichaCaracterizacionController extends Controller
             // Buscar la ficha con sus relaciones
             $ficha = FichaCaracterizacion::with([
                 'programaFormacion',
-                'jornadaFormacion',
+                'jornadaFormacion.parametro',
                 'diasFormacion.dia',
                 'sede'
             ])->findOrFail($id);

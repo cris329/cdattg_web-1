@@ -5,7 +5,7 @@ namespace Database\Factories;
 use App\Models\Ambiente;
 use App\Models\FichaCaracterizacion;
 use App\Models\Instructor;
-use App\Models\JornadaFormacion;
+use App\Models\ParametroTema;
 use App\Models\ProgramaFormacion;
 use App\Models\Sede;
 use Illuminate\Database\Eloquent\Factories\Factory;
@@ -26,9 +26,13 @@ class FichaCaracterizacionFactory extends Factory
     {
         $programaId = ProgramaFormacion::query()->inRandomOrder()->value('id') ?? 1;
         $modalidades = [18, 19, 20];
-        $jornadaId = JornadaFormacion::query()->inRandomOrder()->value('id') ?? 1;
         $sedeId = Sede::query()->inRandomOrder()->value('id') ?? 1;
         $ambienteId = Ambiente::query()->inRandomOrder()->value('id') ?? 1;
+        
+        // Obtener jornada desde parametros_temas del tema JORNADAS
+        $jornadaId = ParametroTema::whereHas('tema', function($q) {
+            $q->where('name', 'LIKE', '%JORNADAS%');
+        })->inRandomOrder()->value('id');
 
         $mesesAtras = rand(0, 6);
         $mesesAdelante = rand(0, 2);

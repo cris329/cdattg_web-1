@@ -71,7 +71,7 @@ class AprendizRepository
         return Aprendiz::with([
             'persona.tipoDocumento',
             'fichaCaracterizacion.programaFormacion',
-            'fichaCaracterizacion.jornadaFormacion',
+            'fichaCaracterizacion.jornadaFormacion.parametro',
             'fichaCaracterizacion.modalidadFormacion',
             'asistencias' => function ($query) {
                 $query->latest()->limit(20);

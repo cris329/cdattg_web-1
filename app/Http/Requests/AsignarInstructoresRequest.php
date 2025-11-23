@@ -319,7 +319,7 @@ class AsignarInstructoresRequest extends FormRequest
                                ->where('fecha_fin', '>=', $fechaFin);
                       });
                 })
-            ->with(['ficha.jornadaFormacion', 'instructorFichaDias.dia']);
+            ->with(['ficha.jornadaFormacion.parametro', 'instructorFichaDias.dia']);
 
         $conflictosExistentes = $conflictosQuery->get();
 
@@ -367,7 +367,7 @@ class AsignarInstructoresRequest extends FormRequest
             $instructor = Instructor::find($instructorId);
             $conflictosText = $conflictosExistentes->map(function($conflicto) use ($diasNuevos, $horariosNuevos) {
                     $programaNombre = $conflicto->ficha->programaFormacion->nombre ?? 'Sin programa';
-                $jornada = $conflicto->ficha->jornadaFormacion->jornada ?? 'Sin jornada';
+                $jornada = $conflicto->ficha->jornadaFormacion->parametro->name ?? 'Sin jornada';
                 
                 // Mostrar días en conflicto
                 $diasExistentes = $conflicto->instructorFichaDias->pluck('dia_id')->toArray();
@@ -701,7 +701,7 @@ class AsignarInstructoresRequest extends FormRequest
     {
         $instructores = $this->input('instructores', []);
         $fichaId = $this->route('id');
-        $ficha = FichaCaracterizacion::with(['diasFormacion', 'jornadaFormacion'])->find($fichaId);
+        $ficha = FichaCaracterizacion::with(['diasFormacion', 'jornadaFormacion.parametro'])->find($fichaId);
         
         if (!$ficha) {
             return;
@@ -803,8 +803,8 @@ class AsignarInstructoresRequest extends FormRequest
                 } else {
                     // Buscar horario del día en la configuración de la ficha
                     $diaFormacionFicha = $ficha->diasFormacion->firstWhere('dia_id', $diaId);
-                    $horaInicio = $diaFormacionFicha->hora_inicio ?? ($ficha->jornadaFormacion->hora_inicio ?? '08:00');
-                    $horaFin = $diaFormacionFicha->hora_fin ?? ($ficha->jornadaFormacion->hora_fin ?? '12:00');
+                    $horaInicio = $diaFormacionFicha->hora_inicio ?? '08:00';
+                    $horaFin = $diaFormacionFicha->hora_fin ?? '12:00';
                     
                     $diasParaCalculo[] = [
                         'dia_id' => $diaId,

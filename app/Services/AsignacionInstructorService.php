@@ -28,7 +28,7 @@ class AsignacionInstructorService
         DB::beginTransaction();
         
         try {
-            $ficha = FichaCaracterizacion::with(['programaFormacion.redConocimiento', 'diasFormacion', 'jornadaFormacion'])->findOrFail($fichaId);
+            $ficha = FichaCaracterizacion::with(['programaFormacion.redConocimiento', 'diasFormacion', 'jornadaFormacion.parametro'])->findOrFail($fichaId);
             
             // Validar que la ficha esté activa
             if (!$ficha->status) {
@@ -151,8 +151,8 @@ class AsignacionInstructorService
                         foreach ($diasSeleccionados as $diaId) {
                             $diaFormacionFicha = $ficha->diasFormacion->firstWhere('dia_id', $diaId);
                             
-                            $horaInicio = $diaFormacionFicha->hora_inicio ?? ($ficha->jornadaFormacion->hora_inicio ?? '08:00');
-                            $horaFin = $diaFormacionFicha->hora_fin ?? ($ficha->jornadaFormacion->hora_fin ?? '12:00');
+                            $horaInicio = $diaFormacionFicha->hora_inicio ?? '08:00';
+                            $horaFin = $diaFormacionFicha->hora_fin ?? '12:00';
                             
                             $asignacionExistente->instructorFichaDias()->create([
                                 'dia_id' => $diaId,
@@ -265,7 +265,7 @@ class AsignacionInstructorService
     private function crearAsignacion(array $instructorData, int $fichaId, int $userId): InstructorFichaCaracterizacion
     {
         // Obtener la ficha con sus días de formación y jornada
-        $ficha = FichaCaracterizacion::with(['jornadaFormacion', 'diasFormacion'])->findOrFail($fichaId);
+        $ficha = FichaCaracterizacion::with(['jornadaFormacion.parametro', 'diasFormacion'])->findOrFail($fichaId);
         
         // Crear asignación sin horas todavía (se calcularán después de crear los días)
         $instructorFicha = InstructorFichaCaracterizacion::create([
@@ -703,7 +703,7 @@ class AsignacionInstructorService
     public function obtenerInstructoresDisponibles(int $fichaId): array
     {
         try {
-            $ficha = FichaCaracterizacion::with(['programaFormacion.redConocimiento', 'diasFormacion', 'sede.regional', 'jornadaFormacion'])->findOrFail($fichaId);
+            $ficha = FichaCaracterizacion::with(['programaFormacion.redConocimiento', 'diasFormacion', 'sede.regional', 'jornadaFormacion.parametro'])->findOrFail($fichaId);
             
             $regionalId = $ficha->sede->regional_id ?? null;
             $redConocimientoId = $ficha->programaFormacion->red_conocimiento_id ?? null;

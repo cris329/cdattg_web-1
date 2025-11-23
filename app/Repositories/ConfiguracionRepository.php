@@ -31,7 +31,7 @@ class ConfiguracionRepository
     {
         return $this->cache('fichas.activas', function () {
             return FichaCaracterizacion::where('status', 1)
-                ->with(['programaFormacion', 'jornadaFormacion'])
+                ->with(['programaFormacion', 'jornadaFormacion.parametro'])
                 ->orderBy('ficha')
                 ->get();
         }, 60); // 1 hora

@@ -30,7 +30,7 @@ class ComplementarioOfertado extends Model
 
     public function jornada()
     {
-        return $this->belongsTo(JornadaFormacion::class, 'jornada_id');
+        return $this->belongsTo(ParametroTema::class, 'jornada_id');
     }
 
     public function ambiente()

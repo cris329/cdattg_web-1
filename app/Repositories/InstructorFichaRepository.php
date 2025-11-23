@@ -17,7 +17,7 @@ class InstructorFichaRepository
     public function obtenerPorInstructor(int $instructorId, bool $soloActivas = false): Collection
     {
         $query = InstructorFichaCaracterizacion::where('instructor_id', $instructorId)
-            ->with(['ficha.programaFormacion', 'ficha.jornadaFormacion']);
+            ->with(['ficha.programaFormacion', 'ficha.jornadaFormacion.parametro']);
 
         if ($soloActivas) {
             $query->whereHas('ficha', function ($q) {

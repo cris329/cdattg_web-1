@@ -81,7 +81,17 @@ class InstructorController extends Controller
                 ->orderBy('primer_apellido')
                 ->get();
             
-            $jornadasTrabajo = \App\Models\JornadaFormacion::orderBy('jornada')->get();
+            $jornadasTrabajo = \App\Models\ParametroTema::whereHas('tema', function($q) {
+                $q->where('name', 'LIKE', '%JORNADAS%');
+            })->whereHas('parametro', function($query) {
+                $query->where('status', true);
+            })->where('status', true)
+              ->with('parametro')
+              ->get()
+              ->sortBy(function($pt) {
+                  return $pt->parametro->name ?? '';
+              })
+              ->values();
             
             // Tipos de vinculación desde parametros_temas (tema: TIPOS DE VINCULACION)
             $tiposVinculacion = \App\Models\ParametroTema::whereHas('tema', function($q) {
@@ -505,7 +515,7 @@ class InstructorController extends Controller
                 ];
             }
             
-            // Preparar jornadas (array de IDs) - mapear desde parametros_temas a jornadas_formacion
+            // Preparar jornadas (array de IDs) - usar directamente parametros_temas
             $jornadasIds = [];
             if ($request->has('jornadas') && is_array($request->input('jornadas'))) {
                 $jornadasRequest = $request->input('jornadas');
@@ -533,40 +543,14 @@ class InstructorController extends Controller
                         })->toArray()
                     ]);
                     
+                    // Usar directamente los parametros_temas (ya vienen del request)
                     foreach ($parametrosTemas as $parametroTema) {
-                        $nombreJornada = $parametroTema->parametro->name ?? null;
-                        if ($nombreJornada) {
-                            // Buscar por nombre exacto primero
-                            $jornadaFormacion = \App\Models\JornadaFormacion::where('jornada', $nombreJornada)->first();
-                            
-                            // Si no se encuentra, buscar sin acentos y case-insensitive
-                            if (!$jornadaFormacion) {
-                                $jornadaFormacion = \App\Models\JornadaFormacion::whereRaw('LOWER(REPLACE(REPLACE(REPLACE(REPLACE(REPLACE(jornada, "Á", "A"), "É", "E"), "Í", "I"), "Ó", "O"), "Ú", "U")) = LOWER(REPLACE(REPLACE(REPLACE(REPLACE(REPLACE(?, "Á", "A"), "É", "E"), "Í", "I"), "Ó", "O"), "Ú", "U"))', [$nombreJornada])->first();
-                            }
-                            
-                            // Si aún no se encuentra, buscar por LIKE
-                            if (!$jornadaFormacion) {
-                                $jornadaFormacion = \App\Models\JornadaFormacion::where('jornada', 'LIKE', "%{$nombreJornada}%")->first();
-                            }
-                            
-                            // Si aún no se encuentra, crear la jornada si no existe
-                            if (!$jornadaFormacion) {
-                                Log::info('JornadaFormacion no encontrada, creando nueva', [
-                                    'nombre_jornada' => $nombreJornada
-                                ]);
-                                $jornadaFormacion = \App\Models\JornadaFormacion::create([
-                                    'jornada' => $nombreJornada
-                                ]);
-                            }
-                            
-                            if ($jornadaFormacion) {
-                                $jornadasIds[] = $jornadaFormacion->id;
-                                Log::info('Jornada mapeada', [
-                                    'parametro_tema_id' => $parametroTema->id,
-                                    'nombre_jornada' => $nombreJornada,
-                                    'jornada_formacion_id' => $jornadaFormacion->id
-                                ]);
-                            }
+                        if ($parametroTema) {
+                            $jornadasIds[] = $parametroTema->id;
+                            Log::info('Jornada asignada', [
+                                'parametro_tema_id' => $parametroTema->id,
+                                'nombre_jornada' => $parametroTema->parametro->name ?? null
+                            ]);
                         }
                     }
                 }
@@ -742,7 +726,7 @@ class InstructorController extends Controller
                     Log::info('Jornadas sincronizadas exitosamente', [
                         'instructor_id' => $instructor->id,
                         'resultado_sync' => $resultado,
-                        'jornadas_actuales' => $instructor->jornadas()->pluck('jornadas_formacion.id')->toArray()
+                        'jornadas_actuales' => $instructor->jornadas()->pluck('parametros_temas.id')->toArray()
                     ]);
                 } else {
                     // Si no hay jornadas seleccionadas, eliminar todas
@@ -1343,7 +1327,7 @@ class InstructorController extends Controller
                         'programaFormacion.redConocimiento',
                         'modalidadFormacion',
                         'ambiente.piso.bloque.sede',
-                        'jornadaFormacion',
+                        'jornadaFormacion.parametro',
                         'diasFormacion'
                     ]);
                 }])
@@ -1361,7 +1345,7 @@ class InstructorController extends Controller
                         'programaFormacion.redConocimiento',
                         'modalidadFormacion',
                         'ambiente.piso.bloque.sede',
-                        'jornadaFormacion',
+                        'jornadaFormacion.parametro',
                         'diasFormacion'
                     ]);
                 }])
@@ -1618,7 +1602,7 @@ class InstructorController extends Controller
                         'programaFormacion.redConocimiento',
                         'modalidadFormacion',
                         'ambiente.piso.bloque.sede',
-                        'jornadaFormacion',
+                        'jornadaFormacion.parametro',
                         'diasFormacion'
                     ]);
                 }

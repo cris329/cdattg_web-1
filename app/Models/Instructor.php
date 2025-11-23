@@ -130,11 +130,14 @@ class Instructor extends Model
     }
 
     /**
-     * Relación muchos a muchos con JornadaFormacion (belongsToMany)
+     * Relación muchos a muchos con ParametroTema (jornadas) (belongsToMany)
      */
     public function jornadas(): BelongsToMany
     {
-        return $this->belongsToMany(JornadaFormacion::class, 'instructor_jornada_formacion', 'instructor_id', 'jornada_formacion_id')
+        return $this->belongsToMany(ParametroTema::class, 'instructor_parametro_tema', 'instructor_id', 'parametro_tema_id')
+                    ->whereHas('tema', function($q) {
+                        $q->where('name', 'LIKE', '%JORNADAS%');
+                    })
                     ->withPivot('user_create_id', 'user_edit_id')
                     ->withTimestamps();
     }

@@ -49,7 +49,7 @@ class ReporteService
                 'ficha' => [
                     'numero' => $ficha->ficha ?? 'N/A',
                     'programa' => $ficha->programaFormacion->nombre ?? 'N/A',
-                    'jornada' => $ficha->jornadaFormacion->jornada ?? 'N/A',
+                    'jornada' => $ficha->jornadaFormacion->parametro->name ?? 'N/A',
                 ],
                 'periodo' => [
                     'inicio' => $fechaInicio,

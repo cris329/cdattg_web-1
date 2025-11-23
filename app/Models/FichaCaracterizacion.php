@@ -82,7 +82,7 @@ class FichaCaracterizacion extends Model
      */
     public function jornadaFormacion(): BelongsTo
     {
-        return $this->belongsTo(JornadaFormacion::class, 'jornada_id');
+        return $this->belongsTo(ParametroTema::class, 'jornada_id');
     }
 
     /**

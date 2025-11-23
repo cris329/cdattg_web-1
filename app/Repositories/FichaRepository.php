@@ -26,7 +26,7 @@ class FichaRepository
     {
         return $this->cache('activas', function () {
             return FichaCaracterizacion::where('status', 1)
-                ->with(['programaFormacion', 'jornadaFormacion', 'modalidadFormacion', 'ambiente.piso.bloque.sede'])
+                ->with(['programaFormacion', 'jornadaFormacion.parametro', 'modalidadFormacion', 'ambiente.piso.bloque.sede'])
                 ->orderBy('ficha')
                 ->get();
         }, 60); // 1 hora
@@ -42,7 +42,7 @@ class FichaRepository
     {
         $query = FichaCaracterizacion::with([
             'programaFormacion.redConocimiento',
-            'jornadaFormacion',
+            'jornadaFormacion.parametro',
             'modalidadFormacion',
             'ambiente.piso.bloque.sede',
             'regional',
@@ -97,7 +97,7 @@ class FichaRepository
         return $this->cache("ficha.{$id}", function () use ($id) {
             return FichaCaracterizacion::with([
                 'programaFormacion.redConocimiento',
-                'jornadaFormacion',
+                'jornadaFormacion.parametro',
                 'modalidadFormacion',
                 'ambiente.piso.bloque.sede',
                 'regional',
@@ -116,7 +116,7 @@ class FichaRepository
         return $this->cache('vigentes', function () {
             return FichaCaracterizacion::where('status', 1)
                 ->where('fecha_fin', '>=', now())
-                ->with(['programaFormacion', 'jornadaFormacion'])
+                ->with(['programaFormacion', 'jornadaFormacion.parametro'])
                 ->orderBy('fecha_inicio')
                 ->get();
         }, 30);

@@ -21,7 +21,18 @@ class StoreProgramaComplementarioRequest extends FormRequest
             'cupos' => 'required|integer|min:1',
             'estado' => 'required|integer|in:0,1,2',
             'modalidad_id' => 'required|exists:parametros_temas,id',
-            'jornada_id' => 'required|exists:jornadas_formacion,id',
+            'jornada_id' => [
+                'required',
+                'exists:parametros_temas,id',
+                function ($attribute, $value, $fail) {
+                    $parametroTema = \App\Models\ParametroTema::whereHas('tema', function($q) {
+                        $q->where('name', 'LIKE', '%JORNADAS%');
+                    })->find($value);
+                    if (!$parametroTema) {
+                        $fail('La jornada seleccionada no pertenece al tema JORNADAS.');
+                    }
+                }
+            ],
             'ambiente_id' => 'required|exists:ambientes,id',
             'dias' => 'nullable|array',
             'dias.*.dia_id' => 'required_with:dias.*.hora_inicio,dias.*.hora_fin|exists:parametros_temas,id',

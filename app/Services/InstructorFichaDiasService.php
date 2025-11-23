@@ -162,7 +162,7 @@ class InstructorFichaDiasService
                            ->where('fecha_fin', '>=', $fechaFin);
                   });
             })
-            ->with(['ficha.jornadaFormacion', 'instructorFichaDias.dia'])
+            ->with(['ficha.jornadaFormacion.parametro', 'instructorFichaDias.dia'])
             ->get();
         
         // Validar conflictos por día y horario
@@ -200,7 +200,7 @@ class InstructorFichaDiasService
                             'dia_nombre' => $this->obtenerNombreDia($diaId),
                             'ficha_conflicto' => $otraAsignacionFicha->ficha->ficha ?? 'N/A',
                             'programa_conflicto' => $otraAsignacionFicha->ficha->programaFormacion->nombre ?? 'N/A',
-                            'jornada_conflicto' => $otraAsignacionFicha->ficha->jornadaFormacion->jornada ?? 'N/A',
+                            'jornada_conflicto' => $otraAsignacionFicha->ficha->jornadaFormacion->parametro->name ?? 'N/A',
                             'fecha_inicio_conflicto' => Carbon::parse($otraAsignacionFicha->fecha_inicio)->format('d/m/Y'),
                             'fecha_fin_conflicto' => Carbon::parse($otraAsignacionFicha->fecha_fin)->format('d/m/Y'),
                             'horario_conflicto' => $diaExistente->hora_inicio && $diaExistente->hora_fin 
