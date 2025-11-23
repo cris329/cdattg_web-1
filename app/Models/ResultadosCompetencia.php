@@ -10,8 +10,13 @@ class ResultadosCompetencia extends Model
     protected $fillable = [
         'rap_id',
         'competencia_id',
+        'duracion',
         'user_create_id',
         'user_edit_id',
+    ];
+
+    protected $casts = [
+        'duracion' => 'decimal:2',
     ];
 
     public function competencia()

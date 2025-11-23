@@ -14,13 +14,23 @@ class UpdateCompetenciaRequest extends FormRequest
 
     public function rules(): array
     {
-        $competenciaId = $this->route('competencia');
+        $competencia = $this->route('competencia');
+        
+        // Obtener el ID si es un objeto
+        $competenciaId = $competencia instanceof \App\Models\Competencia 
+            ? $competencia->id 
+            : $competencia;
 
         return [
             'descripcion' => 'required|string|max:1000',
-            'codigo' => 'required|string|max:50|unique:competencias,codigo,' . $competenciaId,
+            'codigo' => [
+                'required',
+                'string',
+                'max:50',
+                Rule::unique('competencias', 'codigo')->ignore($competenciaId)
+            ],
             'nombre' => 'required|string|max:255',
-            'duracion' => 'required|integer|min:1|max:9999',
+            'duracion' => 'required|numeric|min:1|max:9999',
             'programas' => 'sometimes|array',
             'programas.*' => 'exists:programas_formacion,id',
             'status' => 'nullable|boolean',
@@ -41,7 +51,7 @@ class UpdateCompetenciaRequest extends FormRequest
             'nombre.string' => 'El nombre debe ser una cadena de texto.',
             'nombre.max' => 'El nombre no puede tener más de 255 caracteres.',
             'duracion.required' => 'La duración máxima es obligatoria.',
-            'duracion.integer' => 'La duración debe ser un número entero válido.',
+            'duracion.numeric' => 'La duración debe ser un número válido.',
             'duracion.min' => 'La duración debe ser de al menos 1 hora.',
             'duracion.max' => 'La duración no puede superar las 9999 horas.',
             'programas.array' => 'El formato de los programas seleccionados no es válido.',

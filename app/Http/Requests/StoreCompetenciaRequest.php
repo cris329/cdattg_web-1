@@ -17,7 +17,7 @@ class StoreCompetenciaRequest extends FormRequest
             'descripcion' => 'required|string|max:1000',
             'codigo' => 'required|string|max:50|unique:competencias,codigo',
             'nombre' => 'required|string|max:255',
-            'duracion' => 'required|integer|min:1|max:9999',
+            'duracion' => 'required|numeric|min:1|max:9999',
             'programas' => 'required|array|min:1',
             'programas.*' => 'exists:programas_formacion,id',
         ];
@@ -37,7 +37,7 @@ class StoreCompetenciaRequest extends FormRequest
             'nombre.string' => 'El nombre debe ser una cadena de texto.',
             'nombre.max' => 'El nombre no puede tener más de 255 caracteres.',
             'duracion.required' => 'La duración máxima es obligatoria.',
-            'duracion.integer' => 'La duración debe ser un número entero válido.',
+            'duracion.numeric' => 'La duración debe ser un número válido.',
             'duracion.min' => 'La duración debe ser de al menos 1 hora.',
             'duracion.max' => 'La duración no puede superar las 9999 horas.',
             'programas.required' => 'Debe seleccionar al menos un programa de formación.',

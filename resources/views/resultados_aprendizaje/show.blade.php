@@ -102,47 +102,12 @@
                                             <td class="py-3">{{ $resultadoAprendizaje->nombre }}</td>
                                         </tr>
                                         <tr>
-                                            <th class="py-3">Duración</th>
-                                            <td class="py-3">
-                                                @if($resultadoAprendizaje->duracion)
-                                                    <span class="badge badge-info">{{ formatear_horas($resultadoAprendizaje->duracion) }} horas</span>
-                                                @else
-                                                    <span class="text-muted">No especificada</span>
-                                                @endif
-                                            </td>
-                                        </tr>
-                                        <tr>
-                                            <th class="py-3">Fecha Inicio</th>
-                                            <td class="py-3">
-                                                @if($resultadoAprendizaje->fecha_inicio)
-                                                    <i class="far fa-calendar mr-1"></i>
-                                                    {{ $resultadoAprendizaje->fecha_inicio->format('d/m/Y') }}
-                                                @else
-                                                    <span class="text-muted">No especificada</span>
-                                                @endif
-                                            </td>
-                                        </tr>
-                                        <tr>
-                                            <th class="py-3">Fecha Fin</th>
-                                            <td class="py-3">
-                                                @if($resultadoAprendizaje->fecha_fin)
-                                                    <i class="far fa-calendar mr-1"></i>
-                                                    {{ $resultadoAprendizaje->fecha_fin->format('d/m/Y') }}
-                                                @else
-                                                    <span class="text-muted">No especificada</span>
-                                                @endif
-                                            </td>
-                                        </tr>
-                                        <tr>
                                             <th class="py-3">Estado</th>
                                             <td class="py-3">
                                                 <span class="status-badge {{ $resultadoAprendizaje->status == 1 ? 'text-success' : 'text-danger' }}">
                                                     <i class="fas fa-circle mr-1" style="font-size: 8px;"></i>
                                                     {{ $resultadoAprendizaje->status == 1 ? 'Activo' : 'Inactivo' }}
                                                 </span>
-                                                @if($resultadoAprendizaje->estaVigente())
-                                                    <span class="badge badge-success ml-2">Vigente</span>
-                                                @endif
                                             </td>
                                         </tr>
                                         <tr>

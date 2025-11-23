@@ -141,49 +141,6 @@
 
                                 <div class="form-section">
                                     <div class="form-section-title">
-                                        <i class="fas fa-clock mr-1"></i> Duración y Fechas
-                                    </div>
-                                    <div class="row">
-                                        <div class="col-md-4">
-                                            <div class="form-group">
-                                                <label for="duracion" class="form-label font-weight-bold">Duración (Horas)</label>
-                                                <input type="number" name="duracion" id="duracion"
-                                                    class="form-control @error('duracion') is-invalid @enderror"
-                                                    value="{{ old('duracion', $resultadoAprendizaje->duracion) }}" min="1" max="9999">
-                                                @error('duracion')
-                                                    <div class="invalid-feedback">{{ $message }}</div>
-                                                @enderror
-                                            </div>
-                                        </div>
-
-                                        <div class="col-md-4">
-                                            <div class="form-group">
-                                                <label for="fecha_inicio" class="form-label font-weight-bold">Fecha Inicio</label>
-                                                <input type="date" name="fecha_inicio" id="fecha_inicio"
-                                                    class="form-control @error('fecha_inicio') is-invalid @enderror"
-                                                    value="{{ old('fecha_inicio', $resultadoAprendizaje->fecha_inicio ? $resultadoAprendizaje->fecha_inicio->format('Y-m-d') : '') }}">
-                                                @error('fecha_inicio')
-                                                    <div class="invalid-feedback">{{ $message }}</div>
-                                                @enderror
-                                            </div>
-                                        </div>
-
-                                        <div class="col-md-4">
-                                            <div class="form-group">
-                                                <label for="fecha_fin" class="form-label font-weight-bold">Fecha Fin</label>
-                                                <input type="date" name="fecha_fin" id="fecha_fin"
-                                                    class="form-control @error('fecha_fin') is-invalid @enderror"
-                                                    value="{{ old('fecha_fin', $resultadoAprendizaje->fecha_fin ? $resultadoAprendizaje->fecha_fin->format('Y-m-d') : '') }}">
-                                                @error('fecha_fin')
-                                                    <div class="invalid-feedback">{{ $message }}</div>
-                                                @enderror
-                                            </div>
-                                        </div>
-                                    </div>
-                                </div>
-
-                                <div class="form-section">
-                                    <div class="form-section-title">
                                         <i class="fas fa-award mr-1"></i> Competencia
                                     </div>
                                     <div class="row">

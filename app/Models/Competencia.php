@@ -49,7 +49,7 @@ class Competencia extends Model
             'competencia_id',
             'rap_id'
         )->withTimestamps()
-         ->withPivot('user_create_id', 'user_edit_id');
+         ->withPivot('duracion', 'user_create_id', 'user_edit_id');
     }
 
     public function asignacionesInstructor()
@@ -160,8 +160,9 @@ class Competencia extends Model
 
     public function rapActual()
     {
+        // Ya no se usan fechas en resultados de aprendizaje, retornar el primer resultado activo
         foreach ($this->resultadosCompetencia as $rap) {
-            if ($rap->rap->fecha_inicio <= now() && $rap->rap->fecha_fin >= now()) {
+            if ($rap->rap && $rap->rap->status == 1) {
                 return $rap->rap;
             }
         }

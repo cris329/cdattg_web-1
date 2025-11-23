@@ -83,11 +83,17 @@ class AsignacionInstructorService
                 if ($asignacionExistente) {
                     // Actualizar asignación existente
                     $asignacionExistente->update([
+                        'competencia_id' => $instructorData['competencia_id'] ?? null,
                         'fecha_inicio' => $instructorData['fecha_inicio'],
                         'fecha_fin' => $instructorData['fecha_fin'],
                         'total_horas_instructor' => $instructorData['total_horas_instructor'],
                         'user_edit_id' => $userId
                     ]);
+
+                    // Actualizar resultados de aprendizaje si se proporcionaron
+                    if (isset($instructorData['resultados_aprendizaje']) && is_array($instructorData['resultados_aprendizaje'])) {
+                        $asignacionExistente->resultadosAprendizaje()->sync($instructorData['resultados_aprendizaje']);
+                    }
                     
                     // Eliminar días existentes
                     $asignacionExistente->instructorFichaDias()->delete();
@@ -222,10 +228,16 @@ class AsignacionInstructorService
         $instructorFicha = InstructorFichaCaracterizacion::create([
             'instructor_id' => $instructorData['instructor_id'],
             'ficha_id' => $fichaId,
+            'competencia_id' => $instructorData['competencia_id'] ?? null,
             'fecha_inicio' => $instructorData['fecha_inicio'],
             'fecha_fin' => $instructorData['fecha_fin'],
             'total_horas_instructor' => $instructorData['total_horas_instructor']
         ]);
+
+        // Asignar resultados de aprendizaje si se proporcionaron
+        if (isset($instructorData['resultados_aprendizaje']) && is_array($instructorData['resultados_aprendizaje'])) {
+            $instructorFicha->resultadosAprendizaje()->sync($instructorData['resultados_aprendizaje']);
+        }
 
         // Crear días de formación tomando horarios de la configuración de la ficha
         $diasSeleccionados = [];

@@ -7,7 +7,7 @@
                 <div class="col-md-6">
                     <div class="form-group mb-3">
                         <label for="codigo" class="form-label fw-bold">Código <span class="text-danger">*</span></label>
-                        <input type="text" name="codigo" id="codigo" value="{{ old('codigo') }}"
+                        <input type="number" name="codigo" id="codigo" value="{{ old('codigo') }}"
                             class="form-control @error('codigo') is-invalid @enderror" placeholder="Ej: RAP-001" required>
                         @error('codigo')
                             <div class="invalid-feedback">{{ $message }}</div>
@@ -25,41 +25,6 @@
                             <div class="invalid-feedback">{{ $message }}</div>
                         @enderror
                         <small class="form-text text-muted">Nombre descriptivo del RAP</small>
-                    </div>
-                </div>
-            </div>
-
-            <div class="row">
-                <div class="col-md-4">
-                    <div class="form-group mb-3">
-                        <label for="duracion" class="form-label fw-bold">Duración (Horas)</label>
-                        <input type="number" name="duracion" id="duracion" value="{{ old('duracion') }}"
-                            class="form-control @error('duracion') is-invalid @enderror" placeholder="Ej: 40" min="1"
-                            max="9999">
-                        @error('duracion')
-                            <div class="invalid-feedback">{{ $message }}</div>
-                        @enderror
-                    </div>
-                </div>
-                <div class="col-md-4">
-                    <div class="form-group mb-3">
-                        <label for="fecha_inicio" class="form-label fw-bold">Fecha Inicio</label>
-                        <input type="date" name="fecha_inicio" id="fecha_inicio" value="{{ old('fecha_inicio') }}"
-                            class="form-control @error('fecha_inicio') is-invalid @enderror">
-                        @error('fecha_inicio')
-                            <div class="invalid-feedback">{{ $message }}</div>
-                        @enderror
-                    </div>
-                </div>
-                <div class="col-md-4">
-                    <div class="form-group mb-3">
-                        <label for="fecha_fin" class="form-label fw-bold">Fecha Fin</label>
-                        <input type="date" name="fecha_fin" id="fecha_fin" value="{{ old('fecha_fin') }}"
-                            class="form-control @error('fecha_fin') is-invalid @enderror">
-                        @error('fecha_fin')
-                            <div class="invalid-feedback">{{ $message }}</div>
-                        @enderror
-                        <small class="form-text text-muted">Debe ser igual o posterior a fecha inicio</small>
                     </div>
                 </div>
             </div>

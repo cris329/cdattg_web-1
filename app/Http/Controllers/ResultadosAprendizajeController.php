@@ -63,15 +63,6 @@ class ResultadosAprendizajeController extends Controller
                 $query->where('status', $request->status);
             }
             
-            // Filtro por rango de fechas
-            if ($request->filled('fecha_inicio')) {
-                $query->whereDate('fecha_inicio', '>=', $request->fecha_inicio);
-            }
-            
-            if ($request->filled('fecha_fin')) {
-                $query->whereDate('fecha_fin', '<=', $request->fecha_fin);
-            }
-            
             // Filtro por duración
             if ($request->filled('duracion_min')) {
                 $query->where('duracion', '>=', $request->duracion_min);
@@ -120,10 +111,27 @@ class ResultadosAprendizajeController extends Controller
             $resultadoAprendizaje = ResultadosAprendizaje::create($data);
             
             if ($request->filled('competencia_id')) {
+                $competencia = Competencia::findOrFail($request->competencia_id);
+                
+                // Redistribuir duración entre todos los resultados existentes
+                $this->redistribuirDuracionResultados($competencia);
+                
+                $totalResultados = $competencia->resultadosAprendizaje()->count() + 1;
+                $duracionPorResultado = $totalResultados > 0 ? $competencia->duracion / $totalResultados : 0;
+                
                 $resultadoAprendizaje->competencias()->attach($request->competencia_id, [
+                    'duracion' => $duracionPorResultado,
                     'user_create_id' => Auth::id(),
                     'user_edit_id' => Auth::id(),
                 ]);
+                
+                // Actualizar duración en resultados_aprendizajes
+                $resultadoAprendizaje->update([
+                    'duracion' => $duracionPorResultado,
+                ]);
+                
+                // Redistribuir duración entre todos los resultados (incluyendo el nuevo)
+                $this->redistribuirDuracionResultados($competencia);
             }
             
             DB::commit();
@@ -245,20 +253,30 @@ class ResultadosAprendizajeController extends Controller
                     ->with('error', "No se puede eliminar el resultado de aprendizaje '{$resultadoAprendizaje->codigo}' porque tiene {$cantidadGuias} guía(s) de aprendizaje asociada(s). Primero debe desasociar o eliminar las guías relacionadas.");
             }
             
+            // Guardar el código antes de eliminar
+            $codigoResultado = $resultadoAprendizaje->codigo;
+            
             // Desasociar competencias antes de eliminar
+            $competenciasAsociadas = $resultadoAprendizaje->competencias()->get();
             $resultadoAprendizaje->competencias()->detach();
+            
+            // Redistribuir duración en las competencias asociadas
+            foreach ($competenciasAsociadas as $competencia) {
+                $this->redistribuirDuracionResultados($competencia);
+            }
+            
             $resultadoAprendizaje->delete();
             
             DB::commit();
             
             Log::info('Resultado de aprendizaje eliminado exitosamente', [
-                'resultado_id' => $resultadoAprendizaje->id,
-                'codigo' => $resultadoAprendizaje->codigo,
+                'resultado_id' => $resultadoAprendizaje->id ?? null,
+                'codigo' => $codigoResultado,
                 'user_id' => Auth::id()
             ]);
             
             return redirect()->route('resultados-aprendizaje.index')
-                ->with('success', "Resultado de aprendizaje '{$resultadoAprendizaje->codigo}' eliminado exitosamente.");
+                ->with('success', "Resultado de aprendizaje '{$codigoResultado}' eliminado exitosamente.");
                 
         } catch (Exception $e) {
             DB::rollBack();
@@ -308,24 +326,6 @@ class ResultadosAprendizajeController extends Controller
             // Filtro por estado
             if ($request->filled('status')) {
                 $query->where('status', $request->status);
-            }
-            
-            // Filtro por rango de fechas de inicio
-            if ($request->filled('fecha_inicio_desde')) {
-                $query->whereDate('fecha_inicio', '>=', $request->fecha_inicio_desde);
-            }
-            
-            if ($request->filled('fecha_inicio_hasta')) {
-                $query->whereDate('fecha_inicio', '<=', $request->fecha_inicio_hasta);
-            }
-            
-            // Filtro por rango de fechas de fin
-            if ($request->filled('fecha_fin_desde')) {
-                $query->whereDate('fecha_fin', '>=', $request->fecha_fin_desde);
-            }
-            
-            if ($request->filled('fecha_fin_hasta')) {
-                $query->whereDate('fecha_fin', '<=', $request->fecha_fin_hasta);
             }
             
             // Filtro por duración
@@ -457,11 +457,45 @@ class ResultadosAprendizajeController extends Controller
             
             $resultadoAprendizaje->competencias()->detach($competencia->id);
             
+            // Redistribuir duración entre los resultados restantes
+            $this->redistribuirDuracionResultados($competencia);
+            
             return redirect()->back()->with('success', 'Competencia desasociada exitosamente.');
             
         } catch (Exception $e) {
             Log::error('Error al desasociar competencia: ' . $e->getMessage());
             return redirect()->back()->with('error', 'Error al desasociar la competencia.');
+        }
+    }
+
+    /**
+     * Redistribuye la duración de la competencia entre todos sus resultados de aprendizaje
+     */
+    private function redistribuirDuracionResultados(Competencia $competencia): void
+    {
+        $resultados = $competencia->resultadosAprendizaje()->get();
+        $totalResultados = $resultados->count();
+        
+        if ($totalResultados === 0) {
+            return;
+        }
+        
+        $duracionPorResultado = $competencia->duracion / $totalResultados;
+        
+        foreach ($resultados as $resultado) {
+            // Actualizar duración en la tabla pivot
+            DB::table('resultados_aprendizaje_competencia')
+                ->where('competencia_id', $competencia->id)
+                ->where('rap_id', $resultado->id)
+                ->update([
+                    'duracion' => $duracionPorResultado,
+                    'updated_at' => now(),
+                ]);
+            
+            // Actualizar duración en la tabla resultados_aprendizajes
+            $resultado->update([
+                'duracion' => $duracionPorResultado,
+            ]);
         }
     }
 }

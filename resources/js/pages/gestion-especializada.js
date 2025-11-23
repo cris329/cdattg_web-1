@@ -311,6 +311,32 @@ document.addEventListener('DOMContentLoaded', () => {
                 </div>
                 
                 <div class="row mt-3">
+                    <div class="col-md-6">
+                        <label class="form-label font-weight-bold">
+                            <i class="fas fa-tasks mr-1"></i> Competencia
+                        </label>
+                        <select name="instructores[${nuevoIndice}][competencia_id]" 
+                                class="form-control select2 competencia-select" 
+                                data-index="${nuevoIndice}"
+                                data-placeholder="Seleccionar competencia...">
+                            <option value="">Seleccionar competencia...</option>
+                        </select>
+                    </div>
+                    <div class="col-md-6">
+                        <label class="form-label font-weight-bold">
+                            <i class="fas fa-graduation-cap mr-1"></i> Resultados de Aprendizaje
+                        </label>
+                        <select name="instructores[${nuevoIndice}][resultados_aprendizaje][]" 
+                                class="form-control select2 resultados-select" 
+                                data-index="${nuevoIndice}"
+                                data-placeholder="Seleccionar resultados de aprendizaje..."
+                                multiple>
+                        </select>
+                        <small class="text-muted">Seleccione uno o varios resultados de aprendizaje de la competencia</small>
+                    </div>
+                </div>
+                
+                <div class="row mt-3">
                     <div class="col-md-12">
                         <label class="form-label font-weight-bold">
                             <i class="fas fa-calendar-week mr-1"></i> Días de Formación <span class="text-danger">*</span>
@@ -334,12 +360,38 @@ document.addEventListener('DOMContentLoaded', () => {
 
         // Obtener instructores disponibles via AJAX
         cargarInstructoresDisponibles(nuevoIndice);
+        
+        // Cargar competencias disponibles
+        cargarCompetencias(nuevoIndice);
 
         // Configurar eventos para el nuevo instructor
         const nuevoRow = container.querySelector(`.instructor-row[data-index="${nuevoIndice}"]`);
         
-        // Aplicar restricciones de fechas de la ficha
+        // Inicializar Select2 para competencia y resultados
         if (nuevoRow) {
+            const competenciaSelect = nuevoRow.querySelector('.competencia-select');
+            const resultadosSelect = nuevoRow.querySelector('.resultados-select');
+            
+            if (competenciaSelect && typeof $ !== 'undefined' && $.fn.select2) {
+                $(competenciaSelect).select2({
+                    theme: 'bootstrap-5',
+                    width: '100%',
+                    placeholder: 'Seleccionar competencia...',
+                    allowClear: true
+                });
+            }
+            
+            if (resultadosSelect && typeof $ !== 'undefined' && $.fn.select2) {
+                $(resultadosSelect).select2({
+                    theme: 'bootstrap-5',
+                    width: '100%',
+                    placeholder: 'Seleccionar resultados de aprendizaje...',
+                    allowClear: true,
+                    multiple: true
+                });
+            }
+            
+            // Aplicar restricciones de fechas de la ficha
             const fechaInicioInput = nuevoRow.querySelector('.fecha-inicio');
             const fechaFinInput = nuevoRow.querySelector('.fecha-fin');
             
@@ -435,6 +487,43 @@ document.addEventListener('DOMContentLoaded', () => {
                     }
                 }
                 
+                // Restaurar competencia (esperar a que se carguen las competencias)
+                setTimeout(() => {
+                    if (instructorData.competencia_id) {
+                        const competenciaSelect = row.querySelector(`select[name="instructores[${indice}][competencia_id]"]`);
+                        if (competenciaSelect) {
+                            const $competenciaSelect = $(competenciaSelect);
+                            if ($competenciaSelect.hasClass('select2-hidden-accessible')) {
+                                $competenciaSelect.val(instructorData.competencia_id).trigger('change');
+                                
+                                // Después de seleccionar la competencia, cargar y restaurar resultados
+                                setTimeout(() => {
+                                    if (instructorData.resultados_aprendizaje && Array.isArray(instructorData.resultados_aprendizaje)) {
+                                        const resultadosSelect = row.querySelector(`select[name="instructores[${indice}][resultados_aprendizaje][]"]`);
+                                        if (resultadosSelect) {
+                                            const $resultadosSelect = $(resultadosSelect);
+                                            $resultadosSelect.val(instructorData.resultados_aprendizaje).trigger('change');
+                                        }
+                                    }
+                                }, 500);
+                            } else {
+                                setTimeout(() => {
+                                    $competenciaSelect.val(instructorData.competencia_id).trigger('change');
+                                    setTimeout(() => {
+                                        if (instructorData.resultados_aprendizaje && Array.isArray(instructorData.resultados_aprendizaje)) {
+                                            const resultadosSelect = row.querySelector(`select[name="instructores[${indice}][resultados_aprendizaje][]"]`);
+                                            if (resultadosSelect) {
+                                                const $resultadosSelect = $(resultadosSelect);
+                                                $resultadosSelect.val(instructorData.resultados_aprendizaje).trigger('change');
+                                            }
+                                        }
+                                    }, 500);
+                                }, 300);
+                            }
+                        }
+                    }
+                }, 400);
+
                 // Restaurar días seleccionados (esperar un poco más para que las fechas se procesen)
                 setTimeout(() => {
                     if (instructorData.dias_semana && Array.isArray(instructorData.dias_semana)) {
@@ -740,6 +829,44 @@ document.addEventListener('DOMContentLoaded', () => {
                 validarDias();
             }
         });
+
+        // Configurar eventos para competencia y resultados de aprendizaje
+        const competenciaSelect = instructorRow.querySelector('.competencia-select');
+        const resultadosSelect = instructorRow.querySelector('.resultados-select');
+        
+        if (competenciaSelect) {
+            console.log('Configurando evento para competencia select, índice:', indice);
+            
+            // Usar jQuery para manejar el evento de Select2
+            $(competenciaSelect).on('change', function() {
+                const competenciaId = $(this).val();
+                const indice = $(this).data('index');
+                
+                console.log('Cambio detectado en competencia select:', {
+                    competenciaId: competenciaId,
+                    indice: indice
+                });
+                
+                // Limpiar resultados de aprendizaje
+                if (resultadosSelect) {
+                    const $resultadosSelect = $(resultadosSelect);
+                    if ($resultadosSelect.hasClass('select2-hidden-accessible')) {
+                        $resultadosSelect.select2('destroy');
+                    }
+                    $resultadosSelect.empty();
+                }
+                
+                // Cargar resultados de aprendizaje si se seleccionó una competencia
+                if (competenciaId) {
+                    console.log('Cargando resultados para competencia:', competenciaId);
+                    cargarResultadosAprendizaje(indice, competenciaId);
+                } else {
+                    console.log('No se seleccionó competencia, limpiando resultados');
+                }
+            });
+        } else {
+            console.warn('No se encontró el select de competencia para el índice:', indice);
+        }
 
         // Configurar eventos para los checkboxes de días (contador y validación)
         const diasCheckboxes = instructorRow.querySelectorAll('.dia-check');
@@ -1279,5 +1406,156 @@ document.addEventListener('DOMContentLoaded', () => {
         fichaIdActual = null;
         guardandoDias = false; // Resetear flag
     });
+
+    // Función para cargar competencias disponibles para la ficha
+    function cargarCompetencias(indice) {
+        const fichaId = window.fichaId;
+        if (!fichaId) {
+            console.error('No se encontró el ID de la ficha');
+            return;
+        }
+
+        const competenciaSelect = document.querySelector(`.instructor-row[data-index="${indice}"] .competencia-select`);
+        if (!competenciaSelect) {
+            return;
+        }
+
+        $.ajax({
+            url: `/asignaciones/instructores/fichas/${fichaId}/competencias`,
+            method: 'GET',
+            headers: {
+                'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
+            },
+            success: function(response) {
+                const $select = $(competenciaSelect);
+                $select.empty();
+                $select.append('<option value="">Seleccionar competencia...</option>');
+                
+                if (response.data && response.data.length > 0) {
+                    response.data.forEach(function(competencia) {
+                        $select.append(`<option value="${competencia.id}">${competencia.codigo} - ${competencia.nombre}</option>`);
+                    });
+                }
+                
+                $select.trigger('change');
+            },
+            error: function(xhr, status, error) {
+                console.error('Error al cargar competencias:', error);
+            }
+        });
+    }
+
+    // Función para cargar resultados de aprendizaje de una competencia
+    function cargarResultadosAprendizaje(indice, competenciaId) {
+        const resultadosSelect = document.querySelector(`.instructor-row[data-index="${indice}"] .resultados-select`);
+        if (!resultadosSelect) {
+            console.error('No se encontró el select de resultados de aprendizaje para el índice:', indice);
+            return;
+        }
+
+        const $select = $(resultadosSelect);
+        
+        // Mostrar indicador de carga
+        $select.prop('disabled', true);
+        
+        // Asegurar que Select2 esté inicializado
+        if (!$select.hasClass('select2-hidden-accessible')) {
+            $select.select2({
+                theme: 'bootstrap-5',
+                width: '100%',
+                placeholder: 'Cargando resultados...',
+                allowClear: true,
+                multiple: true,
+                language: {
+                    noResults: function() {
+                        return "No se encontraron resultados";
+                    },
+                    searching: function() {
+                        return "Buscando...";
+                    }
+                }
+            });
+        } else {
+            // Si ya está inicializado, actualizar el placeholder
+            $select.data('select2').$container.find('.select2-selection__placeholder').text('Cargando resultados...');
+        }
+
+        console.log('Cargando resultados de aprendizaje para competencia:', competenciaId);
+
+        const fichaId = window.fichaId;
+        
+        $.ajax({
+            url: `/asignaciones/instructores/competencias/${competenciaId}/resultados`,
+            method: 'GET',
+            data: {
+                ficha_id: fichaId
+            },
+            headers: {
+                'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
+            },
+            success: function(response) {
+                console.log('Respuesta de resultados de aprendizaje:', response);
+                
+                // Destruir Select2 antes de limpiar
+                if ($select.hasClass('select2-hidden-accessible')) {
+                    $select.select2('destroy');
+                }
+                
+                $select.empty();
+                
+                if (response.data && response.data.length > 0) {
+                    response.data.forEach(function(resultado) {
+                        $select.append(`<option value="${resultado.id}">${resultado.codigo} - ${resultado.nombre}</option>`);
+                    });
+                } else {
+                    $select.append('<option value="">No hay resultados de aprendizaje disponibles</option>');
+                }
+                
+                $select.prop('disabled', false);
+                
+                // Reinicializar Select2 con los nuevos datos
+                $select.select2({
+                    theme: 'bootstrap-5',
+                    width: '100%',
+                    placeholder: 'Seleccionar resultados de aprendizaje...',
+                    allowClear: true,
+                    multiple: true,
+                    language: {
+                        noResults: function() {
+                            return "No se encontraron resultados";
+                        },
+                        searching: function() {
+                            return "Buscando...";
+                        }
+                    }
+                });
+                
+                $select.trigger('change');
+            },
+            error: function(xhr, status, error) {
+                console.error('Error al cargar resultados de aprendizaje:', error, xhr);
+                
+                // Destruir Select2 antes de limpiar
+                if ($select.hasClass('select2-hidden-accessible')) {
+                    $select.select2('destroy');
+                }
+                
+                $select.prop('disabled', false);
+                $select.empty();
+                $select.append('<option value="">Error al cargar resultados</option>');
+                
+                // Reinicializar Select2
+                $select.select2({
+                    theme: 'bootstrap-5',
+                    width: '100%',
+                    placeholder: 'Error al cargar',
+                    allowClear: true,
+                    multiple: true
+                });
+                
+                $select.trigger('change');
+            }
+        });
+    }
 
 });

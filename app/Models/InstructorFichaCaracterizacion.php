@@ -6,6 +6,7 @@ use Carbon\Carbon;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
+use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 
 class InstructorFichaCaracterizacion extends Model
 {
@@ -16,6 +17,7 @@ class InstructorFichaCaracterizacion extends Model
     protected $fillable = [
         "instructor_id",
         "ficha_id",
+        "competencia_id",
         "fecha_inicio",
         "fecha_fin",
         "total_horas_instructor"
@@ -44,6 +46,27 @@ class InstructorFichaCaracterizacion extends Model
     public function ficha(): BelongsTo
     {
         return $this->belongsTo(FichaCaracterizacion::class, 'ficha_id');
+    }
+
+    /**
+     * Relación con Competencia
+     */
+    public function competencia(): BelongsTo
+    {
+        return $this->belongsTo(Competencia::class, 'competencia_id');
+    }
+
+    /**
+     * Relación Many-to-Many con ResultadosAprendizaje
+     */
+    public function resultadosAprendizaje(): BelongsToMany
+    {
+        return $this->belongsToMany(
+            ResultadosAprendizaje::class,
+            'instructor_ficha_resultados_aprendizaje',
+            'instructor_ficha_id',
+            'resultado_aprendizaje_id'
+        )->withTimestamps();
     }
 
     /**

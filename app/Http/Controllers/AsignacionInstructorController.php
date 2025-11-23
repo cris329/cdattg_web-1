@@ -10,6 +10,7 @@ use App\Models\FichaCaracterizacion;
 use App\Models\Instructor;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\RedirectResponse;
+use Illuminate\Http\Request;
 use Illuminate\View\View;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Log;
@@ -157,24 +158,77 @@ class AsignacionInstructorController extends Controller
 
     public function competenciasPorFicha(FichaCaracterizacion $ficha): JsonResponse
     {
-        $competencias = $ficha->programaFormacion
-            ? $ficha->programaFormacion->competencias()
-                ->select('competencias.id', 'competencias.codigo', 'competencias.nombre')
-                ->orderBy('competencias.nombre')
-                ->get()
-            : collect();
+        if (!$ficha->programaFormacion) {
+            return response()->json([
+                'data' => [],
+            ]);
+        }
+
+        // Obtener todos los resultados de aprendizaje ya asignados en esta ficha
+        $resultadosAsignados = \DB::table('instructor_ficha_resultados_aprendizaje')
+            ->join('instructor_fichas_caracterizacion', 'instructor_ficha_resultados_aprendizaje.instructor_ficha_id', '=', 'instructor_fichas_caracterizacion.id')
+            ->where('instructor_fichas_caracterizacion.ficha_id', $ficha->id)
+            ->pluck('instructor_ficha_resultados_aprendizaje.resultado_aprendizaje_id')
+            ->toArray();
+
+        // Obtener competencias del programa que tengan resultados de aprendizaje
+        $competencias = $ficha->programaFormacion->competencias()
+            ->with(['resultadosAprendizaje' => function($query) {
+                $query->select('resultados_aprendizajes.id', 'resultados_aprendizajes.codigo', 'resultados_aprendizajes.nombre');
+            }])
+            ->select('competencias.id', 'competencias.codigo', 'competencias.nombre')
+            ->orderBy('competencias.nombre')
+            ->get();
+
+        // Filtrar competencias que tengan al menos un resultado sin asignar
+        $competenciasConResultadosSinAsignar = $competencias->filter(function($competencia) use ($resultadosAsignados) {
+            // Obtener IDs de resultados de esta competencia
+            $resultadosCompetencia = $competencia->resultadosAprendizaje->pluck('id')->toArray();
+            
+            // Verificar si hay algún resultado que no esté asignado
+            $resultadosSinAsignar = array_diff($resultadosCompetencia, $resultadosAsignados);
+            
+            // Solo incluir si hay al menos un resultado sin asignar
+            return !empty($resultadosSinAsignar);
+        })->map(function($competencia) {
+            // Retornar solo los datos necesarios
+            return [
+                'id' => $competencia->id,
+                'codigo' => $competencia->codigo,
+                'nombre' => $competencia->nombre,
+            ];
+        })->values();
 
         return response()->json([
-            'data' => $competencias,
+            'data' => $competenciasConResultadosSinAsignar,
         ]);
     }
 
-    public function resultadosPorCompetencia(Competencia $competencia): JsonResponse
+    public function resultadosPorCompetencia(Competencia $competencia, Request $request): JsonResponse
     {
+        // Obtener el ficha_id de la solicitud (query parameter)
+        $fichaId = $request->input('ficha_id');
+        
+        // Obtener todos los resultados de aprendizaje de la competencia
         $resultados = $competencia->resultadosAprendizaje()
             ->select('resultados_aprendizajes.id', 'resultados_aprendizajes.codigo', 'resultados_aprendizajes.nombre', 'resultados_aprendizajes.duracion')
             ->orderBy('resultados_aprendizajes.codigo')
             ->get();
+
+        // Si se proporciona ficha_id, filtrar resultados ya asignados
+        if ($fichaId) {
+            // Obtener resultados ya asignados en esta ficha
+            $resultadosAsignados = \DB::table('instructor_ficha_resultados_aprendizaje')
+                ->join('instructor_fichas_caracterizacion', 'instructor_ficha_resultados_aprendizaje.instructor_ficha_id', '=', 'instructor_fichas_caracterizacion.id')
+                ->where('instructor_fichas_caracterizacion.ficha_id', $fichaId)
+                ->pluck('instructor_ficha_resultados_aprendizaje.resultado_aprendizaje_id')
+                ->toArray();
+
+            // Filtrar solo los resultados que no estén asignados
+            $resultados = $resultados->reject(function($resultado) use ($resultadosAsignados) {
+                return in_array($resultado->id, $resultadosAsignados);
+            })->values();
+        }
 
         return response()->json([
             'data' => $resultados,

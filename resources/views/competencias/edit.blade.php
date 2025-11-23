@@ -91,7 +91,7 @@
                                             'id' => $resultado->id,
                                             'codigo' => $resultado->codigo ?? '',
                                             'nombre' => $resultado->nombre,
-                                            'horas' => (int) ($resultado->duracion ?? 0),
+                                            'horas' => (int) ($resultado->pivot->duracion ?? $resultado->duracion ?? 0),
                                         ];
                                     });
                                 }

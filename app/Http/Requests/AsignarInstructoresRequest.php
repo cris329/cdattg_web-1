@@ -72,6 +72,25 @@ class AsignarInstructoresRequest extends FormRequest
                 }
             ],
             'instructores.*.total_horas_instructor' => 'nullable|integer|min:1|max:1000',
+            'instructores.*.competencia_id' => [
+                'nullable',
+                'integer',
+                'exists:competencias,id',
+                function ($attribute, $value, $fail) {
+                    if ($value) {
+                        $this->validarCompetenciaPerteneceAPrograma($value, $fail, $attribute);
+                    }
+                }
+            ],
+            'instructores.*.resultados_aprendizaje' => 'nullable|array',
+            'instructores.*.resultados_aprendizaje.*' => [
+                'required',
+                'integer',
+                'exists:resultados_aprendizajes,id',
+                function ($attribute, $value, $fail) {
+                    $this->validarResultadoPerteneceACompetencia($value, $fail, $attribute);
+                }
+            ],
             // Validación principal: array simple de IDs de días
             'instructores.*.dias_semana' => 'required|array|min:1|max:7',
             'instructores.*.dias_semana.*' => 'required|integer|exists:parametros_temas,id',
@@ -611,6 +630,66 @@ class AsignarInstructoresRequest extends FormRequest
             //         "👨‍🏫 El instructor {$instructor->nombre_completo} no cumple con la experiencia mínima requerida (1 año). Seleccione un instructor con más experiencia."
             //     );
             // }
+        }
+    }
+
+    /**
+     * Validar que la competencia pertenezca al programa de formación de la ficha
+     */
+    private function validarCompetenciaPerteneceAPrograma($competenciaId, $fail, $attribute): void
+    {
+        $fichaId = $this->route('id');
+        $ficha = FichaCaracterizacion::with('programaFormacion.competencias')->find($fichaId);
+        
+        if (!$ficha || !$ficha->programaFormacion) {
+            $fail("La ficha no tiene un programa de formación asociado.");
+            return;
+        }
+
+        $competenciaPertenece = $ficha->programaFormacion->competencias->contains('id', $competenciaId);
+        
+        if (!$competenciaPertenece) {
+            $competencia = \App\Models\Competencia::find($competenciaId);
+            $competenciaNombre = $competencia ? $competencia->nombre : 'Competencia desconocida';
+            $fail("La competencia '{$competenciaNombre}' no pertenece al programa de formación de esta ficha.");
+        }
+    }
+
+    /**
+     * Validar que el resultado de aprendizaje pertenezca a la competencia seleccionada
+     */
+    private function validarResultadoPerteneceACompetencia($resultadoId, $fail, $attribute): void
+    {
+        // Extraer el índice del instructor del atributo
+        // Formato: instructores.0.resultados_aprendizaje.0
+        preg_match('/instructores\.(\d+)\.resultados_aprendizaje\.\d+/', $attribute, $matches);
+        $instructorIndex = $matches[1] ?? null;
+        
+        if ($instructorIndex === null) {
+            return; // No se puede validar sin el índice
+        }
+
+        $instructorData = $this->input("instructores.{$instructorIndex}", []);
+        $competenciaId = $instructorData['competencia_id'] ?? null;
+
+        if (!$competenciaId) {
+            $fail("Debe seleccionar una competencia antes de seleccionar resultados de aprendizaje.");
+            return;
+        }
+
+        $competencia = \App\Models\Competencia::with('resultadosAprendizaje')->find($competenciaId);
+        
+        if (!$competencia) {
+            $fail("La competencia seleccionada no existe.");
+            return;
+        }
+
+        $resultadoPertenece = $competencia->resultadosAprendizaje->contains('id', $resultadoId);
+        
+        if (!$resultadoPertenece) {
+            $resultado = \App\Models\ResultadosAprendizaje::find($resultadoId);
+            $resultadoNombre = $resultado ? $resultado->nombre : 'Resultado desconocido';
+            $fail("El resultado de aprendizaje '{$resultadoNombre}' no pertenece a la competencia seleccionada.");
         }
     }
 
