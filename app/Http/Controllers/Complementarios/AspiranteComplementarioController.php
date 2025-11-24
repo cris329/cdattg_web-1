@@ -177,6 +177,8 @@ class AspiranteComplementarioController extends Controller
             'municipio_id' => 'required|integer',
             'direccion' => 'nullable|string|max:191',
             'observaciones' => 'nullable|string',
+            'caracterizacion_ids' => 'nullable|array',
+            'caracterizacion_ids.*' => 'integer|exists:parametros,id',
         ]);
 
         try {
@@ -209,6 +211,17 @@ class AspiranteComplementarioController extends Controller
                 $persona = Persona::create($validated + [
                     'user_create_id' => auth()->id() ?? 1,
                     'user_edit_id' => auth()->id() ?? 1,
+                ]);
+            }
+
+            // Guardar caracterizaciones si existen
+            if (isset($validated['caracterizacion_ids']) && !empty($validated['caracterizacion_ids'])) {
+                $persona->caracterizacionesComplementarias()->sync($validated['caracterizacion_ids']);
+                
+                Log::info('Caracterizaciones guardadas para persona', [
+                    'persona_id' => $persona->id,
+                    'caracterizacion_ids' => $validated['caracterizacion_ids'],
+                    'total_caracterizaciones' => count($validated['caracterizacion_ids'])
                 ]);
             }
 
@@ -413,6 +426,53 @@ class AspiranteComplementarioController extends Controller
     }
 
     /**
+     * Convertir tipo de documento a iniciales (CC, TI, etc.)
+     */
+    private function convertirTipoDocumentoAIniciales($tipoDocumento)
+    {
+        // Limpiar el texto y quitar acentos
+        $tipoDocumento = $this->limpiarTexto($tipoDocumento);
+        
+        // Mapeo de tipos de documento a sus iniciales
+        $mapeo = [
+            'cedula de ciudadania' => 'CC',
+            'cedula de extranjeria' => 'CE',
+            'tarjeta de identidad' => 'TI',
+            'pasaporte' => 'PA',
+            'registro civil' => 'RC',
+            'cedula' => 'CC',
+            'extranjeria' => 'CE',
+            'tarjeta identidad' => 'TI',
+        ];
+
+        // Buscar coincidencia exacta primero
+        $tipoDocumentoLower = strtolower($tipoDocumento);
+        if (isset($mapeo[$tipoDocumentoLower])) {
+            return $mapeo[$tipoDocumentoLower];
+        }
+
+        // Buscar coincidencia parcial
+        foreach ($mapeo as $nombre => $iniciales) {
+            if (strpos($tipoDocumentoLower, $nombre) !== false) {
+                return $iniciales;
+            }
+        }
+
+        // Si no se encuentra coincidencia, devolver las primeras 2 letras en mayúsculas
+        return strtoupper(substr($tipoDocumento, 0, 2));
+    }
+
+    /**
+     * Limpiar texto quitando acentos y caracteres especiales
+     */
+    private function limpiarTexto($texto)
+    {
+        $texto = iconv('UTF-8', 'ASCII//TRANSLIT', $texto);
+        $texto = preg_replace('/[^a-zA-Z0-9\s]/', '', $texto);
+        return trim($texto);
+    }
+
+    /**
      * Exportar aspirantes a Excel
      */
     public function exportarAspirantesExcel($complementarioId)
@@ -422,54 +482,163 @@ class AspiranteComplementarioController extends Controller
             $programa = ComplementarioOfertado::findOrFail($complementarioId);
 
             // Obtener todos los aspirantes del programa con sus datos de persona y caracterización
-            $aspirantes = AspiranteComplementario::with(['persona.caracterizacion', 'persona.tipoDocumento'])
+            $aspirantes = AspiranteComplementario::with(['persona.caracterizacionesComplementarias', 'persona.caracterizacion', 'persona.tipoDocumento'])
                 ->where('complementario_id', $complementarioId)
                 ->get();
+
+            // Log para debugging
+            Log::info('Exportando aspirantes a Excel', [
+                'complementario_id' => $complementarioId,
+                'total_aspirantes' => $aspirantes->count(),
+                'aspirantes_con_caracterizacion' => $aspirantes->filter(function($aspirante) {
+                    return $aspirante->persona->caracterizacionesComplementarias->isNotEmpty();
+                })->count()
+            ]);
 
             // Crear nueva hoja de cálculo
             $spreadsheet = new Spreadsheet();
             $sheet = $spreadsheet->getActiveSheet();
 
-            // Establecer encabezados
-            $sheet->setCellValue('A1', 'Tipo Documento');
-            $sheet->setCellValue('B1', 'Número Documento');
-            $sheet->setCellValue('C1', 'Caracterización');
-
-            // Estilo para encabezados
-            $headerStyle = [
+            // Agregar título
+            $sheet->setCellValue('A1', 'FORMATO PARA LA INSCRIPCIÓN DE ASPIRANTES EN SOFIA PLUS v1.0');
+            $sheet->mergeCells('A1:G1');
+            
+            // Estilo para el título con bordes oscuros
+            $titleStyle = [
                 'font' => [
-                    'bold' => true,
-                    'color' => ['rgb' => 'FFFFFF'],
+                    'bold' => false,
+                    'size' => 14,
+                    'color' => ['rgb' => '000000'],
+                    'name' => 'Calibri',
                 ],
                 'fill' => [
                     'fillType' => \PhpOffice\PhpSpreadsheet\Style\Fill::FILL_SOLID,
-                    'startColor' => ['rgb' => '007BFF'],
+                    'startColor' => ['rgb' => 'C4D79B'],
+                ],
+                'alignment' => [
+                    'horizontal' => \PhpOffice\PhpSpreadsheet\Style\Alignment::HORIZONTAL_CENTER,
+                ],
+                'borders' => [
+                    'allBorders' => [
+                        'borderStyle' => \PhpOffice\PhpSpreadsheet\Style\Border::BORDER_THICK,
+                        'color' => ['rgb' => '000000'],
+                    ],
                 ],
             ];
-            $sheet->getStyle('A1:C1')->applyFromArray($headerStyle);
+            $sheet->getStyle('A1:G1')->applyFromArray($titleStyle);
+
+            // Establecer encabezados
+            $sheet->setCellValue('A2', 'Resultado del Registro (Reservado para el sistema)');
+            $sheet->setCellValue('B2', 'Tipo de Identificación');
+            $sheet->setCellValue('C2', 'Número de Identificación');
+            $sheet->setCellValue('D2', 'Código de la ficha');
+            $sheet->setCellValue('E2', 'Tipo Población Aspirante');
+            $sheet->setCellValue('F2', '');
+            $sheet->setCellValue('G2', 'Codigo Empresa (Solo si la ficha es cerrada)');
+
+            // Estilo para encabezados con bordes oscuros, centrado vertical y horizontal, tamaño 8 y ajuste de texto
+            $headerStyle = [
+                'font' => [
+                    'bold' => false,
+                    'color' => ['rgb' => '000000'],
+                    'name' => 'Calibri',
+                    'size' => 8,
+                ],
+                'alignment' => [
+                    'horizontal' => \PhpOffice\PhpSpreadsheet\Style\Alignment::HORIZONTAL_CENTER,
+                    'vertical' => \PhpOffice\PhpSpreadsheet\Style\Alignment::VERTICAL_CENTER,
+                    'wrapText' => true,
+                ],
+                'borders' => [
+                    'allBorders' => [
+                        'borderStyle' => \PhpOffice\PhpSpreadsheet\Style\Border::BORDER_THICK,
+                        'color' => ['rgb' => '000000'],
+                    ],
+                ],
+            ];
+            $sheet->getStyle('A2:G2')->applyFromArray($headerStyle);
 
             // Llenar datos
-            $row = 2;
+            $row = 3;
             foreach ($aspirantes as $aspirante) {
                 $tipoDocumento = $aspirante->persona->tipoDocumento ? $aspirante->persona->tipoDocumento->name : 'N/A';
                 $numeroDocumento = $aspirante->persona->numero_documento;
-                $caracterizacion = $aspirante->persona->caracterizacion ?
-                    $aspirante->persona->caracterizacion->nombre : 'Sin caracterización';
+                
+                // Obtener caracterizaciones de ambas fuentes
+                $caracterizaciones = $aspirante->persona->caracterizacionesComplementarias;
+                $caracterizacionSingular = $aspirante->persona->caracterizacion;
+                
+                // Log detallado para debugging
+                Log::info('Procesando aspirante', [
+                    'aspirante_id' => $aspirante->id,
+                    'persona_id' => $aspirante->persona->id,
+                    'numero_documento' => $numeroDocumento,
+                    'total_caracterizaciones' => $caracterizaciones->count(),
+                    'caracterizaciones' => $caracterizaciones->pluck('nombre')->toArray(),
+                    'caracterizacion_singular' => $caracterizacionSingular ? $caracterizacionSingular->nombre : null,
+                    'parametro_id' => $aspirante->persona->parametro_id
+                ]);
+                
+                // Priorizar caracterizaciones múltiples, luego la singular
+                if ($caracterizaciones->isNotEmpty()) {
+                    $caracterizacion = $caracterizaciones->random()->nombre;
+                } elseif ($caracterizacionSingular) {
+                    $caracterizacion = $caracterizacionSingular->nombre;
+                } else {
+                    $caracterizacion = 'Sin caracterización';
+                }
 
-                $sheet->setCellValue('A' . $row, $tipoDocumento);
-                $sheet->setCellValue('B' . $row, $numeroDocumento);
-                $sheet->setCellValue('C' . $row, $caracterizacion);
+                // Convertir tipo de documento a iniciales (CC, TI, etc.)
+                $tipoIdentificacion = $this->convertirTipoDocumentoAIniciales($tipoDocumento);
+
+                // Solo llenar los campos que se quieren capturar, los demás quedan vacíos
+                $sheet->setCellValue('A' . $row, ''); // Resultado del Registro (vacío)
+                $sheet->setCellValue('B' . $row, $tipoIdentificacion); // Tipo de Identificación (iniciales)
+                $sheet->setCellValue('C' . $row, $numeroDocumento); // Número de Identificación
+                $sheet->setCellValue('D' . $row, ''); // Código de la ficha (vacío)
+                $sheet->setCellValue('E' . $row, $caracterizacion); // Tipo Población Aspirante
+                $sheet->setCellValue('F' . $row, ''); // Campo vacío
+                $sheet->setCellValue('G' . $row, ''); // Código Empresa (vacío)
 
                 $row++;
             }
 
-            // Auto-ajustar columnas
-            foreach (range('A', 'C') as $column) {
-                $sheet->getColumnDimension($column)->setAutoSize(true);
-            }
+            // Configurar alturas de filas
+            $sheet->getRowDimension(1)->setRowHeight(15); // Título con altura normal como filas de datos
+            $sheet->getRowDimension(2)->setRowHeight(45); // Encabezados más altos con texto centrado verticalmente
+            // Las filas de datos mantienen la altura normal por defecto (~15px)
+
+            // Aplicar estilo Calibri a todo el documento
+            $calibriStyle = [
+                'font' => [
+                    'name' => 'Calibri',
+                    'size' => 11,
+                ],
+            ];
+            $sheet->getStyle('A1:G' . ($row - 1))->applyFromArray($calibriStyle);
+
+            // Aplicar tamaño de letra 8 y ajuste de texto para filas 2 en adelante
+            $dataStyle = [
+                'font' => [
+                    'size' => 8,
+                ],
+                'alignment' => [
+                    'wrapText' => true,
+                ],
+            ];
+            $sheet->getStyle('A2:G' . ($row - 1))->applyFromArray($dataStyle);
+
+            // Configurar anchos de columna específicos
+            $sheet->getColumnDimension('A')->setWidth(20); // Columna A - ancho base (100%)
+            $sheet->getColumnDimension('B')->setWidth(10); // Columna B - 50% menos ancha que A (50% de 20 = 10)
+            $sheet->getColumnDimension('C')->setWidth(10); // Columna C - 50% menos ancha que A (50% de 20 = 10)
+            $sheet->getColumnDimension('D')->setWidth(10); // Columna D - 50% menos ancha que A (50% de 20 = 10)
+            $sheet->getColumnDimension('E')->setWidth(25); // Columna E - 25% más ancha que A (125% de 20 = 25)
+            $sheet->getColumnDimension('F')->setWidth(40); // Columna F - 100% más ancha que A (200% de 20 = 40)
+            $sheet->getColumnDimension('G')->setWidth(10); // Columna G - 50% menos ancha que A (50% de 20 = 10)
 
             // Crear nombre del archivo
-            $fileName = 'aspirantes_' . str_replace(' ', '_', $programa->nombre) . '_' .
+            $fileName = 'formato_inscripcion_sofia_plus_' . str_replace(' ', '_', $programa->nombre) . '_' .
                 now()->format('Y-m-d_H-i-s') . '.xlsx';
 
             // Crear respuesta de descarga
