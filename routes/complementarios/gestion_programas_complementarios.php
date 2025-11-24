@@ -13,8 +13,14 @@ Route::middleware('auth')
         Route::get('/create', [ProgramaComplementarioController::class, 'create'])
             ->name('create');
 
+        Route::get('/{programa}', [ProgramaComplementarioController::class, 'show'])
+            ->name('show');
+
         Route::get('/{programa}/edit', [ProgramaComplementarioController::class, 'edit'])
             ->name('edit');
+
+        Route::get('/{programa}/edit-api', [ProgramaComplementarioController::class, 'editApi'])
+            ->name('edit-api');
 
         Route::post('/', [ProgramaComplementarioController::class, 'store'])
             ->name('store');

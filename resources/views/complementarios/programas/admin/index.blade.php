@@ -118,20 +118,19 @@
                                             {{ $programa->cupos }}
                                         </td>
                                         <td class="align-middle text-center">
-                                            <div class="btn-group btn-group-sm" role="group">
-                                                <button type="button" class="btn btn-outline-primary" data-action="view"
-                                                    data-id="{{ $programa->id }}" data-toggle="tooltip" title="Ver ficha">
-                                                    <i class="fas fa-eye"></i>
-                                                </button>
-                                                <button type="button" class="btn btn-outline-warning" data-action="edit"
-                                                    data-id="{{ $programa->id }}" data-toggle="tooltip" title="Editar">
-                                                    <i class="fas fa-edit"></i>
-                                                </button>
-                                                <button type="button" class="btn btn-outline-danger" data-action="delete"
-                                                    data-id="{{ $programa->id }}" data-toggle="tooltip" title="Eliminar">
-                                                    <i class="fas fa-trash-alt"></i>
-                                                </button>
-                                            </div>
+                                            <x-action-buttons
+                                                :show="true"
+                                                :edit="true"
+                                                :delete="true"
+                                                :showUrl="route('complementarios-ofertados.show', $programa->id)"
+                                                :editUrl="route('complementarios-ofertados.edit', $programa->id)"
+                                                :deleteUrl="route('complementarios-ofertados.destroy', $programa->id)"
+                                                :showTitle="'Ver detalles del programa'"
+                                                :editTitle="'Editar programa'"
+                                                :deleteTitle="'Eliminar programa'"
+                                                :modelName="'programa'"
+                                                :modelId="$programa->id"
+                                            />
                                         </td>
                                     </tr>
                                 @empty
@@ -506,7 +505,7 @@
             });
 
             const fetchPrograma = (id) => {
-                const url = '{{ route('complementarios-ofertados.edit', ':id') }}'.replace(':id', id);
+                const url = '{{ route('complementarios-ofertados.edit-api', ':id') }}'.replace(':id', id);
                 return axios.get(url).then(response => response.data);
             };
 
@@ -565,16 +564,11 @@
                 $('#modal-editar-programa').modal('show');
             };
 
-            $('[data-action="view"]').on('click', function() {
-                const id = $(this).data('id');
-                fetchPrograma(id)
-                    .then(showDetalle)
-                    .catch(() => {
-                        Swal.fire('Error', 'No se pudo cargar la información del programa.', 'error');
-                    });
-            });
-
-            $('[data-action="edit"]').on('click', function() {
+            // Los botones de view y edit ahora son enlaces directos, no necesitan event listeners
+            // El delete se maneja automáticamente por el componente action-buttons con la clase formulario-eliminar
+            
+            // Mantener el modal de edición para compatibilidad si se accede desde otra parte
+            $(document).on('click', '[data-action="edit-modal"]', function() {
                 const id = $(this).data('id');
                 fetchPrograma(id)
                     .then(showEditar)
@@ -583,7 +577,7 @@
                     });
             });
 
-            $('[data-action="delete"]').on('click', function() {
+            $(document).on('click', '[data-action="delete"]', function() {
                 const id = $(this).data('id');
                 Swal.fire({
                     title: '¿Eliminar programa?',

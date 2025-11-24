@@ -105,9 +105,58 @@ class ProgramaComplementarioController extends Controller
     }
 
     /**
-     * API: Obtener datos de programa para edición
+     * Mostrar detalles del programa (Vista)
      */
-    public function edit(ComplementarioOfertado $programa): JsonResponse
+    public function show(ComplementarioOfertado $programa): View
+    {
+        $programa->load(['modalidad.parametro', 'jornada', 'diasFormacion', 'ambiente.piso', 'competencias', 'raps']);
+        $programa = $this->complementarioService->enriquecerPrograma($programa);
+
+        return view(
+            'complementarios.programas.admin.show',
+            array_merge(
+                ['programa' => $programa],
+                $this->complementarioService->obtenerDatosFormulario()
+            )
+        );
+    }
+
+    /**
+     * Mostrar formulario de edición (Vista)
+     */
+    public function edit(ComplementarioOfertado $programa): View
+    {
+        $programa->load(['modalidad', 'jornada', 'diasFormacion', 'ambiente', 'competencias', 'raps', 'guiasAprendizaje']);
+        
+        $dias = $programa->diasFormacion->map(static function ($dia) {
+            return [
+                'dia_id' => $dia->id,
+                'hora_inicio' => $dia->pivot->hora_inicio,
+                'hora_fin' => $dia->pivot->hora_fin,
+            ];
+        });
+
+        $datosFormulario = $this->complementarioService->obtenerDatosFormulario();
+        
+        return view(
+            'complementarios.programas.admin.edit',
+            array_merge(
+                [
+                    'programa' => $programa,
+                    'diasSeleccionados' => $dias,
+                    'competenciasSeleccionadas' => $programa->competencias->pluck('id')->toArray(),
+                    'rapsSeleccionados' => $programa->raps->pluck('id')->toArray(),
+                    'guiasSeleccionadas' => $programa->guiasAprendizaje->pluck('id')->toArray(),
+                ],
+                $datosFormulario
+            )
+        );
+    }
+
+    /**
+     * API: Obtener datos de programa para edición (AJAX)
+     */
+    public function editApi(ComplementarioOfertado $programa): JsonResponse
     {
         $programa->load(['modalidad', 'jornada', 'diasFormacion', 'ambiente']);
 
@@ -162,19 +211,21 @@ class ProgramaComplementarioController extends Controller
     public function update(
         UpdateProgramaComplementarioRequest $request,
         ComplementarioOfertado $programa
-    ): JsonResponse {
+    ): RedirectResponse {
         $payload = $request->validated();
 
         DB::transaction(function () use ($programa, $payload) {
             $programa->update($this->extractProgramaAtributos($payload));
 
             $this->complementarioService->sincronizarDiasFormacion($programa, $payload['dias'] ?? null);
+            
+            // Sincronizar estructura académica
+            $this->sincronizarEstructuraAcademica($programa, $payload);
         });
 
-        return response()->json([
-            'success' => true,
-            'message' => 'Programa actualizado exitosamente.',
-        ]);
+        return redirect()
+            ->route('complementarios-ofertados.show', $programa->id)
+            ->with('success', 'Programa actualizado exitosamente.');
     }
 
     /**
