@@ -324,6 +324,8 @@ class InscripcionComplementarioController extends Controller
             'direccion' => self::NULLABLE_STRING_MAX_191,
             'observaciones' => 'nullable|string',
             'parametro_id' => 'nullable|exists:parametros,id',
+            'caracterizacion_ids' => 'nullable|array',
+            'caracterizacion_ids.*' => 'integer|exists:parametros,id',
             'documento_identidad' => 'required|file|mimes:pdf,application/pdf|max:5120',
             'acepto_privacidad' => 'required',
             'acepto_terminos' => 'required',
@@ -338,6 +340,9 @@ class InscripcionComplementarioController extends Controller
         $personaExistente = Persona::where('numero_documento', $validatedData['numero_documento'])
             ->orWhere('email', $validatedData['email'])
             ->first();
+
+        // Procesar caracterización: seleccionar una aleatoria si hay múltiples
+        $caracterizacionId = $this->procesarCaracterizacion($validatedData);
 
         if ($personaExistente) {
             // Si ya existe, usar esa persona
@@ -360,7 +365,7 @@ class InscripcionComplementarioController extends Controller
                 'departamento_id' => $validatedData['departamento_id'] ?? $persona->departamento_id,
                 'municipio_id' => $validatedData['municipio_id'] ?? $persona->municipio_id,
                 'direccion' => $validatedData['direccion'] ?? $persona->direccion,
-                'caracterizacion_id' => $validatedData['parametro_id'] ?? $persona->caracterizacion_id,
+                'parametro_id' => $caracterizacionId ?? $persona->parametro_id,
             ]);
         } else {
             // Crear nueva persona
@@ -380,7 +385,7 @@ class InscripcionComplementarioController extends Controller
                 'departamento_id' => $validatedData['departamento_id'],
                 'municipio_id' => $validatedData['municipio_id'],
                 'direccion' => $validatedData['direccion'],
-                'caracterizacion_id' => $validatedData['parametro_id'] ?? null,
+                'parametro_id' => $caracterizacionId,
                 'status' => 1,
                 'user_create_id' => 1,
                 'user_edit_id' => 1
@@ -388,6 +393,36 @@ class InscripcionComplementarioController extends Controller
         }
 
         return $persona;
+    }
+
+    /**
+     * Procesar las caracterizaciones: seleccionar una aleatoria si hay múltiples
+     */
+    private function procesarCaracterizacion(array $validatedData)
+    {
+        // Priorizar caracterizaciones múltiples sobre parametro_id individual
+        if (isset($validatedData['caracterizacion_ids']) && !empty($validatedData['caracterizacion_ids'])) {
+            $caracterizaciones = $validatedData['caracterizacion_ids'];
+            
+            // Si hay múltiples caracterizaciones, seleccionar una aleatoria
+            if (count($caracterizaciones) > 1) {
+                $randomIndex = array_rand($caracterizaciones);
+                $selectedCaracterizacion = $caracterizaciones[$randomIndex];
+                
+                Log::info('Seleccionada caracterización aleatoria', [
+                    'caracterizaciones_disponibles' => $caracterizaciones,
+                    'caracterizacion_seleccionada' => $selectedCaracterizacion
+                ]);
+                
+                return $selectedCaracterizacion;
+            } else {
+                // Si solo hay una, usar esa
+                return $caracterizaciones[0];
+            }
+        }
+        
+        // Si no hay caracterizaciones múltiples, usar parametro_id si existe
+        return $validatedData['parametro_id'] ?? null;
     }
 
     /**

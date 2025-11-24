@@ -482,7 +482,7 @@ class AspiranteComplementarioController extends Controller
             $programa = ComplementarioOfertado::findOrFail($complementarioId);
 
             // Obtener todos los aspirantes del programa con sus datos de persona y caracterización
-            $aspirantes = AspiranteComplementario::with(['persona.caracterizacionesComplementarias', 'persona.caracterizacion', 'persona.tipoDocumento'])
+            $aspirantes = AspiranteComplementario::with(['persona.caracterizacionesComplementarias', 'persona.caracterizacion', 'persona.tipoDocumento', 'persona.parametroCaracterizacion'])
                 ->where('complementario_id', $complementarioId)
                 ->get();
 
@@ -491,7 +491,7 @@ class AspiranteComplementarioController extends Controller
                 'complementario_id' => $complementarioId,
                 'total_aspirantes' => $aspirantes->count(),
                 'aspirantes_con_caracterizacion' => $aspirantes->filter(function($aspirante) {
-                    return $aspirante->persona->caracterizacionesComplementarias->isNotEmpty();
+                    return $aspirante->persona->parametro_id !== null;
                 })->count()
             ]);
 
@@ -564,26 +564,21 @@ class AspiranteComplementarioController extends Controller
                 $tipoDocumento = $aspirante->persona->tipoDocumento ? $aspirante->persona->tipoDocumento->name : 'N/A';
                 $numeroDocumento = $aspirante->persona->numero_documento;
                 
-                // Obtener caracterizaciones de ambas fuentes
-                $caracterizaciones = $aspirante->persona->caracterizacionesComplementarias;
-                $caracterizacionSingular = $aspirante->persona->caracterizacion;
+                // Obtener caracterización desde parametroCaracterizacion (relación con parametro_id)
+                $caracterizacionParametro = $aspirante->persona->parametroCaracterizacion;
                 
                 // Log detallado para debugging
                 Log::info('Procesando aspirante', [
                     'aspirante_id' => $aspirante->id,
                     'persona_id' => $aspirante->persona->id,
                     'numero_documento' => $numeroDocumento,
-                    'total_caracterizaciones' => $caracterizaciones->count(),
-                    'caracterizaciones' => $caracterizaciones->pluck('nombre')->toArray(),
-                    'caracterizacion_singular' => $caracterizacionSingular ? $caracterizacionSingular->nombre : null,
-                    'parametro_id' => $aspirante->persona->parametro_id
+                    'parametro_id' => $aspirante->persona->parametro_id,
+                    'caracterizacion_nombre' => $caracterizacionParametro ? $caracterizacionParametro->name : null
                 ]);
                 
-                // Priorizar caracterizaciones múltiples, luego la singular
-                if ($caracterizaciones->isNotEmpty()) {
-                    $caracterizacion = $caracterizaciones->random()->nombre;
-                } elseif ($caracterizacionSingular) {
-                    $caracterizacion = $caracterizacionSingular->nombre;
+                // Obtener la caracterización desde parametroCaracterizacion
+                if ($caracterizacionParametro) {
+                    $caracterizacion = $caracterizacionParametro->name;
                 } else {
                     $caracterizacion = 'Sin caracterización';
                 }

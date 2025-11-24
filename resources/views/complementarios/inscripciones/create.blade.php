@@ -100,7 +100,7 @@
                                     'vias' => $vias,
                                     'letras' => $letras,
                                     'cardinales' => $cardinales,
-                                    'showCaracterizacion' => false,
+                                    'showCaracterizacion' => true,
                                 ])
 
                                 <hr class="my-5" style="border-color: #dee2e6;">
@@ -244,4 +244,3 @@
     </div>
 @include('components.modal-terminos')
 @endsection
-
