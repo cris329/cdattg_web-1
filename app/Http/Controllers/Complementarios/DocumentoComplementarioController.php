@@ -73,6 +73,11 @@ class DocumentoComplementarioController extends Controller
                 $primerApellido = $aspirante->persona->primer_apellido;
                 $timestamp = now()->format('d-m-y-H-i-s');
 
+                // Reemplazar espacios por guiones bajos para consistencia con la búsqueda
+                $tipoDocumento = str_replace(' ', '_', $tipoDocumento);
+                $primerNombre = str_replace(' ', '_', $primerNombre);
+                $primerApellido = str_replace(' ', '_', $primerApellido);
+
                 $fileName = "{$tipoDocumento}_{$numeroDocumento}_{$primerNombre}_" .
                            "{$primerApellido}_{$timestamp}.{$file->getClientOriginalExtension()}";
 

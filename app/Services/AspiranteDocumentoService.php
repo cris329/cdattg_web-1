@@ -30,20 +30,50 @@ class AspiranteDocumentoService
      */
     public function buscarDocumentoEnGoogleDrive(array $files, string $patron): bool
     {
+        // Crear variantes del patrón para manejar diferentes formatos
+        $patrones = [$patron];
+        
+        // Si el patrón tiene guiones bajos, crear versión con espacios
+        if (strpos($patron, '_') !== false) {
+            $patronConEspacios = str_replace('_', ' ', $patron);
+            $patrones[] = $patronConEspacios;
+        }
+        
+        // Si el patrón tiene espacios, crear versión con guiones bajos
+        if (strpos($patron, ' ') !== false) {
+            $patronConGuiones = str_replace(' ', '_', $patron);
+            $patrones[] = $patronConGuiones;
+        }
+
         foreach ($files as $file) {
             $fileName = basename($file);
-            if (strpos($fileName, $patron) === 0) {
-                try {
-                    if (Storage::disk('google')->exists($file)) {
-                        return true;
+            
+            // Buscar archivos que contengan cualquiera de los patrones
+            foreach ($patrones as $patronActual) {
+                if (strpos($fileName, $patronActual) !== false) {
+                    try {
+                        if (Storage::disk('google')->exists($file)) {
+                            Log::info("Documento encontrado en Google Drive", [
+                                'archivo' => $fileName,
+                                'patron_usado' => $patronActual,
+                                'patron_original' => $patron
+                            ]);
+                            return true;
+                        }
+                    } catch (\Exception $e) {
+                        Log::warning("Error verificando existencia de archivo: {$fileName}", [
+                            'error' => $e->getMessage()
+                        ]);
                     }
-                } catch (\Exception $e) {
-                    Log::warning("Error verificando existencia de archivo: {$fileName}", [
-                        'error' => $e->getMessage()
-                    ]);
                 }
             }
         }
+        
+        Log::warning("Documento no encontrado en Google Drive", [
+            'patron' => $patron,
+            'patrones_buscados' => $patrones,
+            'total_archivos' => count($files)
+        ]);
         return false;
     }
 
@@ -69,13 +99,42 @@ class AspiranteDocumentoService
     {
         $files = Storage::disk('google')->files('documentos_aspirantes');
 
+        // Crear variantes del patrón para manejar diferentes formatos
+        $patrones = [$patron];
+        
+        // Si el patrón tiene guiones bajos, crear versión con espacios
+        if (strpos($patron, '_') !== false) {
+            $patronConEspacios = str_replace('_', ' ', $patron);
+            $patrones[] = $patronConEspacios;
+        }
+        
+        // Si el patrón tiene espacios, crear versión con guiones bajos
+        if (strpos($patron, ' ') !== false) {
+            $patronConGuiones = str_replace(' ', '_', $patron);
+            $patrones[] = $patronConGuiones;
+        }
+
         foreach ($files as $file) {
             $fileName = basename($file);
-            if (strpos($fileName, $patron) === 0) {
-                return $file;
+            
+            // Buscar archivos que contengan cualquiera de los patrones
+            foreach ($patrones as $patronActual) {
+                if (strpos($fileName, $patronActual) !== false) {
+                    Log::info("Archivo encontrado para descarga", [
+                        'archivo' => $fileName,
+                        'patron_usado' => $patronActual,
+                        'patron_original' => $patron
+                    ]);
+                    return $file;
+                }
             }
         }
 
+        Log::warning("Archivo no encontrado para descarga", [
+            'patron' => $patron,
+            'patrones_buscados' => $patrones,
+            'total_archivos' => count($files)
+        ]);
         return null;
     }
 
