@@ -2,13 +2,7 @@
 
 @section('title', 'Registrar Devolución')
 
-@section('css')
-    <link href="{{ asset('css/parametros.css') }}" rel="stylesheet">
-@endsection
-
-@push('css')
-    @vite(['resources/css/inventario/shared/base.css'])
-@endpush
+@include('inventario._components.common-css')
 
 @section('content_header')
     <x-page-header
@@ -180,7 +174,8 @@
     {{-- Notificaciones manejadas globalmente por sweetalert2-notifications --}}
     
     {{-- Footer SENA --}}
-    @include('layouts.footer')
+@include('inventario._components.common-footer')
+@endsection
 @endsection
 
 @push('css')
@@ -193,13 +188,7 @@
 
 @section('title', 'Historial de Devoluciones')
 
-@section('css')
-    <link href="{{ asset('css/parametros.css') }}" rel="stylesheet">
-@endsection
-
-@push('css')
-    @vite(['resources/css/inventario/shared/base.css'])
-@endpush
+@include('inventario._components.common-css')
 
 @section('content_header')
     <x-page-header
@@ -338,7 +327,8 @@
     {{-- Notificaciones manejadas globalmente por sweetalert2-notifications --}}
     
     {{-- Footer SENA --}}
-    @include('layouts.footer')
+@include('inventario._components.common-footer')
+@endsection
 @endsection
 
 @push('css')
@@ -375,13 +365,7 @@
 
 @section('title', 'Préstamos Pendientes de Devolución')
 
-@section('css')
-    <link href="{{ asset('css/parametros.css') }}" rel="stylesheet">
-@endsection
-
-@push('css')
-    @vite(['resources/css/inventario/shared/base.css'])
-@endpush
+@include('inventario._components.common-css')
 
 @section('content_header')
     <x-page-header
@@ -507,7 +491,8 @@
     {{-- Notificaciones manejadas globalmente por sweetalert2-notifications --}}
     
     {{-- Footer SENA --}}
-    @include('layouts.footer')
+@include('inventario._components.common-footer')
+@endsection
 @endsection
 
 @push('css')
@@ -520,13 +505,7 @@
 
 @section('title', 'Detalle de Devolución')
 
-@section('css')
-    <link href="{{ asset('css/parametros.css') }}" rel="stylesheet">
-@endsection
-
-@push('css')
-    @vite(['resources/css/inventario/shared/base.css'])
-@endpush
+@include('inventario._components.common-css')
 
 @section('content_header')
     <x-page-header
@@ -697,7 +676,8 @@
     {{-- Notificaciones manejadas globalmente por sweetalert2-notifications --}}
     
     {{-- Footer SENA --}}
-    @include('layouts.footer')
+@include('inventario._components.common-footer')
+@endsection
 @endsection
 
 @push('css')

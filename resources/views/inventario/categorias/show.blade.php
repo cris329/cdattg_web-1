@@ -2,13 +2,7 @@
 
 @section('title', 'Registrar Categoría')
 
-@section('css')
-    <link href="{{ asset('css/parametros.css') }}" rel="stylesheet">
-@endsection
-
-@push('css')
-    @vite(['resources/css/inventario/shared/base.css'])
-@endpush
+@include('inventario._components.common-css')
 
 @section('content_header')
     <x-page-header
@@ -121,8 +115,7 @@
     </section>
 @endsection
 
-@section('footer')
-    @include('layouts.footer')
+@include('inventario._components.common-footer')
 @endsection
 
 
@@ -130,13 +123,7 @@
 
 @section('title', 'Editar Categoría')
 
-@section('css')
-    <link href="{{ asset('css/parametros.css') }}" rel="stylesheet">
-@endsection
-
-@push('css')
-    @vite(['resources/css/inventario/shared/base.css'])
-@endpush
+@include('inventario._components.common-css')
 
 @section('content_header')
     <x-page-header
@@ -250,8 +237,7 @@
     </section>
 @endsection
 
-@section('footer')
-    @include('layouts.footer')
+@include('inventario._components.common-footer')
 @endsection
 
 
@@ -260,13 +246,7 @@
 
 @section('title', 'Gestión de Categorías')
 
-@section('css')
-    <link href="{{ asset('css/parametros.css') }}" rel="stylesheet">
-@endsection
-
-@push('css')
-    @vite(['resources/css/inventario/shared/base.css'])
-@endpush
+@include('inventario._components.common-css')
 
 @section('content_header')
     <x-page-header
@@ -382,13 +362,7 @@
 
 @section('title', 'Ver Categoría')
 
-@section('css')
-    <link href="{{ asset('css/parametros.css') }}" rel="stylesheet">
-@endsection
-
-@push('css')
-    @vite(['resources/css/inventario/shared/base.css'])
-@endpush
+@include('inventario._components.common-css')
 
 @section('content_header')
     <x-page-header
@@ -555,8 +529,7 @@
     </section>
 @endsection
 
-@section('footer')
-    @include('layouts.footer')
+@include('inventario._components.common-footer')
 @endsection
 
 

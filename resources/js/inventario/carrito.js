@@ -56,7 +56,17 @@ function hideModal(elementId) {
         }
     } catch (error) {
         // Log silencioso - esto es normal si el modal no estaba abierto
-        console.debug('Modal no activo o error al cerrar:', elementId);
+        // Solo registrar si es un error inesperado (no relacionado con modal no inicializado)
+        const isExpectedError = error instanceof TypeError && 
+                                error.message && 
+                                (error.message.includes('Cannot read') || 
+                                 error.message.includes('null') ||
+                                 error.message.includes('undefined'));
+        
+        if (!isExpectedError) {
+            console.debug('Modal no activo o error al cerrar:', elementId, error);
+        }
+        // Error esperado: modal no inicializado o elemento no encontrado - no hacer nada
     }
 }
 
@@ -96,7 +106,11 @@ async function loadCartItems() {
 
     try {
         // Cargar detalles de todos los productos
-        await Promise.all(cart.map(item => loadProductDetails(item.id)));
+        const productPromises = [];
+        for (const item of cart) {
+            productPromises.push(loadProductDetails(item.id));
+        }
+        await Promise.all(productPromises);
 
         // Renderizar items
         renderCartItems();
@@ -130,8 +144,8 @@ async function loadProductDetails(productId) {
             image: doc.querySelector('.product-image-wrapper img')?.src || 
                    doc.querySelector('img[alt]')?.src || 
                    '/img/no-image.png',
-            stock: parseInt(doc.querySelector('.stat-card-value')?.textContent) || 
-                   parseInt(Array.from(doc.querySelectorAll('.badge')).find(el => el.textContent.includes('unidades'))?.textContent) || 0,
+            stock: Number.parseInt(doc.querySelector('.stat-card-value')?.textContent, 10) || 
+                   Number.parseInt(Array.from(doc.querySelectorAll('.badge')).find(el => el.textContent.includes('unidades'))?.textContent, 10) || 0,
             code: doc.querySelector('.badge-secondary')?.textContent.trim() || '',
             description: doc.querySelector('.card-text')?.textContent.trim() || ''
         };
@@ -153,7 +167,7 @@ function renderCartItems() {
 
     tbody.innerHTML = '';
 
-    cart.forEach((item, index) => {
+    for (const [index, item] of cart.entries()) {
         // Usar el nombre del item directamente, o cargar detalles si no existe
         const productName = item.name || (productsDetails[item.id]?.name || 'Producto desconocido');
         const product = productsDetails[item.id] || {};
@@ -218,7 +232,7 @@ function renderCartItems() {
         `;
 
         tbody.appendChild(row);
-    });
+    }
 
     // Reconfigurar event listeners
     setupQuantityControls();
@@ -229,37 +243,37 @@ function renderCartItems() {
  */
 function setupQuantityControls() {
     // Botones de disminuir
-    document.querySelectorAll('.btn-decrease').forEach(btn => {
+    for (const btn of document.querySelectorAll('.btn-decrease')) {
         btn.addEventListener('click', function() {
-            const index = parseInt(this.dataset.index);
+            const index = Number.parseInt(this.dataset.index, 10);
             decreaseQuantity(index);
         });
-    });
+    }
 
     // Botones de aumentar
-    document.querySelectorAll('.btn-increase').forEach(btn => {
+    for (const btn of document.querySelectorAll('.btn-increase')) {
         btn.addEventListener('click', function() {
-            const index = parseInt(this.dataset.index);
+            const index = Number.parseInt(this.dataset.index, 10);
             increaseQuantity(index);
         });
-    });
+    }
 
     // Inputs de cantidad
-    document.querySelectorAll('.quantity-input').forEach(input => {
+    for (const input of document.querySelectorAll('.quantity-input')) {
         input.addEventListener('change', function() {
-            const index = parseInt(this.dataset.index);
-            const newQuantity = parseInt(this.value);
+            const index = Number.parseInt(this.dataset.index, 10);
+            const newQuantity = Number.parseInt(this.value, 10);
             updateQuantity(index, newQuantity);
         });
-    });
+    }
 
     // Botones de eliminar
-    document.querySelectorAll('.btn-remove').forEach(btn => {
+    for (const btn of document.querySelectorAll('.btn-remove')) {
         btn.addEventListener('click', function() {
-            const index = parseInt(this.dataset.index);
+            const index = Number.parseInt(this.dataset.index, 10);
             removeItem(index);
         });
-    });
+    }
 }
 
 /**
@@ -383,9 +397,9 @@ function removeItem(index) {
         }
     });
 }
-
-
-// Confirmar vaciar todo el carrito
+/**
+ * Confirmar vaciar todo el carrito
+ */
 function confirmEmptyCart() {
     if (cart.length === 0) return;
 
@@ -458,7 +472,7 @@ function confirmOrder() {
     // Generar resumen
     let summaryHTML = '<table class="table table-sm"><tbody>';
     
-    cart.forEach(item => {
+    for (const item of cart) {
         const product = productsDetails[item.id];
         const productName = item.name || product?.name || 'Producto';
         summaryHTML += `
@@ -467,7 +481,7 @@ function confirmOrder() {
                 <td class="text-right">${item.quantity} unidades</td>
             </tr>
         `;
-    });
+    }
     
     summaryHTML += '</tbody></table>';
     
@@ -519,7 +533,7 @@ async function submitOrder() {
         updateCartSummary();
         
         // Redirigir a la vista de préstamo/salida
-        window.location.href = '/inventario/ordenes/prestamos-salidas?desde_carrito=true';
+        globalThis.location.href = '/inventario/ordenes/prestamos-salidas?desde_carrito=true';
         
     } catch (error) {
         console.error('Error:', error);
@@ -581,7 +595,7 @@ function showError(message) {
 }
 
 // Exportar funciones para uso externo
-window.inventarioCarrito = {
+globalThis.inventarioCarrito = {
     loadCartItems,
     updateCartSummary,
     confirmOrder,

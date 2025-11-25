@@ -2,13 +2,7 @@
 
 @section('title', 'Registrar Proveedor')
 
-@section('css')
-    <link href="{{ asset('css/parametros.css') }}" rel="stylesheet">
-@endsection
-
-@push('css')
-    @vite(['resources/css/inventario/shared/base.css'])
-@endpush
+@include('inventario._components.common-css')
 
 @section('content_header')
     <x-page-header
@@ -224,8 +218,7 @@
     </section>
 @endsection
 
-@section('footer')
-    @include('layouts.footer')
+@include('inventario._components.common-footer')
 @endsection
 
 @vite(['resources/js/inventario/filtro-departamento.js'])
@@ -250,13 +243,7 @@
 
 @section('title', 'Editar Proveedor')
 
-@section('css')
-    <link href="{{ asset('css/parametros.css') }}" rel="stylesheet">
-@endsection
-
-@push('css')
-    @vite(['resources/css/inventario/shared/base.css'])
-@endpush
+@include('inventario._components.common-css')
 
 @section('content_header')
     <x-page-header
@@ -476,8 +463,7 @@
     </section>
 @endsection
 
-@section('footer')
-    @include('layouts.footer')
+@include('inventario._components.common-footer')
 @endsection
 
 @push('scripts')
@@ -504,13 +490,7 @@
 
 @section('title', 'Gestión de Proveedores')
 
-@section('css')
-    <link href="{{ asset('css/parametros.css') }}" rel="stylesheet">
-@endsection
-
-@push('css')
-    @vite(['resources/css/inventario/shared/base.css'])
-@endpush
+@include('inventario._components.common-css')
 
 @section('content_header')
     <x-page-header
@@ -642,13 +622,7 @@
 
 @section('title', 'Ver Proveedor')
 
-@section('css')
-    <link href="{{ asset('css/parametros.css') }}" rel="stylesheet">
-@endsection
-
-@push('css')
-    @vite(['resources/css/inventario/shared/base.css'])
-@endpush
+@include('inventario._components.common-css')
 
 @section('content_header')
     <x-page-header
@@ -901,8 +875,7 @@
     </section>
 @endsection
 
-@section('footer')
-    @include('layouts.footer')
+@include('inventario._components.common-footer')
 @endsection
 
 

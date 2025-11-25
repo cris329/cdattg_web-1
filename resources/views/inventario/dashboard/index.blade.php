@@ -4,13 +4,7 @@
 
 @section('title', 'Dashboard de Inventario')
 
-@section('css')
-    <link href="{{ asset('css/parametros.css') }}" rel="stylesheet">
-@endsection
-
-@push('css')
-    @vite(['resources/css/inventario/shared/base.css'])
-@endpush
+@include('inventario._components.common-css')
 
 @section('content_header')
     <x-page-header
@@ -31,7 +25,6 @@
             @livewire(\App\Livewire\Inventario\DashboardInventario::class)
         </div>
     </section>
-
-    {{-- Footer SENA --}}
-    @include('layouts.footer')
 @endsection
+
+@include('inventario._components.common-footer')

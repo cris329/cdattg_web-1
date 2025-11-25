@@ -870,15 +870,11 @@
     {{-- Alertas --}}
     {{-- Notificaciones manejadas globalmente por sweetalert2-notifications --}}
     
-    {{-- Footer SENA --}}
-    @include('layouts.footer')
+@include('inventario._components.common-footer')
 @endsection
 
 @push('css')
-    @vite([
-        'resources/css/inventario/shared/base.css',
-        'resources/css/inventario/orden.css'
-    ])
+    @vite(['resources/css/inventario/orden.css'])
 @endpush
 
 @push('scripts')
