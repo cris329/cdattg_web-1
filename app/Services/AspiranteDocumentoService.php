@@ -45,6 +45,17 @@ class AspiranteDocumentoService
             $patrones[] = $patronConGuiones;
         }
 
+        // Crear patrón alternativo sin nombres (solo tipo_documento + numero_documento)
+        // Esto para manejar archivos subidos desde procesar-documentos
+        $patronSinNombres = $this->crearPatronSinNombres($patron);
+        if ($patronSinNombres) {
+            $patrones[] = $patronSinNombres;
+            
+            // También crear versión con espacios
+            $patronSinNombresConEspacios = str_replace('_', ' ', $patronSinNombres);
+            $patrones[] = $patronSinNombresConEspacios;
+        }
+
         foreach ($files as $file) {
             $fileName = basename($file);
             
@@ -75,6 +86,51 @@ class AspiranteDocumentoService
             'total_archivos' => count($files)
         ]);
         return false;
+    }
+
+    /**
+     * Crear patrón sin nombres para buscar archivos subidos desde procesar-documentos
+     * Extrae solo tipo_documento + numero_documento del patrón completo
+     */
+    private function crearPatronSinNombres(string $patron): ?string
+    {
+        // El patrón completo es: tipo_documento_numero_documento_primer_nombre_primer_apellido_
+        // Queremos extraer: tipo_documento_numero_documento_
+        
+        // Dividir por guiones bajos
+        $partes = explode('_', $patron);
+        
+        // Necesitamos al menos tipo_documento, numero_documento y nombres
+        if (count($partes) < 4) {
+            return null;
+        }
+        
+        // El tipo de documento puede tener múltiples partes (ej: CÉDULA_DE_CIUDADANÍA)
+        // Buscamos el número de documento (debe ser numérico)
+        $numeroDocumentoIndex = null;
+        for ($i = 0; $i < count($partes); $i++) {
+            if (is_numeric($partes[$i])) {
+                $numeroDocumentoIndex = $i;
+                break;
+            }
+        }
+        
+        if ($numeroDocumentoIndex === null) {
+            return null;
+        }
+        
+        // Reconstruir desde el inicio hasta el número de documento
+        $patronSinNombres = '';
+        for ($i = 0; $i <= $numeroDocumentoIndex; $i++) {
+            $patronSinNombres .= $partes[$i] . '_';
+        }
+        
+        Log::info("Patrón sin nombres creado", [
+            'patron_original' => $patron,
+            'patron_sin_nombres' => $patronSinNombres
+        ]);
+        
+        return $patronSinNombres;
     }
 
     /**
@@ -112,6 +168,17 @@ class AspiranteDocumentoService
         if (strpos($patron, ' ') !== false) {
             $patronConGuiones = str_replace(' ', '_', $patron);
             $patrones[] = $patronConGuiones;
+        }
+
+        // Crear patrón alternativo sin nombres (solo tipo_documento + numero_documento)
+        // Esto para manejar archivos subidos desde procesar-documentos
+        $patronSinNombres = $this->crearPatronSinNombres($patron);
+        if ($patronSinNombres) {
+            $patrones[] = $patronSinNombres;
+            
+            // También crear versión con espacios
+            $patronSinNombresConEspacios = str_replace('_', ' ', $patronSinNombres);
+            $patrones[] = $patronSinNombresConEspacios;
         }
 
         foreach ($files as $file) {
