@@ -15,6 +15,7 @@ Route::prefix('inventario')
             
         // Procesar préstamo/salida (POST)
         Route::post('ordenes/prestamos-salidas', [OrdenController::class, 'storePrestamos'])
+            ->middleware('inventario.stock')
             ->name('prestamos-salidas.store');
         
         // Rutas adicionales para órdenes
