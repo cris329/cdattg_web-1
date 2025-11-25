@@ -18,7 +18,6 @@ Route::prefix('inventario')
         
         // Rutas AJAX para funcionalidades e-commerce
         Route::post('productos/agregar-carrito', [ProductoController::class, 'agregarAlCarrito'])
-            ->middleware('inventario.stock')
             ->name('productos.agregar-carrito');
         
         Route::get('productos/buscar', [ProductoController::class, 'buscar'])

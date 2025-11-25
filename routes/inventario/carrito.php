@@ -13,11 +13,9 @@ Route::prefix('inventario')
         
         // Rutas AJAX para funcionalidad del carrito
         Route::post('carrito/agregar', [CarritoController::class, 'agregar'])
-            ->middleware('inventario.stock')
             ->name('agregar');
         
         Route::put('carrito/actualizar/{id}', [CarritoController::class, 'actualizar'])
-            ->middleware('inventario.stock')
             ->name('actualizar');
         
         Route::delete('carrito/eliminar/{id}', [CarritoController::class, 'eliminar'])->name('eliminar');
