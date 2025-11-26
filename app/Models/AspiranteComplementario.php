@@ -62,8 +62,9 @@ class AspiranteComplementario extends Model
     {
         return match($this->estado) {
             1 => 'En proceso',
-            2 => 'Rechazado',
+            2 => 'Completo',
             3 => 'Admitido',
+            4 => 'Rechazado',
             default => 'Desconocido'
         };
     }

@@ -475,8 +475,8 @@ class AspiranteComplementarioController extends Controller
             $personaNombre = $aspirante->persona->primer_nombre . ' ' . $aspirante->persona->primer_apellido;
             $numeroDocumento = $aspirante->persona->numero_documento;
 
-            // Cambiar el estado a rechazado (2) en lugar de eliminar
-            $aspirante->estado = 2;
+            // Cambiar el estado a rechazado (4) en lugar de eliminar
+            $aspirante->estado = 4;
             $aspirante->save();
 
             Log::info('Aspirante rechazado exitosamente', [

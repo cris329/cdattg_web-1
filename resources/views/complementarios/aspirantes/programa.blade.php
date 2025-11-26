@@ -24,7 +24,8 @@
         $totalAspirantes = $aspirantes->count();
         $enProceso = $aspirantes->where('estado', 1)->count();
         $aceptados = $aspirantes->where('estado', 3)->count();
-        $rechazados = $aspirantes->where('estado', 2)->count();
+        $completos = $aspirantes->where('estado', 2)->count();
+        $rechazados = $aspirantes->where('estado', 4)->count();
         $conDocumento = $aspirantes->filter(fn($a) => $a->persona->condocumento == 1)->count();
     @endphp
 
@@ -84,8 +85,8 @@
                         </div>
                         <div class="col-6">
                             <div class="border rounded p-2 bg-light">
-                                <div class="h4 mb-0 text-danger font-weight-bold">{{ $rechazados }}</div>
-                                <small class="text-muted">Rechazados</small>
+                                <div class="h4 mb-0 text-info font-weight-bold">{{ $completos }}</div>
+                                <small class="text-muted">Completos</small>
                             </div>
                         </div>
                     </div>
@@ -178,7 +179,8 @@
                         <option value="">Todos los estados</option>
                         <option value="1">En Proceso</option>
                         <option value="3">Aceptados</option>
-                        <option value="2">Rechazados</option>
+                        <option value="2">Completos</option>
+                        <option value="4">Rechazados</option>
                     </select>
                 </div>
                 <div class="col-md-2 mb-3 mb-md-0">
@@ -257,12 +259,16 @@
                                         <i class="fas fa-clock mr-1"></i>EN PROCESO
                                     </span>
                                 @elseif($aspirante->estado == 2)
-                                    <span class="badge bg-danger">
-                                        <i class="fas fa-times-circle mr-1"></i>RECHAZADO
+                                    <span class="badge bg-info">
+                                        <i class="fas fa-file-check mr-1"></i>COMPLETO
                                     </span>
                                 @elseif($aspirante->estado == 3)
                                     <span class="badge bg-success">
                                         <i class="fas fa-check-circle mr-1"></i>ACEPTADO
+                                    </span>
+                                @elseif($aspirante->estado == 4)
+                                    <span class="badge bg-danger">
+                                        <i class="fas fa-times-circle mr-1"></i>RECHAZADO
                                     </span>
                                 @else
                                     <span class="badge bg-secondary">DESCONOCIDO</span>

@@ -70,7 +70,7 @@ class InscripcionComplementarioController extends Controller
             'fecha_nacimiento' => [
                 'required',
                 'date',
-                function ($value, $fail) {
+                function ($attribute, $value, $fail) {
                     if (empty($value)) {
                         return;
                     }
@@ -266,7 +266,7 @@ class InscripcionComplementarioController extends Controller
             }
 
             if ($response === null) {
-                \Log::error('Error al procesar inscripción', [
+                Log::error('Error al procesar inscripción', [
                     'error' => $e->getMessage(),
                     'trace' => $e->getTraceAsString(),
                     'programa_id' => $id,
@@ -311,7 +311,7 @@ class InscripcionComplementarioController extends Controller
             'fecha_nacimiento' => [
                 'required',
                 'date',
-                function ($value, $fail) {
+                function ($attribute, $value, $fail) {
                     if (empty($value)) {
                         return;
                     }
@@ -524,7 +524,7 @@ class InscripcionComplementarioController extends Controller
                 $aspirante->update([
                     'documento_identidad_path' => $path,
                     'documento_identidad_nombre' => $fileName,
-                    'estado' => 2, // Estado "Completo"
+                    'estado' => 1, // Estado "En proceso" - siempre se mantiene en proceso
                 ]);
             } else {
                 throw new \InvalidArgumentException('No se encontró el archivo de documento de identidad');
