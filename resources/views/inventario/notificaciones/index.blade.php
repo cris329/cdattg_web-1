@@ -246,8 +246,6 @@
 @endsection
 
 @include('inventario._components.common-footer')
-@endsection
-
 
 @section('js')
 <!-- SweetAlert2 -->

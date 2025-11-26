@@ -238,6 +238,7 @@
         "
     >
         <div 
+            id="product-detail-modal-content"
             style="
                 background:white;
                 border-radius:8px;
@@ -247,6 +248,7 @@
                 overflow-y:auto;
                 box-shadow:0 4px 20px rgba(0,0,0,0.3);
             "
+            onclick="event.stopPropagation()"
         >
             <!-- Header -->
             <div 
@@ -290,6 +292,10 @@
     
     {{-- Alertas --}}
     {{-- Notificaciones manejadas globalmente por sweetalert2-notifications --}}
+@endsection
+
+@section('js')
+    @vite(['resources/js/inventario/card.js'])
 @endsection
 
 @section('footer')

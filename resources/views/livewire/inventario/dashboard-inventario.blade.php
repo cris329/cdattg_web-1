@@ -6,12 +6,12 @@
                     type="button" 
                     class="btn btn-sm btn-primary"
                     wire:click="refrescar"
-                    wire:loading.attr="disabled"
                 >
-                    <i class="fas fa-sync-alt" wire:loading.class="fa-spin"></i>
-                    <span wire:loading.remove>Refrescar</span>
-                    <span wire:loading>Cargando...</span>
+                    <i class="fas fa-sync-alt"></i> Refrescar
                 </button>
+                <span class="ml-2 text-muted small">
+                    <i class="fas fa-info-circle"></i> Los datos se actualizan automáticamente
+                </span>
             </div>
         </div>
 

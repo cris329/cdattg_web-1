@@ -153,6 +153,13 @@ function setupSortFilter() {
 }
 
 /**
+ * Manejar cambio de filtros (alias para applyFilters)
+ */
+function handleFiltersChange() {
+    applyFilters();
+}
+
+/**
  * Aplicar filtros mediante redirección con parámetros GET
  */
 function applyFilters() {

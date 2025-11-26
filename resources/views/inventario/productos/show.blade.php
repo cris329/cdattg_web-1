@@ -1,298 +1,326 @@
 @extends('inventario.layouts.base')
 
-@section('title', 'Catálogo de Productos')
+@section('title', 'Ver Producto')
+
+@section('css')
+    <link href="{{ asset('css/parametros.css') }}" rel="stylesheet">
+@endsection
+
+@push('css')
+    @vite(['resources/css/inventario/shared/base.css'])
+@endpush
 
 @section('content_header')
-    <div class="d-flex justify-content-between align-items-center">
-        <div>
-            <h1 class="m-0 text-dark">
-                <i class="fas fa-store"></i> Catálogo de Productos
-            </h1>
-            <small class="text-muted">Vista moderna de productos disponibles</small>
-        </div>
-        <div>
-            <a href="{{ route('inventario.carrito.ecommerce') }}" class="btn btn-primary">
-                <i class="fas fa-shopping-cart"></i> Ver Carrito 
-                <span class="badge badge-light" id="cart-count">0</span>
-            </a>
-        </div>
-    </div>
+    <x-page-header icon="fas fa-eye" title="Ver Producto" subtitle="Detalles del producto" :breadcrumb="[
+        ['label' => 'Inicio', 'url' => '#'],
+        ['label' => 'Inventario', 'active' => true],
+        ['label' => 'Productos', 'url' => route('inventario.productos.index')],
+        ['label' => $producto->producto, 'active' => true],
+    ]" />
 @endsection
 
 @section('content')
-    <section class="content">
-        <div class="container-fluid">
-            {{-- Filtros y búsqueda --}}
-            <div class="row mb-4">
-                <div class="col-12">
-                    <div class="card">
-                        <div class="card-body">
-                            <div class="row">
-                                <div class="col-md-5">
-                                    <div class="form-group">
-                                        <label for="search-product">
-                                            <i class="fas fa-search"></i> Buscar Producto
-                                        </label>
-                                        <input 
-                                            type="text" 
-                                            id="search-product" 
-                                            class="form-control" 
-                                            placeholder="Buscar por nombre..."
-                                            value="{{ request('search') }}"
-                                        >
-                                    </div>
+    <div class="product-details-container fade-in">
+        {{-- Alertas --}}
+        @include('components.session-alerts')
+
+        {{-- Botón Volver --}}
+        <div class="mb-3">
+            <a href="{{ route('inventario.productos.index') }}" class="btn-action btn-action-secondary">
+                <i class="fas fa-arrow-left"></i>
+                Volver al Listado
+            </a>
+        </div>
+
+        <div class="row">
+            {{-- Columna de Imagen --}}
+            <div class="col-lg-4 col-md-5">
+                <div class="product-image-card slide-in">
+                    <h5 class="font-weight-bold mb-3 text-gradient">
+                        <i class="fas fa-image"></i> Imagen del Producto
+                    </h5>
+                    <div class="product-image-wrapper">
+                        <img src="{{ $producto->imagen ? asset($producto->imagen) : asset('public/img/inventario/producto-default.png') }}"
+                            alt="{{ $producto->producto }}" class="img-fluid" style="cursor: pointer;"
+                            onclick="$('#imageModal').modal('show'); $('#expandedImage').attr('src', this.src);">
+                    </div>
+
+                    {{-- Estadísticas Rápidas --}}
+                    <div class="stats-grid mt-4">
+                        <div
+                            class="stat-card stat-{{ $producto->cantidad <= 5 ? 'danger' : ($producto->cantidad <= 10 ? 'warning' : 'success') }}">
+                            <div class="stat-card-header">
+                                <div class="stat-card-icon">
+                                    <i class="fas fa-boxes"></i>
                                 </div>
-                                <div class="col-md-4">
-                                    <div class="form-group">
-                                        <label for="filter-type">
-                                            <i class="fas fa-box-open"></i> Tipo de producto
-                                        </label>
-                                        <select
-                                            id="filter-type"
-                                            name="filter-type"
-                                            class="form-control select2"
-                                            data-placeholder="Todos los tipos"
-                                        >
-                                            <option value="">Todos los tipos</option>
-                                            @foreach($tiposProductos as $tipoProducto)
-                                                <option value="{{ $tipoProducto->id }}" 
-                                                    {{ request('tipo_producto_id') == $tipoProducto->id ? 'selected' : '' }}>
-                                                    {{ $tipoProducto->parametro->name }}
-                                                </option>
-                                            @endforeach
-                                        </select>
-                                    </div>
-                                </div>
-                                <div class="col-md-3">
-                                    <div class="form-group">
-                                        <label for="sort-by">
-                                            <i class="fas fa-sort"></i> Ordenar por
-                                        </label>
-                                        <select 
-                                            id="sort-by" 
-                                            class="form-control"
-                                        >
-                                            <option value="name" {{ request('sort_by', 'name') == 'name' ? 'selected' : '' }}>Nombre</option>
-                                            <option value="stock-asc" {{ request('sort_by') == 'stock-asc' ? 'selected' : '' }}>Stock Menor</option>
-                                            <option value="stock-desc" {{ request('sort_by') == 'stock-desc' ? 'selected' : '' }}>Stock Mayor</option>
-                                            <option value="newest" {{ request('sort_by') == 'newest' ? 'selected' : '' }}>Más Recientes</option>
-                                        </select>
-                                    </div>
+                                <div>
+                                    <div class="stat-card-label">Stock</div>
+                                    <div class="stat-card-value">{{ $producto->cantidad }}</div>
                                 </div>
                             </div>
                         </div>
                     </div>
                 </div>
+
+                {{-- Widget del Carrito --}}
+                @can('AGREGAR AL CARRITO')
+                    <div class="card-gradient mt-3 slide-in">
+                        <div class="card-gradient-header" style="background: var(--success-gradient)">
+                            <i class="fas fa-shopping-cart"></i>
+                            Agregar al Carrito
+                        </div>
+                        <div class="card-gradient-body">
+                            @include('inventario._components.cart-widget', ['producto' => $producto])
+                        </div>
+                    </div>
+                @endcan
             </div>
 
-            {{-- Grid de productos --}}
-            <div class="row" id="products-grid">
-                @forelse($productos as $producto)
-                    <div class="col-lg-3 col-md-4 col-sm-6 mb-4 product-card" 
-                         data-id="{{ $producto->id }}"
-                         data-type="{{ $producto->tipo_producto_id }}"
-                         data-name="{{ strtolower($producto->producto) }}"
-                         data-code="{{ strtolower($producto->codigo_barras) }}">
-                        <div class="card h-100 shadow-sm hover-shadow">
-                            {{-- Imagen del producto --}}
-                            <div class="product-image-container">
-                                @if($producto->imagen)
-                                    <img src="{{ asset($producto->imagen) }}" 
-                                         class="card-img-top product-image" 
-                                         alt="{{ $producto->producto }}"
-                                @else
-                                    <div class="no-image-placeholder">
-                                        <i class="fas fa-box fa-4x text-muted"></i>
-                                        <p class="text-muted mt-2">Sin imagen</p>
+            {{-- Columna de Información --}}
+            <div class="col-lg-8 col-md-7">
+                <div class="product-info-card slide-in">
+                    <div class="card-gradient-header">
+                        <i class="fas fa-info-circle"></i>
+                        Información del Producto
+                    </div>
+                    <div class="card-gradient-body p-0">
+                        <ul class="product-info-list">
+                            <li>
+                                <i class="fas fa-tag"></i>
+                                <strong>Producto:</strong>
+                                <span>{{ $producto->producto }}</span>
+                            </li>
+
+                            <li>
+                                <i class="fas fa-cubes"></i>
+                                <strong>Tipo:</strong>
+                                <span>{{ $producto->tipoProducto->parametro->name ?? 'N/A' }}</span>
+                            </li>
+
+                            <li>
+                                <i class="fas fa-align-left"></i>
+                                <strong>Descripción:</strong>
+                                <span>{{ $producto->descripcion ?? 'Sin descripción' }}</span>
+                            </li>
+
+                            <li>
+                                <i class="fas fa-weight"></i>
+                                <strong>Magnitud:</strong>
+                                <span>{{ $producto->peso }} {{ $producto->unidadMedida->parametro->name ?? '' }}</span>
+                            </li>
+
+                            <li>
+                                <i class="fas fa-barcode"></i>
+                                <strong>Código de Barras:</strong>
+                                <span class="badge-modern badge-secondary">{{ $producto->codigo_barras }}</span>
+                                @if ($producto->codigo_barras)
+                                    <div class="mt-2">
+                                        <svg id="barcode-show" style="width:100%"></svg>
+                                        <div class="mt-1">
+                                            <a target="_blank" class="btn btn-xs btn-outline-primary"
+                                                href="{{ route('inventario.productos.etiqueta', $producto->id) }}">
+                                                <i class="fas fa-print"></i> Imprimir etiqueta
+                                            </a>
+                                        </div>
                                     </div>
                                 @endif
-                                
-                                {{-- Badge de stock --}}
-                                @php
-                                    $stockClass = 'success';
-                                    if ($producto->cantidad <= 0) {
-                                        $stockClass = 'danger';
-                                    } elseif ($producto->cantidad <= 5) {
-                                        $stockClass = 'warning';
-                                    }
-                                @endphp
-                                <span class="badge stock-badge stock-badge-{{ $stockClass }}">
+                            </li>
+
+                            <li>
+                                <i class="fas fa-check-circle"></i>
+                                <strong>Estado:</strong>
+                                <span
+                                    class="badge-modern {{ $producto->estado->parametro->name === 'DISPONIBLE' ? 'badge-success' : 'badge-warning' }}">
+                                    {{ $producto->estado->parametro->name ?? 'N/A' }}
                                 </span>
+                            </li>
+
+                            <li>
+                                <i class="fas fa-folder"></i>
+                                <strong>Categoría:</strong>
+                                <span class="badge-modern badge-info">
+                                    <i class="fas fa-tag"></i>
+                                    {{ $producto->categoria->name ?? 'N/A' }}
+                                </span>
+                            </li>
+
+                            <li>
+                                <i class="fas fa-copyright"></i>
+                                <strong>Marca:</strong>
+                                <span class="badge-modern badge-dark">
+                                    {{ $producto->marca->name ?? 'N/A' }}
+                                </span>
+                            </li>
+
+                            <li>
+                                <i class="fas fa-building"></i>
+                                <strong>Ambiente:</strong>
+                                <span>{{ $producto->ambiente->title ?? 'N/A' }}</span>
+                            </li>
+
+                            <li>
+                                <i class="fas fa-file-contract"></i>
+                                <strong>Contrato/Convenio:</strong>
+                                <span>{{ $producto->contratoConvenio->name ?? 'N/A' }}</span>
+                            </li>
+
+                            <li>
+                                <i class="fas fa-truck"></i>
+                                <strong>Proveedor:</strong>
+                                <span>{{ $producto->proveedor->proveedor ?? 'N/A' }}</span>
+                            </li>
+
+
+                            <li>
+                                <i class="fas fa-calendar-times"></i>
+                                <strong>Fecha de Vencimiento:</strong>
+                                <span>{{ $producto->fecha_vencimiento ? $producto->fecha_vencimiento->format('d/m/Y') : 'Sin fecha' }}</span>
+                            </li>
+
+                            <li>
+                                <i class="fas fa-calendar-plus"></i>
+                                <strong>Fecha de Registro:</strong>
+                                <span>{{ $producto->created_at->format('d/m/Y H:i') }}</span>
+                            </li>
+
+                            @if ($producto->updated_at != $producto->created_at)
+                                <li>
+                                    <i class="fas fa-calendar-edit"></i>
+                                    <strong>Última Actualización:</strong>
+                                    <span>{{ $producto->updated_at->format('d/m/Y H:i') }}</span>
+                                </li>
+                            @endif
+
+                            @if ($producto->userCreate)
+                                <li>
+                                    <i class="fas fa-user"></i>
+                                    <strong>Creado por:</strong>
+                                    <span>{{ $producto->userCreate->name }}</span>
+                                </li>
+                            @endif
+                        </ul>
+                    </div>
+                </div>
+
+                {{-- Estadísticas Adicionales --}}
+                <div class="stats-grid mt-4">
+                    <div
+                        class="stat-card stat-{{ $producto->cantidad <= 5 ? 'danger' : ($producto->cantidad <= 10 ? 'warning' : 'success') }}">
+                        <div class="stat-card-header">
+                            <div class="stat-card-icon">
+                                <i class="fas fa-warehouse"></i>
                             </div>
-                            <div class="card-body d-flex flex-column">
-                                {{-- Categoría y marca --}}
-                                <div class="mb-2">
-                                    @if($producto->tipoProducto && $producto->tipoProducto->parametro)
-                                        <small class="text-muted d-block">
-                                            <i class="fas fa-box-open"></i> {{ $producto->tipoProducto->parametro->name }}
-                                        </small>
-                                    @endif
-                                    <small class="text-muted">
-                                        <i class="fas fa-tag"></i> {{ $producto->categoria->name ?? 'Sin categoría' }}
-                                    </small>
-                                    @if($producto->marca)
-                                        <br>
-                                        <small class="text-muted">
-                                            <i class="fas fa-copyright"></i> {{ $producto->marca->name }}
-                                        </small>
-                                    @endif
-                                </div>
+                            <div>
+                                <div class="stat-card-label">Inventario</div>
+                                <div class="stat-card-value">{{ $producto->cantidad }} unidades</div>
+                            </div>
+                        </div>
+                    </div>
 
-                                {{-- Nombre del producto --}}
-                                <h5 class="card-title font-weight-bold mb-2">
-                                    {{ Str::limit($producto->producto, 50) }}
-                                </h5>
-
-                                {{-- Descripción --}}
-                                <p class="card-text text-muted small flex-grow-1">
-                                    {{ Str::limit($producto->descripcion, 80) ?? 'Sin descripción disponible' }}
-                                </p>
-
-                                {{-- Código de barras --}}
-                                <div class="mb-2">
-                                    <small class="text-muted">
-                                        <i class="fas fa-barcode"></i> 
-                                        <span class="badge badge-secondary">{{ $producto->codigo_barras }}</span>
-                                    </small>
-                                </div>
-
-                                {{-- Stock disponible --}}
-                                <div class="mb-3">
-                                    <strong>Stock: </strong>
-                                    <span class="badge badge-{{ $stockClass }}">
-                                        {{ $producto->cantidad }} unidades
-                                    </span>
-                                </div>
-
-                                {{-- Acciones --}}
-                                <div class="btn-group d-flex" role="group">
-                                    <button type="button" 
-                                            class="btn btn-sm btn-info btn-view-details w-50"
-                                            data-id="{{ $producto->id }}"
-                                            title="Ver detalles">
-                                        <i class="fas fa-eye"></i> Detalles
-                                    </button>
-                                    @if($producto->cantidad > 0)
-                                        <button type="button" 
-                                                class="btn btn-sm btn-success btn-add-to-cart w-50"
-                                                data-id="{{ $producto->id }}"
-                                                data-name="{{ $producto->producto }}"
-                                                data-stock="{{ $producto->cantidad }}"
-                                                title="Agregar al carrito">
-                                            <i class="fas fa-cart-plus"></i> Agregar
-                                        </button>
-                                    @else
-                                        <button type="button" class="btn btn-sm btn-secondary w-50" disabled>
-                                            <i class="fas fa-ban"></i> Agotado
-                                        </button>
-                                    @endif
+                    <div class="stat-card stat-info">
+                        <div class="stat-card-header">
+                            <div class="stat-card-icon">
+                                <i class="fas fa-calendar-day"></i>
+                            </div>
+                            <div>
+                                <div class="stat-card-label">Registro</div>
+                                <div class="stat-card-value" style="font-size: 1.25rem;">
+                                    {{ $producto->created_at->diffForHumans() }}
                                 </div>
                             </div>
                         </div>
                     </div>
-                @empty
-                    <div class="col-12">
-                        <div class="alert alert-info text-center">
-                            <i class="fas fa-info-circle fa-3x mb-3"></i>
-                            <h5>No hay productos disponibles</h5>
-                            <p>Actualmente no hay productos en el catálogo.</p>
+
+                    <div
+                        class="stat-card stat-{{ $producto->estado->parametro->name === 'DISPONIBLE' ? 'success' : 'warning' }}">
+                        <div class="stat-card-header">
+                            <div class="stat-card-icon">
+                                <i class="fas fa-toggle-on"></i>
+                            </div>
+                            <div>
+                                <div class="stat-card-label">Estado</div>
+                                <div class="stat-card-value" style="font-size: 1rem;">
+                                    {{ $producto->estado->parametro->name ?? 'N/A' }}
+                                </div>
+                            </div>
                         </div>
                     </div>
-                @endforelse
-            </div>
-
-            {{-- Paginación --}}
-            <div class="row">
-                <div class="col-12 d-flex justify-content-center" id="catalog-pagination">
-                    {{ $productos->links() }}
                 </div>
-            </div>
 
-            {{-- Mensaje cuando no hay resultados de búsqueda --}}
-            <div class="row d-none" id="no-results">
-                <div class="col-12">
-                    <div class="alert alert-warning text-center">
-                        <i class="fas fa-search fa-3x mb-3"></i>
-                        <h5>No se encontraron resultados</h5>
-                        <p>Intenta con otros términos de búsqueda o filtros.</p>
-                    </div>
-                </div>
-            </div>
-        </div>
-    </section>
+                {{-- Botones de Acción --}}
+                <div class="action-buttons-container">
+                    @can('EDITAR PRODUCTO')
+                        <a href="{{ route('inventario.productos.edit', $producto->id) }}"
+                            class="btn-action btn-action-primary">
+                            <i class="fas fa-edit"></i>
+                            Editar Producto
+                        </a>
+                    @endcan
 
-    {{-- Modal simple de detalles del producto --}}
-    <div 
-        id="productDetailModal" 
-        style="
-            display:none;
-            position:fixed;
-            top:0;
-            left:0;
-            width:100%;
-            height:100%;
-            background:rgba(0,0,0,0.5);
-            z-index:9999;
-            align-items:center;
-            justify-content:center;
-        "
-    >
-        <div 
-            style="
-                background:white;
-                border-radius:8px;
-                width:90%;
-                max-width:600px;
-                max-height:90vh;
-                overflow-y:auto;
-                box-shadow:0 4px 20px rgba(0,0,0,0.3);
-            "
-        >
-            <!-- Header -->
-            <div 
-                style="
-                    padding:20px;
-                    background:#17a2b8;
-                    color:white;
-                    display:flex;
-                    justify-content:space-between;
-                    align-items:center;
-                    border-radius:8px 8px 0 0;
-                "
-            >
-                <h5 style="margin:0; font-size:18px;">
-                    <i class="fas fa-box"></i> Detalles del Producto
-                </h5>
-                <button 
-                    onclick="closeProductModal()" 
-                    aria-label="Cerrar" 
-                    style="
-                        background:none;
-                        border:none;
-                        color:white;
-                        font-size:24px;
-                        cursor:pointer;
-                    "
-                >
-                    &times;
-                </button>
-            </div>
-            
-            <!-- Body -->
-            <div id="product-detail-content" style="padding:20px;">
-                <div style="text-align:center;">
-                    <i class="fas fa-spinner fa-spin fa-3x"></i>
-                    <p>Cargando detalles...</p>
+                    @can('ELIMINAR PRODUCTO')
+                        <form action="{{ route('inventario.productos.destroy', $producto->id) }}" method="POST"
+                            class="d-inline formulario-eliminar">
+                            @csrf
+                            @method('DELETE')
+                            <button type="submit" class="btn-action btn-action-danger">
+                                <i class="fas fa-trash"></i>
+                                Eliminar Producto
+                            </button>
+                        </form>
+                    @endcan
                 </div>
             </div>
         </div>
     </div>
-    
-    {{-- Alertas --}}
-    {{-- Notificaciones manejadas globalmente por sweetalert2-notifications --}}
+
+    {{-- Modal para imagen expandida --}}
+    @include('inventario._components.image-modal')
 @endsection
 
 @section('footer')
-    {{-- Footer SENA --}}
-@include('inventario._components.common-footer')
+    @include('inventario._components.common-footer')
+@endsection
 
+@push('css')
+    @vite(['resources/css/inventario/shared/base.css', 'resources/css/inventario/inventario.css', 'resources/css/inventario/imagen.css'])
+@endpush
+
+@push('js')
+    @vite('resources/js/inventario/imagen.js')
+    <script src="https://cdn.jsdelivr.net/npm/jsbarcode@3.11.6/dist/JsBarcode.all.min.js"></script>
+    <script>
+        // Confirmación de eliminación
+        document.querySelectorAll('.formulario-eliminar').forEach(form => {
+            form.addEventListener('submit', function(e) {
+                e.preventDefault();
+                Swal.fire({
+                    title: '¿Estás seguro?',
+                    text: "Esta acción no se puede deshacer",
+                    icon: 'warning',
+                    showCancelButton: true,
+                    confirmButtonColor: '#eb3349',
+                    cancelButtonColor: '#6c757d',
+                    confirmButtonText: 'Sí, eliminar',
+                    cancelButtonText: 'Cancelar',
+                    customClass: {
+                        popup: 'modal-imagen-custom'
+                    }
+                }).then((result) => {
+                    if (result.isConfirmed) {
+                        this.submit();
+                    }
+                });
+            });
+        });
+
+        // Render del código de barras
+        @if ($producto->codigo_barras)
+            JsBarcode("#barcode-show", "{{ $producto->codigo_barras }}", {
+                format: "code128",
+                width: 2,
+                height: 60,
+                displayValue: false
+            });
+        @endif
+    </script>
+@endpush

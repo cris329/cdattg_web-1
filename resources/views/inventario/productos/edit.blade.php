@@ -1,298 +1,492 @@
 @extends('inventario.layouts.base')
 
-@section('title', 'Catálogo de Productos')
+@section('title', 'Editar Producto')
+
+@section('css')
+    <link href="{{ asset('css/parametros.css') }}" rel="stylesheet">
+@endsection
+
+@push('css')
+    @vite([
+        'resources/css/inventario/shared/base.css',
+        'resources/css/inventario/inventario.css',
+        'resources/css/inventario/imagen.css',
+    ])
+@endpush
 
 @section('content_header')
-    <div class="d-flex justify-content-between align-items-center">
-        <div>
-            <h1 class="m-0 text-dark">
-                <i class="fas fa-store"></i> Catálogo de Productos
-            </h1>
-            <small class="text-muted">Vista moderna de productos disponibles</small>
-        </div>
-        <div>
-            <a href="{{ route('inventario.carrito.ecommerce') }}" class="btn btn-primary">
-                <i class="fas fa-shopping-cart"></i> Ver Carrito 
-                <span class="badge badge-light" id="cart-count">0</span>
-            </a>
-        </div>
-    </div>
+    <x-page-header
+        icon="fas fa-edit"
+        title="Editar Producto"
+        subtitle="Modificar información del producto"
+        :breadcrumb="[
+            ['label' => 'Inicio', 'url' => '#'],
+            ['label' => 'Inventario', 'active' => true],
+            ['label' => 'Productos', 'url' => route('inventario.productos.index')],
+            ['label' => 'Editar', 'active' => true]
+        ]"
+    />
 @endsection
 
 @section('content')
-    <section class="content">
-        <div class="container-fluid">
-            {{-- Filtros y búsqueda --}}
-            <div class="row mb-4">
-                <div class="col-12">
-                    <div class="card">
-                        <div class="card-body">
-                            <div class="row">
-                                <div class="col-md-5">
-                                    <div class="form-group">
-                                        <label for="search-product">
-                                            <i class="fas fa-search"></i> Buscar Producto
-                                        </label>
-                                        <input 
-                                            type="text" 
-                                            id="search-product" 
-                                            class="form-control" 
-                                            placeholder="Buscar por nombre..."
-                                            value="{{ request('search') }}"
-                                        >
-                                    </div>
-                                </div>
-                                <div class="col-md-4">
-                                    <div class="form-group">
-                                        <label for="filter-type">
-                                            <i class="fas fa-box-open"></i> Tipo de producto
-                                        </label>
-                                        <select
-                                            id="filter-type"
-                                            name="filter-type"
-                                            class="form-control select2"
-                                            data-placeholder="Todos los tipos"
-                                        >
-                                            <option value="">Todos los tipos</option>
-                                            @foreach($tiposProductos as $tipoProducto)
-                                                <option value="{{ $tipoProducto->id }}" 
-                                                    {{ request('tipo_producto_id') == $tipoProducto->id ? 'selected' : '' }}>
-                                                    {{ $tipoProducto->parametro->name }}
-                                                </option>
-                                            @endforeach
-                                        </select>
-                                    </div>
-                                </div>
-                                <div class="col-md-3">
-                                    <div class="form-group">
-                                        <label for="sort-by">
-                                            <i class="fas fa-sort"></i> Ordenar por
-                                        </label>
-                                        <select 
-                                            id="sort-by" 
-                                            class="form-control"
-                                        >
-                                            <option value="name" {{ request('sort_by', 'name') == 'name' ? 'selected' : '' }}>Nombre</option>
-                                            <option value="stock-asc" {{ request('sort_by') == 'stock-asc' ? 'selected' : '' }}>Stock Menor</option>
-                                            <option value="stock-desc" {{ request('sort_by') == 'stock-desc' ? 'selected' : '' }}>Stock Mayor</option>
-                                            <option value="newest" {{ request('sort_by') == 'newest' ? 'selected' : '' }}>Más Recientes</option>
-                                        </select>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
+    <div class="producto-form-container fade-in">
+        {{-- Alertas --}}
+        @include('components.session-alerts')
+
+        <div class="row">
+            {{-- Columna de Imagen --}}
+            <div class="col-lg-4 col-md-5">
+                <div class="image-preview-container slide-in">
+                    <div class="image-preview-box">
+                        <img
+                            id="preview"
+                            src="{{ $producto->imagen ? asset($producto->imagen) : asset('img/no-image.png') }}"
+                            alt="Vista previa"
+                            style="cursor: pointer;"
+                            data-toggle="modal"
+                            data-target="#imageModal"
+                        >
+                    </div>
+                    <div class="image-upload-area">
+                        <label class="image-upload-btn">
+                            <i class="fas fa-cloud-upload-alt"></i>
+                            <span>Cambiar Imagen</span>
+                            <input
+                                type="file"
+                                name="imagen"
+                                id="imagen"
+                                accept="image/*"
+                            >
+                        </label>
+                        <p class="text-muted mt-2 mb-0" style="font-size: 0.85rem;">
+                            <i class="fas fa-info-circle"></i> JPG, PNG (máx. 2MB)
+                        </p>
                     </div>
                 </div>
             </div>
 
-            {{-- Grid de productos --}}
-            <div class="row" id="products-grid">
-                @forelse($productos as $producto)
-                    <div class="col-lg-3 col-md-4 col-sm-6 mb-4 product-card" 
-                         data-id="{{ $producto->id }}"
-                         data-type="{{ $producto->tipo_producto_id }}"
-                         data-name="{{ strtolower($producto->producto) }}"
-                         data-code="{{ strtolower($producto->codigo_barras) }}">
-                        <div class="card h-100 shadow-sm hover-shadow">
-                            {{-- Imagen del producto --}}
-                            <div class="product-image-container">
-                                @if($producto->imagen)
-                                    <img src="{{ asset($producto->imagen) }}" 
-                                         class="card-img-top product-image" 
-                                         alt="{{ $producto->producto }}"
-                                @else
-                                    <div class="no-image-placeholder">
-                                        <i class="fas fa-box fa-4x text-muted"></i>
-                                        <p class="text-muted mt-2">Sin imagen</p>
-                                    </div>
-                                @endif
+            {{-- Columna de Formulario --}}
+            <div class="col-lg-8 col-md-7">
+                <div class="producto-form-card slide-in">
+                    <div class="form-header-gradient">
+                        <h3>
+                            <span class="header-icon">
+                                <i class="fas fa-box-open"></i>
+                            </span>
+                            Editar Información del Producto
+                        </h3>
+                    </div>
+
+                    <form action="{{ route('inventario.productos.update', $producto->id) }}" method="POST" enctype="multipart/form-data">
+                        @csrf
+                        @method('PUT')
+                        
+                        <div class="form-content-container">
+                            {{-- Sección: Información Básica --}}
+                            <div class="form-section">
+                                <h4 class="form-section-title">
+                                    <i class="fas fa-info-circle"></i>
+                                    Información Básica
+                                </h4>
                                 
-                                {{-- Badge de stock --}}
-                                @php
-                                    $stockClass = 'success';
-                                    if ($producto->cantidad <= 0) {
-                                        $stockClass = 'danger';
-                                    } elseif ($producto->cantidad <= 5) {
-                                        $stockClass = 'warning';
-                                    }
-                                @endphp
-                                <span class="badge stock-badge stock-badge-{{ $stockClass }}">
-                                </span>
+                                <div class="row">
+                                    <div class="col-md-6">
+                                        <div class="form-group-modern">
+                                            <label for="producto">
+                                                <i class="fas fa-tag"></i>
+                                                Nombre del Producto
+                                                <span class="text-danger">*</span>
+                                            </label>
+                                            <input type="text"
+                                                   class="form-control-modern @error('producto') is-invalid @enderror"
+                                                   id="producto"
+                                                   name="producto"
+                                                   value="{{ old('producto', $producto->producto) }}"
+                                                   placeholder="Ej: Laptop Dell XPS 15"
+                                                   required>
+                                            @error('producto')
+                                                <div class="invalid-feedback">{{ $message }}</div>
+                                            @enderror
+                                        </div>
+                                    </div>
+
+                                    <div class="col-md-6">
+                                        <div class="form-group-modern">
+                                            <label for="codigo_barras">
+                                                <i class="fas fa-barcode"></i>
+                                                Código de Barras
+                                                <span class="text-danger">*</span>
+                                            </label>
+                                            <div class="input-group">
+                                                <input type="text"
+                                                       class="form-control-modern @error('codigo_barras') is-invalid @enderror"
+                                                       id="codigo_barras"
+                                                       name="codigo_barras"
+                                                       value="{{ old('codigo_barras', $producto->codigo_barras) }}"
+                                                       placeholder="Escanear o ingresar">
+                                                <div class="input-group-append">
+                                                    <button type="button" class="btn btn-info" id="scan-btn">
+                                                        <i class="fas fa-qrcode"></i>
+                                                    </button>
+                                                </div>
+                                            </div>
+                                            @error('codigo_barras')
+                                                <div class="invalid-feedback d-block">{{ $message }}</div>
+                                            @enderror
+                                        </div>
+                                    </div>
+
+                                    <div class="col-md-12">
+                                        <div class="form-group-modern">
+                                            <label for="descripcion">
+                                                <i class="fas fa-align-left"></i>
+                                                Descripción
+                                            </label>
+                                            <textarea class="form-control-modern @error('descripcion') is-invalid @enderror"
+                                                      id="descripcion"
+                                                      name="descripcion"
+                                                      rows="3"
+                                                      placeholder="Ingrese una descripción detallada">{{ old('descripcion', $producto->descripcion) }}</textarea>
+                                            @error('descripcion')
+                                                <div class="invalid-feedback">{{ $message }}</div>
+                                            @enderror
+                                        </div>
+                                    </div>
+                                </div>
                             </div>
-                            <div class="card-body d-flex flex-column">
-                                {{-- Categoría y marca --}}
-                                <div class="mb-2">
-                                    @if($producto->tipoProducto && $producto->tipoProducto->parametro)
-                                        <small class="text-muted d-block">
-                                            <i class="fas fa-box-open"></i> {{ $producto->tipoProducto->parametro->name }}
-                                        </small>
-                                    @endif
-                                    <small class="text-muted">
-                                        <i class="fas fa-tag"></i> {{ $producto->categoria->name ?? 'Sin categoría' }}
-                                    </small>
-                                    @if($producto->marca)
-                                        <br>
-                                        <small class="text-muted">
-                                            <i class="fas fa-copyright"></i> {{ $producto->marca->name }}
-                                        </small>
-                                    @endif
+
+                            {{-- Sección: Clasificación --}}
+                            <div class="form-section">
+                                <h4 class="form-section-title">
+                                    <i class="fas fa-tags"></i>
+                                    Clasificación y Tipo
+                                </h4>
+                                <div class="row">
+                                    <div class="col-md-6">
+                                        <div class="form-group-modern">
+                                            <label for="tipo_producto_id">
+                                                <i class="fas fa-cubes"></i>
+                                                Tipo de Producto
+                                                <span class="text-danger">*</span>
+                                            </label>
+                                            <select
+                                                class="form-control-modern @error('tipo_producto_id') is-invalid @enderror"
+                                                id="tipo_producto_id"
+                                                name="tipo_producto_id"
+                                                required
+                                            >
+                                                <option value="">Seleccionar tipo</option>
+                                                @foreach($tiposProductos as $tipo)
+                                                    <option value="{{ $tipo->id }}" {{ old('tipo_producto_id', $producto->tipo_producto_id) == $tipo->id ? 'selected' : '' }}>
+                                                        {{ $tipo->parametro->name }}
+                                                    </option>
+                                                @endforeach
+                                            </select>
+                                            @error('tipo_producto_id')
+                                                <div class="invalid-feedback">{{ $message }}</div>
+                                            @enderror
+                                        </div>
+                                    </div>
+                                    <div class="col-md-6">
+                                        <div class="form-group-modern">
+                                            <label for="categoria_id">
+                                                <i class="fas fa-list"></i>
+                                                Categoría
+                                                <span class="text-danger">*</span>
+                                            </label>
+                                            <select
+                                                class="form-control-modern @error('categoria_id') is-invalid @enderror"
+                                                id="categoria_id"
+                                                name="categoria_id"
+                                                required
+                                            >
+                                                <option value="">Seleccionar categoría</option>
+                                                @foreach($categorias as $categoria)
+                                                    <option value="{{ $categoria->parametro->id }}" {{ old('categoria_id', $producto->categoria_id) == $categoria->parametro->id ? 'selected' : '' }}>
+                                                        {{ $categoria->parametro->name }}
+                                                    </option>
+                                                @endforeach
+                                            </select>
+                                            @error('categoria_id')
+                                                <div class="invalid-feedback">{{ $message }}</div>
+                                            @enderror
+                                        </div>
+                                    </div>
+                                    <div class="col-md-6">
+                                        <div class="form-group-modern">
+                                            <label for="marca_id">
+                                                <i class="fas fa-copyright"></i>
+                                                Marca
+                                                <span class="text-danger">*</span>
+                                            </label>
+                                            <select
+                                                class="form-control-modern @error('marca_id') is-invalid @enderror"
+                                                id="marca_id"
+                                                name="marca_id"
+                                                required
+                                            >
+                                                <option value="">Seleccionar marca</option>
+                                                @foreach($marcas as $marca)
+                                                    <option value="{{ $marca->parametro->id }}" {{ old('marca_id', $producto->marca_id) == $marca->parametro->id ? 'selected' : '' }}>
+                                                        {{ $marca->parametro->name }}
+                                                    </option>
+                                                @endforeach
+                                            </select>
+                                            @error('marca_id')
+                                                <div class="invalid-feedback">{{ $message }}</div>
+                                            @enderror
+                                        </div>
+                                    </div>
+                                    <div class="col-md-6">
+                                        <div class="form-group-modern">
+                                            <label for="estado_producto_id">
+                                                <i class="fas fa-check-circle"></i>
+                                                Estado
+                                                <span class="text-danger">*</span>
+                                            </label>
+                                            <select
+                                                class="form-control-modern @error('estado_producto_id') is-invalid @enderror"
+                                                id="estado_producto_id"
+                                                name="estado_producto_id"
+                                                required
+                                            >
+                                                <option value="">Seleccionar estado</option>
+                                                @foreach($estados as $estado)
+                                                    <option value="{{ $estado->id }}" {{ old('estado_producto_id', $producto->estado_producto_id) == $estado->id ? 'selected' : '' }}>
+                                                        {{ $estado->parametro->name }}
+                                                    </option>
+                                                @endforeach
+                                            </select>
+                                            @error('estado_producto_id')
+                                                <div class="invalid-feedback">{{ $message }}</div>
+                                            @enderror
+                                        </div>
+                                    </div>
                                 </div>
+                            </div>
 
-                                {{-- Nombre del producto --}}
-                                <h5 class="card-title font-weight-bold mb-2">
-                                    {{ Str::limit($producto->producto, 50) }}
-                                </h5>
-
-                                {{-- Descripción --}}
-                                <p class="card-text text-muted small flex-grow-1">
-                                    {{ Str::limit($producto->descripcion, 80) ?? 'Sin descripción disponible' }}
-                                </p>
-
-                                {{-- Código de barras --}}
-                                <div class="mb-2">
-                                    <small class="text-muted">
-                                        <i class="fas fa-barcode"></i> 
-                                        <span class="badge badge-secondary">{{ $producto->codigo_barras }}</span>
-                                    </small>
+                            {{-- Sección: Cantidad y Medidas --}}
+                            <div class="form-section">
+                                <h4 class="form-section-title">
+                                    <i class="fas fa-ruler-combined"></i>
+                                    Cantidad y Medidas
+                                </h4>
+                                <div class="row">
+                                    <div class="col-md-4">
+                                        <div class="form-group-modern">
+                                            <label for="cantidad">
+                                                <i class="fas fa-boxes"></i>
+                                                Cantidad
+                                                <span class="text-danger">*</span>
+                                            </label>
+                                            <input
+                                                type="number"
+                                                class="form-control-modern @error('cantidad') is-invalid @enderror"
+                                                id="cantidad"
+                                                name="cantidad"
+                                                value="{{ old('cantidad', $producto->cantidad) }}"
+                                                min="0"
+                                                required
+                                            >
+                                            @error('cantidad')
+                                                <div class="invalid-feedback">{{ $message }}</div>
+                                            @enderror
+                                        </div>
+                                    </div>
+                                    <div class="col-md-4">
+                                        <div class="form-group-modern">
+                                            <label for="peso">
+                                                <i class="fas fa-weight"></i>
+                                                Peso/Magnitud
+                                                <span class="text-danger">*</span>
+                                            </label>
+                                            <input
+                                                type="number"
+                                                class="form-control-modern @error('peso') is-invalid @enderror"
+                                                id="peso"
+                                                name="peso"
+                                                value="{{ old('peso', $producto->peso) }}"
+                                                step="0.01"
+                                                min="0"
+                                                required
+                                            >
+                                            @error('peso')
+                                                <div class="invalid-feedback">{{ $message }}</div>
+                                            @enderror
+                                        </div>
+                                    </div>
+                                    <div class="col-md-4">
+                                        <div class="form-group-modern">
+                                            <label for="unidad_medida_id">
+                                                <i class="fas fa-balance-scale"></i>
+                                                Unidad de Medida
+                                                <span class="text-danger">*</span>
+                                            </label>
+                                            <select
+                                                class="form-control-modern @error('unidad_medida_id') is-invalid @enderror"
+                                                id="unidad_medida_id"
+                                                name="unidad_medida_id"
+                                                required
+                                            >
+                                                <option value="">Seleccionar unidad</option>
+                                                @foreach($unidadesMedida as $unidad)
+                                                    <option value="{{ $unidad->id }}" {{ old('unidad_medida_id', $producto->unidad_medida_id) == $unidad->id ? 'selected' : '' }}>
+                                                        {{ $unidad->parametro->name }}
+                                                    </option>
+                                                @endforeach
+                                            </select>
+                                            @error('unidad_medida_id')
+                                                <div class="invalid-feedback">{{ $message }}</div>
+                                            @enderror
+                                        </div>
+                                    </div>
                                 </div>
+                            </div>
 
-                                {{-- Stock disponible --}}
-                                <div class="mb-3">
-                                    <strong>Stock: </strong>
-                                    <span class="badge badge-{{ $stockClass }}">
-                                        {{ $producto->cantidad }} unidades
-                                    </span>
-                                </div>
-
-                                {{-- Acciones --}}
-                                <div class="btn-group d-flex" role="group">
-                                    <button type="button" 
-                                            class="btn btn-sm btn-info btn-view-details w-50"
-                                            data-id="{{ $producto->id }}"
-                                            title="Ver detalles">
-                                        <i class="fas fa-eye"></i> Detalles
-                                    </button>
-                                    @if($producto->cantidad > 0)
-                                        <button type="button" 
-                                                class="btn btn-sm btn-success btn-add-to-cart w-50"
-                                                data-id="{{ $producto->id }}"
-                                                data-name="{{ $producto->producto }}"
-                                                data-stock="{{ $producto->cantidad }}"
-                                                title="Agregar al carrito">
-                                            <i class="fas fa-cart-plus"></i> Agregar
-                                        </button>
-                                    @else
-                                        <button type="button" class="btn btn-sm btn-secondary w-50" disabled>
-                                            <i class="fas fa-ban"></i> Agotado
-                                        </button>
-                                    @endif
+                            {{-- Sección: Ubicación y Proveedor --}}
+                            <div class="form-section">
+                                <h4 class="form-section-title">
+                                    <i class="fas fa-map-marker-alt"></i>
+                                    Ubicación y Proveedor
+                                </h4>
+                                <div class="row">
+                                    <div class="col-md-6">
+                                        <div class="form-group-modern">
+                                            <label for="ambiente_id">
+                                                <i class="fas fa-building"></i>
+                                                Ambiente
+                                                <span class="text-danger">*</span>
+                                            </label>
+                                            <select
+                                                class="form-control-modern @error('ambiente_id') is-invalid @enderror"
+                                                id="ambiente_id"
+                                                name="ambiente_id"
+                                                required
+                                            >
+                                                <option value="">Seleccionar ambiente</option>
+                                                @foreach($ambientes as $ambiente)
+                                                    <option value="{{ $ambiente->id }}" {{ old('ambiente_id', $producto->ambiente_id) == $ambiente->id ? 'selected' : '' }}>
+                                                        {{ $ambiente->title }}
+                                                    </option>
+                                                @endforeach
+                                            </select>
+                                            @error('ambiente_id')
+                                                <div class="invalid-feedback">{{ $message }}</div>
+                                            @enderror
+                                        </div>
+                                    </div>
+                                    <div class="col-md-6">
+                                        <div class="form-group-modern">
+                                            <label for="proveedor_id">
+                                                <i class="fas fa-truck"></i>
+                                                Proveedor
+                                                <span class="text-danger">*</span>
+                                            </label>
+                                            <select
+                                                class="form-control-modern @error('proveedor_id') is-invalid @enderror"
+                                                id="proveedor_id"
+                                                name="proveedor_id"
+                                                required
+                                            >
+                                                <option value="">Seleccionar proveedor</option>
+                                                @foreach($proveedores as $proveedor)
+                                                    <option value="{{ $proveedor->id }}" {{ old('proveedor_id', $producto->proveedor_id) == $proveedor->id ? 'selected' : '' }}>
+                                                        {{ $proveedor->proveedor }}
+                                                    </option>
+                                                @endforeach
+                                            </select>
+                                            @error('proveedor_id')
+                                                <div class="invalid-feedback">{{ $message }}</div>
+                                            @enderror
+                                        </div>
+                                    </div>
+                                    <div class="col-md-6">
+                                        <div class="form-group-modern">
+                                            <label for="contrato_convenio_id">
+                                                <i class="fas fa-file-contract"></i>
+                                                Contrato/Convenio
+                                                <span class="text-danger">*</span>
+                                            </label>
+                                            <select
+                                                class="form-control-modern @error('contrato_convenio_id') is-invalid @enderror"
+                                                id="contrato_convenio_id"
+                                                name="contrato_convenio_id"
+                                                required
+                                            >
+                                                <option value="">Seleccionar contrato</option>
+                                                @foreach($contratosConvenios as $contrato)
+                                                    <option value="{{ $contrato->id }}" {{ old('contrato_convenio_id', $producto->contrato_convenio_id) == $contrato->id ? 'selected' : '' }}>
+                                                        {{ $contrato->name }}
+                                                    </option>
+                                                @endforeach
+                                            </select>
+                                            @error('contrato_convenio_id')
+                                                <div class="invalid-feedback">{{ $message }}</div>
+                                            @enderror
+                                        </div>
+                                    </div>
+                                    <div class="col-md-6">
+                                        <div class="form-group-modern">
+                                            <label for="fecha_vencimiento">
+                                                <i class="fas fa-calendar-times"></i>
+                                                Fecha de Vencimiento
+                                            </label>
+                                            <input
+                                                type="date"
+                                                class="form-control-modern @error('fecha_vencimiento') is-invalid @enderror"
+                                                id="fecha_vencimiento"
+                                                name="fecha_vencimiento"
+                                                value="{{ old('fecha_vencimiento', optional($producto->fecha_vencimiento)->format('Y-m-d')) }}"
+                                            >
+                                            @error('fecha_vencimiento')
+                                                <div class="invalid-feedback">{{ $message }}</div>
+                                            @enderror
+                                        </div>
+                                    </div>
                                 </div>
                             </div>
                         </div>
-                    </div>
-                @empty
-                    <div class="col-12">
-                        <div class="alert alert-info text-center">
-                            <i class="fas fa-info-circle fa-3x mb-3"></i>
-                            <h5>No hay productos disponibles</h5>
-                            <p>Actualmente no hay productos en el catálogo.</p>
+
+                        {{-- Botones de Acción --}}
+                        <div class="form-actions-container">
+                            <a href="{{ route('inventario.productos.index') }}" class="btn-modern btn-modern-secondary">
+                                <i class="fas fa-times"></i>
+                                Cancelar
+                            </a>
+                            <button type="submit" class="btn-modern btn-modern-primary">
+                                <i class="fas fa-save"></i>
+                                Actualizar Producto
+                            </button>
                         </div>
-                    </div>
-                @endforelse
-            </div>
-
-            {{-- Paginación --}}
-            <div class="row">
-                <div class="col-12 d-flex justify-content-center" id="catalog-pagination">
-                    {{ $productos->links() }}
-                </div>
-            </div>
-
-            {{-- Mensaje cuando no hay resultados de búsqueda --}}
-            <div class="row d-none" id="no-results">
-                <div class="col-12">
-                    <div class="alert alert-warning text-center">
-                        <i class="fas fa-search fa-3x mb-3"></i>
-                        <h5>No se encontraron resultados</h5>
-                        <p>Intenta con otros términos de búsqueda o filtros.</p>
-                    </div>
-                </div>
-            </div>
-        </div>
-    </section>
-
-    {{-- Modal simple de detalles del producto --}}
-    <div 
-        id="productDetailModal" 
-        style="
-            display:none;
-            position:fixed;
-            top:0;
-            left:0;
-            width:100%;
-            height:100%;
-            background:rgba(0,0,0,0.5);
-            z-index:9999;
-            align-items:center;
-            justify-content:center;
-        "
-    >
-        <div 
-            style="
-                background:white;
-                border-radius:8px;
-                width:90%;
-                max-width:600px;
-                max-height:90vh;
-                overflow-y:auto;
-                box-shadow:0 4px 20px rgba(0,0,0,0.3);
-            "
-        >
-            <!-- Header -->
-            <div 
-                style="
-                    padding:20px;
-                    background:#17a2b8;
-                    color:white;
-                    display:flex;
-                    justify-content:space-between;
-                    align-items:center;
-                    border-radius:8px 8px 0 0;
-                "
-            >
-                <h5 style="margin:0; font-size:18px;">
-                    <i class="fas fa-box"></i> Detalles del Producto
-                </h5>
-                <button 
-                    onclick="closeProductModal()" 
-                    aria-label="Cerrar" 
-                    style="
-                        background:none;
-                        border:none;
-                        color:white;
-                        font-size:24px;
-                        cursor:pointer;
-                    "
-                >
-                    &times;
-                </button>
-            </div>
-            
-            <!-- Body -->
-            <div id="product-detail-content" style="padding:20px;">
-                <div style="text-align:center;">
-                    <i class="fas fa-spinner fa-spin fa-3x"></i>
-                    <p>Cargando detalles...</p>
+                    </form>
                 </div>
             </div>
         </div>
     </div>
-    
-    {{-- Alertas --}}
-    {{-- Notificaciones manejadas globalmente por sweetalert2-notifications --}}
+
+    {{-- Modal para imagen --}}
+    @include('inventario._components.image-modal')
 @endsection
 
 @section('footer')
-    {{-- Footer SENA --}}
-@include('inventario._components.common-footer')
+    @include('inventario._components.common-footer')
+@endsection
 
+@push('js')
+    <script src="https://unpkg.com/html5-qrcode"></script>
+    @vite('resources/js/inventario/imagen.js')
+    <script src="https://cdn.jsdelivr.net/npm/jsbarcode@3.11.6/dist/JsBarcode.all.min.js"></script>
+    <script>
+        // Preview de imagen
+        document.getElementById('imagen').addEventListener('change', function(e) {
+            const file = e.target.files[0];
+            if (file) {
+                const reader = new FileReader();
+                reader.onload = function(e) {
+                    document.getElementById('preview').src = e.target.result;
+                }
+                reader.readAsDataURL(file);
+            }
+        });
+    </script>
+@endpush
