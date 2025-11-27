@@ -3,16 +3,14 @@
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\Complementarios\AspiranteComplementarioController;
 
-// Rutas antiguas mantenidas por compatibilidad - redirigen a las nuevas rutas RESTful
-Route::get('/gestion-aspirantes', function () {
-    return redirect()->route('aspirantes.index');
-})->name('gestion-aspirantes')->middleware('auth');
+// Mantener compatibilidad con rutas existentes - funcionalidad refactorizada
+Route::get('/gestion-aspirantes', [AspiranteComplementarioController::class, 'gestionAspirantes'])
+    ->name('gestion-aspirantes')
+    ->middleware('auth');
 
-// Mantener ruta antigua por compatibilidad (búsqueda por nombre)
-Route::get('/programas-complementarios/{curso}', function ($curso) {
-    $programa = \App\Models\ComplementarioOfertado::where('nombre', str_replace('-', ' ', $curso))->firstOrFail();
-    return redirect()->route('aspirantes.programa', ['programa' => $programa->id]);
-})->name('programas-complementarios.ver-aspirantes')->middleware('auth');
+Route::get('/programas-complementarios/{curso}', [AspiranteComplementarioController::class, 'verAspirantes'])
+    ->name('programas-complementarios.ver-aspirantes')
+    ->middleware('auth');
 
 Route::post(
     '/programas-complementarios/{complementarioId}/agregar-aspirante',
@@ -40,5 +38,12 @@ Route::get(
     [AspiranteComplementarioController::class, 'descargarCedulas']
 )
     ->name('programas-complementarios.descargar-cedulas')
+    ->middleware('auth');
+
+Route::post(
+    '/programas-complementarios/{complementarioId}/validar-documentos',
+    [AspiranteComplementarioController::class, 'validarDocumentos']
+)
+    ->name('programas-complementarios.validar-documentos')
     ->middleware('auth');
 

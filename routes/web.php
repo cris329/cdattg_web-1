@@ -69,7 +69,7 @@ Route::middleware('web')->group(function () {
             Route::get('/', [InscripcionComplementarioController::class, 'inscripcionGeneral'])
                 ->name('general');
             Route::post('/', [InscripcionComplementarioController::class, 'procesarInscripcionGeneral'])
-                ->name('procesar');
+                ->name('general.store');
         });
 
     Route::get('/sofia-validation-progress/{progressId}', [ValidacionSofiaController::class, 'getValidationProgress'])
