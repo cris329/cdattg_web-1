@@ -9,6 +9,7 @@ use App\Models\JornadaFormacion;
 use App\Models\ProgramaFormacion;
 use App\Models\Sede;
 use Illuminate\Database\Eloquent\Factories\Factory;
+use Illuminate\Support\Facades\Schema;
 
 /**
  * @extends \Illuminate\Database\Eloquent\Factories\Factory<\App\Models\FichaCaracterizacion>
@@ -38,10 +39,17 @@ class FichaCaracterizacionFactory extends Factory
             $jornadaId = null;
         }
         
-        try {
-            $sedeId = Sede::query()->inRandomOrder()->value('id');
-        } catch (\Exception $e) {
-            $sedeId = null;
+        $sedeId = 1;
+        if (Schema::hasTable('sedes')) {
+            try {
+                $sedeId = Sede::query()->inRandomOrder()->value('id') ?? 1;
+            } catch (\Exception $e) {
+                try {
+                    $sedeId = Sede::factory()->create()->id;
+                } catch (\Exception $e) {
+                    $sedeId = 1;
+                }
+            }
         }
         
         try {

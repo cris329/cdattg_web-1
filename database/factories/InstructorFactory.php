@@ -8,6 +8,7 @@ use App\Models\Regional;
 use App\Models\User;
 use Illuminate\Database\Eloquent\Factories\Factory;
 use Illuminate\Support\Collection;
+use Illuminate\Support\Facades\Schema;
 use Faker\Generator as Faker;
 
 /**
@@ -31,10 +32,10 @@ class InstructorFactory extends Factory
             'Construcción',
             'Gastronomía',
         ];
-        
+
         $principal = $especialidades[array_rand($especialidades)];
         $secundarias = Collection::make($especialidades)
-            ->reject(fn ($value) => $value === $principal)
+            ->reject(fn($value) => $value === $principal)
             ->shuffle()
             ->take(rand(0, 2))
             ->values()
@@ -51,7 +52,15 @@ class InstructorFactory extends Factory
             'Redes de Computadores',
         ];
 
-        $regionalId = Regional::query()->inRandomOrder()->value('id') ?? 1;
+        // Regional - usar valor por defecto si la tabla no existe
+        $regionalId = 1;
+        if (Schema::hasTable('regionals')) {
+            try {
+                $regionalId = Regional::query()->inRandomOrder()->value('id') ?? 1;
+            } catch (\Exception $e) {
+                $regionalId = 1;
+            }
+        }
 
         $competenciasSeleccionadas = Collection::make($competencias)
             ->shuffle()
@@ -77,6 +86,12 @@ class InstructorFactory extends Factory
 
     public function configure(): static
     {
+        // Solo configurar el callback si la tabla users existe
+        // Esto evita cualquier consulta a la tabla durante tests cuando no está migrada
+        if (!Schema::hasTable('users')) {
+            return $this;
+        }
+
         return $this->afterCreating(function (Instructor $instructor) {
             $persona = $instructor->persona;
 
@@ -84,9 +99,11 @@ class InstructorFactory extends Factory
                 return;
             }
 
-            $email = strtolower($persona->email);
+            $email = strtolower($persona->getAttributes()['email'] ?? $persona->getOriginal('email') ?? 'test@example.com');
 
-            if (! $persona->user) {
+            $user = $persona->user()->first();
+
+            if (! $user) {
                 $user = User::factory()
                     ->forPersona($persona)
                     ->state([
@@ -99,15 +116,15 @@ class InstructorFactory extends Factory
                     $user->assignRole('INSTRUCTOR');
                 }
             } else {
-                $persona->user->syncRoles(['INSTRUCTOR']);
-                $persona->user->update(['status' => $instructor->status ? 1 : 0]);
+                $user->syncRoles(['INSTRUCTOR']);
+                $user->update(['status' => $instructor->status ? 1 : 0]);
             }
         });
     }
 
     public function createdBy(int $userId): static
     {
-        return $this->state(fn () => [
+        return $this->state(fn() => [
             'user_create_id' => $userId,
             'user_edit_id' => $userId,
         ]);

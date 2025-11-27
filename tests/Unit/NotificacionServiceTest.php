@@ -69,10 +69,15 @@ class NotificacionServiceTest extends TestCase
     public function maneja_errores_al_notificar()
     {
         Log::shouldReceive('error')->atLeast()->once();
+        Log::shouldReceive('info')->atLeast()->once();
 
-        $aprendices = collect([
-            (object)['persona' => null], // Aprendiz sin persona
-        ]);
+        $aprendizMock = Mockery::mock();
+        $aprendizMock->id = 1;
+        $aprendizMock->shouldReceive('__get')
+            ->with('persona')
+            ->andThrow(new \Exception('Error accediendo a persona'));
+
+        $aprendices = collect([$aprendizMock]);
 
         $enviados = $this->service->notificarAprendices($aprendices, 'Mensaje');
 

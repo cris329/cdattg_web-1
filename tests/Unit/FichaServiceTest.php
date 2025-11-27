@@ -67,23 +67,35 @@ class FichaServiceTest extends TestCase
         $fichaId = 1;
 
         $fichaMock = Mockery::mock(FichaCaracterizacion::class);
-        $fichaMock->id = $fichaId;
-        $fichaMock->status = true;
-        $fichaMock->cupos_maximos = 40;
+        $fichaMock->shouldReceive('__get')
+            ->with('status')
+            ->andReturn(true);
+        $fichaMock->shouldReceive('__get')
+            ->with('cupos_maximos')
+            ->andReturn(40);
+        $fichaMock->shouldReceive('getAttribute')
+            ->with('status')
+            ->andReturn(true);
+        $fichaMock->shouldReceive('getAttribute')
+            ->with('cupos_maximos')
+            ->andReturn(40);
         
         $this->mockFichaRepo
             ->shouldReceive('encontrarConRelaciones')
             ->once()
+            ->with($fichaId)
             ->andReturn($fichaMock);
 
         $this->mockInstructorFichaRepo
             ->shouldReceive('obtenerPorFicha')
             ->once()
+            ->with($fichaId)
             ->andReturn(collect([]));
 
         $this->mockAprendizFichaRepo
             ->shouldReceive('obtenerPorFicha')
             ->once()
+            ->with($fichaId)
             ->andReturn(collect([]));
 
         $resultado = $this->service->verificarDisponibilidad($fichaId);

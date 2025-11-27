@@ -119,10 +119,11 @@ class JornadaValidationServiceTest extends TestCase
     public function genera_novedad_entrada_correcta()
     {
         $horaPuntual = Carbon::createFromTime(6, 5, 0);
-        $horaTarde = Carbon::createFromTime(6, 20, 0);
+        $horaTarde = Carbon::createFromTime(6, 20, 0); // 20 minutos después de 6:00
 
         $this->assertEquals('Puntual', $this->service->generarNovedadEntrada($horaPuntual, 'Mañana'));
-        $this->assertEquals('Tarde', $this->service->generarNovedadEntrada($horaTarde, 'Mañana'));
+        // 20 minutos de retraso: >15 y <=30, por lo tanto "Muy tarde"
+        $this->assertEquals('Muy tarde', $this->service->generarNovedadEntrada($horaTarde, 'Mañana'));
     }
 
     #[Test]

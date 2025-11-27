@@ -26,18 +26,7 @@ class FichaRepositoryTest extends TestCase
         Cache::flush();
         
         // Crear datos necesarios para el factory de FichaCaracterizacion
-        if (ProgramaFormacion::count() === 0) {
-            ProgramaFormacion::factory()->create();
-        }
-        if (JornadaFormacion::count() === 0) {
-            JornadaFormacion::factory()->create();
-        }
-        if (Sede::count() === 0) {
-            Sede::factory()->create();
-        }
-        if (Ambiente::count() === 0) {
-            Ambiente::factory()->create();
-        }
+        // Los factories ya manejan la creación de dependencias automáticamente
     }
 
     #[Test]

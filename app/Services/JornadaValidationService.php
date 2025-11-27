@@ -157,7 +157,7 @@ class JornadaValidationService
         $horaLimiteTolerance = $horaFinJornada->copy()->subMinutes($tolerancia);
 
         $salioTemprano = $horaSalidaCarbon->lessThan($horaLimiteTolerance);
-        $minutosAnticipado = $salioTemprano ? $horaFinJornada->diffInMinutes($horaSalidaCarbon) : 0;
+        $minutosAnticipado = $salioTemprano ? abs($horaFinJornada->diffInMinutes($horaSalidaCarbon)) : 0;
 
         return [
             'salio_temprano' => $salioTemprano,

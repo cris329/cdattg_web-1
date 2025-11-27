@@ -7,7 +7,9 @@ use App\Services\ReporteService;
 use App\Repositories\AsistenciaAprendizRepository;
 use App\Repositories\AprendizRepository;
 use App\Repositories\FichaRepository;
+use App\Models\FichaCaracterizacion;
 use Illuminate\Foundation\Testing\RefreshDatabase;
+use Illuminate\Database\Eloquent\Collection;
 use Mockery;
 use PHPUnit\Framework\Attributes\Test;
 
@@ -51,21 +53,21 @@ class ReporteServiceTest extends TestCase
         $this->mockAsistenciaRepo
             ->shouldReceive('obtenerPorFichaYFechas')
             ->once()
-            ->andReturn(collect([]));
+            ->andReturn(new Collection([]));
 
         $this->mockAsistenciaRepo
             ->shouldReceive('obtenerEstadisticas')
             ->once()
             ->andReturn(['total_registros' => 0]);
 
+        $fichaMock = Mockery::mock(FichaCaracterizacion::class);
+        $fichaMock->shouldReceive('__get')->with('ficha')->andReturn('2089876');
+        $fichaMock->ficha = '2089876';
+        
         $this->mockFichaRepo
             ->shouldReceive('encontrarConRelaciones')
             ->once()
-            ->andReturn((object)[
-                'ficha' => '2089876',
-                'programaFormacion' => (object)['nombre' => 'ADSI'],
-                'jornadaFormacion' => (object)['jornada' => 'Mañana'],
-            ]);
+            ->andReturn($fichaMock);
 
         $resultado = $this->service->generarReporteAsistencia($fichaId, $fechaInicio, $fechaFin, 'array');
 
@@ -83,15 +85,16 @@ class ReporteServiceTest extends TestCase
         $this->mockAprendizRepo
             ->shouldReceive('obtenerPorFicha')
             ->once()
-            ->andReturn(collect([]));
+            ->andReturn(new Collection([]));
 
+        $fichaMock = Mockery::mock(FichaCaracterizacion::class);
+        $fichaMock->shouldReceive('__get')->with('ficha')->andReturn('2089876');
+        $fichaMock->ficha = '2089876';
+        
         $this->mockFichaRepo
             ->shouldReceive('encontrarConRelaciones')
             ->once()
-            ->andReturn((object)[
-                'ficha' => '2089876',
-                'programaFormacion' => (object)['nombre' => 'ADSI'],
-            ]);
+            ->andReturn($fichaMock);
 
         $resultado = $this->service->generarReporteAprendices($fichaId, 'array');
 
@@ -109,7 +112,7 @@ class ReporteServiceTest extends TestCase
         $this->mockFichaRepo
             ->shouldReceive('obtenerVigentes')
             ->once()
-            ->andReturn(collect([]));
+            ->andReturn(new Collection([]));
 
         $resultado = $this->service->generarReporteConsolidadoMes($mes, $anio);
 

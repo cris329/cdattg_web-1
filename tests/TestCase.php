@@ -16,6 +16,10 @@ abstract class TestCase extends BaseTestCase
      */
     protected function migrateDatabases()
     {
-        $this->artisan('migrate:module', ['--all' => true, '--fresh' => true]);
+        // Primero ejecutar migrate:fresh para limpiar la base de datos
+        $this->artisan('migrate:fresh');
+        
+        // Luego ejecutar todas las migraciones modulares en orden
+        $this->artisan('migrate:module', ['--all' => true]);
     }
 }
