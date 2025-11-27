@@ -18,7 +18,6 @@ class UpdateProgramaComplementarioRequest extends FormRequest
         return [
             'codigo' => 'required|string|unique:complementarios_ofertados,codigo,' . $programaId,
             'nombre' => 'required|string',
-            'descripcion' => 'nullable|string',
             'justificacion' => 'required|string|max:600',
             'requisitos_ingreso' => 'required|string|max:400',
             'duracion' => 'required|integer|min:1',
