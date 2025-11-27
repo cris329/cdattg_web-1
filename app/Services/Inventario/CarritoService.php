@@ -4,16 +4,16 @@ declare(strict_types=1);
 
 namespace App\Services\Inventario;
 
-use App\Repositories\Inventario\ProductoRepository;
+use App\Repositories\Interfaces\Inventario\ProductoRepositoryInterface;
 use App\Models\Inventario\Producto;
 use App\Exceptions\CarritoException;
 use Illuminate\Support\Collection;
 
 class CarritoService
 {
-    protected ProductoRepository $productoRepository;
+    protected ProductoRepositoryInterface $productoRepository;
 
-    public function __construct(ProductoRepository $productoRepository)
+    public function __construct(ProductoRepositoryInterface $productoRepository)
     {
         $this->productoRepository = $productoRepository;
     }
@@ -37,7 +37,7 @@ class CarritoService
                 continue;
             }
 
-            $producto = $this->productoRepository->findById($productoId);
+            $producto = Producto::find($productoId);
 
             if (!$producto) {
                 throw new CarritoException("Producto con ID {$productoId} no encontrado.");
@@ -65,7 +65,7 @@ class CarritoService
      */
     public function validarItem(int $productoId, int $cantidad): array
     {
-        $producto = $this->productoRepository->findById($productoId);
+        $producto = Producto::find($productoId);
 
         if (!$producto) {
             throw new CarritoException('Producto no encontrado');

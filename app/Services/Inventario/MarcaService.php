@@ -4,16 +4,16 @@ declare(strict_types=1);
 
 namespace App\Services\Inventario;
 
-use App\Repositories\Inventario\MarcaRepository;
+use App\Repositories\Interfaces\Inventario\MarcaRepositoryInterface;
 use App\Models\Inventario\Marca;
 use App\Exceptions\MarcaException;
 use Illuminate\Database\QueryException;
 
 class MarcaService
 {
-    protected MarcaRepository $repository;
+    protected MarcaRepositoryInterface $repository;
 
-    public function __construct(MarcaRepository $repository)
+    public function __construct(MarcaRepositoryInterface $repository)
     {
         $this->repository = $repository;
     }

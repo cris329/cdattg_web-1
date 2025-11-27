@@ -4,16 +4,16 @@ declare(strict_types=1);
 
 namespace App\Services\Inventario;
 
-use App\Repositories\Inventario\CategoriaRepository;
+use App\Repositories\Interfaces\Inventario\CategoriaRepositoryInterface;
 use App\Models\Inventario\Categoria;
 use App\Exceptions\CategoriaException;
 use Illuminate\Database\QueryException;
 
 class CategoriaService
 {
-    protected CategoriaRepository $repository;
+    protected CategoriaRepositoryInterface $repository;
 
-    public function __construct(CategoriaRepository $repository)
+    public function __construct(CategoriaRepositoryInterface $repository)
     {
         $this->repository = $repository;
     }

@@ -4,15 +4,15 @@ declare(strict_types=1);
 
 namespace App\Services\Inventario;
 
-use App\Repositories\Inventario\ProveedorRepository;
+use App\Repositories\Interfaces\Inventario\ProveedorRepositoryInterface;
 use App\Models\Inventario\Proveedor;
 use App\Exceptions\ProveedorException;
 
 class ProveedorService
 {
-    protected ProveedorRepository $repository;
+    protected ProveedorRepositoryInterface $repository;
 
-    public function __construct(ProveedorRepository $repository)
+    public function __construct(ProveedorRepositoryInterface $repository)
     {
         $this->repository = $repository;
     }

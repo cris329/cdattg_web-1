@@ -4,10 +4,10 @@ declare(strict_types=1);
 
 namespace App\Services\Inventario;
 
-use App\Models\Inventario\Aprobacion;
 use App\Models\Inventario\DetalleOrden;
 use App\Models\Inventario\Orden;
 use App\Models\ParametroTema;
+use App\Repositories\Interfaces\Inventario\AprobacionRepositoryInterface;
 use App\Exceptions\AprobacionException;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Auth;
@@ -16,6 +16,12 @@ use App\Notifications\OrdenRechazadaNotification;
 
 class AprobacionService
 {
+    protected AprobacionRepositoryInterface $repository;
+
+    public function __construct(AprobacionRepositoryInterface $repository)
+    {
+        $this->repository = $repository;
+    }
     private const STATUS_PENDING = 'EN ESPERA';
     private const STATUS_APPROVED = 'APROBADA';
     private const STATUS_REJECTED = 'RECHAZADA';
@@ -119,13 +125,12 @@ class AprobacionService
                 'user_update_id' => Auth::id()
             ]);
 
-            $aprobacion = new Aprobacion([
+            $this->repository->crear([
                 'detalle_orden_id' => $detalleOrden->id,
                 'estado_aprobacion_id' => $estadoAprobada->id,
                 'user_create_id' => Auth::id(),
                 'user_update_id' => Auth::id()
             ]);
-            $aprobacion->save();
 
             $producto->cantidad -= $detalleOrden->cantidad;
             $producto->user_update_id = Auth::id();
@@ -173,13 +178,12 @@ class AprobacionService
                 'user_update_id' => Auth::id()
             ]);
 
-            $aprobacion = new Aprobacion([
+            $this->repository->crear([
                 'detalle_orden_id' => $detalleOrden->id,
                 'estado_aprobacion_id' => $estadoRechazada->id,
                 'user_create_id' => Auth::id(),
                 'user_update_id' => Auth::id()
             ]);
-            $aprobacion->save();
 
             $orden = $detalleOrden->orden;
             $orden->descripcion_orden .= "\n\n--- SOLICITUD RECHAZADA ---\n";
@@ -247,13 +251,12 @@ class AprobacionService
                     'user_update_id' => Auth::id()
                 ]);
 
-                $aprobacion = new Aprobacion([
+                $this->repository->crear([
                     'detalle_orden_id' => $detalle->id,
                     'estado_aprobacion_id' => $estadoAprobada->id,
                     'user_create_id' => Auth::id(),
                     'user_update_id' => Auth::id()
                 ]);
-                $aprobacion->save();
 
                 $detalle->producto->cantidad -= $detalle->cantidad;
                 $detalle->producto->user_update_id = Auth::id();
@@ -307,13 +310,12 @@ class AprobacionService
                     'user_update_id' => Auth::id()
                 ]);
 
-                $aprobacion = new Aprobacion([
+                $this->repository->crear([
                     'detalle_orden_id' => $detalle->id,
                     'estado_aprobacion_id' => $estadoRechazada->id,
                     'user_create_id' => Auth::id(),
                     'user_update_id' => Auth::id()
                 ]);
-                $aprobacion->save();
             }
 
             $orden->descripcion_orden .= "\n\n--- ORDEN RECHAZADA COMPLETA ---\n";

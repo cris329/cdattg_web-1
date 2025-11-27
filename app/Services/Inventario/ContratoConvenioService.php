@@ -4,15 +4,15 @@ declare(strict_types=1);
 
 namespace App\Services\Inventario;
 
-use App\Repositories\Inventario\ContratoConvenioRepository;
+use App\Repositories\Interfaces\Inventario\ContratoConvenioRepositoryInterface;
 use App\Models\Inventario\ContratoConvenio;
 use App\Exceptions\ContratoConvenioException;
 
 class ContratoConvenioService
 {
-    protected ContratoConvenioRepository $repository;
+    protected ContratoConvenioRepositoryInterface $repository;
 
-    public function __construct(ContratoConvenioRepository $repository)
+    public function __construct(ContratoConvenioRepositoryInterface $repository)
     {
         $this->repository = $repository;
     }

@@ -4,23 +4,21 @@ declare(strict_types=1);
 
 namespace App\Services\Inventario;
 
-use App\Repositories\Inventario\ProductoRepository;
+use App\Repositories\Interfaces\Inventario\ProductoRepositoryInterface;
 use App\Models\Inventario\Producto;
 use App\Models\ParametroTema;
 use Illuminate\Http\UploadedFile;
 use Illuminate\Support\Facades\DB;
-use Illuminate\Support\Facades\Storage;
 use App\Notifications\StockBajoNotification;
-use Illuminate\Support\Facades\Notification;
 
 class ProductoService
 {
     private const DEFAULT_PRODUCT_IMAGE = 'img/inventario/producto-default.png';
     private const BARCODE_LENGTH = 11;
 
-    protected ProductoRepository $repository;
+    protected ProductoRepositoryInterface $repository;
 
-    public function __construct(ProductoRepository $repository)
+    public function __construct(ProductoRepositoryInterface $repository)
     {
         $this->repository = $repository;
     }
