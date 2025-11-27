@@ -4,6 +4,8 @@ namespace Database\Factories;
 
 use App\Models\Ambiente;
 use App\Models\ComplementarioOfertado;
+use App\Models\JornadaFormacion;
+use App\Models\ParametroTema;
 use Illuminate\Database\Eloquent\Factories\Factory;
 
 /**
@@ -15,8 +17,6 @@ class ComplementarioOfertadoFactory extends Factory
 
     public function definition(): array
     {
-        static $usedNombres = [];
-        
         $nombres = [
             'Auxiliar de Cocina',
             'Acabados en Madera',
@@ -24,33 +24,84 @@ class ComplementarioOfertadoFactory extends Factory
             'Mecánica Básica Automotriz',
             'Cultivos de Huertas Urbanas',
             'Normatividad Laboral',
+            'Soldadura Básica',
+            'Electricidad Residencial',
+            'Plomería Básica',
+            'Panadería y Repostería',
+            'Corte y Confección',
+            'Jardinería y Paisajismo',
         ];
-
-        // Filtrar nombres ya usados
-        $availableNombres = array_diff($nombres, $usedNombres);
-        if (empty($availableNombres)) {
-            $usedNombres = [];
-            $availableNombres = $nombres;
-        }
         
-        $nombre = $availableNombres[array_rand($availableNombres)];
-        $usedNombres[] = $nombre;
+        $nombre = $this->faker->unique()->randomElement($nombres);
         
-        $modalidades = [18, 19, 20];
-        $jornadas = [1, 2, 3, 4];
-        $ambienteId = Ambiente::query()->inRandomOrder()->value('id') ?? 1;
+        // Obtener IDs reales o usar valores por defecto
+        $modalidadId = ParametroTema::where('tema_id', 5)->inRandomOrder()->value('id') ?? 18;
+        $jornadaId = JornadaFormacion::inRandomOrder()->value('id') ?? 1;
+        $ambienteId = Ambiente::where('status', 1)->inRandomOrder()->value('id') ?? 1;
 
         return [
-            'codigo' => strtoupper('COMP' . rand(100, 999)),
+            'codigo' => 'COMP' . str_pad($this->faker->unique()->numberBetween(1, 9999), 4, '0', STR_PAD_LEFT),
             'nombre' => $nombre,
-            'descripcion' => 'Curso complementario de ' . strtolower($nombre) . ' diseñado para fortalecer las competencias de los aprendices.',
-            'duracion' => rand(30, 80),
-            'cupos' => rand(10, 30),
-            'estado' => [0, 1, 2][array_rand([0, 1, 2])],
-            'modalidad_id' => $modalidades[array_rand($modalidades)],
-            'jornada_id' => $jornadas[array_rand($jornadas)],
+            'justificacion' => $this->faker->paragraph(2),
+            'requisitos_ingreso' => $this->faker->paragraph(2),
+            'duracion' => $this->faker->numberBetween(30, 120),
+            'cupos' => $this->faker->numberBetween(10, 50),
+            'estado' => $this->faker->randomElement([0, 1, 2]),
+            'modalidad_id' => $modalidadId,
+            'jornada_id' => $jornadaId,
             'ambiente_id' => $ambienteId,
         ];
+    }
+
+    /**
+     * Estado: Sin Oferta
+     */
+    public function sinOferta(): static
+    {
+        return $this->state(fn (array $attributes) => [
+            'estado' => 0,
+        ]);
+    }
+
+    /**
+     * Estado: Con Oferta
+     */
+    public function conOferta(): static
+    {
+        return $this->state(fn (array $attributes) => [
+            'estado' => 1,
+        ]);
+    }
+
+    /**
+     * Estado: Cupos Llenos
+     */
+    public function cuposLlenos(): static
+    {
+        return $this->state(fn (array $attributes) => [
+            'estado' => 2,
+        ]);
+    }
+
+    /**
+     * Con cupos disponibles
+     */
+    public function conCupos(int $cupos = null): static
+    {
+        return $this->state(fn (array $attributes) => [
+            'cupos' => $cupos ?? $this->faker->numberBetween(20, 50),
+            'estado' => 1,
+        ]);
+    }
+
+    /**
+     * Con duración específica
+     */
+    public function conDuracion(int $horas): static
+    {
+        return $this->state(fn (array $attributes) => [
+            'duracion' => $horas,
+        ]);
     }
 }
 
