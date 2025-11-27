@@ -2,8 +2,8 @@
         {{-- Botón de refrescar --}}
         <div class="row mb-3">
             <div class="col-12 text-right">
-                <button 
-                    type="button" 
+                <button
+                    type="button"
                     class="btn btn-sm btn-primary"
                     wire:click="refrescar"
                 >

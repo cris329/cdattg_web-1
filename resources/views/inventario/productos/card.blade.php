@@ -12,7 +12,7 @@
         </div>
         <div>
             <a href="{{ route('inventario.carrito.ecommerce') }}" class="btn btn-primary">
-                <i class="fas fa-shopping-cart"></i> Ver Carrito 
+                <i class="fas fa-shopping-cart"></i> Ver Carrito
                 <span class="badge badge-light" id="cart-count">0</span>
             </a>
         </div>
@@ -33,10 +33,10 @@
                                         <label for="search-product">
                                             <i class="fas fa-search"></i> Buscar Producto
                                         </label>
-                                        <input 
-                                            type="text" 
-                                            id="search-product" 
-                                            class="form-control" 
+                                        <input
+                                            type="text"
+                                            id="search-product"
+                                            class="form-control"
                                             placeholder="Buscar por nombre..."
                                             value="{{ request('search') }}"
                                         >
@@ -55,7 +55,7 @@
                                         >
                                             <option value="">Todos los tipos</option>
                                             @foreach($tiposProductos as $tipoProducto)
-                                                <option value="{{ $tipoProducto->id }}" 
+                                                <option value="{{ $tipoProducto->id }}"
                                                     {{ request('tipo_producto_id') == $tipoProducto->id ? 'selected' : '' }}>
                                                     {{ $tipoProducto->parametro->name }}
                                                 </option>
@@ -68,8 +68,8 @@
                                         <label for="sort-by">
                                             <i class="fas fa-sort"></i> Ordenar por
                                         </label>
-                                        <select 
-                                            id="sort-by" 
+                                        <select
+                                            id="sort-by"
                                             class="form-control"
                                         >
                                             <option value="name" {{ request('sort_by', 'name') == 'name' ? 'selected' : '' }}>Nombre</option>
@@ -88,7 +88,7 @@
             {{-- Grid de productos --}}
             <div class="row" id="products-grid">
                 @forelse($productos as $producto)
-                    <div class="col-lg-3 col-md-4 col-sm-6 mb-4 product-card" 
+                    <div class="col-lg-3 col-md-4 col-sm-6 mb-4 product-card"
                          data-id="{{ $producto->id }}"
                          data-type="{{ $producto->tipo_producto_id }}"
                          data-name="{{ strtolower($producto->producto) }}"
@@ -97,8 +97,8 @@
                             {{-- Imagen del producto --}}
                             <div class="product-image-container">
                                 @if($producto->imagen)
-                                    <img src="{{ asset($producto->imagen) }}" 
-                                         class="card-img-top product-image" 
+                                    <img src="{{ asset($producto->imagen) }}"
+                                         class="card-img-top product-image"
                                          alt="{{ $producto->producto }}"
                                 @else
                                     <div class="no-image-placeholder">
@@ -151,7 +151,7 @@
                                 {{-- Código de barras --}}
                                 <div class="mb-2">
                                     <small class="text-muted">
-                                        <i class="fas fa-barcode"></i> 
+                                        <i class="fas fa-barcode"></i>
                                         <span class="badge badge-secondary">{{ $producto->codigo_barras }}</span>
                                     </small>
                                 </div>
@@ -166,14 +166,14 @@
 
                                 {{-- Acciones --}}
                                 <div class="btn-group d-flex" role="group">
-                                    <button type="button" 
+                                    <button type="button"
                                             class="btn btn-sm btn-info btn-view-details w-50"
                                             data-id="{{ $producto->id }}"
                                             title="Ver detalles">
                                         <i class="fas fa-eye"></i> Detalles
                                     </button>
                                     @if($producto->cantidad > 0)
-                                        <button type="button" 
+                                        <button type="button"
                                                 class="btn btn-sm btn-success btn-add-to-cart w-50"
                                                 data-id="{{ $producto->id }}"
                                                 data-name="{{ $producto->producto }}"
@@ -222,8 +222,8 @@
     </section>
 
     {{-- Modal simple de detalles del producto --}}
-    <div 
-        id="productDetailModal" 
+    <div
+        id="productDetailModal"
         style="
             display:none;
             position:fixed;
@@ -237,7 +237,7 @@
             justify-content:center;
         "
     >
-        <div 
+        <div
             id="product-detail-modal-content"
             style="
                 background:white;
@@ -251,7 +251,7 @@
             onclick="event.stopPropagation()"
         >
             <!-- Header -->
-            <div 
+            <div
                 style="
                     padding:20px;
                     background:#17a2b8;
@@ -265,9 +265,9 @@
                 <h5 style="margin:0; font-size:18px;">
                     <i class="fas fa-box"></i> Detalles del Producto
                 </h5>
-                <button 
-                    onclick="closeProductModal()" 
-                    aria-label="Cerrar" 
+                <button
+                    onclick="closeProductModal()"
+                    aria-label="Cerrar"
                     style="
                         background:none;
                         border:none;
