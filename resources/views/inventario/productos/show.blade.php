@@ -40,9 +40,20 @@
                         <i class="fas fa-image"></i> Imagen del Producto
                     </h5>
                     <div class="product-image-wrapper">
-                        <img src="{{ $producto->imagen ? asset($producto->imagen) : asset('public/img/inventario/producto-default.png') }}"
-                            alt="{{ $producto->producto }}" class="img-fluid" style="cursor: pointer;"
-                            onclick="$('#imageModal').modal('show'); $('#expandedImage').attr('src', this.src);">
+                        @php
+                            $imagenUrl = $producto->imagen ? asset($producto->imagen) : asset('public/img/inventario/producto-default.png');
+                        @endphp
+                        <img src="{{ $imagenUrl }}"
+                            alt="{{ $producto->producto }}" 
+                            class="img-fluid" 
+                            role="button"
+                            tabindex="0"
+                            aria-label="Ampliar imagen del producto {{ $producto->producto }}"
+                            style="cursor: pointer;"
+                            onclick="expandirImagen('{{ $imagenUrl }}')"
+                            onkeydown="if(event.key === 'Enter' || event.key === ' ') { event.preventDefault(); expandirImagen('{{ $imagenUrl }}'); }"
+                            onkeypress="if(event.key === 'Enter' || event.key === ' ') { event.preventDefault(); expandirImagen('{{ $imagenUrl }}'); }"
+                            onkeyup="if(event.key === 'Enter' || event.key === ' ') { event.preventDefault(); expandirImagen('{{ $imagenUrl }}'); }">
                     </div>
 
                     {{-- Estadísticas Rápidas --}}
@@ -289,6 +300,22 @@
     @vite('resources/js/inventario/imagen.js')
     <script src="https://cdn.jsdelivr.net/npm/jsbarcode@3.11.6/dist/JsBarcode.all.min.js"></script>
     <script>
+        // Función para expandir imagen en modal
+        function expandirImagen(imageSrc) {
+            const expandedImage = document.getElementById('expandedImage');
+            const imageModal = document.getElementById('imageModal');
+            
+            if (expandedImage && imageModal) {
+                expandedImage.src = imageSrc;
+                if (typeof $ !== 'undefined') {
+                    $(imageModal).modal('show');
+                }
+            }
+        }
+
+        // Exponer función globalmente
+        window.expandirImagen = expandirImagen;
+
         // Confirmación de eliminación
         document.querySelectorAll('.formulario-eliminar').forEach(form => {
             form.addEventListener('submit', function(e) {

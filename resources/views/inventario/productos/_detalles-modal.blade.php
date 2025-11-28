@@ -3,8 +3,14 @@
     @php
         $imagenProducto = $producto->imagen ? asset($producto->imagen) : asset('img/inventario/producto-default.png');
     @endphp
-    <div class="modal-img-container" style="cursor: pointer; position: relative; border-radius: 8px; overflow: hidden;" 
-         onclick="$('#imageModal').modal('show'); $('#expandedImage').attr('src', '{{ $imagenProducto }}');">
+    <div class="modal-img-container" 
+         role="button"
+         tabindex="0"
+         aria-label="Ampliar imagen del producto {{ $producto->producto }}"
+         style="cursor: pointer; position: relative; border-radius: 8px; overflow: hidden;" 
+         onclick="expandirImagen('{{ $imagenProducto }}')"
+         onkeydown="if(event.key === 'Enter' || event.key === ' ') { event.preventDefault(); expandirImagen('{{ $imagenProducto }}'); }"
+         onkeypress="if(event.key === 'Enter' || event.key === ' ') { event.preventDefault(); expandirImagen('{{ $imagenProducto }}'); }">
         <img src="{{ $imagenProducto }}" 
              alt="{{ $producto->producto }}" 
              class="modal-img"
@@ -12,6 +18,7 @@
              title="Haz clic para ampliar">
         <div style="position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%); color: white; font-size: 2rem; opacity: 0; transition: opacity 0.3s; text-shadow: 0 2px 4px rgba(0,0,0,0.5);" 
              class="expand-icon" 
+             aria-hidden="true"
              onmouseover="this.style.opacity='1'" 
              onmouseout="this.style.opacity='0'">
             <i class="fas fa-expand"></i>

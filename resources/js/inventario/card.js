@@ -10,6 +10,13 @@ const STORAGE_KEY = 'inventario_carrito';
 // Estado del carrito
 let cart = JSON.parse(localStorage.getItem(STORAGE_KEY)) || [];
 
+// Estado de búsqueda y filtrado
+let showingSearchResults = false;
+let currentFetchedProducts = [];
+let currentFetchController = null;
+let originalGridHTML = null;
+let originalPaginationHTML = '';
+
 /**
  * Helper para mostrar/ocultar modales compatible con Bootstrap 4 y 5
  */
@@ -331,7 +338,7 @@ function compareCards(a, b, sortBy) {
         case 'stock-desc':
             return extractCardStock(b) - extractCardStock(a);
         case 'newest':
-            return parseInt(b.dataset.id) - parseInt(a.dataset.id);
+            return Number.parseInt(b.dataset.id) - Number.parseInt(a.dataset.id);
         case 'name':
         default:
             return (a.dataset.name || '').localeCompare(b.dataset.name || '');
@@ -342,7 +349,7 @@ function extractCardStock(card) {
     const stockBadge = card.querySelector('.badge-success, .badge-warning, .badge-danger');
     if (!stockBadge) return 0;
     const matches = stockBadge.textContent.match(/\d+/);
-    return matches ? parseInt(matches[0], 10) : 0;
+    return matches ? Number.parseInt(matches[0], 10) : 0;
 }
 
 function renderProducts(products, skipSort = false) {
@@ -529,7 +536,7 @@ function setupProductActions() {
         btn.addEventListener('click', function() {
             const productId = this.dataset.id;
             const productName = this.dataset.name;
-            const productStock = parseInt(this.dataset.stock);
+            const productStock = Number.parseInt(this.dataset.stock);
             addToCart(productId, productName, productStock);
         });
     });

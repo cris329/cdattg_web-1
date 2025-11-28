@@ -26,6 +26,7 @@ class AprobacionService
     private const STATUS_APPROVED = 'APROBADA';
     private const STATUS_REJECTED = 'RECHAZADA';
     private const ORDER_STATUS_THEME = 'ESTADOS DE ORDEN';
+    private const ERROR_ESTADO_EN_ESPERA_NO_ENCONTRADO = "Estado 'EN ESPERA' no encontrado.";
 
     public function __construct(
         private readonly AprobacionRepositoryInterface $repository,
@@ -109,7 +110,7 @@ class AprobacionService
 
             $estadoEnEspera = $this->obtenerEstadoEnEspera();
             if (!$estadoEnEspera) {
-                throw new AprobacionException("Estado 'EN ESPERA' no encontrado.");
+                throw new AprobacionException(self::ERROR_ESTADO_EN_ESPERA_NO_ENCONTRADO);
             }
 
             $estadoAprobada = $this->obtenerEstadoAprobada();
@@ -214,7 +215,7 @@ class AprobacionService
 
             $estadoEnEspera = $this->obtenerEstadoEnEspera();
             if (!$estadoEnEspera) {
-                throw new AprobacionException("Estado 'EN ESPERA' no encontrado.");
+                throw new AprobacionException(self::ERROR_ESTADO_EN_ESPERA_NO_ENCONTRADO);
             }
 
             $estadoRechazada = $this->obtenerEstadoRechazada();
@@ -277,7 +278,7 @@ class AprobacionService
 
             $estadoEnEspera = $this->obtenerEstadoEnEspera();
             if (!$estadoEnEspera) {
-                throw new AprobacionException("Estado 'EN ESPERA' no encontrado.");
+                throw new AprobacionException(self::ERROR_ESTADO_EN_ESPERA_NO_ENCONTRADO);
             }
 
             $estadoAprobada = $this->obtenerEstadoAprobada();
@@ -341,7 +342,7 @@ class AprobacionService
 
             $estadoEnEspera = $this->obtenerEstadoEnEspera();
             if (!$estadoEnEspera) {
-                throw new AprobacionException("Estado 'EN ESPERA' no encontrado.");
+                throw new AprobacionException(self::ERROR_ESTADO_EN_ESPERA_NO_ENCONTRADO);
             }
 
             $estadoRechazada = $this->obtenerEstadoRechazada();

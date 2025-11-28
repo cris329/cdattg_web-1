@@ -224,6 +224,10 @@
     {{-- Modal simple de detalles del producto --}}
     <div
         id="productDetailModal"
+        role="dialog"
+        aria-modal="true"
+        aria-labelledby="product-detail-modal-title"
+        tabindex="-1"
         style="
             display:none;
             position:fixed;
@@ -249,6 +253,8 @@
                 box-shadow:0 4px 20px rgba(0,0,0,0.3);
             "
             onclick="event.stopPropagation()"
+            onkeydown="event.stopPropagation()"
+            onkeypress="event.stopPropagation()"
         >
             <!-- Header -->
             <div
@@ -262,7 +268,7 @@
                     border-radius:8px 8px 0 0;
                 "
             >
-                <h5 style="margin:0; font-size:18px;">
+                <h5 id="product-detail-modal-title" style="margin:0; font-size:18px;">
                     <i class="fas fa-box"></i> Detalles del Producto
                 </h5>
                 <button

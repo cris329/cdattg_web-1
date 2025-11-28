@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace App\Http\Requests\Inventario;
 
 use Illuminate\Foundation\Http\FormRequest;
@@ -23,7 +25,7 @@ class MarcaCategoriaRequest extends FormRequest
     {
         // Update - el route parameter puede ser 'categoria' o 'marca'
         if ($this->isMethod('PUT') || $this->isMethod('PATCH')) {
-            $parametroId = $this->route('categoria') ? $this->route('categoria')->id : ($this->route('marca') ? $this->route('marca')->id : null);
+            $parametroId = $this->obtenerParametroId();
             return [
                 'name' => 'required|string|unique:parametros,name,' . $parametroId,
             ];
@@ -33,5 +35,20 @@ class MarcaCategoriaRequest extends FormRequest
         return [
             'name' => 'required|string|unique:parametros,name',
         ];
+    }
+
+    private function obtenerParametroId(): ?int
+    {
+        $categoria = $this->route('categoria');
+        if ($categoria) {
+            return $categoria->id;
+        }
+
+        $marca = $this->route('marca');
+        if ($marca) {
+            return $marca->id;
+        }
+
+        return null;
     }
 }

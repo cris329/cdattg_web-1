@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace App\Models\Inventario;
 
 use App\Exceptions\DevolucionException;
@@ -46,56 +48,76 @@ class Devolucion extends Model
             $detalleOrden = DetalleOrden::with(['producto.tipoProducto.parametro', 'devoluciones'])
                 ->findOrFail($detalleOrdenId);
 
-            if ($detalleOrden->tieneCierreSinStock()) {
-                throw new DevolucionException('Este préstamo ya fue cerrado sin devolución de stock.');
-            }
-
-            $cantidadPendiente = $detalleOrden->getCantidadPendiente();
-            if ($cantidadPendiente <= 0) {
-                throw new DevolucionException('No hay cantidades pendientes por devolver.');
-            }
-
-            if ($cantidadDevuelta < 0) {
-                throw new DevolucionException('La cantidad devuelta no puede ser negativa.');
-            }
-
-            if ($cantidadDevuelta > $cantidadPendiente) {
-                throw new DevolucionException("No puedes devolver más de lo prestado. Cantidad pendiente: {$cantidadPendiente}");
-            }
+            self::validarDevolucion($detalleOrden, $cantidadDevuelta, $observaciones);
 
             $esCierreSinStock = $cantidadDevuelta === 0;
             $observacionesDepuradas = $observaciones !== null ? trim($observaciones) : null;
 
             if ($esCierreSinStock) {
-                if ($observacionesDepuradas === null || $observacionesDepuradas === '') {
-                    throw new DevolucionException('Debes registrar el motivo del consumo total para cerrar sin devolución.');
-                }
-
-                if (!$detalleOrden->producto->esConsumible()) {
-                    throw new DevolucionException('Solo los productos consumibles pueden cerrarse sin devolución de stock.');
-                }
+                self::validarCierreSinStock($detalleOrden, $observacionesDepuradas);
             }
 
-            $devolucion = self::create([
-                'detalle_orden_id' => $detalleOrdenId,
-                'cantidad_devuelta' => $cantidadDevuelta,
-                'fecha_devolucion' => now(),
-                'estado_id' => 1,
-                'observaciones' => $observacionesDepuradas,
-                'cierra_sin_stock' => $esCierreSinStock,
-                'user_create_id' => Auth::id(),
-                'user_update_id' => Auth::id()
-            ]);
+            $devolucion = self::crearDevolucion($detalleOrdenId, $cantidadDevuelta, $observacionesDepuradas, $esCierreSinStock);
 
-            if (!$esCierreSinStock && $cantidadDevuelta > 0) {
-                $detalleOrden->producto->devolverStock($cantidadDevuelta);
-            }
+            self::procesarDevolucionStock($detalleOrden, $esCierreSinStock, $cantidadDevuelta);
 
             return $devolucion->fresh([
                 'detalleOrden.producto',
                 'detalleOrden.orden',
             ]);
         });
+    }
+
+    private static function validarDevolucion(DetalleOrden $detalleOrden, int $cantidadDevuelta, ?string $observaciones): void
+    {
+        if ($detalleOrden->tieneCierreSinStock()) {
+            throw new DevolucionException('Este préstamo ya fue cerrado sin devolución de stock.');
+        }
+
+        $cantidadPendiente = $detalleOrden->getCantidadPendiente();
+        if ($cantidadPendiente <= 0) {
+            throw new DevolucionException('No hay cantidades pendientes por devolver.');
+        }
+
+        if ($cantidadDevuelta < 0) {
+            throw new DevolucionException('La cantidad devuelta no puede ser negativa.');
+        }
+
+        if ($cantidadDevuelta > $cantidadPendiente) {
+            throw new DevolucionException("No puedes devolver más de lo prestado. Cantidad pendiente: {$cantidadPendiente}");
+        }
+    }
+
+    private static function validarCierreSinStock(DetalleOrden $detalleOrden, ?string $observacionesDepuradas): void
+    {
+        if ($observacionesDepuradas === null || $observacionesDepuradas === '') {
+            throw new DevolucionException('Debes registrar el motivo del consumo total para cerrar sin devolución.');
+        }
+
+        if (!$detalleOrden->producto->esConsumible()) {
+            throw new DevolucionException('Solo los productos consumibles pueden cerrarse sin devolución de stock.');
+        }
+    }
+
+    private static function crearDevolucion(int $detalleOrdenId, int $cantidadDevuelta, ?string $observacionesDepuradas, bool $esCierreSinStock): self
+    {
+        return self::create([
+            'detalle_orden_id' => $detalleOrdenId,
+            'cantidad_devuelta' => $cantidadDevuelta,
+            'fecha_devolucion' => now(),
+            'estado_id' => 1,
+            'observaciones' => $observacionesDepuradas,
+            'cierra_sin_stock' => $esCierreSinStock,
+            'user_create_id' => Auth::id(),
+            'user_update_id' => Auth::id()
+        ]);
+    }
+
+    private static function procesarDevolucionStock(DetalleOrden $detalleOrden, bool $esCierreSinStock, int $cantidadDevuelta): void
+    {
+        if (!$esCierreSinStock && $cantidadDevuelta > 0) {
+            $detalleOrden->producto->devolverStock($cantidadDevuelta);
+        }
     }
 
     
