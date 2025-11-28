@@ -8,6 +8,9 @@ use App\Services\Sofia\SofiaValidationProcessor;
 
 class ValidarSofiaCommand extends Command
 {
+    private const DELAY_SECONDS = 2;
+    private const ESTADO_REGISTRADO = 1;
+
     /**
      * The name and signature of the console command.
      *
@@ -25,23 +28,24 @@ class ValidarSofiaCommand extends Command
     /**
      * Execute the console command.
      */
+
     public function handle(
         SofiaValidationService $validationService,
         SofiaValidationProcessor $processor
-    ) {
-        $complementarioId = $this->argument('complementario_id');
+    ): int {
+        $complementarioId = (int) $this->argument('complementario_id');
 
-        // Obtener aspirantes que necesitan validación
         $aspirantes = $validationService->getAspirantesToValidate($complementarioId);
 
         if ($aspirantes->isEmpty()) {
-            $this->info('No hay aspirantes que necesiten validación.');
-            return;
+            $this->info('No hay aspirantes que necesiten validacion.');
+            return self::SUCCESS;
         }
 
-        $this->info("Validando {$aspirantes->count()} aspirantes...");
+        $totalAspirantes = $aspirantes->count();
+        $this->info("Validando {$totalAspirantes} aspirantes...");
 
-        $bar = $this->output->createProgressBar($aspirantes->count());
+        $bar = $this->output->createProgressBar($totalAspirantes);
         $bar->start();
 
         $exitosos = 0;
@@ -51,27 +55,26 @@ class ValidarSofiaCommand extends Command
             $result = $validationService->validateAspirante($aspirante, $complementarioId);
 
             if ($result['success']) {
-                $estado = $result['estado'];
-                if ($estado === 1) {
+                if ($result['estado'] === self::ESTADO_REGISTRADO) {
                     $exitosos++;
                 }
-                $this->info("Cédula {$result['cedula']}: {$result['resultado']}");
+                $this->info("Cedula {$result['cedula']}: {$result['resultado']}");
             } else {
                 $errores++;
-                $this->error("Error con cédula {$result['cedula']}: {$result['error']}");
+                $this->error("Error con cedula {$result['cedula']}: {$result['error']}");
             }
 
             $bar->advance();
-
-            // Delay para evitar rate limiting
-            sleep(2);
+            sleep(self::DELAY_SECONDS);
         }
 
         $bar->finish();
         $this->newLine(2);
 
-        $this->info("Validación completada:");
-        $this->info("✅ Registrados: {$exitosos}");
-        $this->info("❌ Errores: {$errores}");
+        $this->info("Validacion completada:");
+        $this->info("Registrados: {$exitosos}");
+        $this->info("Errores: {$errores}");
+
+        return self::SUCCESS;
     }
 }

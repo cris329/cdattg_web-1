@@ -37,4 +37,8 @@ return [
         'redirect' => env('GOOGLE_DRIVE_REDIRECT_URI'),
     ],
 
+    'playwright' => [
+        'url' => env('PLAYWRIGHT_SERVICE_URL', 'http://playwright:3000'),
+    ],
+
 ];

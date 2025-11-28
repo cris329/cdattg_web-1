@@ -35,41 +35,36 @@ class SofiaValidationService
         $estadoAnterior = $aspirante->persona->estado_sofia;
 
         try {
-            Log::info("🔍 Validando cédula {$cedula}");
+            Log::info('Validando cedula', ['cedula' => $cedula]);
 
             $startTime = microtime(true);
             $resultado = $this->httpClient->validate($cedula);
             $endTime = microtime(true);
             $duration = round($endTime - $startTime, 2);
 
-            // Actualizar estado basado en resultado
             $nuevoEstado = $this->stateMapper->mapToState($resultado);
             $aspirante->persona->update(['estado_sofia' => $nuevoEstado]);
 
             $estadoLabel = $this->stateMapper->getStateLabel($nuevoEstado);
-            Log::info("✅ Cédula {$cedula}: {$resultado} -> Estado: {$estadoLabel} (Tiempo: {$duration}s)");
+            Log::info('Cedula validada exitosamente', [
+                'cedula' => $cedula,
+                'resultado' => $resultado,
+                'estado' => $estadoLabel,
+                'duration' => $duration
+            ]);
 
-            // Registrar en auditoría
-            $resultadoAuditoria = $nuevoEstado === 1 ? 'exitoso' : ($nuevoEstado === 0 ? 'advertencia' : 'exitoso');
-            $this->auditoriaService->registrarValidacionSenasofiaplus(
-                $aspirante->id,
-                $resultadoAuditoria,
-                "Validación completada: {$resultado} -> {$estadoLabel}",
-                [
-                    'cedula' => $cedula,
-                    'resultado_api' => $resultado,
-                    'estado_anterior' => $estadoAnterior,
-                    'estado_nuevo' => $nuevoEstado,
-                    'tiempo_respuesta' => $duration,
-                    'complementario_id' => $complementarioId
-                ]
+            $this->registerAuditSuccess(
+                $aspirante,
+                $cedula,
+                $resultado,
+                $estadoAnterior,
+                $nuevoEstado,
+                $estadoLabel,
+                $duration,
+                $complementarioId
             );
 
-            // Actualizar progreso
-            if ($progress) {
-                $isSuccessful = $nuevoEstado === 1 || $nuevoEstado === 0 || $nuevoEstado === 2;
-                $progress->incrementProcessed($isSuccessful);
-            }
+            $this->updateProgress($progress, $nuevoEstado);
 
             return [
                 'success' => true,
@@ -80,37 +75,13 @@ class SofiaValidationService
             ];
 
         } catch (\Exception $e) {
-            $errorMsg = "❌ Error con cédula {$cedula}: {$e->getMessage()}";
-            Log::error($errorMsg, [
-                'aspirante_id' => $aspirante->id,
-                'persona_id' => $aspirante->persona_id,
-                'complementario_id' => $complementarioId,
-                'exception' => $e->getTraceAsString()
-            ]);
-
-            // Registrar error en auditoría
-            $this->auditoriaService->registrarValidacionSenasofiaplus(
-                $aspirante->id,
-                'error',
-                $errorMsg,
-                [
-                    'cedula' => $cedula,
-                    'complementario_id' => $complementarioId,
-                    'exception_message' => $e->getMessage(),
-                    'exception_type' => get_class($e)
-                ]
+            return $this->handleValidationError(
+                $e,
+                $aspirante,
+                $cedula,
+                $complementarioId,
+                $progress
             );
-
-            // Actualizar progreso con error
-            if ($progress) {
-                $progress->incrementProcessed(false);
-            }
-
-            return [
-                'success' => false,
-                'cedula' => $cedula,
-                'error' => $errorMsg
-            ];
         }
     }
 
@@ -125,6 +96,101 @@ class SofiaValidationService
                 $query->whereIn('estado_sofia', [0, 2]);
             })
             ->get();
+    }
+
+    /**
+     * Registrar auditoría de éxito
+     */
+    private function registerAuditSuccess(
+        AspiranteComplementario $aspirante,
+        string $cedula,
+        string $resultado,
+        int $estadoAnterior,
+        int $nuevoEstado,
+        string $estadoLabel,
+        float $duration,
+        int $complementarioId
+    ): void {
+        $resultadoAuditoria = $this->getAuditResult($nuevoEstado);
+        $this->auditoriaService->registrarValidacionSenasofiaplus(
+            $aspirante->id,
+            $resultadoAuditoria,
+            "Validacion completada: {$resultado} -> {$estadoLabel}",
+            [
+                'cedula' => $cedula,
+                'resultado_api' => $resultado,
+                'estado_anterior' => $estadoAnterior,
+                'estado_nuevo' => $nuevoEstado,
+                'tiempo_respuesta' => $duration,
+                'complementario_id' => $complementarioId
+            ]
+        );
+    }
+
+    /**
+     * Obtener resultado de auditoría
+     */
+    private function getAuditResult(int $estado): string
+    {
+        return match($estado) {
+            1 => 'exitoso',
+            0 => 'advertencia',
+            2 => 'exitoso',
+            default => 'advertencia'
+        };
+    }
+
+    /**
+     * Actualizar progreso
+     */
+    private function updateProgress(?SofiaValidationProgress $progress, int $nuevoEstado): void
+    {
+        if ($progress) {
+            $isSuccessful = in_array($nuevoEstado, [0, 1, 2], true);
+            $progress->incrementProcessed($isSuccessful);
+        }
+    }
+
+    /**
+     * Manejar error de validación
+     */
+    private function handleValidationError(
+        \Exception $e,
+        AspiranteComplementario $aspirante,
+        string $cedula,
+        int $complementarioId,
+        ?SofiaValidationProgress $progress
+    ): array {
+        $errorMsg = "Error con cedula {$cedula}: {$e->getMessage()}";
+        Log::error('Error validando cedula', [
+            'aspirante_id' => $aspirante->id,
+            'persona_id' => $aspirante->persona_id,
+            'complementario_id' => $complementarioId,
+            'cedula' => $cedula,
+            'exception' => $e->getTraceAsString()
+        ]);
+
+        $this->auditoriaService->registrarValidacionSenasofiaplus(
+            $aspirante->id,
+            'error',
+            $errorMsg,
+            [
+                'cedula' => $cedula,
+                'complementario_id' => $complementarioId,
+                'exception_message' => $e->getMessage(),
+                'exception_type' => get_class($e)
+            ]
+        );
+
+        if ($progress) {
+            $progress->incrementProcessed(false);
+        }
+
+        return [
+            'success' => false,
+            'cedula' => $cedula,
+            'error' => $errorMsg
+        ];
     }
 }
 

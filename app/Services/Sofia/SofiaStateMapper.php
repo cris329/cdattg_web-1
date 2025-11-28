@@ -6,6 +6,34 @@ use Illuminate\Support\Facades\Log;
 
 class SofiaStateMapper
 {
+    private const ESTADO_NO_REGISTRADO = 0;
+    private const ESTADO_REGISTRADO = 1;
+    private const ESTADO_REQUIERE_CAMBIO = 2;
+
+    private const RESULTADO_ERROR = 'ERROR';
+    private const RESULTADO_YA_EXISTE = 'YA_EXISTE';
+    private const RESULTADO_NO_REGISTRADO = 'NO_REGISTRADO';
+    private const RESULTADO_REQUIERE_CAMBIO = 'REQUIERE_CAMBIO';
+    private const RESULTADO_DESCONOCIDO = 'DESCONOCIDO';
+
+    private const PATRONES_REQUIERE_CAMBIO = [
+        'requiere_cambio',
+        'actualizar tu documento',
+        'cambiar tu documento',
+        'tarjeta de identidad'
+    ];
+
+    private const PATRONES_REGISTRADO = [
+        'ya existe',
+        'ya cuentas con un registro',
+        'cuenta registrada'
+    ];
+
+    private const PATRONES_NO_REGISTRADO = [
+        'no_registrado',
+        'desconocido'
+    ];
+
     /**
      * Mapear resultado de validación a estado Sofia
      * 
@@ -16,54 +44,29 @@ class SofiaStateMapper
     {
         $resultadoLower = strtolower($resultado);
 
-        // PRIMERO: Verificar si es error
-        if ($resultado === 'ERROR' || str_contains($resultadoLower, 'error')) {
-            Log::warning("Error en validación de SenaSofiaPlus: '{$resultado}'");
-            return 0; // No registrado - error se trata como no registrado
+        if ($this->isError($resultado, $resultadoLower)) {
+            return self::ESTADO_NO_REGISTRADO;
         }
 
-        // SEGUNDO: Verificar respuestas directas del script
-        if ($resultado === 'YA_EXISTE') {
-            return 1; // Registrado
+        $directState = $this->getDirectState($resultado);
+        if ($directState !== null) {
+            return $directState;
         }
 
-        if ($resultado === 'NO_REGISTRADO') {
-            return 0; // No registrado
+        if ($this->requiresChange($resultadoLower)) {
+            return self::ESTADO_REQUIERE_CAMBIO;
         }
 
-        if ($resultado === 'REQUIERE_CAMBIO') {
-            return 2; // Requiere cambio de cédula
+        if ($this->isRegistered($resultadoLower)) {
+            return self::ESTADO_REGISTRADO;
         }
 
-        if ($resultado === 'DESCONOCIDO') {
-            return 0; // No registrado
+        if ($this->isNotRegistered($resultadoLower, $resultado)) {
+            return self::ESTADO_NO_REGISTRADO;
         }
 
-        // TERCERO: Verificar si requiere cambio de documento (texto largo)
-        if (str_contains($resultadoLower, 'requiere_cambio') ||
-            str_contains($resultadoLower, 'actualizar tu documento') ||
-            str_contains($resultadoLower, 'cambiar tu documento') ||
-            str_contains($resultadoLower, 'tarjeta de identidad')) {
-            return 2; // Requiere cambio de cédula
-        }
-
-        // CUARTO: Verificar si está registrado correctamente (texto largo)
-        if (str_contains($resultadoLower, 'ya existe') ||
-            str_contains($resultadoLower, 'ya cuentas con un registro') ||
-            str_contains($resultadoLower, 'cuenta registrada')) {
-            return 1; // Registrado
-        }
-
-        // QUINTO: Verificar si NO está registrado (puede registrarse)
-        if (str_contains($resultadoLower, 'no_registrado') ||
-            str_contains($resultadoLower, 'desconocido') ||
-            trim($resultado) === '') {
-            return 0; // No registrado - puede crear cuenta
-        }
-
-        // SEXTO: Cualquier otro resultado se considera como no registrado
-        Log::warning("Respuesta no reconocida de SenaSofiaPlus: '{$resultado}' - tratando como no registrado");
-        return 0; // Por defecto, asumir no registrado
+        Log::warning('Respuesta no reconocida de SenaSofiaPlus', ['resultado' => $resultado]);
+        return self::ESTADO_NO_REGISTRADO;
     }
 
     /**
@@ -72,11 +75,75 @@ class SofiaStateMapper
     public function getStateLabel(int $estado): string
     {
         return match($estado) {
-            0 => 'No registrado',
-            1 => 'Registrado',
-            2 => 'Requiere cambio',
+            self::ESTADO_NO_REGISTRADO => 'No registrado',
+            self::ESTADO_REGISTRADO => 'Registrado',
+            self::ESTADO_REQUIERE_CAMBIO => 'Requiere cambio',
             default => 'Desconocido'
         };
+    }
+
+    /**
+     * Verificar si es error
+     */
+    private function isError(string $resultado, string $resultadoLower): bool
+    {
+        if ($resultado === self::RESULTADO_ERROR || str_contains($resultadoLower, 'error')) {
+            Log::warning('Error en validacion de SenaSofiaPlus', ['resultado' => $resultado]);
+            return true;
+        }
+        return false;
+    }
+
+    /**
+     * Obtener estado directo del resultado
+     */
+    private function getDirectState(string $resultado): ?int
+    {
+        return match($resultado) {
+            self::RESULTADO_YA_EXISTE => self::ESTADO_REGISTRADO,
+            self::RESULTADO_NO_REGISTRADO, self::RESULTADO_DESCONOCIDO => self::ESTADO_NO_REGISTRADO,
+            self::RESULTADO_REQUIERE_CAMBIO => self::ESTADO_REQUIERE_CAMBIO,
+            default => null
+        };
+    }
+
+    /**
+     * Verificar si requiere cambio
+     */
+    private function requiresChange(string $resultadoLower): bool
+    {
+        foreach (self::PATRONES_REQUIERE_CAMBIO as $patron) {
+            if (str_contains($resultadoLower, $patron)) {
+                return true;
+            }
+        }
+        return false;
+    }
+
+    /**
+     * Verificar si está registrado
+     */
+    private function isRegistered(string $resultadoLower): bool
+    {
+        foreach (self::PATRONES_REGISTRADO as $patron) {
+            if (str_contains($resultadoLower, $patron)) {
+                return true;
+            }
+        }
+        return false;
+    }
+
+    /**
+     * Verificar si no está registrado
+     */
+    private function isNotRegistered(string $resultadoLower, string $resultado): bool
+    {
+        foreach (self::PATRONES_NO_REGISTRADO as $patron) {
+            if (str_contains($resultadoLower, $patron)) {
+                return true;
+            }
+        }
+        return trim($resultado) === '';
     }
 }
 

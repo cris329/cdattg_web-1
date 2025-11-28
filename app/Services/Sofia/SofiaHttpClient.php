@@ -9,13 +9,22 @@ use Illuminate\Http\Client\RequestException;
 
 class SofiaHttpClient
 {
+    private const DEFAULT_TIMEOUT = 90;
+    private const HEALTH_CHECK_TIMEOUT = 5;
+    private const STATUS_OK = 'ok';
+    private const STATUS_ERROR = 'error';
+    private const RESPONSE_FIELD_STATUS = 'status';
+    private const RESPONSE_FIELD_RESULTADO = 'resultado';
+    private const RESPONSE_FIELD_MESSAGE = 'message';
+    private const RESPONSE_FIELD_DETAIL = 'detail';
+
     private string $baseUrl;
     private int $timeout;
 
     public function __construct()
     {
-        $this->baseUrl = rtrim(env('PLAYWRIGHT_SERVICE_URL', 'http://playwright:3000'), '/');
-        $this->timeout = 90; // 90 segundos de timeout
+        $this->baseUrl = rtrim(config('services.playwright.url', 'http://playwright:3000'), '/');
+        $this->timeout = self::DEFAULT_TIMEOUT;
     }
 
     /**
@@ -25,7 +34,7 @@ class SofiaHttpClient
     {
         $validateUrl = $this->baseUrl . '/validate';
 
-        Log::info("🌐 Enviando petición HTTP al servicio Playwright para cédula: {$cedula}", [
+        Log::info('Enviando peticion HTTP al servicio Playwright', [
             'url' => $validateUrl,
             'cedula' => $cedula
         ]);
@@ -33,7 +42,7 @@ class SofiaHttpClient
         try {
             $this->checkHealth();
 
-            Log::info("📤 Iniciando validación HTTP para cédula: {$cedula}");
+            Log::info('Iniciando validacion HTTP', ['cedula' => $cedula]);
             $startTime = microtime(true);
 
             $response = Http::timeout($this->timeout)
@@ -44,7 +53,8 @@ class SofiaHttpClient
             $endTime = microtime(true);
             $duration = round($endTime - $startTime, 2);
 
-            Log::info("📥 Respuesta recibida del servicio Playwright para cédula {$cedula} (duración: {$duration}s)", [
+            Log::info('Respuesta recibida del servicio Playwright', [
+                'cedula' => $cedula,
                 'status_code' => $response->status(),
                 'duration' => $duration
             ]);
@@ -52,26 +62,21 @@ class SofiaHttpClient
             return $this->parseResponse($response, $cedula, $duration);
 
         } catch (ConnectionException $e) {
-            Log::error("❌ Error de conexión con servicio Playwright para cédula {$cedula}", [
-                'message' => $e->getMessage(),
-                'url' => $validateUrl,
-                'exception_type' => get_class($e)
-            ]);
-            throw new \Exception("No se pudo conectar al servicio Playwright en {$validateUrl}: " . $e->getMessage());
+            $this->logConnectionError($e, $validateUrl, $cedula);
+            throw new \RuntimeException(
+                "No se pudo conectar al servicio Playwright en {$validateUrl}: " . $e->getMessage(),
+                0,
+                $e
+            );
         } catch (RequestException $e) {
-            Log::error("❌ Error en la petición HTTP al servicio Playwright para cédula {$cedula}", [
-                'message' => $e->getMessage(),
-                'url' => $validateUrl,
-                'exception_type' => get_class($e)
-            ]);
-            throw new \Exception("Error en la petición al servicio Playwright: " . $e->getMessage());
+            $this->logRequestError($e, $validateUrl, $cedula);
+            throw new \RuntimeException(
+                "Error en la peticion al servicio Playwright: " . $e->getMessage(),
+                0,
+                $e
+            );
         } catch (\Exception $e) {
-            Log::error("❌ Error al validar cédula {$cedula} con servicio Playwright", [
-                'message' => $e->getMessage(),
-                'url' => $validateUrl,
-                'exception' => get_class($e),
-                'trace' => $e->getTraceAsString()
-            ]);
+            $this->logValidationError($e, $validateUrl, $cedula);
             throw $e;
         }
     }
@@ -83,17 +88,19 @@ class SofiaHttpClient
     {
         $healthUrl = $this->baseUrl . '/health';
         try {
-            $healthResponse = Http::timeout(5)->get($healthUrl);
+            $healthResponse = Http::timeout(self::HEALTH_CHECK_TIMEOUT)->get($healthUrl);
             if (!$healthResponse->successful()) {
-                Log::warning("⚠️ Servicio Playwright no responde al health check", [
+                Log::warning('Servicio Playwright no responde al health check', [
                     'health_url' => $healthUrl,
                     'status' => $healthResponse->status()
                 ]);
             } else {
-                Log::debug("✅ Servicio Playwright está disponible (health check OK)");
+                Log::debug('Servicio Playwright esta disponible (health check OK)');
             }
         } catch (\Exception $e) {
-            Log::warning("⚠️ No se pudo verificar health del servicio Playwright: " . $e->getMessage());
+            Log::warning('No se pudo verificar health del servicio Playwright', [
+                'error' => $e->getMessage()
+            ]);
         }
     }
 
@@ -102,73 +109,139 @@ class SofiaHttpClient
      */
     private function parseResponse($response, string $cedula, float $duration): string
     {
-        // Verificar si la petición fue exitosa
         if (!$response->successful()) {
-            $statusCode = $response->status();
-            $errorBody = $response->body();
-
-            Log::error("❌ Servicio Playwright retornó error HTTP para cédula {$cedula}", [
-                'status_code' => $statusCode,
-                'response' => $errorBody,
-                'duration' => $duration
-            ]);
-
-            throw new \Exception("Error HTTP {$statusCode} del servicio Playwright: {$errorBody}");
+            $this->handleUnsuccessfulResponse($response, $cedula, $duration);
         }
 
-        // Obtener respuesta JSON
         $responseData = $response->json();
 
-        Log::debug("📋 Respuesta JSON del servicio Playwright para cédula {$cedula}", [
+        Log::debug('Respuesta JSON del servicio Playwright', [
+            'cedula' => $cedula,
             'response_data' => $responseData
         ]);
 
-        // Verificar estructura de respuesta
-        if (!isset($responseData['status'])) {
-            Log::error("❌ Respuesta del servicio Playwright sin campo 'status' para cédula {$cedula}", [
-                'response' => $responseData,
-                'raw_body' => $response->body()
-            ]);
-            throw new \Exception("Respuesta inválida del servicio Playwright: falta campo 'status'");
-        }
+        $this->validateResponseStructure($responseData, $response, $cedula);
+        $this->validateResponseStatus($responseData, $cedula, $duration);
 
-        // Si hay error en la respuesta
-        if ($responseData['status'] === 'error') {
-            $errorMessage = $responseData['message'] ?? 'Error desconocido del servicio Playwright';
-            Log::error("❌ Servicio Playwright reportó error para cédula {$cedula}", [
-                'message' => $errorMessage,
-                'detail' => $responseData['detail'] ?? null,
-                'duration' => $duration
-            ]);
-            throw new \Exception("Error del servicio Playwright: {$errorMessage}");
-        }
-
-        // Verificar que el status sea 'ok'
-        if ($responseData['status'] !== 'ok') {
-            Log::error("❌ Respuesta del servicio Playwright con status inesperado para cédula {$cedula}", [
-                'status' => $responseData['status'],
-                'response' => $responseData
-            ]);
-            throw new \Exception("Status inesperado del servicio Playwright: {$responseData['status']}");
-        }
-
-        // Extraer resultado de la respuesta
-        $resultado = $responseData['resultado'] ?? null;
+        $resultado = $responseData[self::RESPONSE_FIELD_RESULTADO] ?? null;
 
         if ($resultado === null) {
-            Log::error("❌ Respuesta del servicio Playwright sin campo 'resultado' para cédula {$cedula}", [
+            Log::error('Respuesta del servicio Playwright sin campo resultado', [
+                'cedula' => $cedula,
                 'response' => $responseData,
                 'raw_body' => $response->body()
             ]);
-            throw new \Exception("Respuesta sin resultado del servicio Playwright");
+            throw new \RuntimeException('Respuesta sin resultado del servicio Playwright');
         }
 
-        Log::info("✅ Servicio Playwright completado exitosamente para cédula {$cedula}", [
+        Log::info('Servicio Playwright completado exitosamente', [
+            'cedula' => $cedula,
             'resultado' => $resultado,
             'duration' => $duration
         ]);
 
         return $resultado;
+    }
+
+    /**
+     * Manejar respuesta no exitosa
+     */
+    private function handleUnsuccessfulResponse($response, string $cedula, float $duration): void
+    {
+        $statusCode = $response->status();
+        $errorBody = $response->body();
+
+        Log::error('Servicio Playwright retorno error HTTP', [
+            'cedula' => $cedula,
+            'status_code' => $statusCode,
+            'response' => $errorBody,
+            'duration' => $duration
+        ]);
+
+        throw new \RuntimeException("Error HTTP {$statusCode} del servicio Playwright: {$errorBody}");
+    }
+
+    /**
+     * Validar estructura de respuesta
+     */
+    private function validateResponseStructure(array $responseData, $response, string $cedula): void
+    {
+        if (!isset($responseData[self::RESPONSE_FIELD_STATUS])) {
+            Log::error('Respuesta del servicio Playwright sin campo status', [
+                'cedula' => $cedula,
+                'response' => $responseData,
+                'raw_body' => $response->body()
+            ]);
+            throw new \RuntimeException('Respuesta invalida del servicio Playwright: falta campo status');
+        }
+    }
+
+    /**
+     * Validar status de respuesta
+     */
+    private function validateResponseStatus(array $responseData, string $cedula, float $duration): void
+    {
+        if ($responseData[self::RESPONSE_FIELD_STATUS] === self::STATUS_ERROR) {
+            $errorMessage = $responseData[self::RESPONSE_FIELD_MESSAGE] ?? 'Error desconocido del servicio Playwright';
+            Log::error('Servicio Playwright reporto error', [
+                'cedula' => $cedula,
+                'message' => $errorMessage,
+                'detail' => $responseData[self::RESPONSE_FIELD_DETAIL] ?? null,
+                'duration' => $duration
+            ]);
+            throw new \RuntimeException("Error del servicio Playwright: {$errorMessage}");
+        }
+
+        if ($responseData[self::RESPONSE_FIELD_STATUS] !== self::STATUS_OK) {
+            Log::error('Respuesta del servicio Playwright con status inesperado', [
+                'cedula' => $cedula,
+                'status' => $responseData[self::RESPONSE_FIELD_STATUS],
+                'response' => $responseData
+            ]);
+            throw new \RuntimeException(
+                "Status inesperado del servicio Playwright: {$responseData[self::RESPONSE_FIELD_STATUS]}"
+            );
+        }
+    }
+
+    /**
+     * Registrar error de conexión
+     */
+    private function logConnectionError(ConnectionException $e, string $url, string $cedula): void
+    {
+        Log::error('Error de conexion con servicio Playwright', [
+            'cedula' => $cedula,
+            'message' => $e->getMessage(),
+            'url' => $url,
+            'exception_type' => get_class($e)
+        ]);
+    }
+
+    /**
+     * Registrar error de petición
+     */
+    private function logRequestError(RequestException $e, string $url, string $cedula): void
+    {
+        Log::error('Error en la peticion HTTP al servicio Playwright', [
+            'cedula' => $cedula,
+            'message' => $e->getMessage(),
+            'url' => $url,
+            'exception_type' => get_class($e)
+        ]);
+    }
+
+    /**
+     * Registrar error de validación
+     */
+    private function logValidationError(\Exception $e, string $url, string $cedula): void
+    {
+        Log::error('Error al validar cedula con servicio Playwright', [
+            'cedula' => $cedula,
+            'message' => $e->getMessage(),
+            'url' => $url,
+            'exception' => get_class($e),
+            'trace' => $e->getTraceAsString()
+        ]);
     }
 }
 

@@ -7,6 +7,14 @@ use Illuminate\Support\Facades\Log;
 
 class SofiaValidationProcessor
 {
+    private const BATCH_SIZE = 5;
+    private const BATCH_DELAY_SECONDS = 3;
+    private const DELAY_INITIAL_MS = 3000;
+    private const DELAY_MID_MS = 2000;
+    private const DELAY_FINAL_MS = 1000;
+    private const PROGRESS_THRESHOLD_LOW = 0.2;
+    private const PROGRESS_THRESHOLD_MID = 0.5;
+
     private SofiaValidationService $validationService;
     private int $batchSize;
     private int $batchDelay;
@@ -14,8 +22,8 @@ class SofiaValidationProcessor
     public function __construct(SofiaValidationService $validationService)
     {
         $this->validationService = $validationService;
-        $this->batchSize = 5; // Procesar de 5 en 5
-        $this->batchDelay = 3; // 3 segundos entre lotes
+        $this->batchSize = self::BATCH_SIZE;
+        $this->batchDelay = self::BATCH_DELAY_SECONDS;
     }
 
     /**
@@ -27,7 +35,7 @@ class SofiaValidationProcessor
         ?SofiaValidationProgress $progress = null
     ): array {
         $totalAspirantes = $aspirantes->count();
-        Log::info("📋 Iniciando validación de {$totalAspirantes} aspirantes...");
+        Log::info('Iniciando validacion de aspirantes', ['total' => $totalAspirantes]);
 
         $exitosos = 0;
         $errores = 0;
@@ -35,13 +43,23 @@ class SofiaValidationProcessor
         $procesados = 0;
 
         $batches = $aspirantes->chunk($this->batchSize);
+        $totalBatches = $batches->count();
 
         foreach ($batches as $batchIndex => $batch) {
-            Log::info("🔄 Procesando lote " . ($batchIndex + 1) . "/" . $batches->count() . " ({$batch->count()} aspirantes)");
+            $batchNumber = $batchIndex + 1;
+            Log::info('Procesando lote', [
+                'lote' => $batchNumber,
+                'total_lotes' => $totalBatches,
+                'aspirantes_lote' => $batch->count()
+            ]);
 
             foreach ($batch as $aspirante) {
                 $procesados++;
-                Log::info("🔍 Validando cédula {$aspirante->persona->numero_documento} ({$procesados}/{$totalAspirantes})");
+                $cedula = $aspirante->persona->numero_documento;
+                Log::info('Validando cedula', [
+                    'cedula' => $cedula,
+                    'progreso' => "{$procesados}/{$totalAspirantes}"
+                ]);
 
                 $result = $this->validationService->validateAspirante(
                     $aspirante,
@@ -51,7 +69,7 @@ class SofiaValidationProcessor
 
                 if ($result['success']) {
                     $estado = $result['estado'];
-                    if ($estado === 1 || $estado === 0 || $estado === 2) {
+                    if (in_array($estado, [0, 1, 2], true)) {
                         $exitosos++;
                     }
                 } else {
@@ -59,17 +77,15 @@ class SofiaValidationProcessor
                     $errores_detalle[] = $result['error'];
                 }
 
-                // Delay optimizado entre validaciones
                 $delay = $this->calculateDelay($procesados, $totalAspirantes);
                 if ($delay > 0) {
-                    Log::debug("⏳ Esperando {$delay}ms antes de siguiente validación...");
+                    Log::debug('Esperando antes de siguiente validacion', ['delay_ms' => $delay]);
                     usleep($delay * 1000);
                 }
             }
 
-            // Delay adicional entre lotes
-            if ($batches->count() > 1 && $batchIndex < $batches->count() - 1) {
-                Log::info("🔄 Cambio de lote - Esperando {$this->batchDelay} segundos...");
+            if ($totalBatches > 1 && $batchIndex < $totalBatches - 1) {
+                Log::info('Cambio de lote - esperando', ['segundos' => $this->batchDelay]);
                 sleep($this->batchDelay);
             }
         }
@@ -87,16 +103,21 @@ class SofiaValidationProcessor
      */
     private function calculateDelay(int $procesados, int $total): int
     {
+        if ($total === 0) {
+            return 0;
+        }
+
         $progress = $procesados / $total;
 
-        // Delay inicial alto, luego se reduce
-        if ($progress < 0.2) {
-            return 3000; // 3 segundos al inicio
-        } elseif ($progress < 0.5) {
-            return 2000; // 2 segundos en la mitad
-        } else {
-            return 1000; // 1 segundo al final
+        if ($progress < self::PROGRESS_THRESHOLD_LOW) {
+            return self::DELAY_INITIAL_MS;
         }
+
+        if ($progress < self::PROGRESS_THRESHOLD_MID) {
+            return self::DELAY_MID_MS;
+        }
+
+        return self::DELAY_FINAL_MS;
     }
 }
 
