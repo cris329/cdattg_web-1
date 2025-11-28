@@ -6,7 +6,6 @@ namespace App\Http\Controllers\Inventario;
 
 use App\Services\Inventario\AprobacionService;
 use App\Exceptions\AprobacionException;
-use Illuminate\Http\Request;
 use Illuminate\View\View;
 use Illuminate\Http\RedirectResponse;
 use App\Http\Requests\Inventario\AprobacionesRequest;
@@ -14,17 +13,27 @@ use App\Http\Controllers\Controller;
 
 class AprobacionController extends Controller
 {
-    protected AprobacionService $service;
-
-    public function __construct(AprobacionService $service)
-    {
-        $this->middleware('can:APROBAR ORDEN')->only(['aprobar', 'rechazar', 'pendientes']);
-        
-        $this->service = $service;
+    public function __construct(
+        private readonly AprobacionService $service
+    ) {
+        $this->middleware('can:APROBAR ORDEN')
+            ->only(['aprobar', 'rechazar', 'pendientes', 'aprobarOrden', 'rechazarOrden']);
     }
 
     /**
-     * Mostrar órdenes pendientes de aprobación
+     * Manejo centralizado de excepciones de aprobación
+     */
+    private function handleAprobacion(callable $callback): RedirectResponse
+    {
+        try {
+            return $callback();
+        } catch (AprobacionException $e) {
+            return back()->with('error', $e->getMessage());
+        }
+    }
+
+    /**
+     * Mostrar órdenes pendientes
      */
     public function pendientes(): View
     {
@@ -34,108 +43,76 @@ class AprobacionController extends Controller
     }
 
     /**
-     * Aprobar una solicitud
+     * Aprobar un detalle de orden
      */
     public function aprobar(int $detalleOrdenId): RedirectResponse
     {
-        try {
+        return $this->handleAprobacion(function () use ($detalleOrdenId) {
             $detalleOrden = $this->service->encontrarDetalleConRelaciones($detalleOrdenId);
-            
-            if (!$detalleOrden) {
-                abort(404);
-            }
-            
+
+            // No se requiere abort(404) si el service lanza excepción
+
             $this->service->aprobarDetalle($detalleOrden);
 
-            $producto = $detalleOrden->producto;
-
-            return redirect()
-                ->back()
-                ->with(
-                    'success',
-                    "Solicitud aprobada exitosamente. Stock actualizado para '{$producto->producto}'."
-                );
-
-        } catch (AprobacionException $e) {
-            return back()
-                ->with('error', 'Error al aprobar la solicitud: ' . $e->getMessage());
-        }
+            return back()->with(
+                'success',
+                "Solicitud aprobada. Stock actualizado para '{$detalleOrden->producto->producto}'."
+            );
+        });
     }
 
     /**
-     * Rechazar una solicitud
+     * Rechazar un detalle de orden
      */
     public function rechazar(AprobacionesRequest $request, int $detalleOrdenId): RedirectResponse
     {
-        try {
+        return $this->handleAprobacion(function () use ($request, $detalleOrdenId) {
+
             $validated = $request->validated();
+
             $detalleOrden = $this->service->encontrarDetalleConRelaciones($detalleOrdenId);
-            
-            if (!$detalleOrden) {
-                abort(404);
-            }
-            
+
             $this->service->rechazarDetalle($detalleOrden, $validated['motivo_rechazo']);
 
-            return redirect()
-                ->back()
-                ->with('success', 'Solicitud rechazada exitosamente.');
-
-        } catch (AprobacionException $e) {
-            return back()
-                ->with('error', 'Error al rechazar la solicitud: ' . $e->getMessage());
-        }
+            return back()->with('success', 'Solicitud rechazada exitosamente.');
+        });
     }
 
     /**
-     * Aprobar toda una orden completa
+     * Aprobar una orden completa
      */
     public function aprobarOrden(int $ordenId): RedirectResponse
     {
-        try {
+        return $this->handleAprobacion(function () use ($ordenId) {
+
             $orden = $this->service->encontrarOrdenConDetallesYDevoluciones($ordenId);
-            
-            if (!$orden) {
-                abort(404);
-            }
-            
+
             $this->service->aprobarOrdenCompleta($orden);
 
-            return redirect()
-                ->back()
-                ->with(
-                    'success',
-                    "Orden #{$ordenId} aprobada exitosamente. Stock actualizado para todos los productos."
-                );
-
-        } catch (AprobacionException $e) {
-            return back()
-                ->with('error', 'Error al aprobar la orden: ' . $e->getMessage());
-        }
+            return back()->with(
+                'success',
+                "Orden #{$ordenId} aprobada exitosamente. Stock actualizado para todos los productos."
+            );
+        });
     }
 
     /**
-     * Rechazar toda una orden completa
+     * Rechazar una orden completa
      */
     public function rechazarOrden(AprobacionesRequest $request, int $ordenId): RedirectResponse
     {
-        try {
+        return $this->handleAprobacion(function () use ($request, $ordenId) {
+
             $validated = $request->validated();
+
             $orden = $this->service->encontrarOrdenConDetallesYDevoluciones($ordenId);
-            
-            if (!$orden) {
-                abort(404);
-            }
-            
+
             $this->service->rechazarOrdenCompleta($orden, $validated['motivo_rechazo']);
 
-            return redirect()
-                ->back()
-                ->with('success', "Orden #{$ordenId} rechazada exitosamente.");
-
-        } catch (AprobacionException $e) {
-            return back()
-                ->with('error', 'Error al rechazar la orden: ' . $e->getMessage());
-        }
+            return back()->with(
+                'success',
+                "Orden #{$ordenId} rechazada exitosamente."
+            );
+        });
     }
 }
