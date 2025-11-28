@@ -4,6 +4,8 @@ namespace App\Console\Commands;
 
 use Illuminate\Console\Command;
 use Illuminate\Support\Facades\Artisan;
+use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Schema;
 
 class MigrateModule extends Command
 {
@@ -62,17 +64,13 @@ class MigrateModule extends Command
 
         if ($this->option('all')) {
             if ($this->option('fresh')) {
-                $this->warn('⚠️  Ejecutando migrate:fresh...');
-                Artisan::call('migrate:fresh');
-                $this->info('✓ Base de datos limpiada');
+                $this->freshDatabase();
             }
             return $this->migrateAll();
         }
 
         if ($this->option('fresh')) {
-            $this->warn('⚠️  Ejecutando migrate:fresh...');
-            Artisan::call('migrate:fresh');
-            $this->info('✓ Base de datos limpiada');
+            $this->freshDatabase();
         }
 
         $module = $this->argument('module');
@@ -186,6 +184,72 @@ class MigrateModule extends Command
         } catch (\Exception $e) {
             $this->error("❌ Error: {$e->getMessage()}");
             return 1;
+        }
+    }
+
+    /**
+     * Limpia la base de datos eliminando todas las tablas sin ejecutar migrate:fresh
+     * que ejecutaría todas las migraciones en orden alfabético sin respetar batches
+     */
+    protected function freshDatabase(): void
+    {
+        $this->warn('⚠️  Limpiando base de datos...');
+        
+        try {
+            // Deshabilitar las restricciones de claves foráneas
+            Schema::disableForeignKeyConstraints();
+            
+            // Obtener todas las tablas
+            $driver = DB::getDriverName();
+            $tables = [];
+            
+            if ($driver === 'mysql') {
+                $databaseName = DB::getDatabaseName();
+                $tables = DB::select("SHOW TABLES");
+                $tableNames = [];
+                foreach ($tables as $table) {
+                    $tableArray = (array) $table;
+                    $tableNames[] = reset($tableArray);
+                }
+            } elseif ($driver === 'pgsql') {
+                $tables = DB::select("SELECT tablename FROM pg_tables WHERE schemaname = 'public'");
+                $tableNames = array_map(function($table) {
+                    return $table->tablename;
+                }, $tables);
+            } elseif ($driver === 'sqlite') {
+                $tables = DB::select("SELECT name FROM sqlite_master WHERE type='table' AND name != 'sqlite_sequence'");
+                $tableNames = array_map(function($table) {
+                    return $table->name;
+                }, $tables);
+            } else {
+                $this->warn("⚠️  Driver de base de datos no soportado: {$driver}");
+                return;
+            }
+            
+            if (empty($tableNames)) {
+                $this->info('  ℹ No hay tablas para eliminar');
+                Schema::enableForeignKeyConstraints();
+                return;
+            }
+            
+            // Eliminar todas las tablas
+            foreach ($tableNames as $table) {
+                try {
+                    Schema::dropIfExists($table);
+                    $this->line("  ✓ Eliminada tabla: {$table}");
+                } catch (\Exception $e) {
+                    $this->warn("  ⚠ No se pudo eliminar la tabla {$table}: {$e->getMessage()}");
+                }
+            }
+            
+            // Habilitar nuevamente las restricciones de claves foráneas
+            Schema::enableForeignKeyConstraints();
+            
+            $this->info('✓ Base de datos limpiada exitosamente');
+        } catch (\Exception $e) {
+            Schema::enableForeignKeyConstraints();
+            $this->error("❌ Error al limpiar la base de datos: {$e->getMessage()}");
+            throw $e;
         }
     }
 }
