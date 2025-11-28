@@ -1,25 +1,19 @@
 @extends('inventario.layouts.base')
 
-@section('title', 'Registrar Contrato/Convenio')
+@section('title', 'Editar Contrato/Convenio')
 
-@section('css')
-    <link href="{{ asset('css/parametros.css') }}" rel="stylesheet">
-@endsection
-
-@push('css')
-    @vite(['resources/css/inventario/shared/base.css'])
-@endpush
+@include('inventario._components.common-css')
 
 @section('content_header')
     <x-page-header
-        icon="fas fa-plus"
-        title="Registrar Contrato/Convenio"
-        subtitle="Crear un nuevo contrato o convenio en el inventario"
+        icon="fas fa-edit"
+        title="Editar Contrato/Convenio"
+        subtitle="Modificar datos del contrato o convenio"
         :breadcrumb="[
             ['label' => 'Inicio', 'url' => '#'],
             ['label' => 'Inventario', 'active' => true],
             ['label' => 'Contratos y Convenios', 'url' => route('inventario.contratos-convenios.index')],
-            ['label' => 'Registrar', 'active' => true]
+            ['label' => 'Editar', 'active' => true]
         ]"
     />
 @endsection
@@ -41,8 +35,9 @@
                         </div>
 
                         <div class="card-body">
-                            <form action="{{ route('inventario.contratos-convenios.store') }}" method="POST">
+                            <form action="{{ route('inventario.contratos-convenios.update', $contratoConvenio->id) }}" method="POST">
                                 @csrf
+                                @method('PUT')
                                 
                                 <div class="row">
                                     <div class="col-md-6">
@@ -53,7 +48,7 @@
                                                 class="form-control @error('name') is-invalid @enderror"
                                                 id="name"
                                                 name="name"
-                                                value="{{ old('name') }}"
+                                                value="{{ old('name', $contratoConvenio->name) }}"
                                                 placeholder="Ingrese el nombre del contrato o convenio"
                                                 required
                                             >
@@ -70,7 +65,7 @@
                                                 class="form-control @error('codigo') is-invalid @enderror"
                                                 id="codigo"
                                                 name="codigo"
-                                                value="{{ old('codigo') }}"
+                                                value="{{ old('codigo', $contratoConvenio->codigo) }}"
                                                 placeholder="Ingrese el código del contrato/convenio"
                                             >
                                             @error('codigo')
@@ -91,7 +86,7 @@
                                             >
                                                 <option value="">Seleccione un proveedor</option>
                                                 @foreach($proveedores as $proveedor)
-                                                    <option value="{{ $proveedor->id }}" {{ old('proveedor_id') == $proveedor->id ? 'selected' : '' }}>
+                                                    <option value="{{ $proveedor->id }}" {{ old('proveedor_id', $contratoConvenio->proveedor_id) == $proveedor->id ? 'selected' : '' }}>
                                                         {{ $proveedor->proveedor }}
                                                     </option>
                                                 @endforeach
@@ -117,7 +112,7 @@
                                                         ->where('status', 1)
                                                         ->get() as $estado
                                                 )
-                                                    <option value="{{ $estado->id }}" {{ old('estado_id') == $estado->id ? 'selected' : '' }}>
+                                                    <option value="{{ $estado->id }}" {{ old('estado_id', $contratoConvenio->estado_id) == $estado->id ? 'selected' : '' }}>
                                                         {{ $estado->parametro->name }}
                                                     </option>
                                                 @endforeach
@@ -138,7 +133,7 @@
                                                 class="form-control @error('fecha_inicio') is-invalid @enderror"
                                                 id="fecha_inicio"
                                                 name="fecha_inicio"
-                                                value="{{ old('fecha_inicio') }}"
+                                                value="{{ old('fecha_inicio', $contratoConvenio->fecha_inicio instanceof \Carbon\Carbon ? $contratoConvenio->fecha_inicio->format('Y-m-d') : $contratoConvenio->fecha_inicio) }}"
                                             >
                                             @error('fecha_inicio')
                                                 <div class="invalid-feedback">{{ $message }}</div>
@@ -153,7 +148,7 @@
                                                 class="form-control @error('fecha_fin') is-invalid @enderror"
                                                 id="fecha_fin"
                                                 name="fecha_fin"
-                                                value="{{ old('fecha_fin') }}"
+                                                value="{{ old('fecha_fin', $contratoConvenio->fecha_fin instanceof \Carbon\Carbon ? $contratoConvenio->fecha_fin->format('Y-m-d') : $contratoConvenio->fecha_fin) }}"
                                             >
                                             @error('fecha_fin')
                                                 <div class="invalid-feedback">{{ $message }}</div>
@@ -167,7 +162,7 @@
                                         <div class="card-footer bg-white py-3">
                                             <div class="action-buttons">
                                                 <button type="submit" class="btn btn-outline-primary btn-sm">
-                                                    <i class="fas fa-save mr-1"></i> Guardar
+                                                    <i class="fas fa-save mr-1"></i> Guardar Cambios
                                                 </button>
                                                 <a href="{{ route('inventario.contratos-convenios.index') }}" class="btn btn-outline-secondary btn-sm">
                                                     <i class="fas fa-times mr-1"></i> Cancelar

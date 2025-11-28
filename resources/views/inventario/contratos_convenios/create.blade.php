@@ -2,13 +2,7 @@
 
 @section('title', 'Registrar Contrato/Convenio')
 
-@section('css')
-    <link href="{{ asset('css/parametros.css') }}" rel="stylesheet">
-@endsection
-
-@push('css')
-    @vite(['resources/css/inventario/shared/base.css'])
-@endpush
+@include('inventario._components.common-css')
 
 @section('content_header')
     <x-page-header
@@ -183,7 +177,7 @@
             </div>
         </div>
     </section>
+    @include('inventario._components.common-footer')
 @endsection
 
-@include('inventario._components.common-footer')
 
