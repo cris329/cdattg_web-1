@@ -94,7 +94,6 @@
                             <th>Aceptados</th>
                             <th>Pendientes</th>
                             <th>Tasa de Aceptación</th>
-                            <th>Tendencia</th>
                         </tr>
                     </thead>
                     <tbody id="tabla-programas-demanda">
@@ -105,7 +104,6 @@
                                 <td>{{ $programa['aceptados'] }}</td>
                                 <td>{{ $programa['pendientes'] }}</td>
                                 <td>{{ $programa['tasa_aceptacion'] }}%</td>
-                                <td class="text-success"><i class="fas fa-arrow-up"></i> 0%</td>
                             </tr>
                         @endforeach
                     </tbody>
