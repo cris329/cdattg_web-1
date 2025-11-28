@@ -25,14 +25,14 @@ class WebSocketVisitantesController extends Controller
     {
         try {
             $estadisticas = $this->estadisticasService->obtenerDashboardGeneral();
-            
+
             return response()->json([
                 'success' => true,
                 'data' => $estadisticas,
             ]);
         } catch (\Exception $e) {
             Log::error('Error obteniendo estadísticas de visitantes: ' . $e->getMessage());
-            
+
             return response()->json([
                 'success' => false,
                 'message' => 'Error al obtener estadísticas',
@@ -79,7 +79,7 @@ class WebSocketVisitantesController extends Controller
             ]);
         } catch (\Exception $e) {
             Log::error('Error registrando entrada de visitante: ' . $e->getMessage());
-            
+
             return response()->json([
                 'success' => false,
                 'message' => 'Error al registrar entrada',
@@ -122,7 +122,7 @@ class WebSocketVisitantesController extends Controller
             ]);
         } catch (\Exception $e) {
             Log::error('Error registrando salida de visitante: ' . $e->getMessage());
-            
+
             return response()->json([
                 'success' => false,
                 'message' => 'Error al registrar salida',
@@ -146,7 +146,7 @@ class WebSocketVisitantesController extends Controller
             ]);
         } catch (\Exception $e) {
             Log::error('Error obteniendo visitantes actuales: ' . $e->getMessage());
-            
+
             return response()->json([
                 'success' => false,
                 'message' => 'Error al obtener visitantes actuales',

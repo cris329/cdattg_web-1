@@ -15,9 +15,9 @@ use App\Models\AsignacionInstructor;
 class FichaCaracterizacion extends Model
 {
     use HasFactory;
-    
+
     protected $table = 'fichas_caracterizacion';
-    
+
     protected $fillable = [
         'programa_formacion_id',
         'ficha',
@@ -368,11 +368,11 @@ class FichaCaracterizacion extends Model
     public function scopePorRangoFechas(Builder $query, string $fechaInicio, string $fechaFin): Builder
     {
         return $query->whereBetween('fecha_inicio', [$fechaInicio, $fechaFin])
-                    ->orWhereBetween('fecha_fin', [$fechaInicio, $fechaFin])
-                    ->orWhere(function ($q) use ($fechaInicio, $fechaFin) {
-                        $q->where('fecha_inicio', '<=', $fechaInicio)
-                          ->where('fecha_fin', '>=', $fechaFin);
-                    });
+            ->orWhereBetween('fecha_fin', [$fechaInicio, $fechaFin])
+            ->orWhere(function ($q) use ($fechaInicio, $fechaFin) {
+                $q->where('fecha_inicio', '<=', $fechaInicio)
+                    ->where('fecha_fin', '>=', $fechaFin);
+            });
     }
 
     /**
@@ -385,7 +385,7 @@ class FichaCaracterizacion extends Model
     {
         $hoy = Carbon::today();
         return $query->where('fecha_inicio', '<=', $hoy)
-                    ->where('fecha_fin', '>=', $hoy);
+            ->where('fecha_fin', '>=', $hoy);
     }
 
     /**
@@ -448,7 +448,7 @@ class FichaCaracterizacion extends Model
     public function horasPromedioPorDia(): float
     {
         $duracionDias = $this->duracionEnDias();
-        
+
         if ($duracionDias === 0 || !$this->total_horas) {
             return 0;
         }
@@ -512,7 +512,7 @@ class FichaCaracterizacion extends Model
 
         $hoy = Carbon::today();
         $duracionTotal = $this->fecha_inicio->diffInDays($this->fecha_fin);
-        
+
         if ($duracionTotal === 0) {
             return 100;
         }
@@ -534,19 +534,12 @@ class FichaCaracterizacion extends Model
             return 'Inactiva';
         }
 
-        if ($this->estaPorIniciar()) {
-            return 'Por iniciar';
-        }
-
-        if ($this->estaEnCurso()) {
-            return 'En curso';
-        }
-
-        if ($this->yaTermino()) {
-            return 'Terminada';
-        }
-
-        return 'Desconocido';
+        return match (true) {
+            $this->estaPorIniciar() => 'Por iniciar',
+            $this->estaEnCurso() => 'En curso',
+            $this->yaTermino() => 'Terminada',
+            default => 'Desconocido',
+        };
     }
 
     /**
@@ -560,7 +553,7 @@ class FichaCaracterizacion extends Model
             'id' => $this->id,
             'numero_ficha' => $this->ficha,
             'programa' => $this->programaFormacion->nombre ?? 'N/A',
-            'instructor' => $this->instructor ? 
+            'instructor' => $this->instructor ?
                 $this->instructor->persona->primer_nombre . ' ' . $this->instructor->persona->primer_apellido : 'N/A',
             'sede' => $this->sede->nombre ?? 'N/A',
             'modalidad' => $this->modalidadFormacion->name ?? 'N/A',

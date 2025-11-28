@@ -251,7 +251,7 @@ class ValidarSofiaJob implements ShouldQueue
             // Hacer petición POST al servicio de Playwright
             Log::info("📤 Iniciando validación HTTP para cédula: {$cedula}");
             $startTime = microtime(true);
-            
+
             $response = Http::timeout(90) // 90 segundos de timeout (las validaciones pueden tardar 15-20 segundos)
                 ->post($validateUrl, [
                     'cedula' => $cedula
@@ -259,7 +259,7 @@ class ValidarSofiaJob implements ShouldQueue
 
             $endTime = microtime(true);
             $duration = round($endTime - $startTime, 2);
-            
+
             Log::info("📥 Respuesta recibida del servicio Playwright para cédula {$cedula} (duración: {$duration}s)", [
                 'status_code' => $response->status(),
                 'duration' => $duration
@@ -269,7 +269,7 @@ class ValidarSofiaJob implements ShouldQueue
             if (!$response->successful()) {
                 $statusCode = $response->status();
                 $errorBody = $response->body();
-                
+
                 Log::error("❌ Servicio Playwright retornó error HTTP para cédula {$cedula}", [
                     'status_code' => $statusCode,
                     'response' => $errorBody,
@@ -282,7 +282,7 @@ class ValidarSofiaJob implements ShouldQueue
 
             // Obtener respuesta JSON
             $responseData = $response->json();
-            
+
             Log::debug("📋 Respuesta JSON del servicio Playwright para cédula {$cedula}", [
                 'response_data' => $responseData
             ]);

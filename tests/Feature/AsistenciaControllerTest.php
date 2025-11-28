@@ -8,6 +8,7 @@ use App\Models\AsistenciaAprendiz;
 use App\Models\FichaCaracterizacion;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Carbon\Carbon;
+use PHPUnit\Framework\Attributes\Test;
 
 class AsistenciaControllerTest extends TestCase
 {
@@ -22,7 +23,7 @@ class AsistenciaControllerTest extends TestCase
         $this->user = User::factory()->create();
     }
 
-    /** @test */
+    #[Test]
     public function puede_ver_listado_de_fichas()
     {
         $this->actingAs($this->user);
@@ -33,7 +34,7 @@ class AsistenciaControllerTest extends TestCase
         $response->assertViewIs('asistencias.index');
     }
 
-    /** @test */
+    #[Test]
     public function puede_obtener_asistencias_por_ficha()
     {
         $this->actingAs($this->user);
@@ -48,7 +49,7 @@ class AsistenciaControllerTest extends TestCase
         $response->assertStatus(200);
     }
 
-    /** @test */
+    #[Test]
     public function puede_obtener_asistencias_por_fecha()
     {
         $this->actingAs($this->user);
@@ -70,7 +71,7 @@ class AsistenciaControllerTest extends TestCase
         $response->assertStatus(200);
     }
 
-    /** @test */
+    #[Test]
     public function puede_registrar_asistencia()
     {
         $this->actingAs($this->user);
@@ -94,7 +95,7 @@ class AsistenciaControllerTest extends TestCase
         ]);
     }
 
-    /** @test */
+    #[Test]
     public function puede_actualizar_hora_salida()
     {
         $this->actingAs($this->user);
@@ -117,7 +118,7 @@ class AsistenciaControllerTest extends TestCase
         $response->assertJsonStructure(['message']);
     }
 
-    /** @test */
+    #[Test]
     public function puede_obtener_asistencias_por_documento()
     {
         $this->actingAs($this->user);
@@ -132,7 +133,7 @@ class AsistenciaControllerTest extends TestCase
         $response->assertStatus(200);
     }
 
-    /** @test */
+    #[Test]
     public function no_puede_registrar_asistencia_con_datos_incompletos()
     {
         $this->actingAs($this->user);
@@ -146,7 +147,7 @@ class AsistenciaControllerTest extends TestCase
         $response->assertJson(['message' => 'Datos incompletos']);
     }
 
-    /** @test */
+    #[Test]
     public function puede_obtener_documentos_por_ficha()
     {
         $this->actingAs($this->user);

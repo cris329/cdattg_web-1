@@ -14,7 +14,7 @@ class FixInstructorRoles extends Command
     public function handle()
     {
         $dryRun = $this->option('dry-run');
-        
+
         if ($dryRun) {
             $this->warn('🔍 MODO DRY-RUN: Solo se mostrarán los cambios que se harían');
             $this->newLine();
@@ -34,7 +34,7 @@ class FixInstructorRoles extends Command
             if ($instructor->persona && $instructor->persona->user) {
                 $user = $instructor->persona->user;
                 $nombre = trim($instructor->persona->primer_nombre . ' ' . $instructor->persona->primer_apellido);
-                
+
                 if (!$user->hasRole('INSTRUCTOR')) {
                     if (!$dryRun) {
                         $user->syncRoles(['INSTRUCTOR']);

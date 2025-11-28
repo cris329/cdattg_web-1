@@ -38,8 +38,8 @@ class ResultadosAprendizaje extends Model
     public function guiasAprendizaje()
     {
         return $this->belongsToMany(GuiasAprendizaje::class, 'guia_aprendizaje_rap', 'rap_id', 'guia_aprendizaje_id')
-                    ->withPivot('user_create_id', 'user_edit_id')
-                    ->withTimestamps();
+            ->withPivot('user_create_id', 'user_edit_id')
+            ->withTimestamps();
     }
 
     /**
@@ -56,8 +56,8 @@ class ResultadosAprendizaje extends Model
     public function competencias()
     {
         return $this->belongsToMany(Competencia::class, 'resultados_aprendizaje_competencia', 'rap_id', 'competencia_id')
-                    ->withPivot('user_create_id', 'user_edit_id')
-                    ->withTimestamps();
+            ->withPivot('user_create_id', 'user_edit_id')
+            ->withTimestamps();
     }
 
     public function asignacionesInstructor()
@@ -115,7 +115,7 @@ class ResultadosAprendizaje extends Model
      */
     public function scopePorCompetencia($query, $competenciaId)
     {
-        return $query->whereHas('competencias', function($q) use ($competenciaId) {
+        return $query->whereHas('competencias', function ($q) use ($competenciaId) {
             $q->where('competencias.id', $competenciaId);
         });
     }
@@ -134,11 +134,11 @@ class ResultadosAprendizaje extends Model
     public function scopePorFecha($query, $fechaInicio, $fechaFin = null)
     {
         $query->where('fecha_inicio', '>=', $fechaInicio);
-        
+
         if ($fechaFin) {
             $query->where('fecha_fin', '<=', $fechaFin);
         }
-        
+
         return $query;
     }
 
@@ -161,9 +161,10 @@ class ResultadosAprendizaje extends Model
     /**
      * MÉTODO HELPER: Obtener duración en horas
      */
-    public function duracionEnHoras(): int
+    public function duracionEnHoras(): string
     {
-        return $this->duracion ?? 0;
+        $duracion = $this->duracion ?? 0;
+        return "{$duracion} horas";
     }
 
     /**
@@ -184,8 +185,8 @@ class ResultadosAprendizaje extends Model
         }
 
         $hoy = now();
-        return $hoy->greaterThanOrEqualTo($this->fecha_inicio) && 
-               $hoy->lessThanOrEqualTo($this->fecha_fin);
+        return $hoy->greaterThanOrEqualTo($this->fecha_inicio) &&
+            $hoy->lessThanOrEqualTo($this->fecha_fin);
     }
 
     /**

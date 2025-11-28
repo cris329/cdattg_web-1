@@ -28,4 +28,3 @@ return new class extends Migration
         DB::statement('ALTER TABLE personas MODIFY celular VARCHAR(255) NULL');
     }
 };
-

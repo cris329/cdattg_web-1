@@ -60,21 +60,31 @@ class ProgramaFormacionFactory extends Factory
 
     private function obtenerRedConocimientoId(): int
     {
-        $redConocimiento = RedConocimiento::query()->inRandomOrder()->first();
-
-        if ($redConocimiento) {
-            return $redConocimiento->id;
+        try {
+            $redConocimiento = RedConocimiento::query()->inRandomOrder()->first();
+            if ($redConocimiento) {
+                return $redConocimiento->id;
+            }
+        } catch (\Exception $e) {
+            // Si hay error al consultar, continuar para crear una nueva
         }
 
-        $regionalId = Regional::query()->value('id') ?? $this->crearRegional();
+        // Si no existe ninguna, crear una nueva con todas sus dependencias
+        $regional = Regional::query()->inRandomOrder()->first();
+        if (!$regional) {
+            $regional = Regional::factory()->create();
+        }
 
-        $usuarioId = User::query()->value('id') ?? User::factory()->create()->id;
+        $usuario = User::query()->inRandomOrder()->first();
+        if (!$usuario) {
+            $usuario = User::factory()->create();
+        }
 
         return RedConocimiento::query()->create([
-            'nombre' => 'RED ' . Str::upper(Str::random(8)),
-            'regionals_id' => $regionalId,
-            'user_create_id' => $usuarioId,
-            'user_edit_id' => $usuarioId,
+            'nombre' => $this->faker->unique()->words(2, true),
+            'regionals_id' => $regional->id,
+            'user_create_id' => $usuario->id,
+            'user_edit_id' => $usuario->id,
             'status' => true,
         ])->id;
     }
@@ -95,30 +105,4 @@ class ProgramaFormacionFactory extends Factory
             'status' => 1,
         ])->id;
     }
-
-    private function crearRegional(): int
-    {
-        $departamentoId = Departamento::query()->value('id') ?? $this->crearDepartamento();
-
-        return Regional::query()->create([
-            'nombre' => 'REGIONAL ' . Str::upper(Str::random(6)),
-            'departamento_id' => $departamentoId,
-            'status' => 1,
-        ])->id;
-    }
-
-    private function crearDepartamento(): int
-    {
-        $paisId = Pais::query()->value('id') ?? Pais::query()->create([
-            'pais' => 'COLOMBIA',
-            'status' => 1,
-        ])->id;
-
-        return Departamento::query()->create([
-            'departamento' => 'CUNDINAMARCA ' . Str::upper(Str::random(4)),
-            'pais_id' => $paisId,
-            'status' => 1,
-        ])->id;
-    }
 }
-

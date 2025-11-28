@@ -136,7 +136,7 @@ class AprendizController extends Controller
     {
         try {
             $aprendiz = $this->aprendizService->obtener($id);
-            
+
             if (!$aprendiz) {
                 return redirect()->route('aprendices.index')
                     ->with('error', 'Aprendiz no encontrado.');
@@ -336,17 +336,17 @@ class AprendizController extends Controller
             }
 
             $totalRecords = $query->count();
-            
+
             // Ordenamiento
             if ($request->has('order')) {
                 $orderColumn = $request->input('order.0.column');
                 $orderDir = $request->input('order.0.dir');
-                
+
                 $columns = ['id', 'persona.numero_documento', 'persona.primer_nombre', 'fichaCaracterizacion.ficha', 'estado'];
                 if (isset($columns[$orderColumn])) {
                     if (str_contains($columns[$orderColumn], '.')) {
                         [$relation, $column] = explode('.', $columns[$orderColumn]);
-                        $query->join($relation === 'persona' ? 'personas' : 'ficha_caracterizacions', 
+                        $query->join($relation === 'persona' ? 'personas' : 'ficha_caracterizacions',
                             'aprendices.' . $relation . '_id', '=', $relation === 'persona' ? 'personas.id' : 'ficha_caracterizacions.id')
                             ->orderBy($column, $orderDir);
                     } else {
@@ -358,7 +358,7 @@ class AprendizController extends Controller
             // Paginación
             $start = $request->input('start', 0);
             $length = $request->input('length', 10);
-            
+
             $aprendices = $query->skip($start)->take($length)->get();
 
             $data = $aprendices->map(function ($aprendiz) {
@@ -381,7 +381,7 @@ class AprendizController extends Controller
             ]);
         } catch (\Exception $e) {
             Log::error('Error en DataTable de aprendices: ' . $e->getMessage());
-            
+
             return response()->json([
                 'draw' => intval($request->input('draw')),
                 'recordsTotal' => 0,

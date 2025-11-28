@@ -52,7 +52,7 @@ class ProgramaFormacionService
     {
         return DB::transaction(function () use ($programa, $datos, $competenciasIds) {
             $actualizado = $programa->update($datos);
-            
+
             if ($actualizado && is_array($competenciasIds)) {
                 $programa->competencias()->sync($competenciasIds);
                 $this->repository->invalidarCache();
@@ -66,7 +66,7 @@ class ProgramaFormacionService
     {
         return DB::transaction(function () use ($id) {
             $eliminado = ProgramaFormacion::where('id', $id)->delete();
-            
+
             if ($eliminado) {
                 $this->repository->invalidarCache();
             }

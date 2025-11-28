@@ -289,7 +289,7 @@ class Instructor extends Model
      */
     public function getEstadoFormateadoAttribute(): string
     {
-        return $this->status ? 'Activo' : 'Inactivo';
+        return $this->status ? 'ACTIVO' : 'INACTIVO';
     }
 
     /**
@@ -395,7 +395,7 @@ class Instructor extends Model
         if (!$this->anos_experiencia) {
             return 'Sin especificar';
         }
-        
+
         return $this->anos_experiencia . ' año' . ($this->anos_experiencia > 1 ? 's' : '');
     }
 

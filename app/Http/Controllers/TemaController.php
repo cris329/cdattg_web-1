@@ -84,7 +84,7 @@ class TemaController extends Controller
             return redirect()->route('tema.show', $tema->id)->with('success', 'Tema actualizado exitosamente');
         } catch (QueryException $e) {
             Log::error('Error al actualizar tema: ' . $e->getMessage());
-            
+
             if ($e->getCode() == 23000) {
                 return redirect()->back()->with('error', 'El nombre del tema ya existe.');
             }
@@ -125,7 +125,7 @@ class TemaController extends Controller
             return redirect()->route('tema.index')->with('success', 'Tema eliminado exitosamente');
         } catch (QueryException $e) {
             Log::error('Error al eliminar tema: ' . $e->getMessage());
-            
+
             if ($e->getCode() == 23000) {
                 return redirect()->back()->with('error', 'El tema está en uso, no se puede eliminar');
             }

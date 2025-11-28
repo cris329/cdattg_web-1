@@ -81,16 +81,16 @@ class CreateInstructorRequest extends FormRequest
             // Validaciones adicionales de negocio
             if ($this->has('persona_id')) {
                 $persona = \App\Models\Persona::with(['instructor', 'user'])->find($this->input('persona_id'));
-                
+
                 if (!$persona) {
                     $validator->errors()->add('persona_id', 'La persona seleccionada no existe.');
                     return;
                 }
-                
+
                 if ($persona->instructor) {
                     $validator->errors()->add('persona_id', 'Esta persona ya es instructor.');
                 }
-                
+
                 if (!$persona->user) {
                     $validator->errors()->add('persona_id', 'Esta persona no tiene un usuario asociado.');
                 }

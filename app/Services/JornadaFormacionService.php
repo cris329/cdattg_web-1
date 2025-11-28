@@ -31,7 +31,7 @@ class JornadaFormacionService
     {
         return DB::transaction(function () use ($datos) {
             $jornada = JornadaFormacion::create($datos);
-            
+
             $this->repository->invalidarCache();
 
             Log::info('Jornada creada', ['jornada_id' => $jornada->id]);
@@ -44,7 +44,7 @@ class JornadaFormacionService
     {
         return DB::transaction(function () use ($id, $datos) {
             $actualizado = JornadaFormacion::where('id', $id)->update($datos);
-            
+
             if ($actualizado) {
                 $this->repository->invalidarCache();
             }
@@ -57,7 +57,7 @@ class JornadaFormacionService
     {
         return DB::transaction(function () use ($id) {
             $eliminado = JornadaFormacion::where('id', $id)->delete();
-            
+
             if ($eliminado) {
                 $this->repository->invalidarCache();
             }
@@ -70,7 +70,7 @@ class JornadaFormacionService
     {
         $jornada = JornadaFormacion::find($id);
         $nuevoEstado = !$jornada->status;
-        
+
         return $this->actualizar($id, ['status' => $nuevoEstado]);
     }
 

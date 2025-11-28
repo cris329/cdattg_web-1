@@ -25,7 +25,7 @@ class VerNotificaciones extends Command
             $this->line("Usuario: {$notif->notifiable_id}");
             $this->line("Leída: " . ($notif->leida_en ? 'Sí' : 'No'));
             $this->line("Fecha: {$notif->created_at}");
-            
+
             // Decodificar datos
             $datos = is_string($notif->datos) ? json_decode($notif->datos, true) : $notif->datos;
             if (isset($datos['tipo'])) {
@@ -35,7 +35,7 @@ class VerNotificaciones extends Command
                 $producto = is_array($datos['producto']) ? $datos['producto']['producto'] ?? 'N/A' : $datos['producto'];
                 $this->line("Producto: {$producto}");
             }
-            
+
             $this->newLine();
         }
 

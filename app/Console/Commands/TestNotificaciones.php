@@ -88,7 +88,7 @@ class TestNotificaciones extends Command
             $tipo = class_basename($notif->tipo);
             $leida = $notif->leida_en ? '✅ Leída' : '🔔 No leída';
             $fecha = $notif->created_at->diffForHumans();
-            
+
             $this->line("{$numero}. {$tipo} - {$leida} ({$fecha})");
         }
 

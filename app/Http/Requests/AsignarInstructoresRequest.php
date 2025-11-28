@@ -30,7 +30,7 @@ class AsignarInstructoresRequest extends FormRequest
         if (!$this->has('instructor_principal_id') || !$this->input('instructor_principal_id')) {
             $fichaId = $this->route('id');
             $ficha = FichaCaracterizacion::find($fichaId);
-            
+
             if ($ficha && $ficha->instructor_id) {
                 $this->merge([
                     'instructor_principal_id' => $ficha->instructor_id
@@ -143,7 +143,7 @@ class AsignarInstructoresRequest extends FormRequest
             $this->validarEspecialidadesRequeridas($validator);
             $this->validarDisponibilidadHoraria($validator);
             $this->validarReglasSENA($validator);
-            
+
             // Las sugerencias han sido removidas por solicitud del usuario
         });
     }
@@ -186,11 +186,11 @@ class AsignarInstructoresRequest extends FormRequest
     {
         $fichaId = $this->route('id');
         $ficha = FichaCaracterizacion::find($fichaId);
-        
+
         if ($ficha && $ficha->fecha_inicio) {
             $fechaInicioFicha = Carbon::parse($ficha->fecha_inicio);
             $fechaInicioInstructor = Carbon::parse($fechaInicio);
-            
+
             if ($fechaInicioInstructor->lt($fechaInicioFicha)) {
                 $fail("La fecha de inicio del instructor debe ser posterior o igual a la fecha de inicio de la ficha ({$fechaInicioFicha->format('d/m/Y')}).");
             }
@@ -204,11 +204,11 @@ class AsignarInstructoresRequest extends FormRequest
     {
         $fichaId = $this->route('id');
         $ficha = FichaCaracterizacion::find($fichaId);
-        
+
         if ($ficha && $ficha->fecha_fin) {
             $fechaFinFicha = Carbon::parse($ficha->fecha_fin);
             $fechaFinInstructor = Carbon::parse($fechaFin);
-            
+
             if ($fechaFinInstructor->gt($fechaFinFicha)) {
                 $fail("La fecha de fin del instructor debe ser anterior o igual a la fecha de fin de la ficha ({$fechaFinFicha->format('d/m/Y')}).");
             }
@@ -242,7 +242,7 @@ class AsignarInstructoresRequest extends FormRequest
             $instructorId = $instructorData['instructor_id'];
             $fechaInicio = Carbon::parse($instructorData['fecha_inicio']);
             $fechaFin = Carbon::parse($instructorData['fecha_fin']);
-            
+
             // Extraer IDs de días según el formato proporcionado
             $diasNuevos = [];
             if (isset($instructorData['dias']) && is_array($instructorData['dias'])) {
@@ -269,7 +269,7 @@ class AsignarInstructoresRequest extends FormRequest
         $conflictosQuery = InstructorFichaCaracterizacion::where('instructor_id', $instructorId)
             ->whereHas('ficha', function($q) use ($jornadaIdFicha) {
                     $q->where('status', true);
-                
+
                 // Solo validar conflictos en la misma jornada
                 if ($jornadaIdFicha) {
                     $q->where('jornada_id', $jornadaIdFicha);
@@ -301,7 +301,7 @@ class AsignarInstructoresRequest extends FormRequest
             $conflictosText = $conflictosExistentes->map(function($conflicto) use ($diasNuevos) {
                     $programaNombre = $conflicto->ficha->programaFormacion->nombre ?? 'Sin programa';
                 $jornada = $conflicto->ficha->jornadaFormacion->jornada ?? 'Sin jornada';
-                
+
                 // Mostrar días en conflicto
                 $diasExistentes = $conflicto->instructorFichaDias->pluck('dia_id')->toArray();
                 $diasEnComun = array_intersect($diasNuevos, $diasExistentes);
@@ -310,7 +310,7 @@ class AsignarInstructoresRequest extends FormRequest
                     ->pluck('dia.name')
                     ->filter()
                     ->implode(', ');
-                
+
                 $diasInfo = $diasNombres ? " - Días en conflicto: {$diasNombres}" : '';
                 return "Ficha {$conflicto->ficha->ficha} ({$programaNombre}) - Jornada: {$jornada}{$diasInfo} del " . Carbon::parse($conflicto->fecha_inicio)->format('d/m/Y') . " al " . Carbon::parse($conflicto->fecha_fin)->format('d/m/Y');
                 })->implode(', ');
@@ -328,7 +328,7 @@ class AsignarInstructoresRequest extends FormRequest
     private function validarConflictosMismaFicha($validator, $instructores, $indexActual, $instructorIdActual, $fechaInicioActual, $fechaFinActual, $diasActuales): void
     {
         $fichaId = $this->route('id');
-        
+
         \Log::info('🔍 VALIDACIÓN MISMA FICHA', [
             'instructores_total' => count($instructores),
             'index_actual' => $indexActual,
@@ -346,7 +346,7 @@ class AsignarInstructoresRequest extends FormRequest
             $instructorIdOtro = $instructorOtro['instructor_id'];
             $fechaInicioOtro = Carbon::parse($instructorOtro['fecha_inicio']);
             $fechaFinOtro = Carbon::parse($instructorOtro['fecha_fin']);
-            
+
             // Extraer IDs de días del otro instructor
             $diasOtros = [];
             if (isset($instructorOtro['dias']) && is_array($instructorOtro['dias'])) {
@@ -366,33 +366,33 @@ class AsignarInstructoresRequest extends FormRequest
 
             // Verificar si hay superposición de fechas
             $haySuperposicion = $this->haySuperposicionFechas($fechaInicioActual, $fechaFinActual, $fechaInicioOtro, $fechaFinOtro);
-            
+
             \Log::info('🔍 SUPERPOSICIÓN DE FECHAS', [
                 'hay_superposicion' => $haySuperposicion
             ]);
-            
+
             if ($haySuperposicion) {
                 // Verificar si hay días en común
                 $diasEnComun = array_intersect($diasActuales, $diasOtros);
-                
+
                 \Log::info('🔍 DÍAS EN COMÚN', [
                     'dias_en_comun' => $diasEnComun,
                     'hay_conflicto' => !empty($diasEnComun)
                 ]);
-                
+
                 if (!empty($diasEnComun)) {
                     $instructorActual = Instructor::find($instructorIdActual);
                     $instructorOtro = Instructor::find($instructorIdOtro);
-                    
+
                     // Obtener nombres de los días en común desde Parametro
                     $diasNombres = Parametro::whereIn('id', $diasEnComun)->pluck('name')->implode(', ');
-                    
+
                     \Log::error('❌ CONFLICTO DETECTADO EN FORMULARIO', [
                         'instructor_actual' => $instructorActual->nombre_completo,
                         'instructor_otro' => $instructorOtro->nombre_completo,
                         'dias_conflicto' => $diasNombres
                     ]);
-                    
+
                     $validator->errors()->add(
                         "instructores.{$indexActual}.fecha_inicio",
                         "⚠️ CONFLICTO EN LA MISMA FICHA: El instructor {$instructorActual->nombre_completo} no puede ser asignado en las mismas fechas y días ({$diasNombres}) que el instructor {$instructorOtro->nombre_completo}. Ajuste las fechas o días para evitar el conflicto."
@@ -444,33 +444,33 @@ class AsignarInstructoresRequest extends FormRequest
 
             // Verificar si hay superposición de fechas
             $haySuperposicion = $this->haySuperposicionFechas($fechaInicioActual, $fechaFinActual, $fechaInicioExistente, $fechaFinExistente);
-            
+
             \Log::info('🔍 SUPERPOSICIÓN CON EXISTENTE', [
                 'hay_superposicion' => $haySuperposicion
             ]);
-            
+
             if ($haySuperposicion) {
                 // Verificar si hay días en común
                 $diasEnComun = array_intersect($diasActuales, $diasExistentes);
-                
+
                 \Log::info('🔍 DÍAS EN COMÚN CON EXISTENTE', [
                     'dias_en_comun' => $diasEnComun,
                     'hay_conflicto' => !empty($diasEnComun)
                 ]);
-                
+
                 if (!empty($diasEnComun)) {
                     $instructorActual = Instructor::find($instructorIdActual);
                     $instructorExistente = Instructor::find($instructorIdExistente);
-                    
+
                     // Obtener nombres de los días en común desde Parametro
                     $diasNombres = Parametro::whereIn('id', $diasEnComun)->pluck('name')->implode(', ');
-                    
+
                     \Log::error('❌ CONFLICTO CON ASIGNACIÓN EXISTENTE', [
                         'instructor_actual' => $instructorActual->nombre_completo,
                         'instructor_existente' => $instructorExistente->nombre_completo,
                         'dias_conflicto' => $diasNombres
                     ]);
-                    
+
                     $validator->errors()->add(
                         "instructores.{$indexActual}.fecha_inicio",
                         "⚠️ CONFLICTO CON INSTRUCTOR YA ASIGNADO: El instructor {$instructorActual->nombre_completo} no puede ser asignado en las mismas fechas y días ({$diasNombres}) que el instructor {$instructorExistente->nombre_completo} que ya está asignado a esta ficha. Ajuste las fechas o días para evitar el conflicto."

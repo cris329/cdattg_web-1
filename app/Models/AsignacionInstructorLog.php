@@ -56,7 +56,7 @@ class AsignacionInstructorLog extends Model
 
     /**
      * Crear log de asignación
-     * 
+     *
      * @param int|null $instructorId ID del instructor (null para errores generales)
      * @param int $fichaId ID de la ficha
      * @param string $accion Acción realizada (asignar, desasignar, editar)
@@ -158,7 +158,7 @@ class AsignacionInstructorLog extends Model
     public static function obtenerEstadisticas(Carbon $fechaInicio = null, Carbon $fechaFin = null): array
     {
         $query = self::query();
-        
+
         if ($fechaInicio && $fechaFin) {
             $query->entreFechas($fechaInicio, $fechaFin);
         }

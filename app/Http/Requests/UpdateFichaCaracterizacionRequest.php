@@ -27,7 +27,7 @@ class UpdateFichaCaracterizacionRequest extends FormRequest
     public function rules()
     {
         $fichaId = $this->route('fichaCaracterizacion') ?? $this->route('id');
-        
+
         return [
             // Validación del número de ficha (ignorando el registro actual)
             'ficha' => [
@@ -187,7 +187,7 @@ class UpdateFichaCaracterizacionRequest extends FormRequest
         if (!$this->has('status')) {
             $this->merge(['status' => true]);
         }
-        
+
         if (!$this->has('total_horas')) {
             $this->merge(['total_horas' => 0]);
         }
@@ -212,7 +212,7 @@ class UpdateFichaCaracterizacionRequest extends FormRequest
                     $this->fecha_fin,
                     $fichaId
                 );
-                
+
                 if (!$validacionAmbiente['valido']) {
                     $validator->errors()->add('ambiente_id', $validacionAmbiente['mensaje']);
                 }
@@ -226,7 +226,7 @@ class UpdateFichaCaracterizacionRequest extends FormRequest
                     $this->fecha_fin,
                     $fichaId
                 );
-                
+
                 if (!$validacionInstructor['valido']) {
                     $validator->errors()->add('instructor_id', $validacionInstructor['mensaje']);
                 }
@@ -239,7 +239,7 @@ class UpdateFichaCaracterizacionRequest extends FormRequest
                     $this->programa_formacion_id,
                     $fichaId
                 );
-                
+
                 if (!$validacionFicha['valido']) {
                     $validator->errors()->add('ficha', $validacionFicha['mensaje']);
                 }
@@ -248,7 +248,7 @@ class UpdateFichaCaracterizacionRequest extends FormRequest
             // 4. Validar reglas de negocio específicas del SENA (excluyendo la ficha actual)
             $datos = $this->all();
             $validacionReglas = $this->validarReglasNegocioSena($datos, $fichaId);
-            
+
             if (!$validacionReglas['valido']) {
                 $validator->errors()->add('reglas_negocio', $validacionReglas['mensaje']);
             }

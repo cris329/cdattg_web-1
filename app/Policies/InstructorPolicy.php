@@ -62,7 +62,7 @@ class InstructorPolicy
      */
     public function create(User $user): bool
     {
-        return $user->can('CREAR INSTRUCTOR') && 
+        return $user->can('CREAR INSTRUCTOR') &&
                $user->hasRole(['SUPER ADMINISTRADOR', 'ADMINISTRADOR']);
     }
 
@@ -115,7 +115,7 @@ class InstructorPolicy
      */
     public function restore(User $user, Instructor $instructor): bool
     {
-        return $user->can('CREAR INSTRUCTOR') && 
+        return $user->can('CREAR INSTRUCTOR') &&
                $user->hasRole(['SUPER ADMINISTRADOR', 'ADMINISTRADOR']);
     }
 
@@ -124,7 +124,7 @@ class InstructorPolicy
      */
     public function forceDelete(User $user, Instructor $instructor): bool
     {
-        return $user->can('ELIMINAR INSTRUCTOR') && 
+        return $user->can('ELIMINAR INSTRUCTOR') &&
                $user->hasRole(['SUPER ADMINISTRADOR', 'ADMINISTRADOR']);
     }
 
@@ -267,7 +267,7 @@ class InstructorPolicy
      */
     public function importarInstructores(User $user): bool
     {
-        return $user->can('CREAR INSTRUCTOR') && 
+        return $user->can('CREAR INSTRUCTOR') &&
                $user->hasRole(['SUPER ADMINISTRADOR', 'ADMINISTRADOR']);
     }
 
@@ -284,7 +284,7 @@ class InstructorPolicy
      */
     public function reportePorRegional(User $user): bool
     {
-        return $user->can('VER INSTRUCTOR') && 
+        return $user->can('VER INSTRUCTOR') &&
                $user->hasRole(['SUPER ADMINISTRADOR', 'ADMINISTRADOR']);
     }
 
@@ -309,7 +309,7 @@ class InstructorPolicy
      */
     public function exportar(User $user): bool
     {
-        return $user->can('VER INSTRUCTOR') && 
+        return $user->can('VER INSTRUCTOR') &&
                $user->hasRole(['SUPER ADMINISTRADOR', 'ADMINISTRADOR']);
     }
 

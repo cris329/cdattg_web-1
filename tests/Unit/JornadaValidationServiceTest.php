@@ -5,6 +5,7 @@ namespace Tests\Unit;
 use Tests\TestCase;
 use App\Services\JornadaValidationService;
 use Carbon\Carbon;
+use PHPUnit\Framework\Attributes\Test;
 
 class JornadaValidationServiceTest extends TestCase
 {
@@ -16,7 +17,7 @@ class JornadaValidationServiceTest extends TestCase
         $this->service = new JornadaValidationService();
     }
 
-    /** @test */
+    #[Test]
     public function puede_validar_horario_jornada_manana()
     {
         $hora = Carbon::createFromTime(8, 0, 0);
@@ -26,7 +27,7 @@ class JornadaValidationServiceTest extends TestCase
         $this->assertTrue($resultado);
     }
 
-    /** @test */
+    #[Test]
     public function puede_validar_horario_jornada_tarde()
     {
         $hora = Carbon::createFromTime(15, 0, 0);
@@ -36,7 +37,7 @@ class JornadaValidationServiceTest extends TestCase
         $this->assertTrue($resultado);
     }
 
-    /** @test */
+    #[Test]
     public function puede_validar_horario_jornada_noche()
     {
         $hora = Carbon::createFromTime(20, 0, 0);
@@ -46,7 +47,7 @@ class JornadaValidationServiceTest extends TestCase
         $this->assertTrue($resultado);
     }
 
-    /** @test */
+    #[Test]
     public function rechaza_hora_fuera_de_jornada()
     {
         $hora = Carbon::createFromTime(2, 0, 0); // 2 AM
@@ -56,7 +57,7 @@ class JornadaValidationServiceTest extends TestCase
         $this->assertFalse($resultado);
     }
 
-    /** @test */
+    #[Test]
     public function puede_obtener_jornada_por_hora()
     {
         $horaMañana = Carbon::createFromTime(8, 0, 0);
@@ -68,7 +69,7 @@ class JornadaValidationServiceTest extends TestCase
         $this->assertEquals('Noche', $this->service->obtenerJornadaPorHora($horaNoche));
     }
 
-    /** @test */
+    #[Test]
     public function puede_validar_asistencia_en_jornada()
     {
         $horaIngreso = Carbon::createFromTime(8, 0, 0);
@@ -79,7 +80,7 @@ class JornadaValidationServiceTest extends TestCase
         $this->assertTrue($resultado);
     }
 
-    /** @test */
+    #[Test]
     public function detecta_llegada_tarde()
     {
         // Jornada Mañana comienza a las 06:00, tolerancia 15 minutos
@@ -91,7 +92,7 @@ class JornadaValidationServiceTest extends TestCase
         $this->assertEquals(30, $resultado['minutos_retraso']);
     }
 
-    /** @test */
+    #[Test]
     public function detecta_llegada_puntual()
     {
         $horaIngreso = Carbon::createFromTime(6, 10, 0); // Dentro de tolerancia
@@ -102,7 +103,7 @@ class JornadaValidationServiceTest extends TestCase
         $this->assertEquals(0, $resultado['minutos_retraso']);
     }
 
-    /** @test */
+    #[Test]
     public function detecta_salida_temprana()
     {
         // Jornada Mañana termina a las 13:10, tolerancia 10 minutos
@@ -114,17 +115,18 @@ class JornadaValidationServiceTest extends TestCase
         $this->assertGreaterThan(0, $resultado['minutos_anticipado']);
     }
 
-    /** @test */
+    #[Test]
     public function genera_novedad_entrada_correcta()
     {
         $horaPuntual = Carbon::createFromTime(6, 5, 0);
-        $horaTarde = Carbon::createFromTime(6, 20, 0);
+        $horaTarde = Carbon::createFromTime(6, 20, 0); // 20 minutos después de 6:00
 
         $this->assertEquals('Puntual', $this->service->generarNovedadEntrada($horaPuntual, 'Mañana'));
-        $this->assertEquals('Tarde', $this->service->generarNovedadEntrada($horaTarde, 'Mañana'));
+        // 20 minutos de retraso: >15 y <=30, por lo tanto "Muy tarde"
+        $this->assertEquals('Muy tarde', $this->service->generarNovedadEntrada($horaTarde, 'Mañana'));
     }
 
-    /** @test */
+    #[Test]
     public function obtiene_todas_las_jornadas()
     {
         $jornadas = $this->service->obtenerTodasLasJornadas();
@@ -135,7 +137,7 @@ class JornadaValidationServiceTest extends TestCase
         $this->assertContains('Noche', $jornadas);
     }
 
-    /** @test */
+    #[Test]
     public function obtiene_horarios_de_jornada()
     {
         $horarios = $this->service->obtenerHorariosJornada('Mañana');
@@ -147,7 +149,7 @@ class JornadaValidationServiceTest extends TestCase
         $this->assertArrayHasKey('tolerancia_salida', $horarios);
     }
 
-    /** @test */
+    #[Test]
     public function retorna_null_para_jornada_inexistente()
     {
         $horarios = $this->service->obtenerHorariosJornada('Madrugada');

@@ -24,7 +24,7 @@ class CheckInstructorRoles extends Command
             if ($instructor->persona && $instructor->persona->user) {
                 $user = $instructor->persona->user;
                 $nombre = trim($instructor->persona->primer_nombre . ' ' . $instructor->persona->primer_apellido);
-                
+
                 if ($user->hasRole('INSTRUCTOR')) {
                     $conRol++;
                     $this->line("✅ {$nombre}: Tiene rol INSTRUCTOR");

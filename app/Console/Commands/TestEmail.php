@@ -14,7 +14,7 @@ class TestEmail extends Command
     public function handle()
     {
         $email = $this->argument('email');
-        
+
         $this->info('Probando envío de correo a: ' . $email);
         $this->info('Configuración SMTP:');
         $this->info('  MAILER: ' . config('mail.default'));
@@ -23,13 +23,13 @@ class TestEmail extends Command
         $this->info('  ENCRYPTION: ' . config('mail.mailers.smtp.encryption'));
         $this->info('  FROM: ' . config('mail.from.address'));
         $this->info('  USERNAME: ' . (config('mail.mailers.smtp.username') ? 'Configurado' : 'NO CONFIGURADO'));
-        
+
         try {
             Mail::raw('Este es un correo de prueba desde Laravel. Si recibes esto, el SMTP está funcionando correctamente.', function ($message) use ($email) {
                 $message->to($email)
                     ->subject('Prueba de Correo - Laravel');
             });
-            
+
             $this->info('✅ Correo enviado exitosamente!');
             Log::info('Correo de prueba enviado exitosamente', ['email' => $email]);
             return 0;

@@ -5,8 +5,13 @@ namespace Tests\Unit;
 use Tests\TestCase;
 use App\Repositories\FichaRepository;
 use App\Models\FichaCaracterizacion;
+use App\Models\ProgramaFormacion;
+use App\Models\JornadaFormacion;
+use App\Models\Sede;
+use App\Models\Ambiente;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Support\Facades\Cache;
+use PHPUnit\Framework\Attributes\Test;
 
 class FichaRepositoryTest extends TestCase
 {
@@ -19,9 +24,21 @@ class FichaRepositoryTest extends TestCase
         parent::setUp();
         $this->repository = new FichaRepository();
         Cache::flush();
+        
+        // Ejecutar seeders necesarios para las pruebas
+        // Estos datos son requeridos por las claves foráneas en PersonaFactory
+        $this->seed([
+            \Database\Seeders\RolePermissionSeeder::class,
+            \Database\Seeders\ParametroSeeder::class,
+            \Database\Seeders\PaisSeeder::class,
+            \Database\Seeders\DepartamentoSeeder::class,
+            \Database\Seeders\MunicipioSeeder::class,
+            \Database\Seeders\PersonaSeeder::class,
+            \Database\Seeders\UsersSeeder::class,
+        ]);
     }
 
-    /** @test */
+    #[Test]
     public function puede_obtener_fichas_activas()
     {
         FichaCaracterizacion::factory()->count(3)->create(['status' => 1]);
@@ -32,7 +49,7 @@ class FichaRepositoryTest extends TestCase
         $this->assertCount(3, $fichas);
     }
 
-    /** @test */
+    #[Test]
     public function cachea_fichas_activas()
     {
         FichaCaracterizacion::factory()->create(['status' => 1]);
@@ -46,7 +63,7 @@ class FichaRepositoryTest extends TestCase
         $this->assertEquals($fichas1->count(), $fichas2->count());
     }
 
-    /** @test */
+    #[Test]
     public function puede_obtener_estadisticas()
     {
         FichaCaracterizacion::factory()->count(5)->create(['status' => 1]);
@@ -60,7 +77,7 @@ class FichaRepositoryTest extends TestCase
         $this->assertEquals(5, $estadisticas['activas']);
     }
 
-    /** @test */
+    #[Test]
     public function invalida_cache_al_modificar()
     {
         $ficha = FichaCaracterizacion::factory()->create(['status' => 1]);

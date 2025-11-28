@@ -12,7 +12,7 @@ class CacheWarmupCommand extends Command
      *
      * @var string
      */
-    protected $signature = 'cache:warmup 
+    protected $signature = 'cache:warmup
                             {--flush : Limpiar caché antes de precargar}';
 
     /**
@@ -48,11 +48,11 @@ class CacheWarmupCommand extends Command
         }
 
         $this->info('Iniciando precarga de caché...');
-        
+
         $this->cacheService->warmup();
-        
+
         $this->info('✓ Caché precargada exitosamente');
-        
+
         return 0;
     }
 }

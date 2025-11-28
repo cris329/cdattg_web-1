@@ -12,7 +12,7 @@ class GenerarEstadisticasCommand extends Command
      *
      * @var string
      */
-    protected $signature = 'estadisticas:generar 
+    protected $signature = 'estadisticas:generar
                             {--mes= : Mes específico (1-12)}
                             {--anio= : Año específico}';
 

@@ -43,7 +43,7 @@ class BloqueService
     {
         return DB::transaction(function () use ($id, $datos) {
             $actualizado = Bloque::where('id', $id)->update($datos);
-            
+
             if ($actualizado) {
                 $this->repository->invalidarCache();
             }
@@ -56,7 +56,7 @@ class BloqueService
     {
         return DB::transaction(function () use ($id) {
             $eliminado = Bloque::where('id', $id)->delete();
-            
+
             if ($eliminado) {
                 $this->repository->invalidarCache();
             }
@@ -69,7 +69,7 @@ class BloqueService
     {
         $bloque = Bloque::find($id);
         $nuevoEstado = !$bloque->status;
-        
+
         return $this->actualizar($id, ['status' => $nuevoEstado]);
     }
 }

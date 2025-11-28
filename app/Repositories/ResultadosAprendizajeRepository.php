@@ -17,7 +17,7 @@ class ResultadosAprendizajeRepository
     public function getResultadosVigentes()
     {
         $hoy = Carbon::now()->startOfDay();
-        
+
         return ResultadosAprendizaje::where(function($query) use ($hoy) {
             // Fecha de inicio después de hoy
             $query->where('fecha_inicio', '>', $hoy)
@@ -29,7 +29,7 @@ class ResultadosAprendizajeRepository
         })->get();
     }
 
-    
+
     /**
      * Obtiene los resultados de aprendizaje de una competencia
      *
@@ -42,7 +42,7 @@ class ResultadosAprendizajeRepository
             $query->where('competencias.id', $competenciaId);
         })->get();
     }
-    
+
 
     /**
      * Obtiene los resultados de aprendizaje por ID de guía de aprendizaje
@@ -54,7 +54,7 @@ class ResultadosAprendizajeRepository
     public function getResultadosVigentesPorGuia($guiaAprendizajeId)
     {
         $hoy = Carbon::now()->startOfDay();
-        
+
         return ResultadosAprendizaje::whereHas('guiasAprendizaje', function($query) use ($guiaAprendizajeId) {
             $query->where('guia_aprendizaje_id', $guiaAprendizajeId);
         })->where(function($query) use ($hoy) {

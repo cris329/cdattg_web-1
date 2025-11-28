@@ -22,7 +22,7 @@ class ApiRateLimiter
 
         if (RateLimiter::tooManyAttempts($key, $maxAttempts)) {
             $seconds = RateLimiter::availableIn($key);
-            
+
             return response()->json([
                 'message' => 'Demasiadas solicitudes. Por favor, intente de nuevo en ' . $seconds . ' segundos.',
                 'retry_after' => $seconds,

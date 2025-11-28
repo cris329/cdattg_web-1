@@ -35,9 +35,9 @@ class AsistenciaAprendicesController extends Controller
      */
     public function index (){
         $fichas = FichaCaracterizacion::select('id', 'ficha')->get();
-        return view('asistencias.index', compact('fichas')); 
+        return view('asistencias.index', compact('fichas'));
     }
-   
+
     /**
      * Obtiene las asistencias de los aprendices por ficha.
      *
@@ -49,17 +49,17 @@ class AsistenciaAprendicesController extends Controller
     public function getAttendanceByFicha (Request $request){
         try {
             $fichaId = $request->input('ficha');
-            
+
             if (!$fichaId) {
                 return response()->json(['message' => 'ID de ficha no proporcionado'], 400);
             }
-            
+
             $asistencias = $this->asistenciaService->obtenerPorFicha($fichaId);
 
             if ($asistencias->isEmpty()) {
                 return response()->json(['message' => 'No se encontraron asistencias para la ficha proporcionada'], 404);
             }
-            
+
             return view('asistencias.asistencia_by_ficha', ['asistencias' => $asistencias]);
         } catch (Exception $e) {
             Log::error('Error obteniendo asistencias por ficha: ' . $e->getMessage());
@@ -114,22 +114,22 @@ class AsistenciaAprendicesController extends Controller
      * Obtiene los documentos asociados a una ficha específica.
      *
      * @param \Illuminate\Http\Request $request La solicitud HTTP que contiene el ID de la ficha.
-     * @return \Illuminate\Http\JsonResponse|\Illuminate\View\View Una respuesta JSON con los documentos encontrados o un mensaje de error, 
+     * @return \Illuminate\Http\JsonResponse|\Illuminate\View\View Una respuesta JSON con los documentos encontrados o un mensaje de error,
      *         o una vista con los documentos si se encuentran.
      *
      * @throws \Exception Si ocurre un error al obtener los documentos.
      */
     public function getDocumentsByFicha(Request $request)
     {
-        $fichaId = $request->input('ficha'); 
-        
+        $fichaId = $request->input('ficha');
+
         try {
             if (!$fichaId) {
                 return response()->json(['message' => 'ID de ficha no proporcionado'], 400);
             }
 
             $documentos = $this->asistenciaService->obtenerDocumentosPorFicha($fichaId);
-            
+
             if ($documentos->isEmpty()) {
                 return response()->json(['message' => 'No se encontraron documentos para la ficha proporcionada'], 404);
             }
@@ -148,15 +148,15 @@ class AsistenciaAprendicesController extends Controller
      * @return \Illuminate\Http\JsonResponse|\Illuminate\View\View Una respuesta JSON con un mensaje de error o una vista con las asistencias encontradas.
      */
     public function getAttendanceByDocument(Request $request){
-        $document = $request->input('documento'); 
-       
+        $document = $request->input('documento');
+
         if (!$document) {
             return response()->json(['message' => 'Datos incompletos'], 400);
         }
 
         try {
             $asistencias = $this->asistenciaService->obtenerPorDocumento($document);
-           
+
             if ($asistencias->isEmpty()) {
                 return response()->json(['message' => 'No se encontraron asistencias para el documento proporcionado'], 404);
             }
@@ -168,7 +168,7 @@ class AsistenciaAprendicesController extends Controller
         }
     }
 
-  
+
     /**
      * Almacena la asistencia de los aprendices.
      *
@@ -187,19 +187,19 @@ class AsistenciaAprendicesController extends Controller
             if (empty($data)) {
                 return response()->json(['message' => 'Datos incompletos'], 400);
             }
-      
+
             if (isset($data['attendance'])) {
                 // Registro en lote
                 $cantidad = $this->asistenciaService->registrarAsistenciaLote(
-                    $data['attendance'], 
+                    $data['attendance'],
                     $data['caracterizacion_id']
                 );
-                
+
                 return response()->json(['message' => "Lista de {$cantidad} asistencias guardada con éxito"], 200);
             } else {
                 // Registro individual
                 $this->asistenciaService->registrarAsistencia($data);
-                
+
                 return response()->json(['message' => 'Asistencia guardada con éxito'], 200);
             }
         } catch (Exception $e) {
@@ -208,21 +208,21 @@ class AsistenciaAprendicesController extends Controller
         }
     }
 
-    
+
     /**
      * Actualiza la hora de salida de las asistencias de los aprendices.
      *
      * @param \Illuminate\Http\Request $request La solicitud HTTP que contiene los datos necesarios para la actualización.
-     * 
+     *
      * @return \Illuminate\Http\JsonResponse La respuesta JSON con un mensaje de éxito o error.
-     * 
+     *
      * @throws \Illuminate\Validation\ValidationException Si los datos proporcionados son incompletos.
-     * 
+     *
      * Datos esperados en la solicitud:
      * - caracterizacion_id: ID de la caracterización del aprendiz.
      * - hora_salida: Hora de salida a actualizar.
      * - fecha: Fecha de la asistencia a actualizar.
-     * 
+     *
      * Respuestas posibles:
      * - 200: Asistencias actualizadas con éxito.
      * - 400: Datos incompletos.
@@ -232,14 +232,14 @@ class AsistenciaAprendicesController extends Controller
     {
         try {
             $data = $request->all();
-            
+
             if (!isset($data['caracterizacion_id']) || !isset($data['hora_salida']) || !isset($data['fecha'])) {
                 return response()->json(['message' => 'Datos incompletos'], 400);
             }
 
             $cantidad = $this->asistenciaService->actualizarHoraSalida(
-                $data['caracterizacion_id'], 
-                $data['fecha'], 
+                $data['caracterizacion_id'],
+                $data['fecha'],
                 $data['hora_salida']
             );
 
@@ -254,23 +254,23 @@ class AsistenciaAprendicesController extends Controller
         }
     }
 
-    
+
     /**
      * Maneja la solicitud de novedad de asistencia de aprendices.
      *
      * @param \Illuminate\Http\Request $request La solicitud HTTP que contiene los datos de la novedad.
-     * 
+     *
      * @return \Illuminate\Http\JsonResponse La respuesta JSON con el mensaje correspondiente y el código de estado HTTP.
-     * 
+     *
      * @throws \Illuminate\Validation\ValidationException Si los datos de la solicitud están incompletos.
-     * 
+     *
      * Este método verifica si la solicitud contiene los campos necesarios: 'caracterizacion_id', 'numero_identificacion', 'hora_entrada' y 'novedad'.
      * Si alguno de estos campos falta, devuelve una respuesta JSON con un mensaje de error y un código de estado 400.
-     * 
+     *
      * Luego, intenta encontrar un registro de asistencia que coincida con 'caracterizacion_id', 'numero_identificacion' y 'hora_ingreso'.
      * Si se encuentra un registro, actualiza la 'hora_salida' y 'novedad_salida' con los datos actuales y guarda los cambios.
      * Devuelve una respuesta JSON con un mensaje de éxito y un código de estado 200.
-     * 
+     *
      * Si no se encuentra un registro de asistencia, devuelve una respuesta JSON con un mensaje de error y un código de estado 404.
      */
     public function assistenceNovedad(Request $request)
@@ -278,14 +278,14 @@ class AsistenciaAprendicesController extends Controller
         if (!$request->has('caracterizacion_id') || !$request->has('numero_identificacion') || !$request->has('hora_entrada') || !$request->has('novedad')) {
             return response()->json(['message' => 'Datos incompletos'], 400);
         }
-   
+
         $caracterizacion_id = $request->input('caracterizacion_id');
         $numero_identificacion = $request->input('numero_identificacion');
         $hora_ingreso_peticion = $request->input('hora_entrada');
         $novedad_salida = $request->input('novedad');
-        
+
         $hora_ingreso = Carbon::parse($hora_ingreso_peticion)->format('H:i:s');
-      
+
         $asistencia = AsistenciaAprendiz::where('caracterizacion_id', $caracterizacion_id)
             ->where('numero_identificacion', $numero_identificacion)
             ->where('hora_ingreso', $hora_ingreso)
@@ -302,7 +302,7 @@ class AsistenciaAprendicesController extends Controller
         return response()->json(['message' => 'Solicitud de respuesta aceptada'], 200);
     }
 
-   
+
     /**
      * Obtiene la lista de asistencias para una ficha y jornada específicas.
      *
@@ -313,16 +313,16 @@ class AsistenciaAprendicesController extends Controller
     public function getList(String $ficha, String $jornada)
     {
         // Obtiene la hora y fecha actual
-        $horaEjecucion = Carbon::now()->format('H:i:s'); 
+        $horaEjecucion = Carbon::now()->format('H:i:s');
         $fechaActual = Carbon::now()->format('Y-m-d');
 
         // Obtiene la jornada de formación correspondiente
         $obJornada = JornadaFormacion::where('jornada', $jornada)->first();
 
         Log::info('Jornada: '.json_encode($obJornada));
-        
+
         // Formatea las horas de inicio y fin de la jornada
-        $h1Ini = Carbon::parse($obJornada->hora_inicio)->format('H'); 
+        $h1Ini = Carbon::parse($obJornada->hora_inicio)->format('H');
         $m1Ini = Carbon::parse($obJornada->hora_inicio)->format('i');
         $h2Ini = Carbon::parse($obJornada->hora_fin)->format('H');
         $m2Fin = Carbon::parse($obJornada->hora_fin)->format('i');
@@ -339,7 +339,7 @@ class AsistenciaAprendicesController extends Controller
         // Recorre las asistencias y verifica si la hora de ingreso está dentro del rango de la jornada
         foreach ($asistencias as $asistencia){
             $hourEnter = Carbon::parse($asistencia->hora_ingreso)->format('H:i:s');
-            $dateEnter = Carbon::parse($asistencia->created_at)->format('Y-m-d'); 
+            $dateEnter = Carbon::parse($asistencia->created_at)->format('Y-m-d');
 
             if($this->validateHour($horaEjecucion, $jornada, $h1Ini , $m1Ini , $h2Ini , $m2Fin) == true && $dateEnter == $fechaActual){
                 return response()->json(['asistencias' => $asistencias], 200);
@@ -357,15 +357,15 @@ class AsistenciaAprendicesController extends Controller
      */
 
 
-    /***********Metodos para actulizar novedades de estrada y salida**************/ 
+    /***********Metodos para actulizar novedades de estrada y salida**************/
 
     /**
      * Actualiza la hora de salida y la novedad de salida de la asistencia de un aprendiz.
      *
      * @param \Illuminate\Http\Request $request La solicitud HTTP que contiene los datos necesarios para actualizar la asistencia.
-     * 
+     *
      * @return \Illuminate\Http\JsonResponse Una respuesta JSON con un mensaje indicando el resultado de la operación.
-     * 
+     *
      * Este método realiza las siguientes acciones:
      * - Obtiene la fecha y hora actual.
      * - Extrae los datos de la solicitud, incluyendo el número de identificación del aprendiz y la hora de ingreso.
@@ -373,7 +373,7 @@ class AsistenciaAprendicesController extends Controller
      * - Verifica si la asistencia corresponde a la fecha actual y si la hora de ingreso corresponde a los turnos de mañana, tarde o noche.
      * - Si se cumplen las condiciones, actualiza la novedad de salida y la hora de salida de la asistencia y guarda los cambios.
      * - Si no se encuentra la asistencia, devuelve una respuesta JSON con un mensaje de error.
-     * 
+     *
      * @throws \Exception Si ocurre un error al procesar la solicitud.
      */
     public function updateExitAsistence(Request $request){

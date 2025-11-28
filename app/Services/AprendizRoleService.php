@@ -45,7 +45,7 @@ class AprendizRoleService
             // Asignar rol si no lo tiene
             if (!$user->hasRole('APRENDIZ')) {
                 $user->assignRole('APRENDIZ');
-                
+
                 Log::info('Rol APRENDIZ asignado por AprendizRoleService', [
                     'aprendiz_id' => $aprendiz->id,
                     'user_id' => $user->id,
@@ -78,7 +78,7 @@ class AprendizRoleService
             if ($aprendiz->persona && $aprendiz->persona->user) {
                 $userRoles = $aprendiz->persona->user->roles->pluck('name')->toArray();
                 $aprendiz->syncRoles($userRoles);
-                
+
                 Log::info('Roles sincronizados entre Aprendiz y User', [
                     'aprendiz_id' => $aprendiz->id,
                     'user_id' => $aprendiz->persona->user->id,
@@ -105,7 +105,7 @@ class AprendizRoleService
             $persona = $aprendiz->persona;
             if ($persona && $persona->user) {
                 $persona->user->removeRole('APRENDIZ');
-                
+
                 Log::info('Rol APRENDIZ removido por AprendizRoleService', [
                     'aprendiz_id' => $aprendiz->id,
                     'user_id' => $persona->user->id
@@ -131,7 +131,7 @@ class AprendizRoleService
     public function validateRoleConsistency(Aprendiz $aprendiz): array
     {
         $issues = [];
-        
+
         try {
             if (!$aprendiz->persona) {
                 $issues[] = 'Aprendiz sin persona asociada';
@@ -187,7 +187,7 @@ class AprendizRoleService
     {
         try {
             $email = $persona->email ?? "aprendiz_{$aprendiz->id}@sena.edu.co";
-            
+
             // Verificar que el email no esté en uso
             $existingUser = User::where('email', $email)->first();
             if ($existingUser) {
@@ -200,10 +200,10 @@ class AprendizRoleService
                 'status' => 1,
                 'persona_id' => $persona->id,
             ]);
-            
+
             // Enviar email de verificación automáticamente
             $user->sendEmailVerificationNotification();
-            
+
             Log::info('Usuario creado por AprendizRoleService', [
                 'aprendiz_id' => $aprendiz->id,
                 'user_id' => $user->id,

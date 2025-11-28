@@ -49,7 +49,7 @@ class TemaService
     {
         return DB::transaction(function () use ($datos) {
             $tema = Tema::create($datos);
-            
+
             $this->repository->invalidarCache();
 
             Log::info('Tema creado', ['tema_id' => $tema->id]);
@@ -69,7 +69,7 @@ class TemaService
     {
         return DB::transaction(function () use ($id, $datos) {
             $actualizado = Tema::where('id', $id)->update($datos);
-            
+
             if ($actualizado) {
                 $this->repository->invalidarCache();
             }
@@ -88,7 +88,7 @@ class TemaService
     {
         return DB::transaction(function () use ($id) {
             $eliminado = Tema::where('id', $id)->delete();
-            
+
             if ($eliminado) {
                 $this->repository->invalidarCache();
             }
@@ -140,7 +140,7 @@ class TemaService
     {
         $tema = Tema::find($id);
         $nuevoEstado = !$tema->status;
-        
+
         return $this->actualizar($id, ['status' => $nuevoEstado]);
     }
 }

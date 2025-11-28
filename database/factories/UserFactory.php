@@ -28,13 +28,27 @@ class UserFactory extends Factory
         $uniqueId = uniqid('user_', true);
         $timestamp = time() . rand(1000, 9999);
         
+        try {
+            $personaId = Persona::query()->inRandomOrder()->value('id');
+        } catch (\Exception $e) {
+            $personaId = null;
+        }
+        
+        if (!$personaId) {
+            try {
+                $personaId = Persona::factory()->create()->id;
+            } catch (\Exception $e) {
+                $personaId = null;
+            }
+        }
+        
         return [
             'email' => strtolower($uniqueId . $timestamp . '@example.com'),
             'email_verified_at' => now(),
             'password' => static::$password ??= Hash::make('12345678'),
             'remember_token' => Str::random(10),
             'status' => 1,
-            'persona_id' => Persona::factory(),
+            'persona_id' => $personaId,
         ];
     }
 

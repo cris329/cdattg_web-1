@@ -7,8 +7,11 @@ use App\Services\FichaService;
 use App\Repositories\FichaRepository;
 use App\Repositories\InstructorFichaRepository;
 use App\Repositories\AprendizFichaRepository;
+use App\Models\FichaCaracterizacion;
+use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Mockery;
+use PHPUnit\Framework\Attributes\Test;
 
 class FichaServiceTest extends TestCase
 {
@@ -22,11 +25,11 @@ class FichaServiceTest extends TestCase
     protected function setUp(): void
     {
         parent::setUp();
-        
+
         $this->mockFichaRepo = Mockery::mock(FichaRepository::class);
         $this->mockInstructorFichaRepo = Mockery::mock(InstructorFichaRepository::class);
         $this->mockAprendizFichaRepo = Mockery::mock(AprendizFichaRepository::class);
-        
+
         $this->service = new FichaService(
             $this->mockFichaRepo,
             $this->mockInstructorFichaRepo,
@@ -40,7 +43,7 @@ class FichaServiceTest extends TestCase
         parent::tearDown();
     }
 
-    /** @test */
+    #[Test]
     public function puede_obtener_estadisticas()
     {
         $estadisticasEsperadas = [
@@ -59,29 +62,51 @@ class FichaServiceTest extends TestCase
         $this->assertEquals($estadisticasEsperadas, $resultado);
     }
 
-    /** @test */
+    #[Test]
     public function puede_verificar_disponibilidad()
     {
         $fichaId = 1;
 
+        $fichaMock = Mockery::mock(FichaCaracterizacion::class);
+        $fichaMock->shouldReceive('offsetExists')
+            ->with('cupos_maximos')
+            ->andReturn(true);
+        $fichaMock->shouldReceive('offsetExists')
+            ->with('status')
+            ->andReturn(true);
+        $fichaMock->shouldReceive('offsetExists')
+            ->byDefault()
+            ->andReturn(false);
+        $fichaMock->shouldReceive('__get')
+            ->with('status')
+            ->andReturn(true);
+        $fichaMock->shouldReceive('__get')
+            ->with('cupos_maximos')
+            ->andReturn(40);
+        $fichaMock->shouldReceive('getAttribute')
+            ->with('status')
+            ->andReturn(true);
+        $fichaMock->shouldReceive('getAttribute')
+            ->with('cupos_maximos')
+            ->andReturn(40);
+
         $this->mockFichaRepo
             ->shouldReceive('encontrarConRelaciones')
             ->once()
-            ->andReturn((object)[
-                'id' => $fichaId,
-                'status' => true,
-                'cupos_maximos' => 40,
-            ]);
+            ->with($fichaId)
+            ->andReturn($fichaMock);
 
         $this->mockInstructorFichaRepo
             ->shouldReceive('obtenerPorFicha')
             ->once()
-            ->andReturn(collect([]));
+            ->with($fichaId)
+            ->andReturn(new Collection([]));
 
         $this->mockAprendizFichaRepo
             ->shouldReceive('obtenerPorFicha')
             ->once()
-            ->andReturn(collect([]));
+            ->with($fichaId)
+            ->andReturn(new Collection([]));
 
         $resultado = $this->service->verificarDisponibilidad($fichaId);
 
@@ -91,4 +116,3 @@ class FichaServiceTest extends TestCase
         $this->assertArrayHasKey('total_aprendices', $resultado);
     }
 }
-

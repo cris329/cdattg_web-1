@@ -122,7 +122,7 @@ class AsistenciaAprendizRepository
     public function crearLote(array $asistencias, int $caracterizacionId): int
     {
         $registros = [];
-        
+
         foreach ($asistencias as $asistencia) {
             $registros[] = [
                 'caracterizacion_id' => $caracterizacionId,
@@ -136,7 +136,7 @@ class AsistenciaAprendizRepository
         }
 
         AsistenciaAprendiz::insert($registros);
-        
+
         return count($registros);
     }
 
@@ -169,7 +169,7 @@ class AsistenciaAprendizRepository
     public function buscarAsistencia(int $caracterizacionId, string $numeroIdentificacion, string $horaIngreso): ?AsistenciaAprendiz
     {
         $horaIngresoFormateada = Carbon::parse($horaIngreso)->format('H:i:s');
-        
+
         return AsistenciaAprendiz::where('caracterizacion_id', $caracterizacionId)
             ->where('numero_identificacion', $numeroIdentificacion)
             ->whereTime('hora_ingreso', $horaIngresoFormateada)
@@ -199,7 +199,7 @@ class AsistenciaAprendizRepository
     public function actualizarNovedadEntrada(int $id, string $novedad, ?string $horaIngreso = null): bool
     {
         $datos = ['novedad_entrada' => $novedad];
-        
+
         if ($horaIngreso) {
             $datos['hora_ingreso'] = Carbon::parse($horaIngreso)->format('Y-m-d H:i:s');
         }
@@ -218,7 +218,7 @@ class AsistenciaAprendizRepository
     public function actualizarNovedadSalida(int $id, string $novedad, ?string $horaSalida = null): bool
     {
         $datos = ['novedad_salida' => $novedad];
-        
+
         if ($horaSalida) {
             $datos['hora_salida'] = Carbon::parse($horaSalida)->format('Y-m-d H:i:s');
         }

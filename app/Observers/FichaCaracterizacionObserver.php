@@ -22,7 +22,7 @@ class FichaCaracterizacionObserver
     public function created(FichaCaracterizacion $ficha): void
     {
         $this->invalidarCache();
-        
+
         Log::info('Ficha de caracterización creada', [
             'ficha_id' => $ficha->id,
             'numero_ficha' => $ficha->ficha,
@@ -35,7 +35,7 @@ class FichaCaracterizacionObserver
     public function updated(FichaCaracterizacion $ficha): void
     {
         $this->invalidarCache();
-        
+
         if ($ficha->isDirty('status')) {
             Log::info('Estado de ficha cambiado', [
                 'ficha_id' => $ficha->id,
@@ -51,7 +51,7 @@ class FichaCaracterizacionObserver
     public function deleted(FichaCaracterizacion $ficha): void
     {
         $this->invalidarCache();
-        
+
         Log::info('Ficha de caracterización eliminada', [
             'ficha_id' => $ficha->id,
             'numero_ficha' => $ficha->ficha,

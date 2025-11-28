@@ -15,7 +15,7 @@ class FichaCaracterizacionFlutterController extends Controller
         try {
             // Primero obtener solo los datos básicos
             $fichas = FichaCaracterizacion::select([
-                'id', 'ficha', 'fecha_inicio', 'fecha_fin', 'total_horas', 
+                'id', 'ficha', 'fecha_inicio', 'fecha_fin', 'total_horas',
                 'status', 'programa_formacion_id', 'instructor_id', 'sede_id',
                 'modalidad_formacion_id', 'jornada_id', 'ambiente_id'
             ])->orderBy('id', 'desc')->get();
@@ -41,7 +41,7 @@ class FichaCaracterizacionFlutterController extends Controller
     {
         try {
             $ficha = FichaCaracterizacion::select([
-                'id', 'ficha', 'fecha_inicio', 'fecha_fin', 'total_horas', 
+                'id', 'ficha', 'fecha_inicio', 'fecha_fin', 'total_horas',
                 'status', 'programa_formacion_id', 'instructor_id', 'sede_id',
                 'modalidad_formacion_id', 'jornada_id', 'ambiente_id'
             ])->findOrFail($id);
@@ -70,7 +70,7 @@ class FichaCaracterizacionFlutterController extends Controller
             ]);
 
             $numero = $request->input('numero');
-            
+
             $fichas = FichaCaracterizacion::where('ficha', 'like', "%{$numero}%")
                 ->with([
                     'programaFormacion:id,nombre,codigo',

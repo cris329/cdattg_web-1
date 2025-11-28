@@ -47,7 +47,7 @@ class RegistrarAsistenciaPrueba extends Command
                 'aprendiz.persona',
                 'ficha.jornadaFormacion'
             ])->inRandomOrder()->first();
-            
+
             if (!$aprendizFicha) {
                 $this->error('❌ No se encontró ningún aprendiz en la base de datos.');
                 $this->info('💡 Por favor, crea al menos un aprendiz primero.');
@@ -56,7 +56,7 @@ class RegistrarAsistenciaPrueba extends Command
 
             // Obtener cualquier instructor_ficha disponible
             $instructorFicha = InstructorFichaCaracterizacion::inRandomOrder()->first();
-            
+
             if (!$instructorFicha) {
                 $this->error('❌ No se encontró ningún instructor asignado a una ficha.');
                 $this->info('💡 Por favor, crea al menos una asignación de instructor a ficha primero.');

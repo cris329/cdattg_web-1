@@ -31,7 +31,7 @@ class DetalleOrden extends Model
         return $this->belongsTo(Orden::class, 'orden_id');
     }
 
-    
+
     // Relación con el producto
     public function producto() : BelongsTo
     {
@@ -44,7 +44,7 @@ class DetalleOrden extends Model
         return $this->belongsTo(ParametroTema::class, 'estado_orden_id');
     }
 
-    
+
     // Relación con devoluciones
     public function devoluciones() : HasMany
     {

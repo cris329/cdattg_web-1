@@ -53,7 +53,7 @@ class CompetenciaPolicy
      */
     public function create(User $user): bool
     {
-        return $user->can('CREAR COMPETENCIA') && 
+        return $user->can('CREAR COMPETENCIA') &&
                $user->hasRole(['SUPER ADMINISTRADOR', 'ADMINISTRADOR', 'INSTRUCTOR']);
     }
 
@@ -102,7 +102,7 @@ class CompetenciaPolicy
      */
     public function restore(User $user, Competencia $competencia): bool
     {
-        return $user->can('CREAR COMPETENCIA') && 
+        return $user->can('CREAR COMPETENCIA') &&
                $user->hasRole(['SUPER ADMINISTRADOR', 'ADMINISTRADOR']);
     }
 
@@ -111,7 +111,7 @@ class CompetenciaPolicy
      */
     public function forceDelete(User $user, Competencia $competencia): bool
     {
-        return $user->can('ELIMINAR COMPETENCIA') && 
+        return $user->can('ELIMINAR COMPETENCIA') &&
                $user->hasRole(['SUPER ADMINISTRADOR', 'ADMINISTRADOR']);
     }
 
@@ -160,7 +160,7 @@ class CompetenciaPolicy
      */
     public function asociarPrograma(User $user, Competencia $competencia): bool
     {
-        return $user->can('EDITAR COMPETENCIA') && 
+        return $user->can('EDITAR COMPETENCIA') &&
                $user->hasRole(['SUPER ADMINISTRADOR', 'ADMINISTRADOR', 'INSTRUCTOR']);
     }
 
@@ -169,7 +169,7 @@ class CompetenciaPolicy
      */
     public function exportar(User $user): bool
     {
-        return $user->can('VER COMPETENCIA') && 
+        return $user->can('VER COMPETENCIA') &&
                $user->hasRole(['SUPER ADMINISTRADOR', 'ADMINISTRADOR']);
     }
 }

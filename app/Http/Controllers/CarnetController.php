@@ -26,7 +26,7 @@ class CarnetController extends Controller
     {
         try {
             $aprendiz = Aprendiz::with('persona', 'fichaCaracterizacion.programaFormacion')->findOrFail($id);
-            
+
             $archivo = $this->carnetService->generarCarnetAprendiz($aprendiz);
 
             return response()->json([
@@ -52,7 +52,7 @@ class CarnetController extends Controller
     {
         try {
             $instructor = Instructor::with('persona', 'regional')->findOrFail($id);
-            
+
             $archivo = $this->carnetService->generarCarnetInstructor($instructor);
 
             return response()->json([

@@ -34,7 +34,7 @@ class PersonaImportService
         $this->personaService = $personaService;
         $this->temaRepository = $temaRepository;
     }
-    
+
     private const CHUNK_SIZE = 250;
     private const DUPLICATE_ENTRY_TEXT = 'Duplicate entry';
 
@@ -129,7 +129,7 @@ class PersonaImportService
     {
         // Inicializar cache de tipos de documento (lazy loading)
         $this->warmDocumentoCache();
-        
+
         $import->update([
             'status' => 'processing',
             'processed_rows' => 0,
@@ -159,7 +159,7 @@ class PersonaImportService
                 'total_rows' => 0,
                 'status' => 'completed',
             ]);
-            
+
             // Liberar recursos si no hay datos
             unset($reader);
             gc_collect_cycles();
@@ -190,7 +190,7 @@ class PersonaImportService
 
             // Procesar chunks y contar filas válidas al mismo tiempo
             $totalRowsValidas = $this->procesarChunks($reader, $rutaArchivo, $highestRow, $filter, $import);
-            
+
             // Actualizar con el valor real de filas válidas procesadas
             $import->update([
                 'total_rows' => $totalRowsValidas,
@@ -200,11 +200,11 @@ class PersonaImportService
                 'status' => 'completed',
             ]);
         }
-        
+
         // Liberar explícitamente el reader y forzar recolección de basura
         unset($reader, $filter);
         gc_collect_cycles();
-        
+
         // Esperar un momento adicional en Windows para asegurar liberación completa del archivo
         if (PHP_OS_FAMILY === 'Windows') {
             usleep(250000); // 0.25 segundos
@@ -219,7 +219,7 @@ class PersonaImportService
         if ($this->documentoCacheInitialized) {
             return;
         }
-        
+
         if (! Schema::hasTable('parametros')) {
             Log::warning('La tabla "parametros" no existe; los tipos de documento se resolverán como null');
             $this->documentoCache = [];
@@ -229,14 +229,14 @@ class PersonaImportService
 
         // Obtener tipos de documento usando el repositorio existente
         $temaTiposDocumento = $this->temaRepository->obtenerTiposDocumento();
-        
+
         if (!$temaTiposDocumento || !$temaTiposDocumento->parametros) {
             Log::warning('No se encontró el tema de tipos de documento (tema_id=2)');
             $this->documentoCache = [];
             $this->documentoCacheInitialized = true;
             return;
         }
-        
+
         $this->documentoCache = [];
         $nombresNormalizados = [];
         foreach ($temaTiposDocumento->parametros as $parametro) {
@@ -244,7 +244,7 @@ class PersonaImportService
             $nameOriginal = $parametro->name;
             $nameNormalized = $this->normalizarTextoSinTildes($nameOriginal);
             $this->documentoCache[$nameNormalized] = (int) $parametro->id;
-            
+
             // Guardar para diagnóstico
             $nombresNormalizados[] = [
                 'original' => $nameOriginal,
@@ -263,7 +263,7 @@ class PersonaImportService
         if (empty($this->documentoCache)) {
             Log::warning('No se encontraron parámetros en el tema de tipos de documento');
         }
-        
+
         $this->documentoCacheInitialized = true;
     }
 
@@ -274,14 +274,14 @@ class PersonaImportService
     {
         // Convertir primero a mayúsculas para tener consistencia
         $texto = mb_strtoupper($texto, 'UTF-8');
-        
+
         // Reemplazar TODOS los caracteres con tilde (mayúsculas porque ya convertimos)
         $texto = str_replace(
             ['Á', 'É', 'Í', 'Ó', 'Ú', 'Ñ', 'Ü'],
             ['A', 'E', 'I', 'O', 'U', 'N', 'U'],
             $texto
         );
-        
+
         return $texto;
     }
 
@@ -764,7 +764,7 @@ class PersonaImportService
             return ['success' => true, 'missingContact' => $missingContact];
         } catch (\Throwable $e) {
             $errorMessage = $e->getMessage();
-            
+
             // Intentar reintento si hay campos duplicados no críticos
             if (str_contains($errorMessage, 'Integrity constraint violation')) {
                 $resultado = $this->intentarReintento(
@@ -775,12 +775,12 @@ class PersonaImportService
                     $rowNumber,
                     $missingContact
                 );
-                
+
                 if ($resultado !== null) {
                     return $resultado;
                 }
             }
-            
+
             // Error no recuperable - registrar issue
             return $this->registrarErrorNoRecuperable($e, $data, $import, $rowNumber);
         }
@@ -799,7 +799,7 @@ class PersonaImportService
     ): ?array {
         $errorMessage = $e->getMessage();
         $camposDuplicados = $this->detectarCamposDuplicados($errorMessage, $data);
-        
+
         if (empty($camposDuplicados)) {
             return null;
         }

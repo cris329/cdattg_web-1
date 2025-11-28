@@ -9,6 +9,7 @@ use Illuminate\Notifications\Notifiable;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Schema;
 use Laravel\Sanctum\HasApiTokens;
 use App\Models\PersonaContactAlert;
 use App\Models\FichaCaracterizacion;
@@ -59,25 +60,35 @@ class Persona extends Model
             $persona->direccion = strtoupper($persona->direccion);
 
             // Sincronizar email con el usuario relacionado si existe
-            if ($persona->isDirty('email')) {
+            if ($persona->isDirty('email') && Schema::hasTable('users')) {
                 // Obtener el nuevo valor del email desde los atributos (no del accessor)
                 $newEmail = $persona->getAttributes()['email'] ?? $persona->getOriginal('email');
-                
+
                 // Buscar si existe un usuario relacionado
-                $user = DB::table('users')->where('persona_id', $persona->id)->first();
-                if ($user) {
-                    // Usar DB directo para evitar loops infinitos
-                    DB::table('users')
-                        ->where('persona_id', $persona->id)
-                        ->update(['email' => $newEmail]);
+                try {
+                    $user = DB::table('users')->where('persona_id', $persona->id)->first();
+                    if ($user) {
+                        // Usar DB directo para evitar loops infinitos
+                        DB::table('users')
+                            ->where('persona_id', $persona->id)
+                            ->update(['email' => $newEmail]);
+                    }
+                } catch (\Exception $e) {
+                    // Si hay error (tabla no existe, etc.), simplemente continuar
                 }
             }
         });
 
         // Eliminar usuario asociado antes de eliminar la persona
         static::deleting(function ($persona) {
-            if ($persona->user) {
-                $persona->user->delete();
+            if (Schema::hasTable('users')) {
+                try {
+                    if ($persona->user) {
+                        $persona->user->delete();
+                    }
+                } catch (\Exception $e) {
+                    // Si hay error, simplemente continuar
+                }
             }
         });
     }
@@ -242,6 +253,11 @@ class Persona extends Model
      */
     public function getEmailAttribute($value)
     {
+        // Solo consultar users si la tabla existe
+        if (!Schema::hasTable('users')) {
+            return $value;
+        }
+
         // Si hay un usuario relacionado y está cargado, usar su email (fuente de verdad)
         if ($this->relationLoaded('user') && $this->user) {
             return $this->user->email;
@@ -249,9 +265,14 @@ class Persona extends Model
 
         // Si la relación no está cargada, verificar si existe un usuario
         if (!$this->relationLoaded('user')) {
-            $user = $this->user;
-            if ($user) {
-                return $user->email;
+            try {
+                $user = $this->user;
+                if ($user) {
+                    return $user->email;
+                }
+            } catch (\Exception $e) {
+                // Si hay error al consultar, usar el valor de la tabla personas
+                return $value;
             }
         }
 

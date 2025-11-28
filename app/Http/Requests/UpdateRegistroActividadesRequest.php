@@ -25,7 +25,7 @@ class UpdateRegistroActividadesRequest extends FormRequest
     public function rules(): array
     {
         $actividad = $this->route('actividad');
-        
+
         return [
             'nombre' => [
                 'required',

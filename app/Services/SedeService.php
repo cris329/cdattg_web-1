@@ -53,7 +53,7 @@ class SedeService
     {
         return DB::transaction(function () use ($id, $datos) {
             $actualizado = Sede::where('id', $id)->update($datos);
-            
+
             if ($actualizado) {
                 $this->repository->invalidarCache();
             }
@@ -66,7 +66,7 @@ class SedeService
     {
         return DB::transaction(function () use ($id) {
             $eliminado = Sede::where('id', $id)->delete();
-            
+
             if ($eliminado) {
                 $this->repository->invalidarCache();
             }
@@ -79,7 +79,7 @@ class SedeService
     {
         $sede = Sede::find($id);
         $nuevoEstado = !$sede->status;
-        
+
         return $this->actualizar($id, ['status' => $nuevoEstado]);
     }
 }

@@ -8,8 +8,10 @@ use App\Models\User;
 use App\Models\Instructor;
 use App\Models\Aprendiz;
 use Illuminate\Foundation\Testing\RefreshDatabase;
+use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Log;
 use Mockery;
+use PHPUnit\Framework\Attributes\Test;
 
 class NotificacionServiceTest extends TestCase
 {
@@ -21,14 +23,33 @@ class NotificacionServiceTest extends TestCase
     {
         parent::setUp();
         $this->service = new NotificacionService();
+
+        // Ejecutar seeders necesarios para las pruebas
+        // Estos datos son requeridos por las claves foráneas en PersonaFactory
+        $this->seed([
+            \Database\Seeders\RolePermissionSeeder::class,
+            \Database\Seeders\ParametroSeeder::class,
+            \Database\Seeders\PaisSeeder::class,
+            \Database\Seeders\DepartamentoSeeder::class,
+            \Database\Seeders\MunicipioSeeder::class,
+            \Database\Seeders\PersonaSeeder::class,
+            \Database\Seeders\UsersSeeder::class,
+        ]);
     }
 
-    /** @test */
+    #[Test]
     public function puede_notificar_instructor_sin_email()
     {
         $instructor = Instructor::factory()->create();
-        $instructor->persona->email = null;
-        $instructor->persona->save();
+        
+        // Eliminar el usuario directamente desde la BD para evitar problemas de cache
+        // El servicio verifica $user->email, no $persona->email
+        if ($instructor->persona->user) {
+            DB::table('users')->where('persona_id', $instructor->persona->id)->delete();
+            // Limpiar la relación cacheada y refrescar
+            $instructor->persona->refresh();
+            $instructor->refresh();
+        }
 
         $resultado = $this->service->notificarNuevaFichaInstructor($instructor, [
             'numero' => '2089876',
@@ -37,7 +58,7 @@ class NotificacionServiceTest extends TestCase
         $this->assertFalse($resultado);
     }
 
-    /** @test */
+    #[Test]
     public function registra_log_al_notificar()
     {
         Log::shouldReceive('info')
@@ -53,7 +74,7 @@ class NotificacionServiceTest extends TestCase
         ]);
     }
 
-    /** @test */
+    #[Test]
     public function puede_notificar_multiples_aprendices()
     {
         $aprendices = Aprendiz::factory()->count(5)->create();
@@ -64,18 +85,22 @@ class NotificacionServiceTest extends TestCase
         $this->assertLessThanOrEqual(5, $enviados);
     }
 
-    /** @test */
+    #[Test]
     public function maneja_errores_al_notificar()
     {
         Log::shouldReceive('error')->atLeast()->once();
+        Log::shouldReceive('info')->atLeast()->once();
 
-        $aprendices = collect([
-            (object)['persona' => null], // Aprendiz sin persona
-        ]);
+        $aprendizMock = Mockery::mock();
+        $aprendizMock->id = 1;
+        $aprendizMock->shouldReceive('__get')
+            ->with('persona')
+            ->andThrow(new \Exception('Error accediendo a persona'));
+
+        $aprendices = collect([$aprendizMock]);
 
         $enviados = $this->service->notificarAprendices($aprendices, 'Mensaje');
 
         $this->assertEquals(0, $enviados);
     }
 }
-

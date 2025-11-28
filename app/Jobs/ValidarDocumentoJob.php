@@ -157,10 +157,10 @@ class ValidarDocumentoJob implements ShouldQueue
             $numeroDocumento = $persona->numero_documento;
             $primerNombre = str_replace(' ', '_', $persona->primer_nombre);
             $primerApellido = str_replace(' ', '_', $persona->primer_apellido);
-            
+
             // Listar archivos en Google Drive
             $files = Storage::disk('google')->files('documentos_aspirantes');
-            
+
             // Buscar el archivo que coincida con el patrón
             foreach ($files as $file) {
                 $fileName = basename($file);

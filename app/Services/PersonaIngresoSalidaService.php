@@ -73,7 +73,7 @@ class PersonaIngresoSalidaService
 
             // Generar color dinámicamente basado en el tipo
             $color = $this->obtenerColorPorTipo($tipo);
-            
+
             // Generar icono dinámicamente basado en el tipo
             $icono = $this->obtenerIconoPorTipo($tipo);
 
@@ -99,7 +99,7 @@ class PersonaIngresoSalidaService
     private function pluralizarYCapitalizar(string $nombre): string
     {
         $nombre = strtolower($nombre);
-        
+
         // Reglas de pluralización básicas
         $plurales = [
             'instructor' => 'Instructores',
@@ -153,7 +153,7 @@ class PersonaIngresoSalidaService
     {
         // Mapeo inteligente basado en palabras clave en el nombre del tipo
         $tipoLower = strtolower($tipo);
-        
+
         // Detectar palabras clave y asignar iconos apropiados
         if (str_contains($tipoLower, 'instructor') || str_contains($tipoLower, 'profesor')) {
             return 'fa-chalkboard-teacher';
@@ -573,7 +573,7 @@ class PersonaIngresoSalidaService
     {
         $fechaCarbon = Carbon::parse($fecha);
         $hoy = Carbon::today();
-        
+
         // No permitir fechas futuras
         if ($fechaCarbon->isSameDay($hoy)) {
             return null;

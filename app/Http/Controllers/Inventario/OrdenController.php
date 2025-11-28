@@ -81,7 +81,7 @@ class OrdenController extends Controller
         $programas = ProgramaFormacion::where('status', true)
             ->orderBy('nombre', 'asc')
             ->get(['id', 'nombre', 'codigo']);
-            
+
         return view('inventario.ordenes.prestamos_salidas', compact('programas'));
     }
 
@@ -96,7 +96,7 @@ class OrdenController extends Controller
         } catch (OrdenException $e) {
             $ordenes = collect();
         }
-        
+
         return view('inventario.ordenes.pendientes', compact('ordenes'));
     }
 
@@ -111,7 +111,7 @@ class OrdenController extends Controller
         } catch (OrdenException $e) {
             $ordenes = collect();
         }
-        
+
         return view('inventario.ordenes.completadas', compact('ordenes'));
     }
 

@@ -46,7 +46,7 @@ class CompetenciaService
     public function obtenerConResultados(int $competenciaId): array
     {
         $competencia = Competencia::with(['resultadosAprendizaje', 'resultadosCompetencia'])->find($competenciaId);
-        
+
         if (!$competencia) {
             throw new \Exception('Competencia no encontrada.');
         }

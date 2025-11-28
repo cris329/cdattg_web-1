@@ -52,7 +52,7 @@ class ValidarFichaCaracterizacion
 
             // Obtener datos de la ficha del request
             $datos = $this->obtenerDatosFicha($request, $action);
-            
+
             if (empty($datos)) {
                 return $next($request);
             }
@@ -106,7 +106,7 @@ class ValidarFichaCaracterizacion
     private function debeValidar(Request $request, $action)
     {
         $routeName = $request->route()->getName();
-        
+
         // Validar solo en rutas específicas de fichas de caracterización
         $rutasValidadas = [
             'fichaCaracterizacion.store',

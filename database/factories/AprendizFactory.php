@@ -16,11 +16,22 @@ class AprendizFactory extends Factory
 
     public function definition(): array
     {
+        // Obtener o crear usuario para user_create_id y user_edit_id
+        $userId = null;
+        try {
+            $userId = User::query()->inRandomOrder()->value('id');
+            if (!$userId) {
+                $userId = User::factory()->create()->id;
+            }
+        } catch (\Exception $e) {
+            $userId = User::factory()->create()->id;
+        }
+
         return [
             'persona_id' => Persona::factory(),
             'estado' => (rand(1, 100) <= 90) ? 1 : 0,
-            'user_create_id' => 1,
-            'user_edit_id' => 1,
+            'user_create_id' => $userId ?? 1,
+            'user_edit_id' => $userId ?? 1,
         ];
     }
 

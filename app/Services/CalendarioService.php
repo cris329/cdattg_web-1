@@ -38,7 +38,7 @@ class CalendarioService
         $fechaFin = $fechaFin ?? now()->endOfMonth()->format('Y-m-d');
 
         $asignaciones = $this->instructorFichaRepo->obtenerPorInstructor($instructorId, true);
-        
+
         $eventos = [];
 
         foreach ($asignaciones as $asignacion) {
@@ -72,10 +72,10 @@ class CalendarioService
     protected function generarEventosPorDia($ficha, $diaFormacion, string $fechaInicio, string $fechaFin): array
     {
         $eventos = [];
-        
+
         $fechaInicioFicha = Carbon::parse($ficha->fecha_inicio);
         $fechaFinFicha = Carbon::parse($ficha->fecha_fin);
-        
+
         $fechaActual = Carbon::parse($fechaInicio)->max($fechaInicioFicha);
         $fechaLimite = Carbon::parse($fechaFin)->min($fechaFinFicha);
 

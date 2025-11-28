@@ -31,7 +31,7 @@ class ExportService
 
             // Fecha de generación
             $sheet->setCellValue('A2', 'Fecha de generación: ' . now()->format('d/m/Y H:i:s'));
-            
+
             // Encabezados de columnas
             $row = 4;
             $col = 'A';
@@ -60,7 +60,7 @@ class ExportService
 
             $filename = 'exports/' . $titulo . '_' . time() . '.xlsx';
             $path = storage_path('app/public/' . $filename);
-            
+
             // Crear directorio si no existe
             if (!is_dir(dirname($path))) {
                 mkdir(dirname($path), 0755, true);

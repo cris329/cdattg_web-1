@@ -19,7 +19,7 @@ class JornadaController extends Controller
     public function index()
     {
         $jornadas = $this->jornadaService->listarTodas();
-        return view('jornada.index', compact('jornadas')); 
+        return view('jornada.index', compact('jornadas'));
     }
 
     public function create()
