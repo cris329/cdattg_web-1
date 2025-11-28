@@ -1,11 +1,14 @@
 <?php
 
+declare(strict_types=1);
+
 namespace App\Models\Inventario;
 
 use App\Models\Parametro;
 use App\Traits\Seguimiento;
 use App\Models\Ambiente;
 use App\Models\ParametroTema;
+use App\Exceptions\StockException;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
@@ -121,7 +124,7 @@ class Producto extends Model
     public function descontarStock(int $cantidad) : self
     {
         if (!$this->tieneStockDisponible($cantidad)) {
-            throw new \Exception("Stock insuficiente. Disponible: {$this->cantidad}, Requerido: {$cantidad}");
+            throw new StockException("Stock insuficiente. Disponible: {$this->cantidad}, Requerido: {$cantidad}");
         }
 
         $this->cantidad -= $cantidad;
@@ -167,15 +170,12 @@ class Producto extends Model
     {
         $cantidad = $this->cantidad;
 
-        if ($cantidad <= 5) {
-            return 'critico';
-        } elseif ($cantidad <= 10) {
-            return 'bajo';
-        } elseif ($cantidad <= 20) {
-            return 'medio';
-        }
-
-        return 'normal';
+        return match (true) {
+            $cantidad <= 5 => 'critico',
+            $cantidad <= 10 => 'bajo',
+            $cantidad <= 20 => 'medio',
+            default => 'normal'
+        };
     }
 
     // Obtener badge HTML para mostrar estado de stock

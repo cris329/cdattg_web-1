@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace App\Notifications;
 
 use Illuminate\Bus\Queueable;
@@ -47,7 +49,7 @@ class NuevaOrdenNotification extends Notification implements ShouldQueue
         
         // Extraer motivo de la descripción
         $descripcion = $this->orden->descripcion_orden ?? '';
-        preg_match('/MOTIVO:\s*(.+?)$/s', $descripcion, $matchMotivo);
+        preg_match('/MOTIVO:\s*(.+)$/s', $descripcion, $matchMotivo);
         $motivo = isset($matchMotivo[1]) ? trim($matchMotivo[1]) : 'No especificado';
         
         return (new MailMessage)
