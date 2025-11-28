@@ -27,7 +27,7 @@ return new class extends Migration
             // Tipo de persona: instructor, aprendiz, visitante, administrativo, aspirante
             $table->enum('tipo_persona', [
                 'instructor',
-                'aprendiz', 
+                'aprendiz',
                 'visitante',
                 'administrativo',
                 'aspirante',
