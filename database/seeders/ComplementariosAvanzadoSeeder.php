@@ -11,7 +11,6 @@ class ComplementariosAvanzadoSeeder extends Seeder
 {
     /**
      * Run the database seeds.
-     * 
      * Uso: php artisan db:seed --class=ComplementariosAvanzadoSeeder
      */
     public function run(): void

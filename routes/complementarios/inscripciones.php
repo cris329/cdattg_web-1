@@ -3,6 +3,10 @@
 use App\Http\Controllers\Complementarios\InscripcionComplementarioController;
 use Illuminate\Support\Facades\Route;
 
+if (!defined('ROUTE_PATTERN_NUMERIC')) {
+    define('ROUTE_PATTERN_NUMERIC', '[0-9]+');
+}
+
 // Rutas para inscripciones de complementarios
 Route::prefix('inscripciones')
     ->name('inscripciones.')
@@ -18,9 +22,9 @@ Route::prefix('inscripciones')
         // Inscripción a programa específico
         Route::get('{programa}', [InscripcionComplementarioController::class, 'formularioInscripcion'])
             ->name('formulario')
-            ->where('programa', '[0-9]+');
+            ->where('programa', ROUTE_PATTERN_NUMERIC);
         
         Route::post('{programa}', [InscripcionComplementarioController::class, 'procesarInscripcion'])
             ->name('procesar')
-            ->where('programa', '[0-9]+');
+            ->where('programa', ROUTE_PATTERN_NUMERIC);
     });

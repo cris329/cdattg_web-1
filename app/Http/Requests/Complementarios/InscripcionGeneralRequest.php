@@ -30,7 +30,7 @@ class InscripcionGeneralRequest extends FormRequest
             'fecha_nacimiento' => [
                 'required',
                 'date',
-                function ($attribute, $value, $fail) {
+                function ($value, $fail) {
                     $fechaNacimiento = Carbon::parse($value);
                     $edadMinima = Carbon::now()->subYears(14);
 

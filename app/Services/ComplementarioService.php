@@ -2,6 +2,7 @@
 
 namespace App\Services;
 
+use App\Exceptions\ProgramaNoEncontradoException;
 use App\Models\Ambiente;
 use App\Models\ComplementarioOfertado;
 use App\Models\JornadaFormacion;
@@ -228,7 +229,7 @@ class ComplementarioService
         $programa = $this->programaRepository->findWithRelations($programaId);
         
         if (!$programa) {
-            throw new \Exception('Programa no encontrado');
+            throw new ProgramaNoEncontradoException('Programa no encontrado');
         }
 
         $totalAspirantes = $this->aspiranteRepository->countByPrograma($programaId);
