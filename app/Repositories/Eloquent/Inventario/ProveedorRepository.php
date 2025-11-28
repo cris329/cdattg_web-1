@@ -6,17 +6,20 @@ namespace App\Repositories\Eloquent\Inventario;
 
 use App\Models\Inventario\Proveedor;
 use App\Repositories\Interfaces\Inventario\ProveedorRepositoryInterface;
-use App\Core\Traits\HasCache;
 use Illuminate\Contracts\Pagination\LengthAwarePaginator;
+use Illuminate\Database\Eloquent\Collection;
 
 class ProveedorRepository implements ProveedorRepositoryInterface
 {
-    use HasCache;
 
-    public function __construct()
+    /**
+     * Obtiene todos los proveedores
+     *
+     * @return Collection
+     */
+    public function obtenerTodos(): Collection
     {
-        $this->cacheType = 'proveedores';
-        $this->cacheTags = ['proveedores', 'inventario'];
+        return Proveedor::orderBy('proveedor')->get();
     }
 
     /**
@@ -84,7 +87,6 @@ class ProveedorRepository implements ProveedorRepositoryInterface
      */
     public function crear(array $datos): Proveedor
     {
-        $this->flushCache();
         return Proveedor::create($datos);
     }
 
@@ -97,7 +99,6 @@ class ProveedorRepository implements ProveedorRepositoryInterface
      */
     public function actualizar(int $id, array $datos): bool
     {
-        $this->flushCache();
         return Proveedor::where('id', $id)->update($datos);
     }
 
@@ -109,7 +110,6 @@ class ProveedorRepository implements ProveedorRepositoryInterface
      */
     public function eliminar(int $id): bool
     {
-        $this->flushCache();
         return Proveedor::destroy($id) > 0;
     }
 

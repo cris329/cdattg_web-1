@@ -6,18 +6,20 @@ namespace App\Repositories\Eloquent\Inventario;
 
 use App\Models\Inventario\ContratoConvenio;
 use App\Repositories\Interfaces\Inventario\ContratoConvenioRepositoryInterface;
-use App\Core\Traits\HasCache;
 use Illuminate\Contracts\Pagination\LengthAwarePaginator;
 use Illuminate\Database\Eloquent\Collection;
 
 class ContratoConvenioRepository implements ContratoConvenioRepositoryInterface
 {
-    use HasCache;
 
-    public function __construct()
+    /**
+     * Obtiene todos los contratos y convenios
+     *
+     * @return Collection
+     */
+    public function obtenerTodos(): Collection
     {
-        $this->cacheType = 'contratos_convenios';
-        $this->cacheTags = ['contratos_convenios', 'inventario'];
+        return ContratoConvenio::orderBy('name')->get();
     }
 
     /**
@@ -75,7 +77,6 @@ class ContratoConvenioRepository implements ContratoConvenioRepositoryInterface
      */
     public function crear(array $datos): ContratoConvenio
     {
-        $this->flushCache();
         return ContratoConvenio::create($datos);
     }
 
@@ -88,7 +89,6 @@ class ContratoConvenioRepository implements ContratoConvenioRepositoryInterface
      */
     public function actualizar(int $id, array $datos): bool
     {
-        $this->flushCache();
         return ContratoConvenio::where('id', $id)->update($datos);
     }
 
@@ -100,7 +100,6 @@ class ContratoConvenioRepository implements ContratoConvenioRepositoryInterface
      */
     public function eliminar(int $id): bool
     {
-        $this->flushCache();
         return ContratoConvenio::destroy($id) > 0;
     }
 
@@ -115,16 +114,6 @@ class ContratoConvenioRepository implements ContratoConvenioRepositoryInterface
         return ContratoConvenio::where('id', $id)
             ->whereHas('productos')
             ->exists();
-    }
-
-    /**
-     * Obtiene todos los proveedores para formularios
-     *
-     * @return Collection
-     */
-    public function obtenerProveedores(): Collection
-    {
-        return \App\Models\Inventario\Proveedor::orderBy('proveedor')->get();
     }
 }
 

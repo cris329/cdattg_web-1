@@ -8,21 +8,14 @@ use App\Models\Parametro;
 use App\Models\ParametroTema;
 use App\Models\Tema;
 use App\Models\Inventario\Producto;
+use App\Models\Inventario\Categoria;
 use App\Repositories\Interfaces\Inventario\CategoriaRepositoryInterface;
-use App\Core\Traits\HasCache;
 use Illuminate\Contracts\Pagination\LengthAwarePaginator;
+use Illuminate\Database\Eloquent\Collection;
 
 class CategoriaRepository implements CategoriaRepositoryInterface
 {
-    use HasCache;
-
     private const TEMA_CATEGORIAS = 'CATEGORIAS';
-
-    public function __construct()
-    {
-        $this->cacheType = 'categorias';
-        $this->cacheTags = ['categorias', 'inventario'];
-    }
 
     /**
      * Obtiene el tema de categorías
@@ -71,6 +64,28 @@ class CategoriaRepository implements CategoriaRepositoryInterface
     }
 
     /**
+     * Encuentra una categoría por ID
+     *
+     * @param int $id
+     * @return Categoria|null
+     */
+    public function encontrar(int $id): ?Categoria
+    {
+        return Categoria::find($id);
+    }
+
+    /**
+     * Encuentra múltiples categorías por IDs
+     *
+     * @param array $ids
+     * @return \Illuminate\Database\Eloquent\Collection
+     */
+    public function encontrarMultiples(array $ids): Collection
+    {
+        return Categoria::whereIn('id', $ids)->get()->keyBy('id');
+    }
+
+    /**
      * Encuentra una categoría por ID con relaciones
      *
      * @param int $id
@@ -90,7 +105,6 @@ class CategoriaRepository implements CategoriaRepositoryInterface
      */
     public function actualizar(int $id, array $datos): bool
     {
-        $this->flushCache();
         return Parametro::where('id', $id)->update($datos);
     }
 
@@ -103,8 +117,6 @@ class CategoriaRepository implements CategoriaRepositoryInterface
      */
     public function eliminar(Parametro $categoria, int $temaId): bool
     {
-        $this->flushCache();
-        
         // Desvincular del tema "CATEGORIAS"
         ParametroTema::where('parametro_id', $categoria->id)
             ->where('tema_id', $temaId)

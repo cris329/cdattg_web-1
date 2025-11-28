@@ -7,19 +7,11 @@ namespace App\Repositories\Eloquent\Inventario;
 use App\Models\Inventario\Producto;
 use App\Models\ParametroTema;
 use App\Repositories\Interfaces\Inventario\ProductoRepositoryInterface;
-use App\Core\Traits\HasCache;
 use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Contracts\Pagination\LengthAwarePaginator;
 
 class ProductoRepository implements ProductoRepositoryInterface
 {
-    use HasCache;
-
-    public function __construct()
-    {
-        $this->cacheType = 'productos';
-        $this->cacheTags = ['productos', 'inventario'];
-    }
 
     /**
      * Obtiene productos con filtros y relaciones
@@ -280,14 +272,5 @@ class ProductoRepository implements ProductoRepositoryInterface
         return Producto::where('codigo_barras', $codigo)->exists();
     }
 
-    /**
-     * Invalida caché
-     *
-     * @return void
-     */
-    public function invalidarCache(): void
-    {
-        $this->flushCache();
-    }
 }
 

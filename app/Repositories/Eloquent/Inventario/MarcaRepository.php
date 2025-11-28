@@ -7,23 +7,16 @@ namespace App\Repositories\Eloquent\Inventario;
 use App\Models\Parametro;
 use App\Models\ParametroTema;
 use App\Models\Tema;
+use App\Models\Inventario\Marca;
 use App\Repositories\Interfaces\Inventario\MarcaRepositoryInterface;
-use App\Core\Traits\HasCache;
 use Illuminate\Contracts\Pagination\LengthAwarePaginator;
 use App\Models\Inventario\Producto;
+use Illuminate\Database\Eloquent\Collection;
 
 
 class MarcaRepository implements MarcaRepositoryInterface
 {
-    use HasCache;
-
     private const TEMA_MARCAS = 'MARCAS';
-
-    public function __construct()
-    {
-        $this->cacheType = 'marcas';
-        $this->cacheTags = ['marcas', 'inventario'];
-    }
 
     /**
      * Obtiene el tema de marcas
@@ -46,7 +39,7 @@ class MarcaRepository implements MarcaRepositoryInterface
         $temaMarcas = $this->obtenerTemaMarcas();
 
         if (!$temaMarcas) {
-            return new \Illuminate\Pagination\LengthAwarePaginator([], 0, 10);
+            return new LengthAwarePaginator([], 0, 10);
         }
 
         $query = $temaMarcas->parametros()
@@ -72,6 +65,28 @@ class MarcaRepository implements MarcaRepositoryInterface
     }
 
     /**
+     * Encuentra una marca por ID
+     *
+     * @param int $id
+     * @return Marca|null
+     */
+    public function encontrar(int $id): ?Marca
+    {
+        return Marca::find($id);
+    }
+
+    /**
+     * Encuentra múltiples marcas por IDs
+     *
+     * @param array $ids
+     * @return \Illuminate\Database\Eloquent\Collection
+     */
+    public function encontrarMultiples(array $ids): Collection
+    {
+        return Marca::whereIn('id', $ids)->get()->keyBy('id');
+    }
+
+    /**
      * Encuentra una marca por ID con relaciones
      *
      * @param int $id
@@ -91,7 +106,6 @@ class MarcaRepository implements MarcaRepositoryInterface
      */
     public function actualizar(int $id, array $datos): bool
     {
-        $this->flushCache();
         return Parametro::where('id', $id)->update($datos);
     }
 
@@ -104,8 +118,6 @@ class MarcaRepository implements MarcaRepositoryInterface
      */
     public function eliminar(Parametro $marca, int $temaId): bool
     {
-        $this->flushCache();
-        
         // Desvincular del tema "MARCAS"
         ParametroTema::where('parametro_id', $marca->id)
             ->where('tema_id', $temaId)
