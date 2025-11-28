@@ -64,7 +64,7 @@ class GuiaAprendizajePolicy
      */
     public function create(User $user): bool
     {
-        return $user->can('CREAR GUIA APRENDIZAJE') && 
+        return $user->can('CREAR GUIA APRENDIZAJE') &&
                $user->hasRole(['SUPER ADMINISTRADOR', 'ADMINISTRADOR', 'INSTRUCTOR']);
     }
 
@@ -117,7 +117,7 @@ class GuiaAprendizajePolicy
      */
     public function restore(User $user, GuiasAprendizaje $guiaAprendizaje): bool
     {
-        return $user->can('CREAR GUIA APRENDIZAJE') && 
+        return $user->can('CREAR GUIA APRENDIZAJE') &&
                $user->hasRole(['SUPER ADMINISTRADOR', 'ADMINISTRADOR']);
     }
 
@@ -126,7 +126,7 @@ class GuiaAprendizajePolicy
      */
     public function forceDelete(User $user, GuiasAprendizaje $guiaAprendizaje): bool
     {
-        return $user->can('ELIMINAR GUIA APRENDIZAJE') && 
+        return $user->can('ELIMINAR GUIA APRENDIZAJE') &&
                $user->hasRole(['SUPER ADMINISTRADOR', 'ADMINISTRADOR']);
     }
 
@@ -263,7 +263,7 @@ class GuiaAprendizajePolicy
      */
     public function exportarExcel(User $user): bool
     {
-        return $user->can('VER GUIA APRENDIZAJE') && 
+        return $user->can('VER GUIA APRENDIZAJE') &&
                $user->hasRole(['SUPER ADMINISTRADOR', 'ADMINISTRADOR']);
     }
 
@@ -313,7 +313,7 @@ class GuiaAprendizajePolicy
      */
     public function gestionarPlantillas(User $user): bool
     {
-        return $user->can('CREAR GUIA APRENDIZAJE') && 
+        return $user->can('CREAR GUIA APRENDIZAJE') &&
                $user->hasRole(['SUPER ADMINISTRADOR', 'ADMINISTRADOR']);
     }
 
@@ -411,7 +411,7 @@ class GuiaAprendizajePolicy
      */
     public function gestionarVersiones(User $user, GuiasAprendizaje $guiaAprendizaje): bool
     {
-        return $user->can('EDITAR GUIA APRENDIZAJE') && 
+        return $user->can('EDITAR GUIA APRENDIZAJE') &&
                $user->hasRole(['SUPER ADMINISTRADOR', 'ADMINISTRADOR']);
     }
 

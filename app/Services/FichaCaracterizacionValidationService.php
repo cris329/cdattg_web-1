@@ -85,11 +85,11 @@ class FichaCaracterizacionValidationService
             $advertencias = array_merge($advertencias, $validacionesAdicionales['advertencias']);
 
             $resultado = [
-                'valido' => count($errores) === 0,
+                'valido' => empty($errores),
                 'errores' => $errores,
                 'advertencias' => $advertencias,
-                'mensaje' => count($errores) === 0 
-                    ? 'Todas las validaciones pasaron correctamente.' 
+                'mensaje' => empty($errores)
+                    ? 'Todas las validaciones pasaron correctamente.'
                     : 'Se encontraron errores en la validación.'
             ];
 
@@ -165,7 +165,7 @@ class FichaCaracterizacionValidationService
             // 5. Validar duración mínima según modalidad
             if (isset($datos['modalidad_formacion_id']) && isset($datos['fecha_inicio']) && isset($datos['fecha_fin'])) {
                 $duracionDias = \Carbon\Carbon::parse($datos['fecha_inicio'])->diffInDays(\Carbon\Carbon::parse($datos['fecha_fin']));
-                
+
                 // Duración mínima según modalidad
                 $duracionesMinimas = [
                     1 => 30,  // Presencial
@@ -174,7 +174,7 @@ class FichaCaracterizacionValidationService
                 ];
 
                 $duracionMinima = $duracionesMinimas[$datos['modalidad_formacion_id']] ?? 30;
-                
+
                 if ($duracionDias < $duracionMinima) {
                     $advertencias[] = "La duración del programa es menor a lo recomendado para esta modalidad ({$duracionMinima} días mínimo).";
                 }
@@ -280,7 +280,7 @@ class FichaCaracterizacionValidationService
     {
         try {
             $ficha = FichaCaracterizacion::find($fichaId);
-            
+
             if (!$ficha) {
                 return [
                     'valido' => false,
@@ -316,9 +316,9 @@ class FichaCaracterizacionValidationService
             }
 
             return [
-                'valido' => count($errores) === 0,
-                'mensaje' => count($errores) === 0 
-                    ? 'La ficha puede ser eliminada.' 
+                'valido' => empty($errores),
+                'mensaje' => empty($errores)
+                    ? 'La ficha puede ser eliminada.'
                     : implode(' ', $errores),
                 'errores' => $errores
             ];

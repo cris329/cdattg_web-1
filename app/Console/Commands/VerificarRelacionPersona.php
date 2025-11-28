@@ -19,7 +19,7 @@ class VerificarRelacionPersona extends Command
 
         // Verificar primer aprendiz
         $aprendiz = Aprendiz::first();
-        
+
         if (!$aprendiz) {
             $this->error('No hay aprendices en la base de datos.');
             return Command::FAILURE;
@@ -31,7 +31,7 @@ class VerificarRelacionPersona extends Command
 
         // Verificar si la relación carga
         $persona = $aprendiz->persona;
-        
+
         if ($persona) {
             $this->info("✅ Relación carga correctamente");
             $this->line("👤 Nombre: {$persona->nombre_completo}");
@@ -39,7 +39,7 @@ class VerificarRelacionPersona extends Command
             $this->line("🆔 Documento: {$persona->numero_documento}");
         } else {
             $this->error("❌ La relación NO carga");
-            
+
             // Verificar si existe la persona en la tabla
             $personaDirecta = Persona::find($aprendiz->persona_id);
             if ($personaDirecta) {
@@ -55,19 +55,19 @@ class VerificarRelacionPersona extends Command
 
         $this->newLine();
         $this->info('📊 Verificando la definición de la relación...');
-        
+
         // Verificar la tabla y columnas
         $aprendizTable = (new Aprendiz())->getTable();
         $personaTable = (new Persona())->getTable();
-        
+
         $this->line("Tabla aprendiz: {$aprendizTable}");
         $this->line("Tabla persona: {$personaTable}");
-        
+
         // Verificar columnas de la tabla aprendices
         $columns = DB::select("DESCRIBE {$aprendizTable}");
         $this->newLine();
         $this->line("📋 Columnas de {$aprendizTable}:");
-        
+
         foreach ($columns as $column) {
             if (strpos($column->Field, 'persona') !== false) {
                 $this->info("  - {$column->Field} ({$column->Type})");
@@ -75,11 +75,11 @@ class VerificarRelacionPersona extends Command
         }
 
         $this->newLine();
-        
+
         // Probar con eager loading
         $this->info('🔄 Probando con eager loading...');
         $aprendizConPersona = Aprendiz::with('persona')->first();
-        
+
         if ($aprendizConPersona && $aprendizConPersona->persona) {
             $this->info("✅ Eager loading funciona: {$aprendizConPersona->persona->nombre_completo}");
         } else {

@@ -2,6 +2,7 @@
 
 namespace Database\Factories;
 
+use App\Models\Pais;
 use Illuminate\Database\Eloquent\Factories\Factory;
 
 /**
@@ -16,8 +17,24 @@ class DepartamentoFactory extends Factory
      */
     public function definition(): array
     {
+        try {
+            $paisId = Pais::query()->inRandomOrder()->value('id');
+        } catch (\Exception $e) {
+            $paisId = null;
+        }
+
+        if (!$paisId) {
+            try {
+                $paisId = Pais::factory()->create()->id;
+            } catch (\Exception $e) {
+                $paisId = 1; // Valor por defecto para Colombia
+            }
+        }
+
         return [
-            //
+            'departamento' => $this->faker->unique()->state(),
+            'pais_id' => $paisId,
+            'status' => $this->faker->boolean(90),
         ];
     }
 }

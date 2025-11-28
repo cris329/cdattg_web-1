@@ -113,7 +113,7 @@ class FichaCaracterizacionPolicy
      */
     public function restore(User $user, FichaCaracterizacion $fichaCaracterizacion): bool
     {
-        return $user->can('CREAR FICHA CARACTERIZACION') && 
+        return $user->can('CREAR FICHA CARACTERIZACION') &&
                $user->hasRole(['SUPER ADMINISTRADOR', 'ADMINISTRADOR']);
     }
 
@@ -122,7 +122,7 @@ class FichaCaracterizacionPolicy
      */
     public function forceDelete(User $user, FichaCaracterizacion $fichaCaracterizacion): bool
     {
-        return $user->can('ELIMINAR FICHA CARACTERIZACION') && 
+        return $user->can('ELIMINAR FICHA CARACTERIZACION') &&
                $user->hasRole(['SUPER ADMINISTRADOR', 'ADMINISTRADOR']);
     }
 
@@ -314,7 +314,7 @@ class FichaCaracterizacionPolicy
      */
     public function generarReporteGeneral(User $user): bool
     {
-        return $user->can('VER FICHA CARACTERIZACION') && 
+        return $user->can('VER FICHA CARACTERIZACION') &&
                $user->hasRole(['SUPER ADMINISTRADOR', 'ADMINISTRADOR']);
     }
 
@@ -323,7 +323,7 @@ class FichaCaracterizacionPolicy
      */
     public function exportarFichas(User $user): bool
     {
-        return $user->can('VER FICHA CARACTERIZACION') && 
+        return $user->can('VER FICHA CARACTERIZACION') &&
                $user->hasRole(['SUPER ADMINISTRADOR', 'ADMINISTRADOR']);
     }
 
@@ -332,7 +332,7 @@ class FichaCaracterizacionPolicy
      */
     public function descargarPlantillaImportacion(User $user): bool
     {
-        return $user->can('CREAR FICHA CARACTERIZACION') && 
+        return $user->can('CREAR FICHA CARACTERIZACION') &&
                $user->hasRole(['SUPER ADMINISTRADOR', 'ADMINISTRADOR']);
     }
 
@@ -341,7 +341,7 @@ class FichaCaracterizacionPolicy
      */
     public function importarFichas(User $user): bool
     {
-        return $user->can('CREAR FICHA CARACTERIZACION') && 
+        return $user->can('CREAR FICHA CARACTERIZACION') &&
                $user->hasRole(['SUPER ADMINISTRADOR', 'ADMINISTRADOR']);
     }
 

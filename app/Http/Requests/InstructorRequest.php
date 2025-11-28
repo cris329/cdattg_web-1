@@ -24,7 +24,7 @@ class InstructorRequest extends FormRequest
     public function rules(): array
     {
         $instructorId = $this->route('instructor');
-        
+
         return [
             // Validaciones básicas
             'persona_id' => [
@@ -35,17 +35,17 @@ class InstructorRequest extends FormRequest
             ],
             'regional_id' => 'required|integer|exists:regionals,id',
             'status' => 'boolean',
-            
+
             // Validaciones de especialidades
             'especialidades' => 'nullable|array',
             'especialidades.principal' => 'nullable|string|max:255',
             'especialidades.secundarias' => 'nullable|array',
             'especialidades.secundarias.*' => 'string|max:255',
-            
+
             // Validaciones de competencias
             'competencias' => 'nullable|array',
             'competencias.*' => 'string|max:255',
-            
+
             // Validaciones de experiencia
             'anos_experiencia' => 'nullable|integer|min:0|max:50',
             'experiencia_laboral' => 'nullable|string|max:1000',

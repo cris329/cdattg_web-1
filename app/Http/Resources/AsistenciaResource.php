@@ -30,7 +30,7 @@ class AsistenciaResource extends JsonResource
             'horarios' => [
                 'ingreso' => $this->hora_ingreso?->format('H:i:s'),
                 'salida' => $this->hora_salida?->format('H:i:s'),
-                'duracion_minutos' => $this->hora_salida 
+                'duracion_minutos' => $this->hora_salida
                     ? $this->hora_ingreso->diffInMinutes($this->hora_salida)
                     : null,
             ],

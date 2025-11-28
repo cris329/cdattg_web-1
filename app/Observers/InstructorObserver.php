@@ -78,7 +78,7 @@ class InstructorObserver
 
             // Sincronizar solo el rol INSTRUCTOR (evita duplicados)
             $user->syncRoles(['INSTRUCTOR']);
-            
+
             Log::info('Rol INSTRUCTOR sincronizado automáticamente', [
                 'instructor_id' => $instructor->id,
                 'user_id' => $user->id,
@@ -108,16 +108,16 @@ class InstructorObserver
             $persona = $instructor->persona;
             if ($persona && $persona->user) {
                 $user = $persona->user;
-                
+
                 // Remover solo el rol INSTRUCTOR, mantener otros roles
                 $user->removeRole('INSTRUCTOR');
-                
+
                 // Si no tiene otros roles, asignar VISITANTE
                 if ($user->roles->isEmpty()) {
                     $visitorRole = Role::firstOrCreate(['name' => 'VISITANTE']);
                     $user->assignRole('VISITANTE');
                 }
-                
+
                 Log::info('Rol INSTRUCTOR removido automáticamente', [
                     'instructor_id' => $instructor->id,
                     'user_id' => $user->id,

@@ -231,7 +231,7 @@ class InstructorService
         ];
 
         // La primera especialidad es la principal
-        if (count($especialidadesIds) > 0) {
+        if (!empty($especialidadesIds)) {
             $especialidadesFormateadas['principal'] = $nombresEspecialidades[$especialidadesIds[0]] ?? null;
 
             // Las demás son secundarias

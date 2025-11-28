@@ -22,7 +22,7 @@ class EvidenciasController extends Controller
      */
     public function create($caracterizacion)
     {
-        
+
         return view('registro_actividades.create', compact('resultadosAprendizaje', 'caracterizacion'));
     }
 

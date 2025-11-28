@@ -18,7 +18,7 @@ class CompetenciaRepository
     public function getCompetenciasVigentes()
     {
         $hoy = Carbon::now()->startOfDay();
-        
+
         return Competencia::where(function($query) use ($hoy) {
             // Fecha de inicio después de hoy
             $query->where('fecha_inicio', '>', $hoy)
@@ -32,7 +32,7 @@ class CompetenciaRepository
 
     /**
      * Obtiene la competencia actual basada en las fechas
-     * 
+     *
      * @return Competencia|null
      */
     public function getCompetenciaActual(FichaCaracterizacion $fichaCaracterizacion)
@@ -43,7 +43,7 @@ class CompetenciaRepository
         $programaFormacion = $fichaCaracterizacion->programaFormacion;
 
         $competenciaActual = $programaFormacion->competenciaActual();
-        
+
         return $competenciaActual->where('fecha_inicio', '<=', $hoy)
             ->where(function($query) use ($hoy) {
                 $query->where('fecha_fin', '>=', $hoy)
@@ -54,7 +54,7 @@ class CompetenciaRepository
 
     /**
      * Obtiene las competencias que inician después de hoy
-     * 
+     *
      * @return \Illuminate\Database\Eloquent\Collection
      */
     public function getProximasCompetencias()

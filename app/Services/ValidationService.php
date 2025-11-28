@@ -137,7 +137,7 @@ class ValidationService
     public function validarEmailSena(string $email): array
     {
         $dominiosPermitidos = ['@sena.edu.co', '@misena.edu.co'];
-        
+
         $esValido = false;
         foreach ($dominiosPermitidos as $dominio) {
             if (str_ends_with($email, $dominio)) {
@@ -148,7 +148,7 @@ class ValidationService
 
         return [
             'valido' => $esValido,
-            'mensaje' => $esValido 
+            'mensaje' => $esValido
                 ? 'Email institucional válido'
                 : 'Debe usar un email institucional del SENA',
         ];

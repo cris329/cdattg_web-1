@@ -45,7 +45,7 @@ class PersonaIngresoSalidaController extends Controller
             ], 201);
         } catch (\Exception $e) {
             Log::error('Error registrando entrada: ' . $e->getMessage());
-            
+
             return response()->json([
                 'success' => false,
                 'message' => $e->getMessage(),
@@ -77,7 +77,7 @@ class PersonaIngresoSalidaController extends Controller
             ], 200);
         } catch (\Exception $e) {
             Log::error('Error registrando salida: ' . $e->getMessage());
-            
+
             return response()->json([
                 'success' => false,
                 'message' => $e->getMessage(),
@@ -92,7 +92,7 @@ class PersonaIngresoSalidaController extends Controller
     {
         try {
             $sedeId = $request->query('sede_id'); // Opcional: filtrar por sede
-            
+
             $estadisticas = $this->personaIngresoSalidaService->obtenerEstadisticasPersonasDentro(
                 $sedeId ? (int)$sedeId : null
             );
@@ -103,7 +103,7 @@ class PersonaIngresoSalidaController extends Controller
             ], 200);
         } catch (\Exception $e) {
             Log::error('Error obteniendo estadísticas: ' . $e->getMessage());
-            
+
             return response()->json([
                 'success' => false,
                 'message' => 'Error al obtener estadísticas',
@@ -118,7 +118,7 @@ class PersonaIngresoSalidaController extends Controller
     {
         try {
             $sedeId = $request->query('sede_id'); // Opcional: filtrar por sede
-            
+
             $estadisticas = $this->personaIngresoSalidaService->obtenerEstadisticasPersonasDentroHoy(
                 $sedeId ? (int)$sedeId : null
             );
@@ -129,7 +129,7 @@ class PersonaIngresoSalidaController extends Controller
             ], 200);
         } catch (\Exception $e) {
             Log::error('Error obteniendo estadísticas de hoy: ' . $e->getMessage());
-            
+
             return response()->json([
                 'success' => false,
                 'message' => 'Error al obtener estadísticas',
@@ -157,7 +157,7 @@ class PersonaIngresoSalidaController extends Controller
             ], 200);
         } catch (\Exception $e) {
             Log::error('Error obteniendo personas dentro: ' . $e->getMessage());
-            
+
             return response()->json([
                 'success' => false,
                 'message' => 'Error al obtener personas dentro',
@@ -187,7 +187,7 @@ class PersonaIngresoSalidaController extends Controller
             ], 200);
         } catch (\Exception $e) {
             Log::error('Error obteniendo estadísticas por fecha: ' . $e->getMessage());
-            
+
             return response()->json([
                 'success' => false,
                 'message' => 'Error al obtener estadísticas',
@@ -209,7 +209,7 @@ class PersonaIngresoSalidaController extends Controller
             ], 200);
         } catch (\Exception $e) {
             Log::error('Error obteniendo estadísticas por sede: ' . $e->getMessage());
-            
+
             return response()->json([
                 'success' => false,
                 'message' => 'Error al obtener estadísticas',

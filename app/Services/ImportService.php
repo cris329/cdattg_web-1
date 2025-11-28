@@ -71,7 +71,7 @@ class ImportService
                     ]);
 
                     $user->assignRole('INSTRUCTOR');
-                    
+
                     // Enviar email de verificación automáticamente
                     $user->sendEmailVerificationNotification();
 
@@ -106,7 +106,7 @@ class ImportService
             ];
         } catch (\Exception $e) {
             DB::rollBack();
-            
+
             Log::error('Error en importación masiva', [
                 'error' => $e->getMessage(),
             ]);

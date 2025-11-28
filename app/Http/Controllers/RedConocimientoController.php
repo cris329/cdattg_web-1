@@ -70,17 +70,17 @@ class RedConocimientoController extends Controller
             $datos['user_edit_id'] = Auth::id();
 
             $this->redService->crear($datos);
-            
+
             return redirect()->route('red-conocimiento.index')
                 ->with('success', '¡Red de conocimiento creada exitosamente!');
         } catch (QueryException $e) {
             Log::error('Error al crear red de conocimiento: ' . $e->getMessage());
-            
+
             if ($e->getCode() == 23000) {
                 return redirect()->back()->withInput()
                     ->with('error', 'Ya existe una red con este nombre.');
             }
-            
+
             return redirect()->back()->withInput()
                 ->with('error', 'Error al crear red de conocimiento.');
         }
@@ -126,17 +126,17 @@ class RedConocimientoController extends Controller
             $datos['user_edit_id'] = Auth::id();
 
             $this->redService->actualizar($redConocimiento->id, $datos);
-            
+
             return redirect()->route('red-conocimiento.show', $redConocimiento->id)
                 ->with('success', 'Red de conocimiento actualizada exitosamente.');
         } catch (QueryException $e) {
             Log::error('Error al actualizar red de conocimiento: ' . $e->getMessage());
-            
+
             if ($e->getCode() == 23000) {
                 return redirect()->back()->withInput()
                     ->with('error', 'Ya existe una red con este nombre.');
             }
-            
+
             return redirect()->back()->withInput()
                 ->with('error', 'Error al actualizar red de conocimiento.');
         }
@@ -149,17 +149,17 @@ class RedConocimientoController extends Controller
     {
         try {
             $this->redService->eliminar($redConocimiento->id);
-            
+
             return redirect()->route('red-conocimiento.index')
                 ->with('success', 'Red de conocimiento eliminada exitosamente.');
         } catch (QueryException $e) {
             Log::error('Error al eliminar red de conocimiento: ' . $e->getMessage());
-            
+
             if ($e->getCode() == 23000) {
                 return redirect()->back()
                     ->with('error', 'La red está en uso, no se puede eliminar.');
             }
-            
+
             return redirect()->back()->with('error', 'Error al eliminar red.');
         }
     }
@@ -171,15 +171,15 @@ class RedConocimientoController extends Controller
     {
         try {
             $this->redService->cambiarEstado($redConocimiento->id);
-            
-            $mensaje = $redConocimiento->status === 0 
-                ? 'Red de conocimiento activada exitosamente.' 
+
+            $mensaje = $redConocimiento->status === 0
+                ? 'Red de conocimiento activada exitosamente.'
                 : 'Red de conocimiento desactivada exitosamente.';
-                
+
             return redirect()->back()->with('success', $mensaje);
         } catch (\Exception $e) {
             Log::error('Error al cambiar estado: ' . $e->getMessage());
-            
+
             return redirect()->back()->with('error', 'Error al cambiar estado.');
         }
     }

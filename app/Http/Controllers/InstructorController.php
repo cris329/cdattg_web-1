@@ -540,7 +540,7 @@ class InstructorController extends Controller
 
                     // Asignar el rol de 'INSTRUCTOR' al usuario
                     $user->assignRole('INSTRUCTOR');
-                    
+
                     // Enviar email de verificación automáticamente
                     $user->sendEmailVerificationNotification();
 

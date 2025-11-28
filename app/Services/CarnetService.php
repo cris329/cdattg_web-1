@@ -150,7 +150,7 @@ class CarnetService
 
             if ($datos['tipo'] === 'APRENDIZ') {
                 $aprendiz = Aprendiz::with('persona', 'fichaCaracterizacion')->find($datos['id']);
-                
+
                 if (!$aprendiz) {
                     return [
                         'valido' => false,
@@ -170,7 +170,7 @@ class CarnetService
                 ];
             } elseif ($datos['tipo'] === 'INSTRUCTOR') {
                 $instructor = Instructor::with('persona', 'regional')->find($datos['id']);
-                
+
                 if (!$instructor) {
                     return [
                         'valido' => false,
@@ -217,15 +217,15 @@ class CarnetService
         // Crear imagen base (en producción usar plantilla real)
         $width = 600;
         $height = 400;
-        
+
         $image = imagecreatetruecolor($width, $height);
-        
+
         // Colores
         $background = $tipo === 'aprendiz' ? imagecolorallocate($image, 52, 152, 219) : imagecolorallocate($image, 41, 128, 185);
         $white = imagecolorallocate($image, 255, 255, 255);
-        
+
         imagefilledrectangle($image, 0, 0, $width, $height, $background);
-        
+
         return $image;
     }
 

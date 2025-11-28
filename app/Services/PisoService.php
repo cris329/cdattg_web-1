@@ -43,7 +43,7 @@ class PisoService
     {
         return DB::transaction(function () use ($id, $datos) {
             $actualizado = Piso::where('id', $id)->update($datos);
-            
+
             if ($actualizado) {
                 $this->repository->invalidarCache();
             }
@@ -56,7 +56,7 @@ class PisoService
     {
         return DB::transaction(function () use ($id) {
             $eliminado = Piso::where('id', $id)->delete();
-            
+
             if ($eliminado) {
                 $this->repository->invalidarCache();
             }
@@ -69,7 +69,7 @@ class PisoService
     {
         $piso = Piso::find($id);
         $nuevoEstado = !$piso->status;
-        
+
         return $this->actualizar($id, ['status' => $nuevoEstado]);
     }
 }

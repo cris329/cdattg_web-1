@@ -18,14 +18,14 @@ class StoreFichaCaracterizacionRequest extends FormRequest
     {
         $user = $this->user();
         $canCreate = $user->can('CREAR PROGRAMA DE CARACTERIZACION');
-        
+
         \Log::info('StoreFichaCaracterizacionRequest authorize', [
             'user_id' => $user->id,
             'user_roles' => $user->getRoleNames(),
             'can_create' => $canCreate,
             'permissions' => $user->getAllPermissions()->pluck('name')
         ]);
-        
+
         return $canCreate;
     }
 
@@ -40,7 +40,7 @@ class StoreFichaCaracterizacionRequest extends FormRequest
             'user_id' => $this->user()->id,
             'all_data' => $this->all()
         ]);
-        
+
         return [
             // Validación del número de ficha
             'ficha' => [
@@ -277,7 +277,7 @@ class StoreFichaCaracterizacionRequest extends FormRequest
                     $this->fecha_inicio,
                     $this->fecha_fin
                 );
-                
+
                 if (!$validacionAmbiente['valido']) {
                     $validator->errors()->add('ambiente_id', $validacionAmbiente['mensaje']);
                 }
@@ -290,7 +290,7 @@ class StoreFichaCaracterizacionRequest extends FormRequest
                     $this->fecha_inicio,
                     $this->fecha_fin
                 );
-                
+
                 if (!$validacionInstructor['valido']) {
                     $validator->errors()->add('instructor_id', $validacionInstructor['mensaje']);
                 }
@@ -302,7 +302,7 @@ class StoreFichaCaracterizacionRequest extends FormRequest
                     $this->ficha,
                     $this->programa_formacion_id
                 );
-                
+
                 if (!$validacionFicha['valido']) {
                     $validator->errors()->add('ficha', $validacionFicha['mensaje']);
                 }
@@ -311,7 +311,7 @@ class StoreFichaCaracterizacionRequest extends FormRequest
             // 4. Validar reglas de negocio específicas del SENA
             $datos = $this->all();
             $validacionReglas = $this->validarReglasNegocioSena($datos);
-            
+
             if (!$validacionReglas['valido']) {
                 // TEMPORAL: Solo mostrar advertencia en lugar de error
                 \Log::warning('Reglas de negocio SENA no cumplidas', [
@@ -321,7 +321,7 @@ class StoreFichaCaracterizacionRequest extends FormRequest
                 // Comentado temporalmente para permitir creación
                 // $validator->errors()->add('reglas_negocio', $validacionReglas['mensaje']);
             }
-            
+
             \Log::info('StoreFichaCaracterizacionRequest withValidator completed', [
                 'user_id' => $this->user()->id,
                 'final_errors_count' => $validator->errors()->count(),

@@ -24,11 +24,11 @@ class DebugListadoAprendices extends Command
         $this->newLine();
 
         $tableData = [];
-        
+
         foreach ($aprendices as $aprendiz) {
             $personaCarga = $aprendiz->persona ? 'SI' : 'NO';
             $nombrePersona = $aprendiz->persona?->nombre_completo ?? 'NULL';
-            
+
             $tableData[] = [
                 'ID' => $aprendiz->id,
                 'Persona ID' => $aprendiz->persona_id,
@@ -43,7 +43,7 @@ class DebugListadoAprendices extends Command
         );
 
         $this->newLine();
-        
+
         // Verificar si hay alguno sin persona
         $sinPersona = $aprendices->filter(function($a) {
             return is_null($a->persona);
@@ -62,7 +62,7 @@ class DebugListadoAprendices extends Command
         if ($primer) {
             $relaciones = $primer->getRelations();
             $this->line('Relaciones cargadas: ' . implode(', ', array_keys($relaciones)));
-            
+
             if (isset($relaciones['persona'])) {
                 $this->info('✅ Relación "persona" está cargada');
             } else {

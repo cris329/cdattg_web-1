@@ -95,7 +95,7 @@ class AprendizService
             }
 
             $fichaAnterior = $aprendiz->ficha_caracterizacion_id;
-            
+
             // Actualizar el aprendiz
             $actualizado = $this->repository->actualizar($id, $datos);
 
@@ -132,7 +132,7 @@ class AprendizService
             if ($eliminado) {
                 // Invalidar caché
                 $this->repository->invalidarCache();
-                
+
                 Log::info('Aprendiz eliminado exitosamente', [
                     'aprendiz_id' => $id,
                 ]);
@@ -158,7 +158,7 @@ class AprendizService
         }
 
         $nuevoEstado = !$aprendiz->estado;
-        
+
         $actualizado = $this->repository->actualizar($id, ['estado' => $nuevoEstado]);
 
         Log::info('Estado de aprendiz cambiado', [

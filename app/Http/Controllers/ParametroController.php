@@ -88,7 +88,7 @@ class ParametroController extends Controller
                 ->with('success', 'Parámetro actualizado exitosamente');
         } catch (QueryException $e) {
             Log::error('Error al actualizar parámetro: ' . $e->getMessage());
-            
+
             if ($e->getCode() == 23000) {
                 return redirect()->back()->withInput()->with('error', 'El nombre del parámetro ya existe.');
             }
@@ -104,7 +104,7 @@ class ParametroController extends Controller
             return redirect()->route('parametro.index')->with('success', 'Parámetro eliminado exitosamente');
         } catch (QueryException $e) {
             Log::error('Error al eliminar parámetro: ' . $e->getMessage());
-            
+
             if ($e->getCode() == 23000) {
                 return redirect()->back()->with('error', 'El parámetro está en uso, no se puede eliminar.');
             }

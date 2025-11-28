@@ -43,7 +43,7 @@ class ValidarFichasCaracterizacion extends Command
     public function handle()
     {
         $this->info('🔍 Iniciando validación de fichas de caracterización...');
-        
+
         $fichaId = $this->option('id');
         $validarTodas = $this->option('all');
         $corregirErrores = $this->option('fix');
@@ -86,7 +86,7 @@ class ValidarFichasCaracterizacion extends Command
         }
 
         $this->mostrarInformacionFicha($ficha);
-        
+
         $datos = $ficha->toArray();
         $resultado = $this->validationService->validarFichaCompleta($datos, $ficha->id);
 
@@ -201,7 +201,7 @@ class ValidarFichasCaracterizacion extends Command
 
         foreach ($errores as $error) {
             $this->warn("   - {$error}");
-            
+
             // Aquí se pueden implementar correcciones automáticas específicas
             // Por ejemplo, ajustar fechas, cambiar ambientes, etc.
         }
@@ -215,7 +215,7 @@ class ValidarFichasCaracterizacion extends Command
     private function generarReporte($fichas, $resultados)
     {
         $this->info('📄 Generando reporte de validación...');
-        
+
         // Aquí se puede implementar la generación de un reporte en PDF o Excel
         // con los resultados de la validación
     }

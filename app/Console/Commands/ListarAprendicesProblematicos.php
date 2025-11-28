@@ -21,7 +21,7 @@ class ListarAprendicesProblematicos extends Command
         foreach ($aprendices as $aprendiz) {
             // Cargar la relación persona
             $persona = $aprendiz->persona;
-            
+
             if (is_null($persona)) {
                 $problematicos[] = [
                     'ID Aprendiz' => $aprendiz->id,
@@ -33,7 +33,7 @@ class ListarAprendicesProblematicos extends Command
             }
         }
 
-        if (count($problematicos) > 0) {
+        if (!empty($problematicos)) {
             $this->error("⚠️  Encontrados " . count($problematicos) . " aprendices con problemas:");
             $this->newLine();
             $this->table(

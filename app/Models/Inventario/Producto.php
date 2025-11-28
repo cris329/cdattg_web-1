@@ -102,7 +102,7 @@ class Producto extends Model
     {
         return $this->belongsTo(Proveedor::class);
     }
-    
+
     // Relación con detalles de órdenes
     public function detalleOrdenes() : HasMany
     {
@@ -130,7 +130,7 @@ class Producto extends Model
         return $this;
     }
 
-   
+
     // Devolver stock al producto
     public function devolverStock(int $cantidad) : self
     {
@@ -161,7 +161,7 @@ class Producto extends Model
         return round(($this->cantidad / $stockMaximo) * 100, 2);
     }
 
- 
+
     // Obtener estado del stock (crítico, bajo, medio, normal)
     public function getEstadoStock() : string
     {

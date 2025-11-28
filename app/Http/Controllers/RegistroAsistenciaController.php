@@ -19,7 +19,7 @@ class RegistroAsistenciaController extends Controller
     /**
      * Registra una entrada de asistencia
      * Dispara evento WebSocket en tiempo real
-     * 
+     *
      * @param Request $request
      * @return \Illuminate\Http\JsonResponse
      */
@@ -96,7 +96,7 @@ class RegistroAsistenciaController extends Controller
         } catch (\Exception $e) {
             DB::rollBack();
             Log::error('Error al registrar entrada: ' . $e->getMessage());
-            
+
             return response()->json([
                 'status' => 'error',
                 'message' => 'Error al registrar la entrada',
@@ -108,7 +108,7 @@ class RegistroAsistenciaController extends Controller
     /**
      * Registra una salida de asistencia
      * Dispara evento WebSocket en tiempo real
-     * 
+     *
      * @param Request $request
      * @return \Illuminate\Http\JsonResponse
      */
@@ -179,7 +179,7 @@ class RegistroAsistenciaController extends Controller
         } catch (\Exception $e) {
             DB::rollBack();
             Log::error('Error al registrar salida: ' . $e->getMessage());
-            
+
             return response()->json([
                 'status' => 'error',
                 'message' => 'Error al registrar la salida',
@@ -190,7 +190,7 @@ class RegistroAsistenciaController extends Controller
 
     /**
      * Obtiene las asistencias del día actual por jornada
-     * 
+     *
      * @param Request $request
      * @return \Illuminate\Http\JsonResponse
      */
@@ -245,7 +245,7 @@ class RegistroAsistenciaController extends Controller
 
         } catch (\Exception $e) {
             Log::error('Error al obtener asistencias por jornada: ' . $e->getMessage());
-            
+
             return response()->json([
                 'status' => 'error',
                 'message' => 'Error al obtener asistencias',
@@ -257,7 +257,7 @@ class RegistroAsistenciaController extends Controller
     /**
      * Obtiene todas las fichas con sus jornadas
      * Útil para listar opciones al registrar asistencia
-     * 
+     *
      * @return \Illuminate\Http\JsonResponse
      */
     public function obtenerFichasConJornadas()
@@ -283,7 +283,7 @@ class RegistroAsistenciaController extends Controller
 
         } catch (\Exception $e) {
             Log::error('Error al obtener fichas con jornadas: ' . $e->getMessage());
-            
+
             return response()->json([
                 'status' => 'error',
                 'message' => 'Error al obtener fichas',

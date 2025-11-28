@@ -31,7 +31,7 @@ class InfraestructuraService
      */
     public function obtenerEstructuraCompleta(?int $regionalId = null): array
     {
-        $centros = $regionalId 
+        $centros = $regionalId
             ? $this->centroRepo->obtenerPorRegional($regionalId)
             : $this->centroRepo->obtenerActivos();
 

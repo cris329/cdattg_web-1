@@ -71,7 +71,7 @@ class AsistenceQrService
         // Obtener horario de hoy
         $diaHoy = now()->dayOfWeek;
         $diaId = ($diaHoy == 0) ? 18 : $diaHoy + 11;
-        
+
         $horarioHoy = null;
         if ($fichaCaracterizacion->diasFormacion) {
             $horarioHoy = $fichaCaracterizacion->diasFormacion
@@ -118,8 +118,8 @@ class AsistenceQrService
 
                 if ($persona->asistenciaHoy) {
                     $persona->asistenciaHoy->formatted_hora_ingreso = \Carbon\Carbon::parse($persona->asistenciaHoy->hora_ingreso)->format('h:i A');
-                    $persona->asistenciaHoy->formatted_hora_salida = $persona->asistenciaHoy->hora_salida 
-                        ? \Carbon\Carbon::parse($persona->asistenciaHoy->hora_salida)->format('h:i A') 
+                    $persona->asistenciaHoy->formatted_hora_salida = $persona->asistenciaHoy->hora_salida
+                        ? \Carbon\Carbon::parse($persona->asistenciaHoy->hora_salida)->format('h:i A')
                         : null;
                 }
 

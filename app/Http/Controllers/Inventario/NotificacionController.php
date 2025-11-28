@@ -54,7 +54,7 @@ class NotificacionController extends Controller
                 'message' => 'Notificación marcada como leída'
             ]);
         }
-        
+
         return response()->json([
             'success' => false,
             'message' => 'Notificación no encontrada'
@@ -84,7 +84,7 @@ class NotificacionController extends Controller
         if ($resultado) {
             return back()->with('success', 'Notificación eliminada exitosamente');
         }
-        
+
         return back()->with('error', 'Notificación no encontrada');
     }
 
@@ -94,9 +94,9 @@ class NotificacionController extends Controller
     public function destroyAll()  : JsonResponse
     {
         $count = Auth::user()->notifications()->count();
-        
+
         Auth::user()->notifications()->delete();
-        
+
         return response()->json([
             'success' => true,
             'message' => 'Todas las notificaciones han sido eliminadas',

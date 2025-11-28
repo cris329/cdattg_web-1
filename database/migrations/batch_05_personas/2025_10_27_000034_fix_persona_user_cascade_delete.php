@@ -13,12 +13,18 @@ return new class extends Migration
      */
     public function up(): void
     {
-        // Obtener el nombre exacto de la foreign key
-        $foreignKeyName = $this->getForeignKeyName();
+        if (DB::getDriverName() === 'sqlite') {
+            Schema::table('users', function (Blueprint $table) {
+                $table->dropForeign(['persona_id']);
+            });
+        } else {
+            // Obtener el nombre exacto de la foreign key
+            $foreignKeyName = $this->getForeignKeyName();
 
-        if ($foreignKeyName) {
-            // Si existe, eliminarla usando el nombre exacto
-            DB::statement("ALTER TABLE users DROP FOREIGN KEY {$foreignKeyName}");
+            if ($foreignKeyName) {
+                // Si existe, eliminarla usando el nombre exacto
+                DB::statement("ALTER TABLE users DROP FOREIGN KEY {$foreignKeyName}");
+            }
         }
 
         // Recrear con onDelete cascade

@@ -44,12 +44,12 @@ class NuevaOrdenNotification extends Notification implements ShouldQueue
     {
         $tipoOrden = $this->orden->tipoOrden->parametro->name ?? 'N/A';
         $cantidadProductos = $this->orden->detalles->count();
-        
+
         // Extraer motivo de la descripción
         $descripcion = $this->orden->descripcion_orden ?? '';
         preg_match('/MOTIVO:\s*(.+?)$/s', $descripcion, $matchMotivo);
         $motivo = isset($matchMotivo[1]) ? trim($matchMotivo[1]) : 'No especificado';
-        
+
         return (new MailMessage)
             ->subject('📋 Nueva Solicitud de ' . $tipoOrden . ' - Orden #' . $this->orden->id)
             ->greeting('¡Hola, ' . $notifiable->name . '!')
@@ -77,21 +77,21 @@ class NuevaOrdenNotification extends Notification implements ShouldQueue
     {
         $tipoOrden = $this->orden->tipoOrden->parametro->name ?? 'N/A';
         $solicitante = $this->solicitante;
-        
+
         // Obtener el rol del usuario
         $rol = $solicitante && $solicitante->roles->isNotEmpty()
             ? $solicitante->roles->first()->name
             : 'N/A';
-        
+
         // Obtener datos de la persona
         $persona = $solicitante ? $solicitante->persona : null;
         $nombreCompleto = $persona
             ? trim(($persona->primer_nombre ?? '') . ' ' . ($persona->segundo_nombre ?? '') . ' ' .
                    ($persona->primer_apellido ?? '') . ' ' . ($persona->segundo_apellido ?? ''))
             : ($solicitante->name ?? 'N/A');
-        
+
         $documento = $persona ? $persona->numero_documento ?? 'N/A' : 'N/A';
-        
+
         return [
             'orden_id' => $this->orden->id,
             'tipo_orden' => $tipoOrden,

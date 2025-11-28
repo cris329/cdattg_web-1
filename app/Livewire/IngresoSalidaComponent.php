@@ -59,7 +59,7 @@ class IngresoSalidaComponent extends Component
     public function buscarPersona()
     {
         $this->resetearEstado();
-        
+
         if (strlen(trim($this->numeroDocumento)) < 3) {
             return;
         }
@@ -185,7 +185,7 @@ class IngresoSalidaComponent extends Component
         ]);
 
         $this->procesando = true;
-        
+
         // Solo cerrar el modal si estaba abierto (para entrada)
         if ($this->mostrarModalSede) {
         $this->mostrarModalSede = false;
@@ -242,7 +242,7 @@ class IngresoSalidaComponent extends Component
             // Limpiar campos
             $this->observaciones = '';
             $this->accionPendiente = null;
-            
+
             // Forzar actualización del estado para refrescar los botones
             // Refrescar la relación de la persona para obtener datos actualizados
             if ($this->personaEncontrada) {
@@ -303,7 +303,7 @@ class IngresoSalidaComponent extends Component
     {
         $this->tipoMensaje = $tipo;
         $this->mensaje = $mensaje;
-        
+
         // Limpiar mensaje después de 5 segundos
         $this->dispatch('mostrar-mensaje', [
             'tipo' => $tipo,

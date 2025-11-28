@@ -66,7 +66,7 @@ class ParametroService
     {
         $parametro = Parametro::find($id);
         $nuevoEstado = !$parametro->status;
-        
+
         return $this->actualizar($id, ['status' => $nuevoEstado]);
     }
 }

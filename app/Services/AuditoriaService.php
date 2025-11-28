@@ -43,7 +43,7 @@ class AuditoriaService
 
                 // Verificar intentos fallidos recientes
                 $intentosFallidos = $this->loginRepo->contarIntentosFallidosRecientes($datos['email']);
-                
+
                 if ($intentosFallidos >= 5) {
                     Log::alert('Múltiples intentos fallidos detectados', [
                         'email' => $datos['email'],

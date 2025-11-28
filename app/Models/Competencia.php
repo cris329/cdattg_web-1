@@ -8,9 +8,9 @@ use Illuminate\Database\Eloquent\Model;
 class Competencia extends Model
 {
     use HasFactory;
-    
+
     protected $table = 'competencias';
-    
+
     protected $fillable = [
         'codigo',
         'nombre',
@@ -49,7 +49,7 @@ class Competencia extends Model
             'competencia_id',
             'rap_id'
         )->withTimestamps()
-         ->withPivot('user_create_id', 'user_edit_id');
+            ->withPivot('user_create_id', 'user_edit_id');
     }
 
     public function asignacionesInstructor()
@@ -75,7 +75,7 @@ class Competencia extends Model
             'competencia_id',
             'programa_id'
         )->withTimestamps()
-         ->withPivot('user_create_id', 'user_edit_id');
+            ->withPivot('user_create_id', 'user_edit_id');
     }
 
     // ========================================
@@ -99,17 +99,17 @@ class Competencia extends Model
 
     public function scopePorFecha($query, $fechaInicio, $fechaFin)
     {
-        return $query->where(function($q) use ($fechaInicio, $fechaFin) {
+        return $query->where(function ($q) use ($fechaInicio, $fechaFin) {
             $q->whereBetween('fecha_inicio', [$fechaInicio, $fechaFin])
-              ->orWhereBetween('fecha_fin', [$fechaInicio, $fechaFin]);
+                ->orWhereBetween('fecha_fin', [$fechaInicio, $fechaFin]);
         });
     }
 
     public function scopeVigentes($query)
     {
         return $query->where('fecha_inicio', '<=', now())
-                     ->where('fecha_fin', '>=', now())
-                     ->where('status', 1);
+            ->where('fecha_fin', '>=', now())
+            ->where('status', 1);
     }
 
     public function scopeOrdenadoPorCodigo($query)
@@ -119,7 +119,7 @@ class Competencia extends Model
 
     public function scopePorPrograma($query, $programaId)
     {
-        return $query->whereHas('programasFormacion', function($q) use ($programaId) {
+        return $query->whereHas('programasFormacion', function ($q) use ($programaId) {
             $q->where('programas_formacion.id', $programaId);
         });
     }
@@ -148,7 +148,7 @@ class Competencia extends Model
         if (!$this->tieneFechasDefinidas()) {
             return false;
         }
-        
+
         $hoy = now();
         return $this->fecha_inicio <= $hoy && $this->fecha_fin >= $hoy;
     }
@@ -174,7 +174,7 @@ class Competencia extends Model
 
     public function getEstadoFormateadoAttribute()
     {
-        return $this->status ? 'Activa' : 'Inactiva';
+        return $this->status ? 'ACTIVA' : 'INACTIVA';
     }
 
     public function getNombreCompletoAttribute()

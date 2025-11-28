@@ -36,10 +36,10 @@ class IngresoSalidaDashboard extends Component
         $this->fechaSeleccionada = \Carbon\Carbon::today()->format('Y-m-d');
         $this->tiposPersona = $this->personaIngresoSalidaService->obtenerTiposPersona();
         $this->configuracionTiposPersona = $this->personaIngresoSalidaService->obtenerConfiguracionTiposPersona();
-        
+
         // Cargar frecuencia desde localStorage si existe
         $this->dispatch('cargar-frecuencia-desde-storage');
-        
+
         $this->cargarDatos();
     }
 
@@ -51,7 +51,7 @@ class IngresoSalidaDashboard extends Component
         $this->sedes = $this->sedeRepository->obtenerActivas();
         $this->estadisticasPorSede = [];
         $fecha = $this->fechaSeleccionada ?? \Carbon\Carbon::today()->format('Y-m-d');
-        
+
         // Verificar disponibilidad de fechas anterior y siguiente
         $this->tieneFechaAnterior = $this->personaIngresoSalidaService
             ->obtenerFechaAnteriorConRegistros($fecha) !== null;
@@ -61,23 +61,23 @@ class IngresoSalidaDashboard extends Component
         /** @var \App\Models\Sede $sede */
         foreach ($this->sedes as $sede) {
             $sedeId = (int) $sede->id;
-            
+
             // Obtener estadísticas de personas dentro para la fecha seleccionada
             $estadisticasFecha = $this->personaIngresoSalidaService
                 ->obtenerEstadisticasPersonasDentroPorFecha($fecha, $sedeId);
             $estadisticasGenerales = $this->personaIngresoSalidaService
                 ->obtenerEstadisticasPersonasDentro($sedeId);
-            
+
             // Obtener estadísticas de registros del día (entradas y salidas)
             $estadisticasRegistros = $this->personaIngresoSalidaService
                 ->obtenerEstadisticasPorFecha($fecha, $sedeId);
-            
+
             $this->estadisticasPorSede[$sedeId] = [
                 'sede' => $sede,
                 'estadisticas_hoy' => $estadisticasFecha,
                 'estadisticas_generales' => $estadisticasGenerales,
                 'estadisticas_registros' => $estadisticasRegistros,
-                'tiene_registros_hoy' => ($estadisticasRegistros['entradas']['total'] > 0 || 
+                'tiene_registros_hoy' => ($estadisticasRegistros['entradas']['total'] > 0 ||
                     $estadisticasRegistros['salidas']['total'] > 0),
             ];
         }
@@ -117,7 +117,7 @@ class IngresoSalidaDashboard extends Component
     {
         $fechaAnterior = $this->personaIngresoSalidaService
             ->obtenerFechaAnteriorConRegistros($this->fechaSeleccionada);
-        
+
         if ($fechaAnterior) {
             $this->fechaSeleccionada = $fechaAnterior;
             $this->cargarDatos();
@@ -131,7 +131,7 @@ class IngresoSalidaDashboard extends Component
     {
         $fechaSiguiente = $this->personaIngresoSalidaService
             ->obtenerFechaSiguienteConRegistros($this->fechaSeleccionada);
-        
+
         if ($fechaSiguiente) {
             $this->fechaSeleccionada = $fechaSiguiente;
             $this->cargarDatos();
@@ -154,13 +154,13 @@ class IngresoSalidaDashboard extends Component
     {
         $fechaCarbon = \Carbon\Carbon::parse($value);
         $hoy = \Carbon\Carbon::today();
-        
+
         // No permitir fechas futuras
         if ($fechaCarbon->isAfter($hoy)) {
             $this->fechaSeleccionada = $hoy->format('Y-m-d');
         } else {
             $fechaFormateada = $fechaCarbon->format('Y-m-d');
-            
+
             // Verificar si la fecha tiene registros
             if (!$this->personaIngresoSalidaService->fechaTieneRegistros($fechaFormateada)) {
                 // Buscar la fecha más cercana con registros
@@ -168,7 +168,7 @@ class IngresoSalidaDashboard extends Component
                     ->obtenerFechaAnteriorConRegistros($fechaFormateada);
                 $fechaSiguiente = $this->personaIngresoSalidaService
                     ->obtenerFechaSiguienteConRegistros($fechaFormateada);
-                
+
                 // Elegir la más cercana
                 if ($fechaAnterior && $fechaSiguiente) {
                     $diffAnterior = abs($fechaCarbon->diffInDays(\Carbon\Carbon::parse($fechaAnterior)));

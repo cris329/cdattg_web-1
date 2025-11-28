@@ -27,17 +27,17 @@ class HomeController extends Controller
         // Obtener programas en los que el usuario está inscrito
         $programasInscritos = collect();
         $programasInscritosIds = collect();
-        
+
         if (Auth::check() && Auth::user()->persona) {
             $personaId = Auth::user()->persona->id;
-            
+
             // Debug: Verificar si hay datos en la tabla aspirantes_complementarios
             $aspirantesCount = \App\Models\AspiranteComplementario::where('persona_id', $personaId)
                 ->where('estado', 1)
                 ->count();
-            
+
             Log::info("Debug HomeController - Persona ID: {$personaId}, Aspirantes encontrados: {$aspirantesCount}");
-            
+
             $programasInscritos = ComplementarioOfertado::with(['modalidad.parametro', 'jornada', 'diasFormacion'])
                 ->whereHas('aspirantes', function($query) use ($personaId) {
                     $query->where('persona_id', $personaId)

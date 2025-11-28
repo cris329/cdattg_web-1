@@ -14,7 +14,7 @@ class ProgramaFormacionObserver
     public function created(ProgramaFormacion $programa): void
     {
         $this->invalidarCache();
-        
+
         Log::info('Programa de formación creado', [
             'programa_id' => $programa->id,
             'nombre' => $programa->nombre,
@@ -27,7 +27,7 @@ class ProgramaFormacionObserver
     public function updated(ProgramaFormacion $programa): void
     {
         $this->invalidarCache();
-        
+
         if ($programa->isDirty('status')) {
             Log::info('Estado de programa cambiado', [
                 'programa_id' => $programa->id,
@@ -43,7 +43,7 @@ class ProgramaFormacionObserver
     public function deleted(ProgramaFormacion $programa): void
     {
         $this->invalidarCache();
-        
+
         Log::info('Programa de formación eliminado', [
             'programa_id' => $programa->id,
             'nombre' => $programa->nombre,

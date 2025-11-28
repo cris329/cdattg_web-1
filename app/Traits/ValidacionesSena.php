@@ -314,9 +314,9 @@ trait ValidacionesSena
             // 9. Validar límite de fichas por instructor
             if (isset($datos['instructor_id']) && isset($datos['fecha_inicio']) && isset($datos['fecha_fin'])) {
                 $validacionLimiteFichas = $this->validarLimiteFichasPorInstructor(
-                    $datos['instructor_id'], 
-                    $datos['fecha_inicio'], 
-                    $datos['fecha_fin'], 
+                    $datos['instructor_id'],
+                    $datos['fecha_inicio'],
+                    $datos['fecha_fin'],
                     $excluirFichaId
                 );
                 if (!$validacionLimiteFichas['valido']) {
@@ -327,9 +327,9 @@ trait ValidacionesSena
             // 10. Validar superposición de horarios en ambiente
             if (isset($datos['ambiente_id']) && isset($datos['fecha_inicio']) && isset($datos['fecha_fin'])) {
                 $validacionSuperposicion = $this->validarSuperposicionHorariosAmbiente(
-                    $datos['ambiente_id'], 
-                    $datos['fecha_inicio'], 
-                    $datos['fecha_fin'], 
+                    $datos['ambiente_id'],
+                    $datos['fecha_inicio'],
+                    $datos['fecha_fin'],
                     $excluirFichaId
                 );
                 if (!$validacionSuperposicion['valido']) {
@@ -337,7 +337,7 @@ trait ValidacionesSena
                 }
             }
 
-            if (count($errores) > 0) {
+            if (!empty($errores)) {
                 return [
                     'valido' => false,
                     'mensaje' => implode(' ', $errores)
@@ -705,7 +705,7 @@ trait ValidacionesSena
             $fechaActual = $fechaInicio->copy();
             while ($fechaActual->lte($fechaFin)) {
                 $diaMes = $fechaActual->format('m-d');
-                
+
                 if (in_array($diaMes, $festivosFijos)) {
                     $fechasFestivas[] = $fechaActual->format('d/m/Y');
                 }

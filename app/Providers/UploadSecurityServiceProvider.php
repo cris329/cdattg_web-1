@@ -8,7 +8,7 @@ use Illuminate\Support\ServiceProvider;
 
 /**
  * Service Provider para la seguridad de cargas de archivos.
- * 
+ *
  * Este proveedor verifica la configuración de PHP al arrancar la aplicación
  * y registra advertencias si los límites no son seguros.
  */

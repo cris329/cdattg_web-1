@@ -6,7 +6,9 @@ use App\Models\Ambiente;
 use App\Models\Inventario\ContratoConvenio;
 use App\Models\Inventario\Producto;
 use App\Models\Inventario\Proveedor;
+use App\Models\User;
 use Illuminate\Database\Eloquent\Factories\Factory;
+use Illuminate\Support\Facades\Schema;
 
 /**
  * @extends \Illuminate\Database\Eloquent\Factories\Factory<\App\Models\Inventario\Producto>
@@ -45,9 +47,23 @@ class ProductoFactory extends Factory
             'proveedor_id' => Proveedor::factory(),
             'fecha_vencimiento' => date('Y-m-d', strtotime('+' . rand(90, 730) . ' days')),
             'imagen' => 'img/inventario/producto-default.png',
-            'user_create_id' => 1,
-            'user_update_id' => 1,
+            'user_create_id' => $this->getUserId(),
+            'user_update_id' => $this->getUserId(),
         ];
+    }
+
+    private function getUserId(): int
+    {
+        if (!Schema::hasTable('users')) {
+            return 1;
+        }
+
+        try {
+            $userId = User::query()->inRandomOrder()->value('id');
+            return $userId ?? User::factory()->create()->id;
+        } catch (\Exception $e) {
+            return User::factory()->create()->id;
+        }
     }
 }
 

@@ -45,15 +45,15 @@ class StoreProgramaFormacionRequest extends FormRequest
             'codigo.string' => 'El código debe ser una cadena de texto.',
             'codigo.max' => 'El código no puede tener más de 50 caracteres.',
             'codigo.unique' => 'Ya existe un programa con este código.',
-            
+
             'nombre.required' => 'El nombre del programa es obligatorio.',
             'nombre.string' => 'El nombre debe ser una cadena de texto.',
             'nombre.max' => 'El nombre no puede tener más de 255 caracteres.',
             'nombre.unique' => 'Ya existe un programa con este nombre.',
-            
+
             'red_conocimiento_id.required' => 'La red de conocimiento es obligatoria.',
             'red_conocimiento_id.exists' => 'La red de conocimiento seleccionada no es válida.',
-            
+
             'nivel_formacion_id.required' => 'El nivel de formación es obligatorio.',
             'nivel_formacion_id.exists' => 'El nivel de formación seleccionado no es válido.',
 

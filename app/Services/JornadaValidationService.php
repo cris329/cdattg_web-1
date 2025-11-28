@@ -17,7 +17,7 @@ class JornadaValidationService
     public function validarHorarioJornada($hora, string $jornada): bool
     {
         $horarios = $this->obtenerHorariosJornada($jornada);
-        
+
         if (!$horarios) {
             return false;
         }
@@ -40,7 +40,7 @@ class JornadaValidationService
     public function validarAsistenciaEnJornada($horaIngreso, $horaActual, string $jornada): bool
     {
         $horarios = $this->obtenerHorariosJornada($jornada);
-        
+
         if (!$horarios) {
             return false;
         }
@@ -50,7 +50,7 @@ class JornadaValidationService
         $horaInicio = $this->parsearHora($horarios['inicio']);
         $horaFin = $this->parsearHora($horarios['fin']);
 
-        return $horaIngresoCarbon->between($horaInicio, $horaFin) 
+        return $horaIngresoCarbon->between($horaInicio, $horaFin)
             && $horaActualCarbon->between($horaInicio, $horaFin);
     }
 
@@ -87,12 +87,12 @@ class JornadaValidationService
     public function tienetiempoMinimoClase($horaIngreso, $horaSalida): bool
     {
         $tiempoMinimo = Config::get('jornadas.validacion.tiempo_minimo_clase', 45);
-        
+
         $ingreso = $this->parsearHora($horaIngreso);
         $salida = $this->parsearHora($horaSalida);
-        
+
         $diferencia = $salida->diffInMinutes($ingreso);
-        
+
         return $diferencia >= $tiempoMinimo;
     }
 
@@ -106,7 +106,7 @@ class JornadaValidationService
     public function validarLlegadaTarde($horaIngreso, string $jornada): array
     {
         $horarios = $this->obtenerHorariosJornada($jornada);
-        
+
         if (!$horarios) {
             return ['llego_tarde' => false, 'minutos_retraso' => 0];
         }
@@ -118,7 +118,15 @@ class JornadaValidationService
         $horaLimiteTolerance = $horaInicioJornada->copy()->addMinutes($tolerancia);
 
         $llegoTarde = $horaIngresoCarbon->greaterThan($horaLimiteTolerance);
-        $minutosRetraso = $llegoTarde ? $horaIngresoCarbon->diffInMinutes($horaInicioJornada) : 0;
+
+        if ($llegoTarde) {
+            // Calcular minutos de retraso desde el inicio de la jornada
+            $minutosRetraso = $horaIngresoCarbon->diffInMinutes($horaInicioJornada, false);
+            // Asegurar que sea positivo
+            $minutosRetraso = abs($minutosRetraso);
+        } else {
+            $minutosRetraso = 0;
+        }
 
         return [
             'llego_tarde' => $llegoTarde,
@@ -137,7 +145,7 @@ class JornadaValidationService
     public function validarSalidaTemprana($horaSalida, string $jornada): array
     {
         $horarios = $this->obtenerHorariosJornada($jornada);
-        
+
         if (!$horarios) {
             return ['salio_temprano' => false, 'minutos_anticipado' => 0];
         }
@@ -149,7 +157,7 @@ class JornadaValidationService
         $horaLimiteTolerance = $horaFinJornada->copy()->subMinutes($tolerancia);
 
         $salioTemprano = $horaSalidaCarbon->lessThan($horaLimiteTolerance);
-        $minutosAnticipado = $salioTemprano ? $horaFinJornada->diffInMinutes($horaSalidaCarbon) : 0;
+        $minutosAnticipado = $salioTemprano ? abs($horaFinJornada->diffInMinutes($horaSalidaCarbon)) : 0;
 
         return [
             'salio_temprano' => $salioTemprano,
@@ -219,13 +227,11 @@ class JornadaValidationService
 
         $minutos = $validacion['minutos_retraso'];
 
-        if ($minutos <= 15) {
-            return 'Tarde';
-        } elseif ($minutos <= 30) {
-            return 'Muy tarde';
-        } else {
-            return 'Falta justificada';
-        }
+        return match (true) {
+            $minutos <= 15 => 'Tarde',
+            $minutos <= 30 => 'Muy tarde',
+            default => 'Falta justificada',
+        };
     }
 
     /**
@@ -246,4 +252,3 @@ class JornadaValidationService
         return 'Anticipada';
     }
 }
-

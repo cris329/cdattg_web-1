@@ -12,7 +12,7 @@ class GuiasAprendizaje extends Model
     use HasFactory, SoftDeletes;
 
     protected $table = 'guia_aprendizajes';
-    
+
     protected $fillable = [
         'codigo',
         'nombre',
@@ -155,11 +155,11 @@ class GuiasAprendizaje extends Model
     public function scopePorFechaCreacion($query, $fechaInicio, $fechaFin = null)
     {
         $query->whereDate('created_at', '>=', $fechaInicio);
-        
+
         if ($fechaFin) {
             $query->whereDate('created_at', '<=', $fechaFin);
         }
-        
+
         return $query;
     }
 
@@ -217,7 +217,7 @@ class GuiasAprendizaje extends Model
     public function porcentajeCompletitud(): float
     {
         $totalActividades = $this->contarActividades();
-        
+
         if ($totalActividades == 0) {
             return 0.0;
         }

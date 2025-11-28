@@ -13,11 +13,11 @@ class PermisoService
     {
         return DB::transaction(function () use ($userId, $permisos) {
             $user = User::findOrFail($userId);
-            
+
             // Validar si necesita rol de instructor
             if (in_array('TOMAR ASISTENCIA', $permisos)) {
                 $roles = $user->roles->pluck('name');
-                
+
                 if (!$roles->contains('INSTRUCTOR')) {
                     throw new \Exception('El usuario debe tener el rol de INSTRUCTOR para tomar asistencia.');
                 }

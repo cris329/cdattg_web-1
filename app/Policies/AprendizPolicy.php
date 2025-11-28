@@ -130,7 +130,7 @@ class AprendizPolicy
 
         // Verificar si el aprendiz está en alguna de las fichas adicionales del instructor
         $fichasInstructor = $instructor->instructorFichas()->pluck('ficha_id');
-        
+
         $perteneceAFicha = $aprendiz->fichasCaracterizacion()
             ->whereIn('fichas_caracterizacion.id', $fichasInstructor)
             ->exists();

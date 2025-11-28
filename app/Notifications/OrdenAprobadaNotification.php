@@ -41,7 +41,7 @@ class OrdenAprobadaNotification extends Notification implements ShouldQueue
         $orden = $this->detalleOrden->orden;
         $producto = $this->detalleOrden->producto;
         $tipoOrden = $orden->tipoOrden->parametro->name ?? 'N/A';
-        
+
         return (new MailMessage)
             ->subject('✅ Tu Solicitud ha sido Aprobada - Orden #' . $orden->id)
             ->greeting('¡Hola, ' . $notifiable->name . '!')

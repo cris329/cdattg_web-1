@@ -13,7 +13,7 @@ class Kernel extends ConsoleKernel
     protected function schedule(Schedule $schedule): void
     {
         // $schedule->command('inspire')->hourly();
-        
+
         // Procesar salidas pendientes a la medianoche
         $schedule->command('ingreso-salida:procesar-salidas-pendientes')
             ->dailyAt('00:00')

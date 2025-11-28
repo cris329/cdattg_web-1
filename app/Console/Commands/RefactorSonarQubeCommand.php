@@ -159,7 +159,7 @@ class RefactorSonarQubeCommand extends Command
     }
 
     /**
-     * Reemplazar count($array) > 0 con !empty($array)
+     * Reemplazar !empty($array) con !empty($array)
      */
     private function fixCountToEmpty(string $content, int &$count): string
     {

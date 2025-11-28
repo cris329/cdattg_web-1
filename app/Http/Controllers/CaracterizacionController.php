@@ -20,7 +20,7 @@ class CaracterizacionController extends Controller
     /**
      * Muestra una lista de todos los caracteres con sus fichas asociadas.
      *
-     * Este método recupera todos los registros de la tabla `CaracterizacionPrograma` 
+     * Este método recupera todos los registros de la tabla `CaracterizacionPrograma`
      * junto con sus relaciones `ficha` y los pasa a la vista `caracterizacion.index`.
      *
      * @return \Illuminate\View\View La vista que muestra la lista de caracteres.
@@ -81,9 +81,9 @@ class CaracterizacionController extends Controller
     /**
      * Almacena una nueva caracterización en la base de datos.
      *
-     * Este método valida los datos de entrada y crea una nueva instancia de 
-     * CaracterizacionPrograma con los datos proporcionados. Luego guarda la 
-     * instancia en la base de datos y redirige al usuario al índice de 
+     * Este método valida los datos de entrada y crea una nueva instancia de
+     * CaracterizacionPrograma con los datos proporcionados. Luego guarda la
+     * instancia en la base de datos y redirige al usuario al índice de
      * caracterizaciones con un mensaje de éxito.
      *
      * @param \Illuminate\Http\Request $request La solicitud HTTP que contiene los datos de entrada.
@@ -118,7 +118,7 @@ class CaracterizacionController extends Controller
      *
      * @param string $id El ID de la caracterización a editar.
      * @return \Illuminate\View\View La vista del formulario de edición con los datos necesarios.
-     * 
+     *
      * @throws \Illuminate\Database\Eloquent\ModelNotFoundException Si no se encuentra la caracterización con el ID proporcionado.
      */
     public function edit(string $id)
@@ -183,7 +183,7 @@ class CaracterizacionController extends Controller
 
         $asistencias = AsistenciaAprendiz::where('caracterizacion_id', $id)->get();
 
-        if (count($asistencias) > 0) {
+        if (!empty($asistencias)) {
             return redirect()->route('caracterizacion.index')->with('error', 'No se puede eliminar la caracterización porque tiene asistencias asociadas.');
         }
 

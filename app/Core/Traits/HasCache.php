@@ -63,9 +63,9 @@ trait HasCache
     protected function cache(string $key, callable $callback, ?int $ttl = null)
     {
         $this->initializeCache();
-        
+
         $fullKey = $this->cacheService->key($this->cachePrefix, $key);
-        
+
         return $this->cacheService->remember($fullKey, $callback, $ttl, $this->cacheType);
     }
 
@@ -80,10 +80,10 @@ trait HasCache
     protected function cacheWithTags(string $key, callable $callback, ?int $ttl = null)
     {
         $this->initializeCache();
-        
+
         $fullKey = $this->cacheService->key($this->cachePrefix, $key);
         $tags = array_merge([$this->cachePrefix], $this->cacheTags);
-        
+
         return $this->cacheService->rememberWithTags($tags, $fullKey, $callback, $ttl);
     }
 
@@ -96,9 +96,9 @@ trait HasCache
     protected function forgetCache(string $key): bool
     {
         $this->initializeCache();
-        
+
         $fullKey = $this->cacheService->key($this->cachePrefix, $key);
-        
+
         return $this->cacheService->forget($fullKey);
     }
 
@@ -110,9 +110,9 @@ trait HasCache
     protected function flushCache(): bool
     {
         $this->initializeCache();
-        
+
         $tags = array_merge([$this->cachePrefix], $this->cacheTags);
-        
+
         return $this->cacheService->flushTags($tags);
     }
 
@@ -125,7 +125,7 @@ trait HasCache
     protected function cacheKey(...$parts): string
     {
         $this->initializeCache();
-        
+
         return $this->cacheService->key($this->cachePrefix, ...$parts);
     }
 }

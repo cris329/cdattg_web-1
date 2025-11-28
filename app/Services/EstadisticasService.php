@@ -43,27 +43,27 @@ class EstadisticasService
             $superAdminUsers = \App\Models\User::whereHas('roles', function($query) {
                 $query->where('name', 'SUPER ADMINISTRADOR');
             })->get();
-            
+
             $adminUsers = \App\Models\User::whereHas('roles', function($query) {
                 $query->where('name', 'ADMINISTRADOR');
             })->get();
-            
+
             $instructorUsers = \App\Models\User::whereHas('roles', function($query) {
                 $query->where('name', 'INSTRUCTOR');
             })->get();
-            
+
             $visitanteUsers = \App\Models\User::whereHas('roles', function($query) {
                 $query->where('name', 'VISITANTE');
             })->get();
-            
+
             $aprendizUsers = \App\Models\User::whereHas('roles', function($query) {
                 $query->where('name', 'APRENDIZ');
             })->get();
-            
+
             $aspiranteUsers = \App\Models\User::whereHas('roles', function($query) {
                 $query->where('name', 'ASPIRANTE');
             })->get();
-            
+
             return [
                 'roles' => [
                     'super_administradores' => [
@@ -118,13 +118,13 @@ class EstadisticasService
 
         return $this->cache($cacheKey, function () use ($fichaId, $fechaInicio, $fechaFin) {
             $estadisticas = $this->asistenciaRepo->obtenerEstadisticas($fichaId, $fechaInicio, $fechaFin);
-            
+
             $totalAprendices = $this->aprendizRepo->contarPorFicha($fichaId);
-            
+
             return [
                 ...$estadisticas,
                 'total_aprendices_ficha' => $totalAprendices,
-                'porcentaje_asistencia' => $totalAprendices > 0 
+                'porcentaje_asistencia' => $totalAprendices > 0
                     ? round(($estadisticas['aprendices_unicos'] / $totalAprendices) * 100, 2)
                     : 0,
             ];

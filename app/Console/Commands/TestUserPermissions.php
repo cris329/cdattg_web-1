@@ -34,7 +34,7 @@ class TestUserPermissions extends Command
         $this->info("Nombre: {$user->name}");
         $this->info("Email: {$user->email}");
         $this->info("Roles: " . $user->roles->pluck('name')->implode(', '));
-        
+
         $this->info("\n=== PERMISOS DEL USUARIO ===");
         $permissions = $user->getAllPermissions()->pluck('name')->toArray();
         foreach ($permissions as $permission) {
@@ -42,15 +42,15 @@ class TestUserPermissions extends Command
         }
 
         $this->info("\n=== VERIFICACIÓN DE AUTORIZACIÓN ===");
-        
+
         // Verificar si es superadmin
         $esSuperadmin = $user->hasRole('SUPERADMIN');
         $this->info("Es SUPERADMIN: " . ($esSuperadmin ? 'SÍ' : 'NO'));
-        
+
         // Verificar permiso específico
         $tienePermiso = $user->can('ELIMINAR FICHA CARACTERIZACION');
         $this->info("Tiene permiso ELIMINAR FICHA CARACTERIZACION: " . ($tienePermiso ? 'SÍ' : 'NO'));
-        
+
         // Verificar usando política
         try {
             $user->can('delete', $ficha);

@@ -27,9 +27,9 @@ class ProbarRelacionesAprendiz extends Command
     public function handle()
     {
         $id = $this->argument('id');
-        
+
         $this->info("🔍 Probando relaciones del aprendiz ID: {$id}");
-        
+
         try {
             // Cargar el aprendiz con todas las relaciones necesarias
             $aprendiz = Aprendiz::with([
@@ -37,11 +37,11 @@ class ProbarRelacionesAprendiz extends Command
                 'fichaCaracterizacion.programaFormacion',
                 'fichaCaracterizacion.jornadaFormacion',
             ])->findOrFail($id);
-            
+
             $this->info('✅ Aprendiz encontrado');
             $this->line("   Nombre: " . ($aprendiz->persona?->nombre_completo ?? 'N/A'));
             $this->line("   Documento: " . ($aprendiz->persona?->numero_documento ?? 'N/A'));
-            
+
             // Probar tipo de documento
             $this->info('📋 Tipo de Documento:');
             if ($aprendiz->persona?->tipoDocumento) {
@@ -50,7 +50,7 @@ class ProbarRelacionesAprendiz extends Command
                 $this->warn("   ⚠️  No se pudo cargar el tipo de documento");
                 $this->line("   ID tipo_documento en persona: " . ($aprendiz->persona?->tipo_documento ?? 'NULL'));
             }
-            
+
             // Probar jornada
             $this->info('🕐 Jornada:');
             if ($aprendiz->fichaCaracterizacion?->jornadaFormacion) {
@@ -59,19 +59,19 @@ class ProbarRelacionesAprendiz extends Command
                 $this->warn("   ⚠️  No se pudo cargar la jornada");
                 $this->line("   ID jornada_id en ficha: " . ($aprendiz->fichaCaracterizacion?->jornada_id ?? 'NULL'));
             }
-            
+
             // Mostrar información completa
             $this->info('📊 Información completa:');
             $this->line("   Ficha: " . ($aprendiz->fichaCaracterizacion?->ficha ?? 'N/A'));
             $this->line("   Programa: " . ($aprendiz->fichaCaracterizacion?->programaFormacion?->nombre ?? 'N/A'));
-            
+
         } catch (\Exception $e) {
             $this->error("❌ Error: " . $e->getMessage());
             return 1;
         }
-        
+
         $this->info('✅ Prueba completada.');
-        
+
         return 0;
     }
 }

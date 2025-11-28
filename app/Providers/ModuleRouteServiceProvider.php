@@ -91,7 +91,7 @@ class ModuleRouteServiceProvider extends ServiceProvider
     {
         foreach ($this->modules as $module => $config) {
             $routeFile = base_path("routes/modules/{$module}.php");
-            
+
             if (file_exists($routeFile)) {
                 Route::middleware(['web', ...$config['middleware']])
                     ->prefix($config['prefix'])

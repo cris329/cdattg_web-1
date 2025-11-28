@@ -41,7 +41,7 @@ class ProcesarAsistenciasMasivasJob implements ShouldQueue
             ]);
 
             $cantidad = $asistenciaService->registrarAsistenciaLote(
-                $this->asistencias, 
+                $this->asistencias,
                 $this->caracterizacionId
             );
 

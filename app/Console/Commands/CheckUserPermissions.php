@@ -51,7 +51,7 @@ class CheckUserPermissions extends Command
 
         $this->info("👤 Usuario: {$user->persona->nombre_completo} (ID: {$userId})");
         $this->info("📧 Email: {$user->email}");
-        
+
         // Mostrar roles
         $roles = $user->roles->pluck('name')->toArray();
         if (empty($roles)) {
@@ -62,9 +62,9 @@ class CheckUserPermissions extends Command
 
         // Obtener todos los permisos (directos y de roles)
         $allPermissions = $user->getAllPermissions();
-        
+
         $this->info("✅ Permisos totales: " . $allPermissions->count());
-        
+
         if ($allPermissions->isEmpty()) {
             $this->warn("⚠️  No tiene permisos asignados");
             return;
@@ -97,7 +97,7 @@ class CheckUserPermissions extends Command
         foreach ($users as $user) {
             $roles = $user->roles->pluck('name')->implode(', ') ?: 'Sin roles';
             $permissionsCount = $user->getAllPermissions()->count();
-            
+
             $tableData[] = [
                 $user->id,
                 $user->persona->nombre_completo ?? 'Sin nombre',
@@ -134,13 +134,13 @@ class CheckUserPermissions extends Command
 
         foreach ($permissions as $permission) {
             $name = strtoupper($permission->name);
-            
+
             if (str_contains($name, 'PARAMETRO') || str_contains($name, 'TEMA')) {
                 $groups['PARÁMETROS Y TEMAS']->push($permission);
             } elseif (str_contains($name, 'REGIONAL') || str_contains($name, 'MUNICIPIO')) {
                 $groups['UBICACIÓN']->push($permission);
-            } elseif (str_contains($name, 'CENTRO') || str_contains($name, 'SEDE') || 
-                      str_contains($name, 'BLOQUE') || str_contains($name, 'PISO') || 
+            } elseif (str_contains($name, 'CENTRO') || str_contains($name, 'SEDE') ||
+                      str_contains($name, 'BLOQUE') || str_contains($name, 'PISO') ||
                       str_contains($name, 'AMBIENTE')) {
                 $groups['INFRAESTRUCTURA']->push($permission);
             } elseif (str_contains($name, 'INSTRUCTOR') || str_contains($name, 'ESPECIALIDAD')) {
@@ -149,22 +149,22 @@ class CheckUserPermissions extends Command
                 $groups['FICHAS']->push($permission);
             } elseif (str_contains($name, 'PERSONA')) {
                 $groups['PERSONAS']->push($permission);
-            } elseif (str_contains($name, 'PRODUCTO') || str_contains($name, 'CATALOGO') || 
-                      str_contains($name, 'CARRITO') || str_contains($name, 'CATEGORIA') || 
-                      str_contains($name, 'MARCA') || str_contains($name, 'PROVEEDOR') || 
-                      str_contains($name, 'CONTRATO') || str_contains($name, 'ORDEN') || 
-                      str_contains($name, 'PRESTAMO') || str_contains($name, 'DEVOLUCION') || 
-                      str_contains($name, 'ENTRADA') || str_contains($name, 'SALIDA') || 
+            } elseif (str_contains($name, 'PRODUCTO') || str_contains($name, 'CATALOGO') ||
+                      str_contains($name, 'CARRITO') || str_contains($name, 'CATEGORIA') ||
+                      str_contains($name, 'MARCA') || str_contains($name, 'PROVEEDOR') ||
+                      str_contains($name, 'CONTRATO') || str_contains($name, 'ORDEN') ||
+                      str_contains($name, 'PRESTAMO') || str_contains($name, 'DEVOLUCION') ||
+                      str_contains($name, 'ENTRADA') || str_contains($name, 'SALIDA') ||
                       str_contains($name, 'INVENTARIO')) {
                 $groups['INVENTARIO']->push($permission);
             } elseif (str_contains($name, 'APRENDIZ')) {
                 $groups['APRENDICES']->push($permission);
-            } elseif (str_contains($name, 'PROGRAMA') || $name === 'programa.index' || 
-                      $name === 'programa.show' || $name === 'programa.create' || 
-                      $name === 'programa.edit' || $name === 'programa.delete' || 
+            } elseif (str_contains($name, 'PROGRAMA') || $name === 'programa.index' ||
+                      $name === 'programa.show' || $name === 'programa.create' ||
+                      $name === 'programa.edit' || $name === 'programa.delete' ||
                       $name === 'programa.search') {
                 $groups['PROGRAMAS']->push($permission);
-            } elseif (str_contains($name, 'COMPETENCIA') || str_contains($name, 'RAP') || 
+            } elseif (str_contains($name, 'COMPETENCIA') || str_contains($name, 'RAP') ||
                       str_contains($name, 'RESULTADO')) {
                 $groups['COMPETENCIAS Y RAP']->push($permission);
             } else {

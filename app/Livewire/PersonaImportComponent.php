@@ -136,7 +136,7 @@ class PersonaImportComponent extends Component
         Log::info('updatedArchivo llamado', [
             'archivo' => $this->archivo ? 'presente' : 'ausente',
         ]);
-        
+
         if ($this->archivo) {
             $this->archivoNombre = $this->archivo->getClientOriginalName();
             Log::info('Archivo actualizado', [
@@ -276,12 +276,12 @@ class PersonaImportComponent extends Component
 
         $this->procesados = $importacion->processed_rows ?? 0;
         $this->total = $importacion->total_rows ?? 0;
-        
+
         // Si total es 0 pero hay procesados, usar procesados como estimación
         if ($this->total === 0 && $this->procesados > 0) {
             $this->total = $this->procesados;
         }
-        
+
         $this->exitosos = $importacion->success_count ?? 0;
         $this->duplicados = $importacion->duplicate_count ?? 0;
         $this->faltantes = $importacion->missing_contact_count ?? 0;
@@ -493,7 +493,7 @@ class PersonaImportComponent extends Component
     {
         // Forzar liberación de recursos
         gc_collect_cycles();
-        
+
         for ($i = 0; $i < $intentos; $i++) {
             try {
                 if (Storage::disk($disk)->exists($path)) {
@@ -507,7 +507,7 @@ class PersonaImportComponent extends Component
                     'path' => $path,
                     'error' => $e->getMessage(),
                 ]);
-                
+
                 if ($i < $intentos - 1) {
                     // Esperar y forzar GC antes del siguiente intento
                     usleep(500000); // 0.5 segundos

@@ -73,7 +73,7 @@ class AsistenceQrController extends Controller
 
             // Delegar al servicio
             $datosCaracterizacion = $this->asistenceQrService->obtenerDatosCaracterizacion(
-                $caracterizacion->id, 
+                $caracterizacion->id,
                 Auth::user()
             );
 

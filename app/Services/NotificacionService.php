@@ -64,7 +64,7 @@ class NotificacionService
         foreach ($aprendices as $aprendiz) {
             try {
                 $persona = $aprendiz->persona;
-                
+
                 if (!$persona || !$persona->email) {
                     continue;
                 }

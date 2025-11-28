@@ -7,6 +7,7 @@ use App\Models\User;
 use App\Models\FichaCaracterizacion;
 use App\Models\AsistenciaAprendiz;
 use Illuminate\Foundation\Testing\RefreshDatabase;
+use PHPUnit\Framework\Attributes\Test;
 
 class ReporteControllerTest extends TestCase
 {
@@ -21,7 +22,7 @@ class ReporteControllerTest extends TestCase
         $this->user = User::factory()->create();
     }
 
-    /** @test */
+    #[Test]
     public function puede_ver_dashboard_de_reportes()
     {
         $this->actingAs($this->user);
@@ -32,7 +33,7 @@ class ReporteControllerTest extends TestCase
         $response->assertViewIs('reportes.index');
     }
 
-    /** @test */
+    #[Test]
     public function puede_obtener_estadisticas_generales_api()
     {
         $this->actingAs($this->user);
@@ -51,7 +52,7 @@ class ReporteControllerTest extends TestCase
         ]);
     }
 
-    /** @test */
+    #[Test]
     public function puede_solicitar_reporte_asistencia()
     {
         $this->actingAs($this->user);
@@ -73,7 +74,7 @@ class ReporteControllerTest extends TestCase
         ]);
     }
 
-    /** @test */
+    #[Test]
     public function puede_solicitar_reporte_aprendices()
     {
         $this->actingAs($this->user);
@@ -92,7 +93,7 @@ class ReporteControllerTest extends TestCase
         ]);
     }
 
-    /** @test */
+    #[Test]
     public function valida_datos_requeridos_para_reporte()
     {
         $this->actingAs($this->user);

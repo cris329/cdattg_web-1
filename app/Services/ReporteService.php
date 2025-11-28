@@ -142,7 +142,7 @@ class ReporteService
 
             foreach ($fichas as $ficha) {
                 $estadisticas = $this->asistenciaRepo->obtenerEstadisticas($ficha->id, $fechaInicio, $fechaFin);
-                
+
                 $reportes[] = [
                     'ficha' => $ficha->ficha,
                     'programa' => $ficha->programaFormacion->nombre ?? 'N/A',
@@ -182,7 +182,7 @@ class ReporteService
 
         foreach ($asistencias as $asistencia) {
             $documento = $asistencia->numero_identificacion;
-            
+
             if (!isset($resumen[$documento])) {
                 $resumen[$documento] = [
                     'nombres' => $asistencia->nombres,

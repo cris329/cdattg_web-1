@@ -13,12 +13,26 @@ class ResultadosAprendizajeModelTest extends TestCase
 {
     use RefreshDatabase;
 
+    private const NOMBRE_RAP_INACTIVO = 'RAP Inactivo';
+
     protected $user;
     protected $rap;
 
     protected function setUp(): void
     {
         parent::setUp();
+
+        // Ejecutar seeders necesarios para las pruebas
+        // Estos datos son requeridos por las claves foráneas en PersonaFactory y UserFactory
+        $this->seed([
+            \Database\Seeders\RolePermissionSeeder::class,
+            \Database\Seeders\ParametroSeeder::class,
+            \Database\Seeders\PaisSeeder::class,
+            \Database\Seeders\DepartamentoSeeder::class,
+            \Database\Seeders\MunicipioSeeder::class,
+            \Database\Seeders\PersonaSeeder::class,
+            \Database\Seeders\UsersSeeder::class,
+        ]);
 
         $this->user = User::factory()->create();
 
@@ -74,7 +88,7 @@ class ResultadosAprendizajeModelTest extends TestCase
         // Crear RAP inactivo
         ResultadosAprendizaje::create([
             'codigo' => 'RAP002',
-            'nombre' => 'RAP Inactivo',
+            'nombre' => self::NOMBRE_RAP_INACTIVO,
             'duracion' => 40,
             'fecha_inicio' => now()->format('Y-m-d'),
             'fecha_fin' => now()->addMonths(3)->format('Y-m-d'),
@@ -96,7 +110,7 @@ class ResultadosAprendizajeModelTest extends TestCase
     {
         ResultadosAprendizaje::create([
             'codigo' => 'RAP003',
-            'nombre' => 'RAP Inactivo',
+            'nombre' => self::NOMBRE_RAP_INACTIVO,
             'duracion' => 40,
             'fecha_inicio' => now()->format('Y-m-d'),
             'fecha_fin' => now()->addMonths(3)->format('Y-m-d'),
@@ -120,7 +134,7 @@ class ResultadosAprendizajeModelTest extends TestCase
 
         $rapInactivo = ResultadosAprendizaje::create([
             'codigo' => 'RAP004',
-            'nombre' => 'RAP Inactivo',
+            'nombre' => self::NOMBRE_RAP_INACTIVO,
             'duracion' => 40,
             'fecha_inicio' => now()->format('Y-m-d'),
             'fecha_fin' => now()->addMonths(3)->format('Y-m-d'),
@@ -287,11 +301,11 @@ class ResultadosAprendizajeModelTest extends TestCase
      */
     public function test_atributo_estado_formateado_funciona()
     {
-        $this->assertEquals('Activo', $this->rap->estadoFormateado);
+        $this->assertEquals('ACTIVO', $this->rap->estadoFormateado);
 
         $rapInactivo = ResultadosAprendizaje::create([
             'codigo' => 'RAP008',
-            'nombre' => 'RAP Inactivo',
+            'nombre' => self::NOMBRE_RAP_INACTIVO,
             'duracion' => 40,
             'fecha_inicio' => now()->format('Y-m-d'),
             'fecha_fin' => now()->addMonths(3)->format('Y-m-d'),
@@ -300,7 +314,7 @@ class ResultadosAprendizajeModelTest extends TestCase
             'user_edit_id' => $this->user->id,
         ]);
 
-        $this->assertEquals('Inactivo', $rapInactivo->estadoFormateado);
+        $this->assertEquals('INACTIVO', $rapInactivo->estadoFormateado);
     }
 
     /**
@@ -311,4 +325,3 @@ class ResultadosAprendizajeModelTest extends TestCase
         $this->assertEquals('RAP001 - Resultado de Prueba', $this->rap->nombreCompleto);
     }
 }
-

@@ -38,7 +38,7 @@ class VerificationController extends Controller
                 'id' => $id,
                 'hash' => $hash,
             ]);
-            
+
             return redirect()->route('login.index')
                 ->with('error', 'El enlace de verificación no es válido.');
         }
@@ -52,7 +52,7 @@ class VerificationController extends Controller
                 'hash_esperado' => sha1($user->getEmailForVerification()),
                 'hash_recibido' => $hash,
             ]);
-            
+
             return redirect()->route('login.index')
                 ->with('error', 'El enlace de verificación no es válido o ha expirado.');
         }
@@ -64,7 +64,7 @@ class VerificationController extends Controller
 
         if ($user->markEmailAsVerified()) {
             event(new Verified($user));
-            
+
             \Illuminate\Support\Facades\Log::info('Correo verificado exitosamente', [
                 'user_id' => $user->id,
                 'email' => $user->email,

@@ -13,10 +13,10 @@ class UploadLimitsTest extends TestCase
 
     public function test_constantes_de_importacion_y_generales_son_consistentes(): void
     {
-        $this->assertEquals(8192, UploadLimits::IMPORT_FILE_SIZE_KB);
-        $this->assertEquals(8192 * 1024, UploadLimits::IMPORT_FILE_SIZE_BYTES);
-        $this->assertEquals(8, UploadLimits::IMPORT_FILE_SIZE_MB);
-        $this->assertEquals(8 * 1024 * 1024, UploadLimits::IMPORT_CONTENT_LENGTH_BYTES);
+        $this->assertEquals(25600, UploadLimits::IMPORT_FILE_SIZE_KB);
+        $this->assertEquals(25600 * 1024, UploadLimits::IMPORT_FILE_SIZE_BYTES);
+        $this->assertEquals(25, UploadLimits::IMPORT_FILE_SIZE_MB);
+        $this->assertEquals(25600 * 1024, UploadLimits::IMPORT_CONTENT_LENGTH_BYTES);
         $this->assertEquals(2 * 1024 * 1024, UploadLimits::GENERAL_CONTENT_LENGTH_BYTES);
     }
 
@@ -56,10 +56,10 @@ class UploadLimitsTest extends TestCase
 
     public function test_get_import_limit_retorna_formatos_correctos(): void
     {
-        $this->assertEquals(8192, UploadLimits::getImportLimit('KB'));
-        $this->assertEquals(8192 * 1024, UploadLimits::getImportLimit('BYTES'));
-        $this->assertEquals(8, UploadLimits::getImportLimit('MB'));
-        $this->assertEquals(8192 * 1024, UploadLimits::getImportLimit('invalid'));
+        $this->assertEquals(25600, UploadLimits::getImportLimit('KB'));
+        $this->assertEquals(25600 * 1024, UploadLimits::getImportLimit('BYTES'));
+        $this->assertEquals(25, UploadLimits::getImportLimit('MB'));
+        $this->assertEquals(25600 * 1024, UploadLimits::getImportLimit('invalid'));
     }
 
     public function test_get_document_limit_retorna_formatos_correctos(): void

@@ -53,7 +53,7 @@ class ResultadosAprendizajePolicy
      */
     public function create(User $user): bool
     {
-        return $user->can('CREAR RESULTADO APRENDIZAJE') && 
+        return $user->can('CREAR RESULTADO APRENDIZAJE') &&
                $user->hasRole(['SUPER ADMINISTRADOR', 'ADMINISTRADOR', 'INSTRUCTOR']);
     }
 
@@ -102,7 +102,7 @@ class ResultadosAprendizajePolicy
      */
     public function restore(User $user, ResultadosAprendizaje $resultadosAprendizaje): bool
     {
-        return $user->can('CREAR RESULTADO APRENDIZAJE') && 
+        return $user->can('CREAR RESULTADO APRENDIZAJE') &&
                $user->hasRole(['SUPER ADMINISTRADOR', 'ADMINISTRADOR']);
     }
 
@@ -111,7 +111,7 @@ class ResultadosAprendizajePolicy
      */
     public function forceDelete(User $user, ResultadosAprendizaje $resultadosAprendizaje): bool
     {
-        return $user->can('ELIMINAR RESULTADO APRENDIZAJE') && 
+        return $user->can('ELIMINAR RESULTADO APRENDIZAJE') &&
                $user->hasRole(['SUPER ADMINISTRADOR', 'ADMINISTRADOR']);
     }
 
@@ -160,7 +160,7 @@ class ResultadosAprendizajePolicy
      */
     public function asociarGuia(User $user, ResultadosAprendizaje $resultadosAprendizaje): bool
     {
-        return $user->can('EDITAR RESULTADO APRENDIZAJE') && 
+        return $user->can('EDITAR RESULTADO APRENDIZAJE') &&
                $user->hasRole(['SUPER ADMINISTRADOR', 'ADMINISTRADOR', 'INSTRUCTOR']);
     }
 
@@ -169,7 +169,7 @@ class ResultadosAprendizajePolicy
      */
     public function exportar(User $user): bool
     {
-        return $user->can('VER RESULTADO APRENDIZAJE') && 
+        return $user->can('VER RESULTADO APRENDIZAJE') &&
                $user->hasRole(['SUPER ADMINISTRADOR', 'ADMINISTRADOR']);
     }
 }

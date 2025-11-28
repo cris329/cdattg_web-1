@@ -60,14 +60,19 @@ class MigrateModule extends Command
             return $this->listModules();
         }
 
+        if ($this->option('all')) {
+            if ($this->option('fresh')) {
+                $this->warn('⚠️  Ejecutando migrate:fresh...');
+                Artisan::call('migrate:fresh');
+                $this->info('✓ Base de datos limpiada');
+            }
+            return $this->migrateAll();
+        }
+
         if ($this->option('fresh')) {
             $this->warn('⚠️  Ejecutando migrate:fresh...');
             Artisan::call('migrate:fresh');
             $this->info('✓ Base de datos limpiada');
-        }
-
-        if ($this->option('all')) {
-            return $this->migrateAll();
         }
 
         $module = $this->argument('module');
@@ -93,7 +98,7 @@ class MigrateModule extends Command
             $path = database_path("migrations/{$key}");
             $exists = is_dir($path);
             $status = $exists ? '✓' : '✗';
-            
+
             $this->line("  {$status} <fg=cyan>{$key}</> - {$description}");
         }
 
@@ -120,14 +125,14 @@ class MigrateModule extends Command
         foreach ($this->batches as $batch => $description) {
             $currentBatch++;
             $this->info("[{$currentBatch}/{$totalBatches}] Migrando: {$batch}");
-            
+
             $result = $this->migrateSingleBatch($batch, false);
-            
+
             if ($result !== 0) {
                 $this->error("❌ Error al migrar el batch: {$batch}");
                 return 1;
             }
-            
+
             $this->newLine();
         }
 
@@ -161,16 +166,23 @@ class MigrateModule extends Command
         }
 
         try {
-            Artisan::call('migrate', [
+            $exitCode = Artisan::call('migrate', [
                 '--path' => $path,
                 '--force' => true,
             ]);
 
             $output = Artisan::output();
-            $this->line($output);
+            if (!empty(trim($output))) {
+                $this->line($output);
+            }
 
-            $this->info("✓ Batch {$batch} migrado exitosamente");
-            return 0;
+            if ($exitCode === 0) {
+                $this->info("✓ Batch {$batch} migrado exitosamente");
+                return 0;
+            } else {
+                $this->error("❌ Error al migrar el batch: {$batch}");
+                return 1;
+            }
         } catch (\Exception $e) {
             $this->error("❌ Error: {$e->getMessage()}");
             return 1;

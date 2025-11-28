@@ -7,7 +7,10 @@ use App\Services\AprendizService;
 use App\Repositories\AprendizRepository;
 use App\Models\Aprendiz;
 use Illuminate\Foundation\Testing\RefreshDatabase;
+use Illuminate\Contracts\Pagination\LengthAwarePaginator;
+use Illuminate\Pagination\LengthAwarePaginator as Paginator;
 use Mockery;
+use PHPUnit\Framework\Attributes\Test;
 
 class AprendizServiceTest extends TestCase
 {
@@ -30,23 +33,25 @@ class AprendizServiceTest extends TestCase
         parent::tearDown();
     }
 
-    /** @test */
+    #[Test]
     public function puede_listar_aprendices_con_filtros()
     {
         $filtros = ['search' => 'Juan', 'per_page' => 15];
+        
+        $paginator = new Paginator([], 0, 15, 1);
         
         $this->mockRepository
             ->shouldReceive('obtenerAprendicesConFiltros')
             ->once()
             ->with($filtros)
-            ->andReturn(collect([]));
+            ->andReturn($paginator);
 
         $resultado = $this->service->listarConFiltros($filtros);
 
-        $this->assertIsObject($resultado);
+        $this->assertInstanceOf(LengthAwarePaginator::class, $resultado);
     }
 
-    /** @test */
+    #[Test]
     public function puede_obtener_estadisticas()
     {
         $estadisticasEsperadas = [
@@ -65,7 +70,7 @@ class AprendizServiceTest extends TestCase
         $this->assertEquals($estadisticasEsperadas, $resultado);
     }
 
-    /** @test */
+    #[Test]
     public function puede_verificar_si_persona_es_aprendiz()
     {
         $personaId = 1;
@@ -81,7 +86,7 @@ class AprendizServiceTest extends TestCase
         $this->assertTrue($resultado);
     }
 
-    /** @test */
+    #[Test]
     public function puede_contar_aprendices_por_ficha()
     {
         $fichaId = 1;
@@ -97,7 +102,7 @@ class AprendizServiceTest extends TestCase
         $this->assertEquals(25, $resultado);
     }
 
-    /** @test */
+    #[Test]
     public function formatea_aprendiz_para_api_correctamente()
     {
         $aprendiz = new Aprendiz();

@@ -146,6 +146,14 @@ class AppServiceProvider extends ServiceProvider
         // Registrar observadores
         AsistenciaAprendiz::observe(AsistenciaAprendizObserver::class);
 
+        // Cargar migraciones de subdirectorios
+        $migrationsPath = database_path('migrations');
+        $directories = glob($migrationsPath . '/*', GLOB_ONLYDIR);
+
+        foreach ($directories as $directory) {
+            $this->loadMigrationsFrom($directory);
+        }
+
         // Registrar driver de Google Drive
         try {
             Storage::extend('google', function ($config) {

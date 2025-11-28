@@ -14,11 +14,11 @@ class ProgramaFormacion extends Model
     use HasFactory, SoftDeletes;
 
     protected $table = 'programas_formacion';
-    
+
     protected $fillable = [
-        'codigo', 
-        'nombre', 
-        'red_conocimiento_id', 
+        'codigo',
+        'nombre',
+        'red_conocimiento_id',
         'nivel_formacion_id',
         'user_create_id',
         'user_edit_id',

@@ -114,7 +114,7 @@ class RegistroActividadesController extends Controller
             DB::transaction(function () use ($actividad) {
                 // Eliminar primero los registros relacionados en evidencia_guia_aprendizaje
                 EvidenciaGuiaAprendizaje::where('evidencia_id', $actividad->id)->delete();
-                
+
                 // Luego eliminar la actividad (evidencia)
                 $actividad->delete();
             });

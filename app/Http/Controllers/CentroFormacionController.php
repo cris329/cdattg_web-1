@@ -146,10 +146,10 @@ class CentroFormacionController extends Controller
     {
         try {
             DB::beginTransaction();
-            
+
             $centro = CentroFormacion::findOrFail($id);
             $centro->delete();
-            
+
             DB::commit();
             return redirect()->route('centros.index')
                 ->with('success', 'Centro de formación eliminado exitosamente');
@@ -175,7 +175,7 @@ class CentroFormacionController extends Controller
         try {
             $centro = CentroFormacion::findOrFail($id);
             $nuevoStatus = $centro->status === 1 ? 0 : 1;
-            
+
             $centro->update([
                 'status' => $nuevoStatus,
                 'user_update_id' => Auth::id(),

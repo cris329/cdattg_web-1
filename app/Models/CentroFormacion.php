@@ -6,7 +6,7 @@ use Illuminate\Database\Eloquent\Model;
 
 class CentroFormacion extends Model
 {
-    
+
     protected $fillable = ['nombre', 'regional_id', 'telefono', 'direccion', 'web', 'status', 'user_create_id', 'user_update_id'];
 
     public function regional()
