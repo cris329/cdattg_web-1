@@ -10,6 +10,13 @@ const STORAGE_KEY = 'inventario_carrito';
 // Estado del carrito
 let cart = JSON.parse(localStorage.getItem(STORAGE_KEY)) || [];
 
+// Estado de búsqueda y filtrado
+let showingSearchResults = false;
+let currentFetchedProducts = [];
+let currentFetchController = null;
+let originalGridHTML = null;
+let originalPaginationHTML = '';
+
 /**
  * Helper para mostrar/ocultar modales compatible con Bootstrap 4 y 5
  */
