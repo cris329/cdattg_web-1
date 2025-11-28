@@ -6,9 +6,11 @@ namespace App\Repositories\Interfaces\Inventario;
 
 use App\Models\Inventario\Proveedor;
 use Illuminate\Contracts\Pagination\LengthAwarePaginator;
+use Illuminate\Database\Eloquent\Collection;
 
 interface ProveedorRepositoryInterface
 {
+    public function obtenerTodos(): Collection;
     public function obtenerConFiltros(array $filtros = []): LengthAwarePaginator;
     public function encontrarConRelaciones(int $id): ?Proveedor;
     public function crear(array $datos): Proveedor;

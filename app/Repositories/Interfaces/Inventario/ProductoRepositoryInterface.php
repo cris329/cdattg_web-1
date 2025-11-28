@@ -23,5 +23,4 @@ interface ProductoRepositoryInterface
     public function actualizarStock(Producto $producto, int $cantidad): bool;
     public function obtenerMaxCodigoBarras(): ?string;
     public function existeCodigoBarras(string $codigo): bool;
-    public function invalidarCache(): void;
 }
