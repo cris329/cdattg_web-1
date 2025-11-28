@@ -137,4 +137,104 @@ class AprobacionControllerTest extends TestCase
 
         $response->assertRedirect(route('login'));
     }
+
+    #[Test]
+    public function puede_aprobar_orden_completa(): void
+    {
+        $this->actingAs($this->user);
+
+        $producto1 = Producto::factory()->create(['cantidad' => 10]);
+        $producto2 = Producto::factory()->create(['cantidad' => 5]);
+        $orden = Orden::factory()->create();
+
+        $estadoEnEspera = ParametroTema::whereHas('parametro', function ($q) {
+            $q->where('name', 'EN ESPERA');
+        })->whereHas('tema', function ($q) {
+            $q->where('name', 'ESTADOS DE ORDEN');
+        })->first();
+
+        if (! $estadoEnEspera) {
+            $this->markTestSkipped('Falta estado EN ESPERA (requiere seeders completos)');
+        }
+
+        DetalleOrden::factory()->create([
+            'orden_id' => $orden->id,
+            'producto_id' => $producto1->id,
+            'cantidad' => 2,
+            'estado_orden_id' => $estadoEnEspera->id,
+        ]);
+
+        DetalleOrden::factory()->create([
+            'orden_id' => $orden->id,
+            'producto_id' => $producto2->id,
+            'cantidad' => 1,
+            'estado_orden_id' => $estadoEnEspera->id,
+        ]);
+
+        $response = $this->post(route('inventario.aprobaciones.aprobar-orden', $orden->id));
+
+        $response->assertRedirect();
+        $response->assertSessionHas('success');
+    }
+
+    #[Test]
+    public function puede_rechazar_orden_completa(): void
+    {
+        $this->actingAs($this->user);
+
+        $producto = Producto::factory()->create(['cantidad' => 10]);
+        $orden = Orden::factory()->create();
+
+        $estadoEnEspera = ParametroTema::whereHas('parametro', function ($q) {
+            $q->where('name', 'EN ESPERA');
+        })->whereHas('tema', function ($q) {
+            $q->where('name', 'ESTADOS DE ORDEN');
+        })->first();
+
+        if (! $estadoEnEspera) {
+            $this->markTestSkipped('Falta estado EN ESPERA (requiere seeders completos)');
+        }
+
+        DetalleOrden::factory()->create([
+            'orden_id' => $orden->id,
+            'producto_id' => $producto->id,
+            'cantidad' => 2,
+            'estado_orden_id' => $estadoEnEspera->id,
+        ]);
+
+        $response = $this->post(route('inventario.aprobaciones.rechazar-orden', $orden->id), [
+            'motivo_rechazo' => 'Motivo de rechazo de orden completa',
+        ]);
+
+        $response->assertRedirect();
+        $response->assertSessionHas('success');
+    }
+
+    #[Test]
+    public function no_puede_aprobar_orden_sin_permiso(): void
+    {
+        $userSinPermiso = User::factory()->create();
+        $this->actingAs($userSinPermiso);
+
+        $orden = Orden::factory()->create();
+
+        $response = $this->post(route('inventario.aprobaciones.aprobar-orden', $orden->id));
+
+        $response->assertStatus(403);
+    }
+
+    #[Test]
+    public function no_puede_rechazar_orden_sin_permiso(): void
+    {
+        $userSinPermiso = User::factory()->create();
+        $this->actingAs($userSinPermiso);
+
+        $orden = Orden::factory()->create();
+
+        $response = $this->post(route('inventario.aprobaciones.rechazar-orden', $orden->id), [
+            'motivo_rechazo' => 'Motivo',
+        ]);
+
+        $response->assertStatus(403);
+    }
 }
