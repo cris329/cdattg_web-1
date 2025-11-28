@@ -2,6 +2,7 @@
 
 namespace App\Services;
 
+use App\Exceptions\ProgramaNoEncontradoException;
 use App\Models\AspiranteComplementario;
 use App\Models\ComplementarioOfertado;
 use App\Models\Persona;
@@ -14,6 +15,9 @@ use Illuminate\Support\Facades\Log;
 
 class AspiranteManagementService
 {
+    private const PROGRAMA_NO_ENCONTRADO = 'Programa no encontrado.';
+    private const PROGRAMA_NO_ENCONTRADO_SIN_PUNTO = 'Programa no encontrado';
+
     public function __construct(
         private readonly AspiranteComplementarioRepository $aspiranteRepository,
         private readonly ComplementarioOfertadoRepository $programaRepository,
@@ -36,7 +40,7 @@ class AspiranteManagementService
         $programa = $this->programaRepository->findByNombre($cursoNombre);
 
         if (!$programa) {
-            abort(404, 'Programa no encontrado');
+            abort(404, self::PROGRAMA_NO_ENCONTRADO_SIN_PUNTO);
         }
 
         return $this->obtenerAspirantesPorProgramaId($programa->id);
@@ -50,7 +54,7 @@ class AspiranteManagementService
         $programa = $this->programaRepository->findWithRelations($programaId, ['modalidad.parametro', 'jornada', 'diasFormacion']);
 
         if (!$programa) {
-            abort(404, 'Programa no encontrado');
+            abort(404, self::PROGRAMA_NO_ENCONTRADO_SIN_PUNTO);
         }
 
         $aspirantes = $this->aspiranteRepository->findByPrograma($programaId, ['persona', 'complementario']);
@@ -73,32 +77,16 @@ class AspiranteManagementService
     public function agregarAspirante(int $complementarioId, string $numeroDocumento): array
     {
         try {
-            // Verificar que el programa existe
-            $programa = $this->programaRepository->findWithRelations($complementarioId);
-            if (!$programa) {
-                return $this->createErrorResponse('Programa no encontrado.');
+            $errorResponse = $this->validarAgregarAspirante($complementarioId, $numeroDocumento);
+            if ($errorResponse !== null) {
+                return $errorResponse;
             }
 
-            // Buscar persona por número de documento
             $persona = $this->personaRepository->findByNumeroDocumento($numeroDocumento);
-            if (!$persona) {
-                return $this->createErrorResponse(
-                    'No se encontró ninguna persona registrada con el número de documento "' . $numeroDocumento . '".'
-                );
-            }
-
-            // Verificar si ya está inscrita en este programa
-            if ($this->aspiranteRepository->existeInscripcion($persona->id, $complementarioId)) {
-                return $this->createErrorResponse(
-                    'La persona con documento "' . $numeroDocumento . '" ya se encuentra inscrita en este programa complementario.'
-                );
-            }
-
-            // Crear nuevo aspirante
             $this->aspiranteRepository->create([
                 'persona_id' => $persona->id,
                 'complementario_id' => $complementarioId,
-                'estado' => 1, // Estado "En proceso"
+                'estado' => 1,
                 'observaciones' => 'Agregado manualmente desde gestión de aspirantes'
             ]);
 
@@ -124,46 +112,19 @@ class AspiranteManagementService
     public function rechazarAspirante(int $complementarioId, int $aspiranteId): array
     {
         try {
-            // Verificar permisos
-            if (!Auth::user()->can('ELIMINAR ASPIRANTE COMPLEMENTARIO')) {
-                return [
-                    'success' => false,
-                    'message' => 'No tiene permisos para rechazar aspirantes.',
-                    'status_code' => 403
-                ];
+            $errorResponse = $this->validarRechazarAspirante($complementarioId, $aspiranteId);
+            if ($errorResponse !== null) {
+                return $errorResponse;
             }
 
-            // Verificar que el programa existe
-            $programa = $this->programaRepository->findWithRelations($complementarioId);
-            if (!$programa) {
-                return [
-                    'success' => false,
-                    'message' => 'Programa no encontrado.',
-                    'status_code' => 404
-                ];
-            }
-
-            // Buscar aspirante
             $aspirante = $this->aspiranteRepository->findByPrograma($complementarioId)
                 ->where('id', $aspiranteId)
                 ->first();
-
-            if (!$aspirante) {
-                return [
-                    'success' => false,
-                    'message' => 'Aspirante no encontrado.',
-                    'status_code' => 404
-                ];
-            }
-
-            // Cargar relación persona si no está cargada
             $aspirante->load('persona');
 
-            // Guardar información para el mensaje
             $personaNombre = $aspirante->persona->primer_nombre . ' ' . $aspirante->persona->primer_apellido;
             $numeroDocumento = $aspirante->persona->numero_documento;
 
-            // Cambiar estado a rechazado
             $this->aspiranteRepository->update($aspirante, ['estado' => 2]);
 
             Log::info('Aspirante rechazado exitosamente', [
@@ -201,7 +162,7 @@ class AspiranteManagementService
         $programa = $this->programaRepository->findWithRelations($programaId);
         
         if (!$programa) {
-            throw new \Exception('Programa no encontrado');
+            throw new ProgramaNoEncontradoException(self::PROGRAMA_NO_ENCONTRADO_SIN_PUNTO);
         }
 
         $totalAspirantes = $this->aspiranteRepository->countByPrograma($programaId);
@@ -222,23 +183,13 @@ class AspiranteManagementService
     public function validarDocumentos(int $complementarioId, AspiranteDocumentoService $documentoService): array
     {
         try {
-            // Verificar que el programa existe
-            $programa = $this->programaRepository->findWithRelations($complementarioId);
-            if (!$programa) {
-                return $this->createErrorResponse('Programa no encontrado.');
+            $errorResponse = $this->validarDocumentosPrecondiciones($complementarioId);
+            if ($errorResponse !== null) {
+                return $errorResponse;
             }
 
-            // Obtener aspirantes del programa
             $aspirantes = $this->aspiranteRepository->findByPrograma($complementarioId, ['persona.tipoDocumento']);
-
-            if ($aspirantes->isEmpty()) {
-                return $this->createErrorResponse('No hay aspirantes en este programa para validar documentos.');
-            }
-
-            // Obtener archivos de Google Drive
             $files = $documentoService->getGoogleDriveFiles();
-            
-            // Procesar validación
             $resultados = $this->procesarValidacionDocumentos($aspirantes, $files, $documentoService);
 
             Log::info("Validación de documentos completada", [
@@ -318,6 +269,95 @@ class AspiranteManagementService
             'sin_documento' => $sinDocumento,
             'errores' => $errores
         ];
+    }
+
+    /**
+     * Validar precondiciones para agregar aspirante
+     */
+    private function validarAgregarAspirante(int $complementarioId, string $numeroDocumento): ?array
+    {
+        $programa = $this->programaRepository->findWithRelations($complementarioId);
+        if (!$programa) {
+            return $this->createErrorResponse(self::PROGRAMA_NO_ENCONTRADO);
+        }
+
+        $persona = $this->personaRepository->findByNumeroDocumento($numeroDocumento);
+        if (!$persona) {
+            return $this->createErrorResponse(
+                'No se encontró ninguna persona registrada con el número de documento "' . $numeroDocumento . '".'
+            );
+        }
+
+        $errorResponse = null;
+        if ($this->aspiranteRepository->existeInscripcion($persona->id, $complementarioId)) {
+            $errorResponse = $this->createErrorResponse(
+                'La persona con documento "' . $numeroDocumento . '" ya se encuentra inscrita en este programa complementario.'
+            );
+        }
+
+        return $errorResponse;
+    }
+
+    /**
+     * Validar precondiciones para rechazar aspirante
+     */
+    private function validarRechazarAspirante(int $complementarioId, int $aspiranteId): ?array
+    {
+        $errorResponse = null;
+
+        if (!Auth::user()->can('ELIMINAR ASPIRANTE COMPLEMENTARIO')) {
+            $errorResponse = [
+                'success' => false,
+                'message' => 'No tiene permisos para rechazar aspirantes.',
+                'status_code' => 403
+            ];
+        }
+
+        if ($errorResponse === null) {
+            $programa = $this->programaRepository->findWithRelations($complementarioId);
+            if (!$programa) {
+                $errorResponse = [
+                    'success' => false,
+                    'message' => self::PROGRAMA_NO_ENCONTRADO,
+                    'status_code' => 404
+                ];
+            }
+        }
+
+        if ($errorResponse === null) {
+            $aspirante = $this->aspiranteRepository->findByPrograma($complementarioId)
+                ->where('id', $aspiranteId)
+                ->first();
+
+            if (!$aspirante) {
+                $errorResponse = [
+                    'success' => false,
+                    'message' => 'Aspirante no encontrado.',
+                    'status_code' => 404
+                ];
+            }
+        }
+
+        return $errorResponse;
+    }
+
+    /**
+     * Validar precondiciones para validar documentos
+     */
+    private function validarDocumentosPrecondiciones(int $complementarioId): ?array
+    {
+        $programa = $this->programaRepository->findWithRelations($complementarioId);
+        if (!$programa) {
+            return $this->createErrorResponse(self::PROGRAMA_NO_ENCONTRADO);
+        }
+
+        $errorResponse = null;
+        $aspirantes = $this->aspiranteRepository->findByPrograma($complementarioId, ['persona.tipoDocumento']);
+        if ($aspirantes->isEmpty()) {
+            $errorResponse = $this->createErrorResponse('No hay aspirantes en este programa para validar documentos.');
+        }
+
+        return $errorResponse;
     }
 
     /**

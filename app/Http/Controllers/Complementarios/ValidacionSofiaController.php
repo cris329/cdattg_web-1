@@ -12,6 +12,8 @@ use Illuminate\Support\Facades\Log;
 
 class ValidacionSofiaController extends Controller
 {
+    private const PROGRAMA_NO_ENCONTRADO = 'Programa no encontrado.';
+
     /**
      * Iniciar validación SOFIA para un programa complementario
      */
@@ -100,7 +102,7 @@ class ValidacionSofiaController extends Controller
             Log::error("Programa no encontrado: {$complementarioId}", ['exception' => $e->getMessage()]);
             return response()->json([
                 'success' => false,
-                'message' => 'Programa no encontrado.'
+                'message' => self::PROGRAMA_NO_ENCONTRADO
             ], 404);
         } catch (\Exception $e) {
             Log::error("Error iniciando validación SenaSofiaPlus", [

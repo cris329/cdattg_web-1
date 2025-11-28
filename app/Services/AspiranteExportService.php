@@ -2,6 +2,9 @@
 
 namespace App\Services;
 
+use App\Exceptions\AspirantesSinDocumentosException;
+use App\Exceptions\DescargaDocumentosException;
+use App\Exceptions\ProgramaNoEncontradoException;
 use App\Models\ComplementarioOfertado;
 use App\Repositories\AspiranteComplementarioRepository;
 use App\Repositories\ComplementarioOfertadoRepository;
@@ -29,7 +32,7 @@ class AspiranteExportService
             // Verificar que el programa existe
             $programa = $this->programaRepository->findWithRelations($complementarioId);
             if (!$programa) {
-                throw new \Exception('Programa no encontrado');
+                throw new ProgramaNoEncontradoException('Programa no encontrado');
             }
 
             // Obtener aspirantes para exportación
@@ -65,14 +68,14 @@ class AspiranteExportService
             // Verificar que el programa existe
             $programa = $this->programaRepository->findWithRelations($complementarioId);
             if (!$programa) {
-                throw new \Exception('Programa no encontrado');
+                throw new ProgramaNoEncontradoException('Programa no encontrado');
             }
 
             // Obtener aspirantes con documentos
             $aspirantes = $this->aspiranteRepository->findByProgramaConDocumentos($complementarioId);
 
             if ($aspirantes->isEmpty()) {
-                throw new \Exception('No hay aspirantes con documentos de identidad para descargar.');
+                throw new AspirantesSinDocumentosException('No hay aspirantes con documentos de identidad para descargar.');
             }
 
             // Crear directorio temporal y PDF
@@ -84,7 +87,7 @@ class AspiranteExportService
 
             if ($resultados['archivos_agregados'] === 0) {
                 $this->documentoService->limpiarArchivosTemporales($resultados['archivos_temporales']);
-                throw new \Exception('No se pudieron descargar los documentos. Verifique que los archivos existan en Google Drive.');
+                throw new DescargaDocumentosException('No se pudieron descargar los documentos. Verifique que los archivos existan en Google Drive.');
             }
 
             // Generar archivo PDF final
