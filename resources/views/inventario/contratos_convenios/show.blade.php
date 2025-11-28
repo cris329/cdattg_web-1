@@ -46,9 +46,9 @@
                     <div class="stats-card">
                         <div class="stats-number">
                             @php
-                                $fechaFin = $contratoConvenio->fecha_fin 
-                                    ? (is_string($contratoConvenio->fecha_fin) 
-                                        ? \Carbon\Carbon::parse($contratoConvenio->fecha_fin) 
+                                $fechaFin = $contratoConvenio->fecha_fin
+                                    ? (is_string($contratoConvenio->fecha_fin)
+                                        ? \Carbon\Carbon::parse($contratoConvenio->fecha_fin)
                                         : $contratoConvenio->fecha_fin)
                                     : null;
                             @endphp
@@ -199,7 +199,7 @@
                                 @endcan
 
                                 @can('ELIMINAR CONTRATO')
-                                    <form action="{{ route('inventario.contratos-convenios.destroy', $contratoConvenio->id) }}" 
+                                    <form action="{{ route('inventario.contratos-convenios.destroy', $contratoConvenio->id) }}"
                                           method="POST" class="d-inline formulario-eliminar">
                                         @csrf
                                         @method('DELETE')

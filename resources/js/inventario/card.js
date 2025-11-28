@@ -175,7 +175,7 @@ function applyFilters() {
     const sortBy = document.getElementById('sort-by')?.value || 'name';
 
     // Construir URL con parámetros
-    const url = new URL(window.location.href);
+    const url = new URL(globalThis.location.href);
     url.searchParams.delete('page'); // Resetear a página 1 cuando se filtran
 
     if (searchTerm) {
@@ -197,7 +197,7 @@ function applyFilters() {
     }
 
     // Redirigir a la URL con los filtros
-    window.location.href = url.toString();
+    globalThis.location.href = url.toString();
 }
 
 
@@ -308,7 +308,9 @@ function sortProducts(sortBy) {
     cards.sort((a, b) => compareCards(a, b, sortBy));
 
     // Reorganizar elementos
-    cards.forEach(card => grid.appendChild(card));
+    for (const card of cards) {
+        grid.appendChild(card);
+    }
 }
 
 function sortProductData(products, sortBy) {
@@ -473,7 +475,7 @@ function initializeSelect2() {
 
     const elements = document.querySelectorAll('.select2');
 
-    elements.forEach(function(element) {
+    for (const element of elements) {
         const $element = $(element);
         
         // Destruir instancia existente si existe
@@ -491,7 +493,7 @@ function initializeSelect2() {
                 minimumResultsForSearch: -1 // Ocultar barra de búsqueda
             });
         }
-    });
+    }
 }
 
 function truncateText(text, maxLength) {
@@ -524,22 +526,22 @@ function setPaginationVisibility(show) {
  */
 function setupProductActions() {
     // Botones de ver detalles
-    document.querySelectorAll('.btn-view-details').forEach(btn => {
+    for (const btn of document.querySelectorAll('.btn-view-details')) {
         btn.addEventListener('click', function() {
             const productId = this.dataset.id;
             showProductDetails(productId);
         });
-    });
+    }
 
     // Botones de agregar al carrito
-    document.querySelectorAll('.btn-add-to-cart').forEach(btn => {
+    for (const btn of document.querySelectorAll('.btn-add-to-cart')) {
         btn.addEventListener('click', function() {
             const productId = this.dataset.id;
             const productName = this.dataset.name;
             const productStock = Number.parseInt(this.dataset.stock);
             addToCart(productId, productName, productStock);
         });
-    });
+    }
 }
 
 /**
@@ -723,7 +725,7 @@ function clearFilters() {
 }
 
 // Exportar funciones para uso externo si es necesario
-window.inventarioCard = {
+globalThis.inventarioCard = {
     handleFiltersChange,
     sortProducts,
     clearFilters,
@@ -732,6 +734,6 @@ window.inventarioCard = {
 };
 
 // Exponer funciones utilizadas por atributos onclick en el HTML renderizado por Blade
-window.closeProductModal = closeProductModal;
-window.agregarAlCarritoDesdeModal = agregarAlCarritoDesdeModal;
-window.expandirImagen = expandirImagen;
+globalThis.closeProductModal = closeProductModal;
+globalThis.agregarAlCarritoDesdeModal = agregarAlCarritoDesdeModal;
+globalThis.expandirImagen = expandirImagen;

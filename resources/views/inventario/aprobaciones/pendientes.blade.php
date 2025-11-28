@@ -20,7 +20,7 @@
 @endsection
 @push('css')
     @vite([
-        'resources/css/inventario/shared/base.css', 
+        'resources/css/inventario/shared/base.css',
         'resources/css/inventario/modal-orden.css'
     ])
 @endpush

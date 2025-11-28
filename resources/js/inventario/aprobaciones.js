@@ -182,7 +182,7 @@ function rechazarOrden(ordenId, productos) {
 }
 
 // Exponer funciones para uso en vistas Blade
-window.aprobarProducto = aprobarProducto;
-window.rechazarProducto = rechazarProducto;
-window.aprobarOrden = aprobarOrden;
-window.rechazarOrden = rechazarOrden;
+globalThis.aprobarProducto = aprobarProducto;
+globalThis.rechazarProducto = rechazarProducto;
+globalThis.aprobarOrden = aprobarOrden;
+globalThis.rechazarOrden = rechazarOrden;

@@ -19,14 +19,14 @@ function initFiltroMunicipios(municipioOriginal = null) {
         if (!departamentoId) {
             // Si no hay departamento seleccionado, mostrar todos
             municipioSelect.innerHTML = '<option value="">Seleccione un municipio</option>';
-            const municipiosArray = window.municipiosData || [];
-            municipiosArray.forEach(function(municipio) {
+            const municipiosArray = globalThis.municipiosData || [];
+            for (const municipio of municipiosArray) {
                 const option = document.createElement('option');
                 option.value = municipio.id;
                 option.textContent = municipio.municipio + ' (' + municipio.departamento + ')';
                 if (municipioOriginal == municipio.id) option.selected = true;
                 municipioSelect.appendChild(option);
-            });
+            }
             return;
         }
 
@@ -35,13 +35,13 @@ function initFiltroMunicipios(municipioOriginal = null) {
             .then(response => response.json())
             .then(municipios => {
                 municipioSelect.innerHTML = '<option value="">Seleccione un municipio</option>';
-                municipios.forEach(function(municipio) {
+                for (const municipio of municipios) {
                     const option = document.createElement('option');
                     option.value = municipio.id;
                     option.textContent = municipio.municipio + ' (' + municipio.departamento + ')';
                     if (municipioOriginal == municipio.id) option.selected = true;
                     municipioSelect.appendChild(option);
-                });
+                }
             })
             .catch(error => console.error('Error al cargar municipios:', error));
     }

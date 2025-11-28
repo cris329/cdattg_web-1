@@ -31,7 +31,7 @@ document.addEventListener('DOMContentLoaded', function() {
                         </div>
                     `;
                     setTimeout(() => {
-                        window.location.href = `/inventario/productos/${producto.id}`;
+                        globalThis.location.href = `/inventario/productos/${producto.id}`;
                     }, 1000);
                 })
                 .catch(error => {

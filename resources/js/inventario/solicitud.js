@@ -34,7 +34,7 @@ function cargarDatosCarrito() {
 }
 
 function debeCargarDesdeCarrito() {
-    const urlParams = new URLSearchParams(window.location.search);
+    const urlParams = new URLSearchParams(globalThis.location.search);
     return urlParams.get('desde_carrito') === 'true';
 }
 

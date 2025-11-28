@@ -62,7 +62,7 @@ function manejarMarcarLeidaError() {
 }
 
 function redirigirAUrl(url) {
-    window.location.href = url;
+    globalThis.location.href = url;
 }
 
 function manejarAbrirNotificacionSuccess(response, targetUrl) {
@@ -106,7 +106,7 @@ function manejarEliminarNotificacionSuccess(listItem) {
         $(this).remove();
         
         if ($('.list-group-item').length === 0) {
-            location.reload();
+            globalThis.location.reload();
         }
     });
     
@@ -163,7 +163,7 @@ function manejarVaciarTodasSuccess(result) {
         text: `${result.value.deleted} notificación(es) eliminada(s)`,
         confirmButtonText: 'Aceptar'
     }).then(() => {
-        location.reload();
+        globalThis.location.reload();
     });
 }
 
@@ -213,7 +213,7 @@ function marcarTodasComoLeidas() {
                 text: 'Todas las notificaciones marcadas como leídas',
                 confirmButtonText: 'Aceptar'
             }).then(() => {
-                location.reload();
+                globalThis.location.reload();
             });
         },
         error: function() {
