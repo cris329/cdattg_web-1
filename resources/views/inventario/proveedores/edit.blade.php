@@ -38,17 +38,17 @@
                             <form action="{{ route('inventario.proveedores.update', $proveedor->id) }}" method="POST">
                                 @csrf
                                 @method('PUT')
-                                
+
                                 <div class="row">
                                     <div class="col-md-6">
                                         <div class="form-group">
                                             <label for="proveedor">Nombre del Proveedor <span class="text-danger">*</span></label>
-                                            <input 
-                                                type="text" 
-                                                class="form-control @error('proveedor') is-invalid @enderror" 
-                                                id="proveedor" 
-                                                name="proveedor" 
-                                                value="{{ old('proveedor', $proveedor->proveedor) }}" 
+                                            <input
+                                                type="text"
+                                                class="form-control @error('proveedor') is-invalid @enderror"
+                                                id="proveedor"
+                                                name="proveedor"
+                                                value="{{ old('proveedor', $proveedor->proveedor) }}"
                                                 placeholder="Ingrese el nombre del proveedor"
                                                 required
                                             >
@@ -60,12 +60,12 @@
                                     <div class="col-md-6">
                                         <div class="form-group">
                                             <label for="nit">NIT</label>
-                                            <input 
-                                                type="text" 
-                                                class="form-control @error('nit') is-invalid @enderror" 
-                                                id="nit" 
-                                                name="nit" 
-                                                value="{{ old('nit', $proveedor->nit) }}" 
+                                            <input
+                                                type="text"
+                                                class="form-control @error('nit') is-invalid @enderror"
+                                                id="nit"
+                                                name="nit"
+                                                value="{{ old('nit', $proveedor->nit) }}"
                                                 placeholder="Ingrese el NIT del proveedor"
                                             >
                                             @error('nit')
@@ -79,12 +79,12 @@
                                     <div class="col-md-6">
                                         <div class="form-group">
                                             <label for="email">Correo Electrónico</label>
-                                            <input 
-                                                type="email" 
-                                                class="form-control @error('email') is-invalid @enderror" 
-                                                id="email" 
-                                                name="email" 
-                                                value="{{ old('email', $proveedor->email) }}" 
+                                            <input
+                                                type="email"
+                                                class="form-control @error('email') is-invalid @enderror"
+                                                id="email"
+                                                name="email"
+                                                value="{{ old('email', $proveedor->email) }}"
                                                 placeholder="Ingrese el correo electrónico"
                                             >
                                             @error('email')
@@ -95,12 +95,12 @@
                                     <div class="col-md-6">
                                         <div class="form-group">
                                             <label for="telefono">Teléfono</label>
-                                            <input 
-                                                type="text" 
-                                                class="form-control @error('telefono') is-invalid @enderror" 
-                                                id="telefono" 
-                                                name="telefono" 
-                                                value="{{ old('telefono', $proveedor->telefono) }}" 
+                                            <input
+                                                type="text"
+                                                class="form-control @error('telefono') is-invalid @enderror"
+                                                id="telefono"
+                                                name="telefono"
+                                                value="{{ old('telefono', $proveedor->telefono) }}"
                                                 placeholder="Ingrese el teléfono"
                                             >
                                             @error('telefono')
@@ -185,11 +185,11 @@
                                     <div class="col-12">
                                         <div class="form-group">
                                             <label for="observaciones">Observaciones</label>
-                                            <textarea 
-                                                class="form-control @error('observaciones') is-invalid @enderror" 
-                                                id="observaciones" 
-                                                name="observaciones" 
-                                                rows="3" 
+                                            <textarea
+                                                class="form-control @error('observaciones') is-invalid @enderror"
+                                                id="observaciones"
+                                                name="observaciones"
+                                                rows="3"
                                                 placeholder="Ingrese observaciones sobre el proveedor (opcional)"
                                             >{{ old('observaciones', $proveedor->observaciones) }}</textarea>
                                             @error('observaciones')
