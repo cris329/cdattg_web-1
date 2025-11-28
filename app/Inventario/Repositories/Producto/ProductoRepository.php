@@ -2,11 +2,11 @@
 
 declare(strict_types=1);
 
-namespace App\Repositories\Eloquent\Inventario;
+namespace App\Inventario\Repositories\Producto;
 
 use App\Models\Inventario\Producto;
 use App\Models\ParametroTema;
-use App\Repositories\Interfaces\Inventario\ProductoRepositoryInterface;
+use App\Inventario\Interfaces\Repositories\Producto\ProductoRepositoryInterface;
 use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Contracts\Pagination\LengthAwarePaginator;
 

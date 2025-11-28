@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace App\Repositories\Interfaces\Inventario;
+namespace App\Inventario\Interfaces\Repositories\Producto;
 
 use App\Models\Inventario\Producto;
 use Illuminate\Contracts\Pagination\LengthAwarePaginator;

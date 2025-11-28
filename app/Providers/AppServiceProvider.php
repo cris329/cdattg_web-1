@@ -20,8 +20,8 @@ class AppServiceProvider extends ServiceProvider
     {
         // Bindings de repositorios de Inventario
         $this->app->bind(
-            \App\Repositories\Interfaces\Inventario\ProductoRepositoryInterface::class,
-            \App\Repositories\Eloquent\Inventario\ProductoRepository::class
+            \App\Inventario\Interfaces\Repositories\Producto\ProductoRepositoryInterface::class,
+            \App\Inventario\Repositories\Producto\ProductoRepository::class
         );
 
         $this->app->bind(

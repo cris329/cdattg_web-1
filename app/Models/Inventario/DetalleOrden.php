@@ -25,7 +25,7 @@ class DetalleOrden extends Model
         'user_edit_id'
     ];
 
-    // Relación con la orden 
+    // Relación con la orden
     public function orden() : BelongsTo
     {
         return $this->belongsTo(Orden::class, 'orden_id');

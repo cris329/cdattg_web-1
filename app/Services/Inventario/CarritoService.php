@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace App\Services\Inventario;
 
-use App\Repositories\Interfaces\Inventario\ProductoRepositoryInterface;
+use App\Inventario\Interfaces\Repositories\Producto\ProductoRepositoryInterface;
 use App\Models\Inventario\Producto;
 use App\Exceptions\CarritoException;
 use Illuminate\Support\Collection;

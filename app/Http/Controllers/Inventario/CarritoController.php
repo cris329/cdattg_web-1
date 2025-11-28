@@ -5,7 +5,7 @@ declare(strict_types=1);
 namespace App\Http\Controllers\Inventario;
 
 use App\Http\Controllers\Controller;
-use App\Repositories\Interfaces\Inventario\ProductoRepositoryInterface;
+use App\Inventario\Interfaces\Repositories\Producto\ProductoRepositoryInterface;
 use App\Services\Inventario\CarritoService;
 use App\Exceptions\CarritoException;
 use Illuminate\Http\JsonResponse;

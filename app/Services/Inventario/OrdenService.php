@@ -8,7 +8,7 @@ use App\Models\Inventario\Orden;
 use App\Models\Inventario\DetalleOrden;
 use App\Repositories\Interfaces\Inventario\OrdenRepositoryInterface;
 use App\Repositories\Interfaces\Inventario\DetalleOrdenRepositoryInterface;
-use App\Repositories\Interfaces\Inventario\ProductoRepositoryInterface;
+use App\Inventario\Interfaces\Repositories\Producto\ProductoRepositoryInterface;
 use App\Services\Inventario\Interfaces\NotificationServiceInterface;
 use App\Services\Inventario\Interfaces\TransactionServiceInterface;
 use App\Services\Inventario\Interfaces\StockValidatorServiceInterface;

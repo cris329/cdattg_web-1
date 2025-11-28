@@ -5,7 +5,7 @@ declare(strict_types=1);
 namespace App\Services\Inventario;
 
 use App\Services\Inventario\Interfaces\BarcodeServiceInterface;
-use App\Repositories\Interfaces\Inventario\ProductoRepositoryInterface;
+use App\Inventario\Interfaces\Repositories\Producto\ProductoRepositoryInterface;
 
 class BarcodeService implements BarcodeServiceInterface
 {
