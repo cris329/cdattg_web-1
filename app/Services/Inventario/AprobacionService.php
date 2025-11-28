@@ -10,9 +10,12 @@ use App\Repositories\Interfaces\Inventario\AprobacionRepositoryInterface;
 use App\Repositories\Interfaces\Inventario\DetalleOrdenRepositoryInterface;
 use App\Repositories\Interfaces\Inventario\OrdenRepositoryInterface;
 use App\Repositories\Interfaces\Inventario\ProductoRepositoryInterface;
-use App\Repositories\Interfaces\ParametroTemaRepositoryInterface;
+use App\Services\Inventario\Interfaces\TransactionServiceInterface;
+use App\Services\Inventario\Interfaces\NotificationServiceInterface;
+use App\Services\Inventario\Interfaces\StockValidatorServiceInterface;
+use App\Models\Tema;
+use App\Models\Parametro;
 use App\Exceptions\AprobacionException;
-use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Auth;
 use App\Notifications\OrdenAprobadaNotification;
 use App\Notifications\OrdenRechazadaNotification;
@@ -23,20 +26,23 @@ class AprobacionService
     protected DetalleOrdenRepositoryInterface $detalleOrdenRepository;
     protected OrdenRepositoryInterface $ordenRepository;
     protected ProductoRepositoryInterface $productoRepository;
-    protected ParametroTemaRepositoryInterface $parametroTemaRepository;
+    protected TransactionServiceInterface $transactionService;
+    protected StockValidatorServiceInterface $stockValidator;
 
     public function __construct(
         AprobacionRepositoryInterface $repository,
         DetalleOrdenRepositoryInterface $detalleOrdenRepository,
         OrdenRepositoryInterface $ordenRepository,
         ProductoRepositoryInterface $productoRepository,
-        ParametroTemaRepositoryInterface $parametroTemaRepository
+        TransactionServiceInterface $transactionService,
+        StockValidatorServiceInterface $stockValidator
     ) {
         $this->repository = $repository;
         $this->detalleOrdenRepository = $detalleOrdenRepository;
         $this->ordenRepository = $ordenRepository;
         $this->productoRepository = $productoRepository;
-        $this->parametroTemaRepository = $parametroTemaRepository;
+        $this->transactionService = $transactionService;
+        $this->stockValidator = $stockValidator;
     }
     private const STATUS_PENDING = 'EN ESPERA';
     private const STATUS_APPROVED = 'APROBADA';
@@ -45,23 +51,41 @@ class AprobacionService
 
     /**
      * Obtiene estado EN ESPERA
+     * Uso directo del modelo Tema/Parametro (clase externa, sin SOLID)
      *
-     * @return ParametroTema|null
+     * @return Parametro|null
      */
     public function obtenerEstadoEnEspera()
     {
-        return $this->parametroTemaRepository->buscarPorTemaYNombre(self::ORDER_STATUS_THEME, self::STATUS_PENDING);
+        $tema = Tema::where('name', self::ORDER_STATUS_THEME)->first();
+        if (!$tema) {
+            return null;
+        }
+
+        return $tema->parametros()
+            ->where('name', self::STATUS_PENDING)
+            ->wherePivot('status', 1)
+            ->first();
     }
 
     /**
      * Obtiene estado APROBADA
+     * Uso directo del modelo Tema/Parametro (clase externa, sin SOLID)
      *
-     * @return ParametroTema
+     * @return Parametro
      * @throws AprobacionException
      */
     public function obtenerEstadoAprobada()
     {
-        $estado = $this->parametroTemaRepository->buscarPorTemaYNombre(self::ORDER_STATUS_THEME, self::STATUS_APPROVED);
+        $tema = Tema::where('name', self::ORDER_STATUS_THEME)->first();
+        if (!$tema) {
+            throw new AprobacionException("Tema 'ESTADOS DE ORDEN' no encontrado.");
+        }
+
+        $estado = $tema->parametros()
+            ->where('name', self::STATUS_APPROVED)
+            ->wherePivot('status', 1)
+            ->first();
 
         if (!$estado) {
             throw new AprobacionException("Estado 'APROBADA' no encontrado en parámetros.");
@@ -72,13 +96,22 @@ class AprobacionService
 
     /**
      * Obtiene estado RECHAZADA
+     * Uso directo del modelo Tema/Parametro (clase externa, sin SOLID)
      *
-     * @return ParametroTema
+     * @return Parametro
      * @throws AprobacionException
      */
     public function obtenerEstadoRechazada()
     {
-        $estado = $this->parametroTemaRepository->buscarPorTemaYNombre(self::ORDER_STATUS_THEME, self::STATUS_REJECTED);
+        $tema = Tema::where('name', self::ORDER_STATUS_THEME)->first();
+        if (!$tema) {
+            throw new AprobacionException("Tema 'ESTADOS DE ORDEN' no encontrado.");
+        }
+
+        $estado = $tema->parametros()
+            ->where('name', self::STATUS_REJECTED)
+            ->wherePivot('status', 1)
+            ->first();
 
         if (!$estado) {
             throw new AprobacionException("Estado 'RECHAZADA' no encontrado en parámetros.");
@@ -97,26 +130,15 @@ class AprobacionService
     public function aprobarDetalle(DetalleOrden $detalleOrden): void
     {
         try {
-            DB::beginTransaction();
+            $this->transactionService->beginTransaction();
 
             $estadoEnEspera = $this->obtenerEstadoEnEspera();
             $estadoAprobada = $this->obtenerEstadoAprobada();
 
-            if (!$estadoEnEspera || $detalleOrden->estado_orden_id != $estadoEnEspera->id) {
-                throw new AprobacionException('Esta solicitud no está pendiente de aprobación.');
-            }
-
-            if ($detalleOrden->aprobacion) {
-                throw new AprobacionException('Esta solicitud ya fue procesada anteriormente.');
-            }
+            $this->validarDetallePendiente($detalleOrden, $estadoEnEspera);
 
             $producto = $detalleOrden->producto;
-            if ($producto->cantidad < $detalleOrden->cantidad) {
-                throw new AprobacionException(
-                    "Stock insuficiente para '{$producto->producto}'. " .
-                    "Disponible: {$producto->cantidad}, Solicitado: {$detalleOrden->cantidad}"
-                );
-            }
+            $this->stockValidator->validarStockSuficiente($producto, $detalleOrden->cantidad);
 
             $this->detalleOrdenRepository->actualizar($detalleOrden, [
                 'estado_orden_id' => $estadoAprobada->id,
@@ -134,16 +156,65 @@ class AprobacionService
             $this->productoRepository->actualizarStock($producto, $nuevaCantidad);
             $this->productoRepository->actualizar($producto, ['user_update_id' => Auth::id()]);
 
-            $solicitante = $detalleOrden->orden->userCreate;
-            if ($solicitante) {
-                $solicitante->notify(new OrdenAprobadaNotification($detalleOrden, Auth::user()));
-            }
+            $this->notificarAprobacion($detalleOrden);
 
-            DB::commit();
+            $this->transactionService->commit();
 
         } catch (\Exception $e) {
-            DB::rollBack();
+            $this->transactionService->rollBack();
             throw $e;
+        }
+    }
+
+    /**
+     * Valida que el detalle esté pendiente de aprobación
+     *
+     * @param DetalleOrden $detalleOrden
+     * @param mixed $estadoEnEspera
+     * @return void
+     * @throws AprobacionException
+     */
+    private function validarDetallePendiente(DetalleOrden $detalleOrden, $estadoEnEspera): void
+    {
+        if (!$estadoEnEspera || $detalleOrden->estado_orden_id != $estadoEnEspera->id) {
+            throw new AprobacionException('Esta solicitud no está pendiente de aprobación.');
+        }
+
+        if ($detalleOrden->aprobacion) {
+            throw new AprobacionException('Esta solicitud ya fue procesada anteriormente.');
+        }
+    }
+
+    /**
+     * Notifica la aprobación al solicitante
+     *
+     * @param DetalleOrden $detalleOrden
+     * @return void
+     */
+    private function notificarAprobacion(DetalleOrden $detalleOrden): void
+    {
+        $solicitante = $detalleOrden->orden->userCreate;
+        if ($solicitante) {
+            $solicitante->notify(new OrdenAprobadaNotification($detalleOrden, Auth::user()));
+        }
+    }
+
+    /**
+     * Notifica el rechazo al solicitante
+     *
+     * @param DetalleOrden $detalleOrden
+     * @param string $motivoRechazo
+     * @return void
+     */
+    private function notificarRechazo(DetalleOrden $detalleOrden, string $motivoRechazo): void
+    {
+        $solicitante = $detalleOrden->orden->userCreate;
+        if ($solicitante) {
+            $solicitante->notify(new OrdenRechazadaNotification(
+                $detalleOrden,
+                Auth::user(),
+                $motivoRechazo
+            ));
         }
     }
 
@@ -158,18 +229,12 @@ class AprobacionService
     public function rechazarDetalle(DetalleOrden $detalleOrden, string $motivoRechazo): void
     {
         try {
-            DB::beginTransaction();
+            $this->transactionService->beginTransaction();
 
             $estadoEnEspera = $this->obtenerEstadoEnEspera();
             $estadoRechazada = $this->obtenerEstadoRechazada();
 
-            if (!$estadoEnEspera || $detalleOrden->estado_orden_id != $estadoEnEspera->id) {
-                throw new AprobacionException('Esta solicitud no está pendiente de aprobación.');
-            }
-
-            if ($detalleOrden->aprobacion) {
-                throw new AprobacionException('Esta solicitud ya fue procesada anteriormente.');
-            }
+            $this->validarDetallePendiente($detalleOrden, $estadoEnEspera);
 
             $this->detalleOrdenRepository->actualizar($detalleOrden, [
                 'estado_orden_id' => $estadoRechazada->id,
@@ -195,19 +260,12 @@ class AprobacionService
                 'user_update_id' => Auth::id()
             ]);
 
-            $solicitante = $detalleOrden->orden->userCreate;
-            if ($solicitante) {
-                $solicitante->notify(new OrdenRechazadaNotification(
-                    $detalleOrden,
-                    Auth::user(),
-                    $motivoRechazo
-                ));
-            }
+            $this->notificarRechazo($detalleOrden, $motivoRechazo);
 
-            DB::commit();
+            $this->transactionService->commit();
 
         } catch (\Exception $e) {
-            DB::rollBack();
+            $this->transactionService->rollBack();
             throw $e;
         }
     }
@@ -222,7 +280,7 @@ class AprobacionService
     public function aprobarOrdenCompleta(Orden $orden): void
     {
         try {
-            DB::beginTransaction();
+            $this->transactionService->beginTransaction();
 
             $estadoEnEspera = $this->obtenerEstadoEnEspera();
             $estadoAprobada = $this->obtenerEstadoAprobada();
@@ -237,13 +295,9 @@ class AprobacionService
                 throw new AprobacionException('No hay productos pendientes de aprobación en esta orden.');
             }
 
+            // Validar stock de todos los productos antes de procesar
             foreach ($detallesPendientes as $detalle) {
-                if ($detalle->producto->cantidad < $detalle->cantidad) {
-                    throw new AprobacionException(
-                        "Stock insuficiente para '{$detalle->producto->producto}'. " .
-                        "Disponible: {$detalle->producto->cantidad}, Solicitado: {$detalle->cantidad}"
-                    );
-                }
+                $this->stockValidator->validarStockSuficiente($detalle->producto, $detalle->cantidad);
             }
 
             foreach ($detallesPendientes as $detalle) {
@@ -271,10 +325,10 @@ class AprobacionService
                 }
             }
 
-            DB::commit();
+            $this->transactionService->commit();
 
         } catch (\Exception $e) {
-            DB::rollBack();
+            $this->transactionService->rollBack();
             throw $e;
         }
     }
@@ -290,7 +344,7 @@ class AprobacionService
     public function rechazarOrdenCompleta(Orden $orden, string $motivoRechazo): void
     {
         try {
-            DB::beginTransaction();
+            $this->transactionService->beginTransaction();
 
             $estadoEnEspera = $this->obtenerEstadoEnEspera();
             $estadoRechazada = $this->obtenerEstadoRechazada();
@@ -340,10 +394,10 @@ class AprobacionService
                 }
             }
 
-            DB::commit();
+            $this->transactionService->commit();
 
         } catch (\Exception $e) {
-            DB::rollBack();
+            $this->transactionService->rollBack();
             throw $e;
         }
     }

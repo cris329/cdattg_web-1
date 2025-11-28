@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace App\Services\Inventario;
 
-use App\Repositories\Interfaces\ParametroTemaRepositoryInterface;
+use App\Models\Tema;
 use App\Exceptions\OrdenException;
 
 class DevolucionesServices
@@ -12,22 +12,24 @@ class DevolucionesServices
     private const THEME_ORDER_STATES = 'ESTADOS DE ORDEN';
     private const STATUS_APROBADA = 'APROBADA';
 
-    protected ParametroTemaRepositoryInterface $parametroTemaRepository;
-
-    public function __construct(ParametroTemaRepositoryInterface $parametroTemaRepository)
-    {
-        $this->parametroTemaRepository = $parametroTemaRepository;
-    }
-
     /**
      * Obtiene estado APROBADA
+     * Uso directo del modelo Tema/Parametro (clase externa, sin SOLID)
      *
-     * @return mixed
+     * @return \App\Models\Parametro
      * @throws OrdenException
      */
     public function obtenerEstadoAprobada()
     {
-        $estado = $this->parametroTemaRepository->buscarPorTemaYNombre(self::THEME_ORDER_STATES, self::STATUS_APROBADA);
+        $tema = Tema::where('name', self::THEME_ORDER_STATES)->first();
+        if (!$tema) {
+            throw new OrdenException("Tema 'ESTADOS DE ORDEN' no encontrado.");
+        }
+
+        $estado = $tema->parametros()
+            ->where('name', self::STATUS_APROBADA)
+            ->wherePivot('status', 1)
+            ->first();
 
         if (!$estado) {
             throw new OrdenException("Estado 'APROBADA' no encontrado.");
