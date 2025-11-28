@@ -122,7 +122,7 @@
                             <input type="file"
                                    id="documento_identidad"
                                    name="documento_identidad"
-                                   class="d-none"
+                                   style="position: absolute; opacity: 0; width: 0.1px; height: 0.1px; overflow: hidden; z-index: -1;"
                                    accept=".pdf,.jpg,.jpeg,.png"
                                    required>
                             <div id="fileInfo" class="mt-3" style="display: none;">
@@ -190,121 +190,161 @@
 
 @section('js')
     <script>
-        document.addEventListener('DOMContentLoaded', function() {
-            const uploadArea = document.getElementById('uploadArea');
-            const fileInput = document.getElementById('documento_identidad');
-            const selectFileBtn = document.getElementById('selectFileBtn');
-            const fileInfo = document.getElementById('fileInfo');
-            const fileName = document.getElementById('fileName');
-            const fileSize = document.getElementById('fileSize');
-            const removeFileBtn = document.getElementById('removeFileBtn');
-            const uploadText = document.getElementById('uploadText');
-            const submitBtn = document.getElementById('submitBtn');
-            const form = document.getElementById('documentForm');
+        (function() {
+            let initialized = false;
 
-            // Open file dialog when button is clicked
-            selectFileBtn.addEventListener('click', function() {
-                fileInput.click();
-            });
+            function initFileUpload() {
+                // Evitar múltiples inicializaciones
+                if (initialized) return;
+                
+                const uploadArea = document.getElementById('uploadArea');
+                const fileInput = document.getElementById('documento_identidad');
+                const selectFileBtn = document.getElementById('selectFileBtn');
+                const fileInfo = document.getElementById('fileInfo');
+                const fileName = document.getElementById('fileName');
+                const fileSize = document.getElementById('fileSize');
+                const removeFileBtn = document.getElementById('removeFileBtn');
+                const uploadText = document.getElementById('uploadText');
+                const submitBtn = document.getElementById('submitBtn');
+                const form = document.getElementById('documentForm');
 
-            // Handle file selection
-            fileInput.addEventListener('change', function(e) {
-                if (this.files && this.files[0]) {
-                    handleFileSelection(this.files[0]);
-                }
-            });
-
-            // Drag and drop functionality
-            ['dragenter', 'dragover', 'dragleave', 'drop'].forEach(eventName => {
-                uploadArea.addEventListener(eventName, preventDefaults, false);
-            });
-
-            function preventDefaults(e) {
-                e.preventDefault();
-                e.stopPropagation();
-            }
-
-            ['dragenter', 'dragover'].forEach(eventName => {
-                uploadArea.addEventListener(eventName, highlight, false);
-            });
-
-            ['dragleave', 'drop'].forEach(eventName => {
-                uploadArea.addEventListener(eventName, unhighlight, false);
-            });
-
-            function highlight() {
-                uploadArea.classList.add('highlight');
-            }
-
-            function unhighlight() {
-                uploadArea.classList.remove('highlight');
-            }
-
-            uploadArea.addEventListener('drop', function(e) {
-                const dt = e.dataTransfer;
-                const files = dt.files;
-                if (files && files[0]) {
-                    fileInput.files = files;
-                    handleFileSelection(files[0]);
-                }
-            });
-
-            function handleFileSelection(file) {
-                // Validate file type
-                const validTypes = ['application/pdf', 'image/jpeg', 'image/jpg', 'image/png'];
-                if (!validTypes.includes(file.type)) {
-                    alert('Tipo de archivo no válido. Solo se permiten PDF, JPG y PNG.');
-                    return;
+                // Verificar que todos los elementos existan
+                if (!uploadArea || !fileInput || !selectFileBtn || !fileInfo || !fileName || 
+                    !fileSize || !removeFileBtn || !uploadText || !submitBtn || !form) {
+                    return false;
                 }
 
-                // Validate file size (5MB)
-                const maxSize = 5 * 1024 * 1024; // 5MB in bytes
-                if (file.size > maxSize) {
-                    alert('El archivo es demasiado grande. El tamaño máximo permitido es 5MB.');
-                    return;
-                }
+                initialized = true;
 
-                // Update UI
-                fileName.textContent = file.name;
-                fileSize.textContent = ` (${formatFileSize(file.size)})`;
-                fileInfo.style.display = 'block';
-                uploadText.textContent = 'Archivo seleccionado:';
-                uploadArea.classList.add('file-selected');
-            }
-
-            // Remove file
-            removeFileBtn.addEventListener('click', function() {
-                fileInput.value = '';
-                fileInfo.style.display = 'none';
-                uploadText.textContent = 'Arrastre y suelte el documento aquí';
-                uploadArea.classList.remove('file-selected');
-            });
-
-            // Format file size
-            function formatFileSize(bytes) {
-                if (bytes === 0) return '0 Bytes';
-                const k = 1024;
-                const sizes = ['Bytes', 'KB', 'MB', 'GB'];
-                const i = Math.floor(Math.log(bytes) / Math.log(k));
-                return parseFloat((bytes / Math.pow(k, i)).toFixed(2)) + ' ' + sizes[i];
-            }
-
-            // Form validation
-            form.addEventListener('submit', function(e) {
-                const tipoDocumento = document.getElementById('tipo_documento').value;
-                const numeroDocumento = document.getElementById('numero_documento').value;
-                const documentoIdentidad = document.getElementById('documento_identidad').files[0];
-
-                if (!tipoDocumento || !numeroDocumento || !documentoIdentidad) {
+                // Open file dialog when button is clicked
+                selectFileBtn.addEventListener('click', function(e) {
                     e.preventDefault();
-                    alert('Por favor complete todos los campos obligatorios.');
-                    return;
+                    e.stopPropagation();
+                    fileInput.click();
+                }, true);
+
+                // Handle file selection
+                fileInput.addEventListener('change', function(e) {
+                    if (this.files && this.files[0]) {
+                        handleFileSelection(this.files[0]);
+                    }
+                });
+
+                // Drag and drop functionality
+                ['dragenter', 'dragover', 'dragleave', 'drop'].forEach(eventName => {
+                    uploadArea.addEventListener(eventName, preventDefaults, false);
+                });
+
+                function preventDefaults(e) {
+                    e.preventDefault();
+                    e.stopPropagation();
                 }
 
-                // Show loading state
-                submitBtn.disabled = true;
-                submitBtn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Subiendo...';
+                ['dragenter', 'dragover'].forEach(eventName => {
+                    uploadArea.addEventListener(eventName, highlight, false);
+                });
+
+                ['dragleave', 'drop'].forEach(eventName => {
+                    uploadArea.addEventListener(eventName, unhighlight, false);
+                });
+
+                function highlight() {
+                    uploadArea.classList.add('highlight');
+                }
+
+                function unhighlight() {
+                    uploadArea.classList.remove('highlight');
+                }
+
+                uploadArea.addEventListener('drop', function(e) {
+                    const dt = e.dataTransfer;
+                    const files = dt.files;
+                    if (files && files[0]) {
+                        fileInput.files = files;
+                        handleFileSelection(files[0]);
+                    }
+                });
+
+                function handleFileSelection(file) {
+                    // Validate file type
+                    const validTypes = ['application/pdf', 'image/jpeg', 'image/jpg', 'image/png'];
+                    if (!validTypes.includes(file.type)) {
+                        alert('Tipo de archivo no válido. Solo se permiten PDF, JPG y PNG.');
+                        return;
+                    }
+
+                    // Validate file size (5MB)
+                    const maxSize = 5 * 1024 * 1024; // 5MB in bytes
+                    if (file.size > maxSize) {
+                        alert('El archivo es demasiado grande. El tamaño máximo permitido es 5MB.');
+                        return;
+                    }
+
+                    // Update UI
+                    fileName.textContent = file.name;
+                    fileSize.textContent = ` (${formatFileSize(file.size)})`;
+                    fileInfo.style.display = 'block';
+                    uploadText.textContent = 'Archivo seleccionado:';
+                    uploadArea.classList.add('file-selected');
+                }
+
+                // Remove file
+                removeFileBtn.addEventListener('click', function() {
+                    fileInput.value = '';
+                    fileInfo.style.display = 'none';
+                    uploadText.textContent = 'Arrastre y suelte el documento aquí';
+                    uploadArea.classList.remove('file-selected');
+                });
+
+                // Format file size
+                function formatFileSize(bytes) {
+                    if (bytes === 0) return '0 Bytes';
+                    const k = 1024;
+                    const sizes = ['Bytes', 'KB', 'MB', 'GB'];
+                    const i = Math.floor(Math.log(bytes) / Math.log(k));
+                    return parseFloat((bytes / Math.pow(k, i)).toFixed(2)) + ' ' + sizes[i];
+                }
+
+                // Form validation
+                form.addEventListener('submit', function(e) {
+                    const tipoDocumento = document.getElementById('tipo_documento').value;
+                    const numeroDocumento = document.getElementById('numero_documento').value;
+                    const documentoIdentidad = document.getElementById('documento_identidad').files[0];
+
+                    if (!tipoDocumento || !numeroDocumento || !documentoIdentidad) {
+                        e.preventDefault();
+                        alert('Por favor complete todos los campos obligatorios.');
+                        return;
+                    }
+
+                    // Show loading state
+                    submitBtn.disabled = true;
+                    submitBtn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Subiendo...';
+                });
+
+                return true;
+            }
+
+            // Función para intentar inicializar
+            function tryInit() {
+                if (!initFileUpload()) {
+                    setTimeout(tryInit, 50);
+                }
+            }
+
+            // Intentar inicializar en múltiples momentos
+            if (document.readyState === 'loading') {
+                document.addEventListener('DOMContentLoaded', function() {
+                    setTimeout(tryInit, 100);
+                });
+            } else {
+                setTimeout(tryInit, 100);
+            }
+
+            // También intentar cuando todo esté completamente cargado
+            window.addEventListener('load', function() {
+                setTimeout(tryInit, 50);
             });
-        });
+        })();
     </script>
 @stop
