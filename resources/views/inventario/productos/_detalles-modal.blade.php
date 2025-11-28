@@ -1,30 +1,32 @@
 <div>
+    <style>
+        .modal-img-container:hover .expand-icon {
+            opacity: 1 !important;
+        }
+    </style>
     <!-- Imagen clickeable para expandir -->
     @php
         $imagenProducto = $producto->imagen ? asset($producto->imagen) : asset('img/inventario/producto-default.png');
     @endphp
-    <div class="modal-img-container" 
+    <div class="modal-img-container"
          role="button"
          tabindex="0"
          aria-label="Ampliar imagen del producto {{ $producto->producto }}"
-         style="cursor: pointer; position: relative; border-radius: 8px; overflow: hidden;" 
+         style="cursor: pointer; position: relative; border-radius: 8px; overflow: hidden;"
          onclick="expandirImagen('{{ $imagenProducto }}')"
-         onkeydown="if(event.key === 'Enter' || event.key === ' ') { event.preventDefault(); expandirImagen('{{ $imagenProducto }}'); }"
-         onkeypress="if(event.key === 'Enter' || event.key === ' ') { event.preventDefault(); expandirImagen('{{ $imagenProducto }}'); }">
-        <img src="{{ $imagenProducto }}" 
-             alt="{{ $producto->producto }}" 
+         onkeydown="if(event.key === 'Enter' || event.key === ' ') { event.preventDefault(); expandirImagen('{{ $imagenProducto }}'); }">
+        <img src="{{ $imagenProducto }}"
+             alt="{{ $producto->producto }}"
              class="modal-img"
              style="width: 100%; height: 100%; object-fit: contain; border-radius: 8px;"
              title="Haz clic para ampliar">
-        <div style="position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%); color: white; font-size: 2rem; opacity: 0; transition: opacity 0.3s; text-shadow: 0 2px 4px rgba(0,0,0,0.5);" 
-             class="expand-icon" 
-             aria-hidden="true"
-             onmouseover="this.style.opacity='1'" 
-             onmouseout="this.style.opacity='0'">
+        <div style="position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%); color: white; font-size: 2rem; opacity: 0; transition: opacity 0.3s; text-shadow: 0 2px 4px rgba(0,0,0,0.5);"
+             class="expand-icon"
+             aria-hidden="true">
             <i class="fas fa-expand"></i>
         </div>
     </div>
-    
+
     <!-- Modal de Imagen Expandible -->
     @include('inventario._components.image-modal')
 
@@ -113,7 +115,7 @@
     <!-- Botones -->
     <div class="modal-buttons">
         @if($producto->cantidad > 0)
-            <button type="button" 
+            <button type="button"
                     class="modal-btn modal-btn-success"
                     onclick="agregarAlCarritoDesdeModal({{ $producto->id }}, '{{ addslashes($producto->producto) }}', {{ $producto->cantidad }})">
                 <i class="fas fa-cart-plus"></i> Agregar al Carrito
@@ -123,7 +125,7 @@
                 Stock Agotado
             </button>
         @endif
-        <button type="button" 
+        <button type="button"
                 class="modal-btn modal-btn-secondary"
                 onclick="closeProductModal()">
             Cerrar

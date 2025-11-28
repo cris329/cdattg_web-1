@@ -253,9 +253,6 @@
                 overflow-y:auto;
                 box-shadow:0 4px 20px rgba(0,0,0,0.3);
             "
-            onclick="event.stopPropagation()"
-            onkeydown="event.stopPropagation()"
-            onkeypress="event.stopPropagation()"
         >
             <!-- Header -->
             <div
@@ -273,17 +270,20 @@
                     <i class="fas fa-box"></i> Detalles del Producto
                 </h5>
                 <button
+                    type="button"
                     onclick="closeProductModal()"
-                    aria-label="Cerrar"
+                    aria-label="Cerrar modal de detalles del producto"
                     style="
                         background:none;
                         border:none;
                         color:white;
                         font-size:24px;
                         cursor:pointer;
+                        padding:0;
+                        margin:0;
                     "
                 >
-                    &times;
+                    <span aria-hidden="true">&times;</span>
                 </button>
             </div>
             

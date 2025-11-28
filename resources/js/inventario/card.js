@@ -89,6 +89,8 @@ function initializeCardView() {
  */
 function setupModalDismissHandlers() {
     const modal = document.getElementById('productDetailModal');
+    const modalContent = document.getElementById('product-detail-modal-content');
+
     if (modal && !modal.dataset.dismissInitialized) {
         modal.addEventListener('click', function(event) {
             if (event.target === modal) {
@@ -96,6 +98,16 @@ function setupModalDismissHandlers() {
             }
         });
         modal.dataset.dismissInitialized = 'true';
+    }
+
+    if (modalContent && !modalContent.dataset.stopPropagationInitialized) {
+        modalContent.addEventListener('click', function(event) {
+            event.stopPropagation();
+        });
+        modalContent.addEventListener('keydown', function(event) {
+            event.stopPropagation();
+        });
+        modalContent.dataset.stopPropagationInitialized = 'true';
     }
 
     if (!document.body.dataset.productModalEscapeListener) {
