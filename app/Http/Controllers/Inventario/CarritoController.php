@@ -47,30 +47,13 @@ class CarritoController extends Controller
             $erroresStock = $this->service->verificarDisponibilidad($validated['items']);
 
             if (!empty($erroresStock)) {
-                return response()->json([
-                    'success' => false,
-                    'message' => 'Stock insuficiente para algunos productos',
-                    'errores' => $erroresStock
-                ], 400);
+                return $this->respuestaErrorStock($erroresStock);
             }
 
-            // La creación de la orden se completa en el formulario de préstamos/salidas.
-            return response()->json([
-                'success' => true,
-                'message' => 'Solicitud procesada correctamente',
-                'orden_id' => null
-            ]);
+            return $this->respuestaExitoAgregar();
 
-        } catch (CarritoException $e) {
-            return response()->json([
-                'success' => false,
-                'message' => $e->getMessage()
-            ], 404);
         } catch (\Exception $e) {
-            return response()->json([
-                'success' => false,
-                'message' => 'Error al procesar la solicitud: ' . $e->getMessage()
-            ], 500);
+            return $this->manejarExcepcionAgregar($e);
         }
     }
 
@@ -81,22 +64,13 @@ class CarritoController extends Controller
             $validated = $request->validated();
             $resultado = $this->service->validarItem($id, (int)$validated['cantidad']);
 
-            if (!$resultado['success']) {
-                return response()->json($resultado, 400);
-            }
-
-            return response()->json($resultado);
+            $codigoHttp = $resultado['success'] ? 200 : 400;
+            return response()->json($resultado, $codigoHttp);
 
         } catch (CarritoException $e) {
-            return response()->json([
-                'success' => false,
-                'message' => $e->getMessage()
-            ], 404);
+            return $this->respuestaErrorCarrito($e);
         } catch (\Exception $e) {
-            return response()->json([
-                'success' => false,
-                'message' => 'Error al actualizar: ' . $e->getMessage()
-            ], 500);
+            return $this->respuestaErrorGenerico('Error al actualizar: ' . $e->getMessage());
         }
     }
 
@@ -156,6 +130,49 @@ class CarritoController extends Controller
                 'message' => 'Error al obtener contenido: ' . $e->getMessage()
             ], 500);
         }
+    }
+
+    private function respuestaErrorStock(array $erroresStock): JsonResponse
+    {
+        return response()->json([
+            'success' => false,
+            'message' => 'Stock insuficiente para algunos productos',
+            'errores' => $erroresStock
+        ], 400);
+    }
+
+    private function respuestaExitoAgregar(): JsonResponse
+    {
+        return response()->json([
+            'success' => true,
+            'message' => 'Solicitud procesada correctamente',
+            'orden_id' => null
+        ]);
+    }
+
+    private function respuestaErrorCarrito(CarritoException $e): JsonResponse
+    {
+        return response()->json([
+            'success' => false,
+            'message' => $e->getMessage()
+        ], 404);
+    }
+
+    private function respuestaErrorGenerico(string $mensaje): JsonResponse
+    {
+        return response()->json([
+            'success' => false,
+            'message' => $mensaje
+        ], 500);
+    }
+
+    private function manejarExcepcionAgregar(\Exception $e): JsonResponse
+    {
+        if ($e instanceof CarritoException) {
+            return $this->respuestaErrorCarrito($e);
+        }
+
+        return $this->respuestaErrorGenerico('Error al procesar la solicitud: ' . $e->getMessage());
     }
 }
 
