@@ -62,7 +62,7 @@ function configurarDescarga(elements) {
         link.download = `producto-${Date.now()}.png`;
         document.body.appendChild(link);
         link.click();
-        document.body.removeChild(link);
+        link.remove();
 
         mostrarNotificacion('Imagen descargada correctamente', 'success');
     });

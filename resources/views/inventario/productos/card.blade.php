@@ -165,7 +165,8 @@
                                 </div>
 
                                 {{-- Acciones --}}
-                                <div class="btn-group d-flex" role="group">
+                                <fieldset class="btn-group d-flex border-0 p-0 m-0">
+                                    <legend class="sr-only">Acciones del producto {{ $producto->producto }}</legend>
                                     <button type="button"
                                             class="btn btn-sm btn-info btn-view-details w-50"
                                             data-id="{{ $producto->id }}"
@@ -186,7 +187,7 @@
                                             <i class="fas fa-ban"></i> Agotado
                                         </button>
                                     @endif
-                                </div>
+                                </fieldset>
                             </div>
                         </div>
                     </div>

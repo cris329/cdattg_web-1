@@ -43,17 +43,18 @@
                         @php
                             $imagenUrl = $producto->imagen ? asset($producto->imagen) : asset('public/img/inventario/producto-default.png');
                         @endphp
-                        <img src="{{ $imagenUrl }}"
-                            alt="{{ $producto->producto }}" 
-                            class="img-fluid" 
-                            role="button"
-                            tabindex="0"
-                            aria-label="Ampliar imagen del producto {{ $producto->producto }}"
-                            style="cursor: pointer;"
-                            onclick="expandirImagen('{{ $imagenUrl }}')"
-                            onkeydown="if(event.key === 'Enter' || event.key === ' ') { event.preventDefault(); expandirImagen('{{ $imagenUrl }}'); }"
-                            onkeypress="if(event.key === 'Enter' || event.key === ' ') { event.preventDefault(); expandirImagen('{{ $imagenUrl }}'); }"
-                            onkeyup="if(event.key === 'Enter' || event.key === ' ') { event.preventDefault(); expandirImagen('{{ $imagenUrl }}'); }">
+                        <button type="button"
+                                class="border-0 bg-transparent p-0 w-100"
+                                aria-label="Ampliar imagen del producto {{ $producto->producto }}"
+                                onclick="expandirImagen('{{ $imagenUrl }}')"
+                                onkeydown="if(event.key === 'Enter' || event.key === ' ') { event.preventDefault(); expandirImagen('{{ $imagenUrl }}'); }"
+                                onkeypress="if(event.key === 'Enter' || event.key === ' ') { event.preventDefault(); expandirImagen('{{ $imagenUrl }}'); }"
+                                onkeyup="if(event.key === 'Enter' || event.key === ' ') { event.preventDefault(); expandirImagen('{{ $imagenUrl }}'); }">
+                            <img src="{{ $imagenUrl }}"
+                                alt="{{ $producto->producto }}" 
+                                class="img-fluid" 
+                                style="cursor: pointer;">
+                        </button>
                     </div>
 
                     {{-- Estadísticas Rápidas --}}

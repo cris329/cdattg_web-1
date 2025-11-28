@@ -29,9 +29,7 @@ function showModal(elementId) {
 
 function closeProductModal() {
     const modal = document.getElementById('productDetailModal');
-    if (modal) {
-        modal.style.display = 'none';
-    }
+    modal?.style.setProperty('display', 'none');
 }
 
 /**
@@ -41,12 +39,14 @@ function expandirImagen(imageSrc) {
     const expandedImage = document.getElementById('expandedImage');
     const imageModal = document.getElementById('imageModal');
     
-    if (expandedImage && imageModal) {
-        expandedImage.src = imageSrc;
-        // Usar jQuery si está disponible
-        if (typeof $ !== 'undefined') {
-            $(imageModal).modal('show');
-        }
+    if (!expandedImage || !imageModal) {
+        return;
+    }
+
+    expandedImage.src = imageSrc;
+    // Usar jQuery si está disponible
+    if (typeof $ !== 'undefined' && $?.fn?.modal) {
+        $(imageModal).modal('show');
     }
 }
 
@@ -467,7 +467,7 @@ function createProductCardHTML(product) {
 }
 
 function initializeSelect2() {
-    if (typeof $ === 'undefined' || !$.fn || !$.fn.select2) {
+    if (typeof $ === 'undefined' || !$?.fn?.select2) {
         return;
     }
 
@@ -482,7 +482,7 @@ function initializeSelect2() {
         }
 
         // Solo inicializar si tiene opciones
-        if (element.options && element.options.length > 0) {
+        if (element.options?.length > 0) {
             $element.select2({
                 theme: 'bootstrap4',
                 width: '100%',
@@ -547,6 +547,7 @@ function setupProductActions() {
  */
 async function showProductDetails(productId) {
     const contentDiv = document.getElementById('product-detail-content');
+    if (!contentDiv) return;
 
     // Mostrar loading
     contentDiv.innerHTML = `
@@ -712,7 +713,7 @@ function clearFilters() {
     if (searchInput) searchInput.value = '';
     if (typeSelect) {
         typeSelect.value = '';
-        if (typeof $ !== 'undefined' && $.fn && $.fn.select2) {
+        if (typeof $ !== 'undefined' && $?.fn?.select2) {
             $(typeSelect).val(null).trigger('change');
         }
     }
