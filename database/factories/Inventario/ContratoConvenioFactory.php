@@ -28,8 +28,8 @@ class ContratoConvenioFactory extends Factory
         // Generar nombre único
         do {
             $name = strtoupper(
-                $palabras[array_rand($palabras)] . ' ' . 
-                $palabras[array_rand($palabras)] . ' ' . 
+                $palabras[array_rand($palabras)] . ' ' .
+                $palabras[array_rand($palabras)] . ' ' .
                 rand(2024, 2025) . '-' . 
                 str_pad($counter, 3, '0', STR_PAD_LEFT)
             );
@@ -39,8 +39,8 @@ class ContratoConvenioFactory extends Factory
         
         $letras = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ';
         $codigo = strtoupper(
-            $letras[rand(0, 25)] . $letras[rand(0, 25)] . '-' . 
-            rand(10, 99) . $letras[rand(0, 25)] . $letras[rand(0, 25)] . '-' . 
+            $letras[rand(0, 25)] . $letras[rand(0, 25)] . '-' .
+            rand(10, 99) . $letras[rand(0, 25)] . $letras[rand(0, 25)] . '-' .
             rand(1000, 9999)
         );
 

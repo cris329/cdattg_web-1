@@ -46,9 +46,7 @@ class ProductoService
         $datos['user_create_id'] = $userId;
         $datos['user_update_id'] = $userId;
 
-        $producto = $this->repository->crear($datos);
-
-        return $producto;
+        return $this->repository->crear($datos);
     }
 
     /**
@@ -103,9 +101,7 @@ class ProductoService
     public function eliminar(Producto $producto): bool
     {
         $this->imageService->eliminarImagenSiExiste($producto);
-        $resultado = $this->repository->eliminar($producto);
-
-        return $resultado;
+        return $this->repository->eliminar($producto);
     }
 }
 
