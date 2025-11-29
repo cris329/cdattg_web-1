@@ -47,10 +47,22 @@ class ContratoConvenioFactory extends Factory
             rand(1000, 9999)
         );
 
+        // Obtener o crear proveedor - campo requerido
+        $proveedorId = null;
+        try {
+            $proveedorId = Proveedor::query()->inRandomOrder()->value('id');
+        } catch (\Exception $e) {
+            // Ignorar error de consulta
+        }
+
+        if (!$proveedorId) {
+            $proveedorId = Proveedor::factory()->create()->id;
+        }
+
         return [
             'name' => $name,
             'codigo' => $codigo,
-            'proveedor_id' => Proveedor::factory(),
+            'proveedor_id' => $proveedorId,
             'fecha_inicio' => $fechaInicio->format('Y-m-d'),
             'fecha_fin' => $fechaFin->format('Y-m-d'),
             'estado_id' => 1,
