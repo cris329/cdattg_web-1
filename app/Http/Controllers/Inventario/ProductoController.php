@@ -69,7 +69,7 @@ class ProductoController extends Controller
         $productos = $this->repository->obtenerConFiltros($filtros);
         $productos->appends($request->only('search'));
 
-        // Enriquecer productos con marcas y categorías (SRP)
+        // Enriquecer productos con marcas y categorías
         $this->enrichmentService->enriquecerConMarcasYCategorias($productos);
 
         $tiposProductos = $this->repository->obtenerTiposProductos();
@@ -91,7 +91,7 @@ class ProductoController extends Controller
         $productos = $this->repository->obtenerParaCatalogo($filtros);
         $tiposProductos = $this->repository->obtenerTiposProductos();
 
-        // Enriquecer productos con marcas y categorías (SRP)
+        // Enriquecer productos con marcas y categorías
         $this->enrichmentService->enriquecerConMarcasYCategorias($productos);
 
         return view(
