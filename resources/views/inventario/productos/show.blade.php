@@ -51,8 +51,8 @@
                                 onkeypress="if(event.key === 'Enter' || event.key === ' ') { event.preventDefault(); expandirImagen('{{ $imagenUrl }}'); }"
                                 onkeyup="if(event.key === 'Enter' || event.key === ' ') { event.preventDefault(); expandirImagen('{{ $imagenUrl }}'); }">
                             <img src="{{ $imagenUrl }}"
-                                alt="{{ $producto->producto }}" 
-                                class="img-fluid" 
+                                alt="{{ $producto->producto }}"
+                                class="img-fluid"
                                 style="cursor: pointer;">
                         </button>
                     </div>
@@ -305,7 +305,7 @@
         function expandirImagen(imageSrc) {
             const expandedImage = document.getElementById('expandedImage');
             const imageModal = document.getElementById('imageModal');
-            
+
             if (expandedImage && imageModal) {
                 expandedImage.src = imageSrc;
                 if (typeof $ !== 'undefined') {

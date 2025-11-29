@@ -223,14 +223,10 @@
     </section>
 
     {{-- Modal simple de detalles del producto --}}
-    <div
+    <dialog
         id="productDetailModal"
-        role="dialog"
-        aria-modal="true"
         aria-labelledby="product-detail-modal-title"
-        tabindex="-1"
         style="
-            display:none;
             position:fixed;
             top:0;
             left:0;
@@ -240,6 +236,8 @@
             z-index:9999;
             align-items:center;
             justify-content:center;
+            border:none;
+            padding:0;
         "
     >
         <div
@@ -295,8 +293,8 @@
                 </div>
             </div>
         </div>
-    </div>
-    
+    </dialog>
+
     {{-- Alertas --}}
     {{-- Notificaciones manejadas globalmente por sweetalert2-notifications --}}
 @endsection
