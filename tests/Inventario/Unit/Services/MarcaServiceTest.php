@@ -8,6 +8,7 @@ use Tests\TestCase;
 use App\Inventario\Services\Marca\MarcaService;
 use App\Inventario\Interfaces\Repositories\Marca\MarcaRepositoryInterface;
 use App\Models\Inventario\Marca;
+use App\Models\Tema;
 use App\Exceptions\MarcaException;
 use Mockery;
 use PHPUnit\Framework\Attributes\Test;
@@ -41,7 +42,7 @@ class MarcaServiceTest extends TestCase
     #[Test]
     public function puede_actualizar_marca(): void
     {
-        $marcaMock = Mockery::mock(Marca::class);
+        $marcaMock = Mockery::mock(Marca::class)->makePartial();
         $marcaMock->id = 1;
 
         $datos = [
@@ -64,10 +65,10 @@ class MarcaServiceTest extends TestCase
     #[Test]
     public function puede_eliminar_marca_sin_productos(): void
     {
-        $temaMock = Mockery::mock();
+        $temaMock = Mockery::mock(Tema::class)->makePartial();
         $temaMock->id = 1;
 
-        $marcaMock = Mockery::mock(Marca::class);
+        $marcaMock = Mockery::mock(Marca::class)->makePartial();
         $marcaMock->id = 1;
 
         $this->mockRepository->shouldReceive('tieneProductos')
@@ -95,7 +96,7 @@ class MarcaServiceTest extends TestCase
         $this->expectException(MarcaException::class);
         $this->expectExceptionMessage('No se puede eliminar la marca porque está en uso.');
 
-        $marcaMock = Mockery::mock(Marca::class);
+        $marcaMock = Mockery::mock(Marca::class)->makePartial();
         $marcaMock->id = 1;
 
         $this->mockRepository->shouldReceive('tieneProductos')
@@ -112,7 +113,7 @@ class MarcaServiceTest extends TestCase
         $this->expectException(MarcaException::class);
         $this->expectExceptionMessage('No existe el tema "MARCAS" en la base de datos.');
 
-        $marcaMock = Mockery::mock(Marca::class);
+        $marcaMock = Mockery::mock(Marca::class)->makePartial();
         $marcaMock->id = 1;
 
         $this->mockRepository->shouldReceive('tieneProductos')

@@ -80,8 +80,9 @@ class AprobacionServiceTest extends TestCase
     #[Test]
     public function puede_obtener_estado_en_espera(): void
     {
-        $estadoMock = Mockery::mock(Parametro::class);
+        $estadoMock = Mockery::mock(Parametro::class)->makePartial();
         $estadoMock->id = self::ID_ESTADO_EN_ESPERA;
+        $estadoMock->shouldAllowMockingProtectedMethods();
 
         $this->mockFormOptionsService->shouldReceive('obtenerEstadoOrdenPorNombre')
             ->once()
@@ -97,7 +98,7 @@ class AprobacionServiceTest extends TestCase
     #[Test]
     public function puede_obtener_estado_aprobada(): void
     {
-        $estadoMock = Mockery::mock(Parametro::class);
+        $estadoMock = Mockery::mock(Parametro::class)->makePartial();
         $estadoMock->id = self::ID_ESTADO_APROBADA;
 
         $this->mockFormOptionsService->shouldReceive('obtenerEstadoOrdenPorNombre')
@@ -126,7 +127,7 @@ class AprobacionServiceTest extends TestCase
     #[Test]
     public function puede_obtener_estado_rechazada(): void
     {
-        $estadoMock = Mockery::mock(Parametro::class);
+        $estadoMock = Mockery::mock(Parametro::class)->makePartial();
         $estadoMock->id = self::ID_ESTADO_RECHAZADA;
 
         $this->mockFormOptionsService->shouldReceive('obtenerEstadoOrdenPorNombre')
@@ -142,10 +143,10 @@ class AprobacionServiceTest extends TestCase
     #[Test]
     public function puede_obtener_detalles_pendientes(): void
     {
-        $estadoMock = Mockery::mock(Parametro::class);
+        $estadoMock = Mockery::mock(Parametro::class)->makePartial();
         $estadoMock->id = self::ID_ESTADO_EN_ESPERA;
 
-        $detallesMock = collect([]);
+        $detallesMock = new \Illuminate\Database\Eloquent\Collection([]);
 
         $this->mockFormOptionsService->shouldReceive('obtenerEstadoOrdenPorNombre')
             ->once()
@@ -159,7 +160,7 @@ class AprobacionServiceTest extends TestCase
 
         $resultado = $this->service->obtenerDetallesPendientes();
 
-        $this->assertInstanceOf(\Illuminate\Support\Collection::class, $resultado);
+        $this->assertInstanceOf(\Illuminate\Database\Eloquent\Collection::class, $resultado);
     }
 
     #[Test]
@@ -179,7 +180,7 @@ class AprobacionServiceTest extends TestCase
     #[Test]
     public function puede_encontrar_detalle_con_relaciones(): void
     {
-        $detalleMock = Mockery::mock(DetalleOrden::class);
+        $detalleMock = Mockery::mock(DetalleOrden::class)->makePartial();
         $detalleMock->id = self::ID_DETALLE_ORDEN;
 
         $this->mockDetalleOrdenRepository->shouldReceive('encontrarConRelaciones')
@@ -196,7 +197,7 @@ class AprobacionServiceTest extends TestCase
     #[Test]
     public function puede_encontrar_orden_con_detalles_y_devoluciones(): void
     {
-        $ordenMock = Mockery::mock(Orden::class);
+        $ordenMock = Mockery::mock(Orden::class)->makePartial();
         $ordenMock->id = self::ID_ORDEN;
 
         $this->mockOrdenRepository->shouldReceive('encontrarConDetallesYDevoluciones')

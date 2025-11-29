@@ -91,7 +91,7 @@ class FormOptionsServiceTest extends TestCase
         $estado = $this->service->obtenerEstadoOrdenPorNombre('EN ESPERA');
 
         if ($estado !== null) {
-            $this->assertInstanceOf(\App\Models\ParametroTema::class, $estado);
+            $this->assertInstanceOf(\App\Models\Parametro::class, $estado);
         } else {
             $this->assertNull($estado);
         }

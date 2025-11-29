@@ -46,13 +46,13 @@ class ProductoEnrichmentServiceTest extends TestCase
     #[Test]
     public function puede_enriquecer_producto_con_relaciones(): void
     {
-        $marcaMock = Mockery::mock();
+        $marcaMock = Mockery::mock(\App\Models\Inventario\Marca::class)->makePartial();
         $marcaMock->id = 1;
         
-        $categoriaMock = Mockery::mock();
+        $categoriaMock = Mockery::mock(\App\Models\Inventario\Categoria::class)->makePartial();
         $categoriaMock->id = 1;
 
-        $productoMock = Mockery::mock(Producto::class);
+        $productoMock = Mockery::mock(Producto::class)->makePartial();
         $productoMock->marca_id = 1;
         $productoMock->categoria_id = 1;
         $productoMock->shouldReceive('setRelation')
@@ -80,26 +80,26 @@ class ProductoEnrichmentServiceTest extends TestCase
     #[Test]
     public function puede_enriquecer_coleccion_con_marcas_y_categorias(): void
     {
-        $marcaMock = Mockery::mock();
+        $marcaMock = Mockery::mock(\App\Models\Inventario\Marca::class)->makePartial();
         $marcaMock->id = 1;
         
-        $categoriaMock = Mockery::mock();
+        $categoriaMock = Mockery::mock(\App\Models\Inventario\Categoria::class)->makePartial();
         $categoriaMock->id = 1;
 
-        $productoMock1 = Mockery::mock(Producto::class);
+        $productoMock1 = Mockery::mock(Producto::class)->makePartial();
         $productoMock1->marca_id = 1;
         $productoMock1->categoria_id = 1;
         $productoMock1->shouldReceive('setRelation')->twice();
 
-        $productoMock2 = Mockery::mock(Producto::class);
+        $productoMock2 = Mockery::mock(Producto::class)->makePartial();
         $productoMock2->marca_id = 1;
         $productoMock2->categoria_id = 1;
         $productoMock2->shouldReceive('setRelation')->twice();
 
         $productos = collect([$productoMock1, $productoMock2]);
 
-        $marcasCollection = collect([1 => $marcaMock]);
-        $categoriasCollection = collect([1 => $categoriaMock]);
+        $marcasCollection = new \Illuminate\Database\Eloquent\Collection([1 => $marcaMock]);
+        $categoriasCollection = new \Illuminate\Database\Eloquent\Collection([1 => $categoriaMock]);
 
         $this->mockMarcaRepository->shouldReceive('encontrarMultiples')
             ->once()
