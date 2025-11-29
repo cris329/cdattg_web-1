@@ -29,42 +29,40 @@ class ProductoRequest extends FormRequest
             ];
         }
 
-        // Validación para update
+        // Validación para update y store
+        $rules = $this->getProductoBaseRules();
+        
         if ($this->isMethod('PUT') || $this->isMethod('PATCH')) {
             $productoId = $this->route('producto');
-            return [
-                'producto' => 'required|unique:productos,producto,' . $productoId,
-                'tipo_producto_id' => 'required|exists:parametros_temas,id',
-                'descripcion' => 'required|string',
-                'peso' => 'required|numeric|min:0',
-                'unidad_medida_id' => 'required|exists:parametros_temas,id',
-                'cantidad' => 'required|integer|min:0',
-                'codigo_barras' => 'nullable|string',
-                'estado_producto_id' => 'required|exists:parametros_temas,id',
-                'categoria_id' => 'required|exists:parametros,id',
-                'marca_id' => 'required|exists:parametros,id',
-                'contrato_convenio_id' => 'required|exists:contratos_convenios,id',
-                'ambiente_id' => 'required|exists:ambientes,id',
-                'fecha_vencimiento' => 'nullable|date',
-                'imagen' => 'nullable|image|mimes:jpg,jpeg,png|max:2048'
-            ];
+            $rules['producto'] = 'required|unique:productos,producto,' . $productoId;
+            $rules['cantidad'] = 'required|integer|min:0';
+        } else {
+            $rules['producto'] = 'required|unique:productos';
+            $rules['cantidad'] = 'required|integer|min:1';
+            $rules['proveedor_id'] = 'required|exists:proveedores,id';
         }
 
-        // Validación para store (crear)
+        return $rules;
+    }
+
+    /**
+     * Obtiene las reglas base comunes para crear y actualizar productos
+     *
+     * @return array<string, string>
+     */
+    private function getProductoBaseRules(): array
+    {
         return [
-            'producto' => 'required|unique:productos',
             'tipo_producto_id' => 'required|exists:parametros_temas,id',
             'descripcion' => 'required|string',
             'peso' => 'required|numeric|min:0',
             'unidad_medida_id' => 'required|exists:parametros_temas,id',
-            'cantidad' => 'required|integer|min:1',
             'codigo_barras' => 'nullable|string',
             'estado_producto_id' => 'required|exists:parametros_temas,id',
             'categoria_id' => 'required|exists:parametros,id',
             'marca_id' => 'required|exists:parametros,id',
             'contrato_convenio_id' => 'required|exists:contratos_convenios,id',
             'ambiente_id' => 'required|exists:ambientes,id',
-            'proveedor_id' => 'required|exists:proveedores,id',
             'fecha_vencimiento' => 'nullable|date',
             'imagen' => 'nullable|image|mimes:jpg,jpeg,png|max:2048'
         ];

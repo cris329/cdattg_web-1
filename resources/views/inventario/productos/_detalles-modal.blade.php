@@ -8,13 +8,11 @@
     @php
         $imagenProducto = $producto->imagen ? asset($producto->imagen) : asset('img/inventario/producto-default.png');
     @endphp
-    <div class="modal-img-container"
-         role="button"
-         tabindex="0"
-         aria-label="Ampliar imagen del producto {{ $producto->producto }}"
-         style="cursor: pointer; position: relative; border-radius: 8px; overflow: hidden;"
-         onclick="expandirImagen('{{ $imagenProducto }}')"
-         onkeydown="if(event.key === 'Enter' || event.key === ' ') { event.preventDefault(); expandirImagen('{{ $imagenProducto }}'); }">
+    <button type="button"
+            class="modal-img-container"
+            aria-label="Ampliar imagen del producto {{ $producto->producto }}"
+            style="cursor: pointer; position: relative; border-radius: 8px; overflow: hidden; border: none; padding: 0; background: transparent; width: 100%;"
+            onclick="expandirImagen('{{ $imagenProducto }}')">
         <img src="{{ $imagenProducto }}"
              alt="{{ $producto->producto }}"
              class="modal-img"
@@ -25,7 +23,7 @@
              aria-hidden="true">
             <i class="fas fa-expand"></i>
         </div>
-    </div>
+    </button>
 
     <!-- Modal de Imagen Expandible -->
     @include('inventario._components.image-modal')

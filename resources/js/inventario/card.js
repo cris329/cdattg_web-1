@@ -24,12 +24,22 @@ function showModal(elementId) {
     const element = document.getElementById(elementId);
     if (!element) return;
     
-    element.style.display = 'flex';
+    if (element instanceof HTMLDialogElement) {
+        element.showModal();
+    } else {
+        element.style.display = 'flex';
+    }
 }
 
 function closeProductModal() {
     const modal = document.getElementById('productDetailModal');
-    modal?.style.setProperty('display', 'none');
+    if (!modal) return;
+    
+    if (modal instanceof HTMLDialogElement) {
+        modal.close();
+    } else {
+        modal.style.setProperty('display', 'none');
+    }
 }
 
 /**
@@ -92,11 +102,18 @@ function setupModalDismissHandlers() {
     const modalContent = document.getElementById('product-detail-modal-content');
 
     if (modal && !modal.dataset.dismissInitialized) {
-        modal.addEventListener('click', function(event) {
-            if (event.target === modal) {
+        if (modal instanceof HTMLDialogElement) {
+            modal.addEventListener('cancel', function(event) {
+                event.preventDefault();
                 closeProductModal();
-            }
-        });
+            });
+        } else {
+            modal.addEventListener('click', function(event) {
+                if (event.target === modal) {
+                    closeProductModal();
+                }
+            });
+        }
         modal.dataset.dismissInitialized = 'true';
     }
 

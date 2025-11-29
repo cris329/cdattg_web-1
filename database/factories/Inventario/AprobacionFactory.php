@@ -4,15 +4,16 @@ namespace Database\Factories\Inventario;
 
 use App\Models\Inventario\Aprobacion;
 use App\Models\Inventario\DetalleOrden;
-use App\Models\User;
+use Database\Factories\Concerns\HasUserId;
 use Illuminate\Database\Eloquent\Factories\Factory;
-use Illuminate\Support\Facades\Schema;
 
 /**
  * @extends \Illuminate\Database\Eloquent\Factories\Factory<\App\Models\Inventario\Aprobacion>
  */
 class AprobacionFactory extends Factory
 {
+    use HasUserId;
+
     protected $model = Aprobacion::class;
 
     public function definition(): array
@@ -23,20 +24,6 @@ class AprobacionFactory extends Factory
             'user_create_id' => $this->getUserId(),
             'user_update_id' => $this->getUserId(),
         ];
-    }
-
-    private function getUserId(): int
-    {
-        if (!Schema::hasTable('users')) {
-            return 1;
-        }
-
-        try {
-            $userId = User::query()->inRandomOrder()->value('id');
-            return $userId ?? User::factory()->create()->id;
-        } catch (\Exception $e) {
-            return User::factory()->create()->id;
-        }
     }
 }
 

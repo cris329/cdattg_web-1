@@ -48,7 +48,7 @@ class Devolucion extends Model
             $detalleOrden = DetalleOrden::with(['producto.tipoProducto.parametro', 'devoluciones'])
                 ->findOrFail($detalleOrdenId);
 
-            self::validarDevolucion($detalleOrden, $cantidadDevuelta, $observaciones);
+            self::validarDevolucion($detalleOrden, $cantidadDevuelta);
 
             $esCierreSinStock = $cantidadDevuelta === 0;
             $observacionesDepuradas = $observaciones !== null ? trim($observaciones) : null;
@@ -68,7 +68,7 @@ class Devolucion extends Model
         });
     }
 
-    private static function validarDevolucion(DetalleOrden $detalleOrden, int $cantidadDevuelta, ?string $observaciones): void
+    private static function validarDevolucion(DetalleOrden $detalleOrden, int $cantidadDevuelta): void
     {
         if ($detalleOrden->tieneCierreSinStock()) {
             throw new DevolucionException('Este préstamo ya fue cerrado sin devolución de stock.');

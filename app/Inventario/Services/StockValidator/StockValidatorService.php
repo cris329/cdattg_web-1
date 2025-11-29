@@ -79,20 +79,18 @@ class StockValidatorService implements StockValidatorServiceInterface
 
     private function debeNotificarCambioStock(Producto $producto, int $cantidadAnterior): bool
     {
-        if ($cantidadAnterior === $producto->cantidad) {
-            return false;
+        $debeNotificar = false;
+
+        if ($cantidadAnterior !== $producto->cantidad) {
+            if (config('inventario.stock.notificar_stock_bajo', true)) {
+                $umbralMinimo = $this->getUmbralMinimo();
+                if ($cantidadAnterior > $umbralMinimo) {
+                    $debeNotificar = $this->estaBajoUmbralMinimo($producto);
+                }
+            }
         }
 
-        if (!config('inventario.stock.notificar_stock_bajo', true)) {
-            return false;
-        }
-
-        $umbralMinimo = $this->getUmbralMinimo();
-        if ($cantidadAnterior <= $umbralMinimo) {
-            return false;
-        }
-
-        return $this->estaBajoUmbralMinimo($producto);
+        return $debeNotificar;
     }
 
     /**
