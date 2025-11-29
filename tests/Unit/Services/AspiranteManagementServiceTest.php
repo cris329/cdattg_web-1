@@ -46,10 +46,15 @@ class AspiranteManagementServiceTest extends TestCase
     /** @test */
     public function puede_obtener_programas_para_gestion()
     {
-        $programa1 = new ComplementarioOfertado(['id' => 1, 'nombre' => 'Programa 1']);
-        $programa1->aspirantes_count = 5;
-        $programa2 = new ComplementarioOfertado(['id' => 2, 'nombre' => 'Programa 2']);
-        $programa2->aspirantes_count = 3;
+        $programa1 = new ComplementarioOfertado();
+        $programa1->setAttribute('id', 1);
+        $programa1->setAttribute('nombre', 'Programa 1');
+        $programa1->setAttribute('aspirantes_count', 5);
+        
+        $programa2 = new ComplementarioOfertado();
+        $programa2->setAttribute('id', 2);
+        $programa2->setAttribute('nombre', 'Programa 2');
+        $programa2->setAttribute('aspirantes_count', 3);
         
         $programas = new Collection([$programa1, $programa2]);
 
@@ -61,13 +66,18 @@ class AspiranteManagementServiceTest extends TestCase
         $resultado = $this->service->obtenerProgramasParaGestion();
 
         $this->assertCount(2, $resultado);
-        $this->assertEquals(5, $resultado->firstWhere('id', 1)->aspirantes_count);
+        $programaEncontrado = $resultado->firstWhere('id', 1);
+        $this->assertNotNull($programaEncontrado);
+        $this->assertEquals(5, $programaEncontrado->aspirantes_count);
     }
 
     /** @test */
     public function puede_obtener_aspirantes_por_programa_por_nombre()
     {
-        $programa = new ComplementarioOfertado(['id' => 1, 'nombre' => 'Auxiliar de Cocina']);
+        $programa = new ComplementarioOfertado();
+        $programa->setAttribute('id', 1);
+        $programa->setAttribute('nombre', 'Auxiliar de Cocina');
+        
         $aspirantes = new Collection([
             new AspiranteComplementario(['id' => 1, 'complementario_id' => 1]),
             new AspiranteComplementario(['id' => 2, 'complementario_id' => 1]),
@@ -107,14 +117,17 @@ class AspiranteManagementServiceTest extends TestCase
 
         $data = $this->service->obtenerAspirantesPorPrograma('Auxiliar-de-Cocina');
 
-        $this->assertEquals($programa->id, $data['programa']->id);
+        $this->assertEquals(1, $data['programa']->id);
         $this->assertCount(3, $data['aspirantes']);
     }
 
     /** @test */
     public function puede_obtener_aspirantes_por_programa_por_id()
     {
-        $programa = new ComplementarioOfertado(['id' => 1, 'nombre' => 'Programa Test']);
+        $programa = new ComplementarioOfertado();
+        $programa->setAttribute('id', 1);
+        $programa->setAttribute('nombre', 'Programa Test');
+        
         $aspirantes = new Collection([
             new AspiranteComplementario(['id' => 1]),
             new AspiranteComplementario(['id' => 2]),
@@ -150,15 +163,23 @@ class AspiranteManagementServiceTest extends TestCase
 
         $data = $this->service->obtenerAspirantesPorProgramaId(1);
 
-        $this->assertEquals($programa->id, $data['programa']->id);
+        $this->assertEquals(1, $data['programa']->id);
         $this->assertCount(4, $data['aspirantes']);
     }
 
     /** @test */
     public function puede_agregar_aspirante_existente()
     {
-        $programa = new ComplementarioOfertado(['id' => 1, 'nombre' => 'Programa Test']);
-        $persona = new Persona(['id' => 1, 'numero_documento' => '1234567890', 'primer_nombre' => 'Juan', 'primer_apellido' => 'Pérez']);
+        $programa = new ComplementarioOfertado();
+        $programa->setAttribute('id', 1);
+        $programa->setAttribute('nombre', 'Programa Test');
+        
+        $persona = new Persona();
+        $persona->setAttribute('id', 1);
+        $persona->setAttribute('numero_documento', '1234567890');
+        $persona->setAttribute('primer_nombre', 'Juan');
+        $persona->setAttribute('primer_apellido', 'Pérez');
+        
         $aspirante = new AspiranteComplementario(['id' => 1, 'persona_id' => 1, 'complementario_id' => 1]);
 
         $this->programaRepositoryMock->shouldReceive('findWithRelations')
@@ -167,7 +188,7 @@ class AspiranteManagementServiceTest extends TestCase
             ->andReturn($programa);
 
         $this->personaRepositoryMock->shouldReceive('findByNumeroDocumento')
-            ->once()
+            ->twice()
             ->with('1234567890')
             ->andReturn($persona);
 
@@ -194,7 +215,9 @@ class AspiranteManagementServiceTest extends TestCase
     /** @test */
     public function no_agrega_aspirante_si_no_existe_persona()
     {
-        $programa = new ComplementarioOfertado(['id' => 1, 'nombre' => 'Programa Test']);
+        $programa = new ComplementarioOfertado();
+        $programa->setAttribute('id', 1);
+        $programa->setAttribute('nombre', 'Programa Test');
 
         $this->programaRepositoryMock->shouldReceive('findWithRelations')
             ->once()
@@ -215,8 +238,13 @@ class AspiranteManagementServiceTest extends TestCase
     /** @test */
     public function no_agrega_aspirante_si_ya_esta_inscrito()
     {
-        $programa = new ComplementarioOfertado(['id' => 1, 'nombre' => 'Programa Test']);
-        $persona = new Persona(['id' => 1, 'numero_documento' => '1234567890']);
+        $programa = new ComplementarioOfertado();
+        $programa->setAttribute('id', 1);
+        $programa->setAttribute('nombre', 'Programa Test');
+        
+        $persona = new Persona();
+        $persona->setAttribute('id', 1);
+        $persona->setAttribute('numero_documento', '1234567890');
 
         $this->programaRepositoryMock->shouldReceive('findWithRelations')
             ->once()
@@ -242,7 +270,9 @@ class AspiranteManagementServiceTest extends TestCase
     /** @test */
     public function puede_obtener_estadisticas_programa()
     {
-        $programa = new ComplementarioOfertado(['id' => 1, 'cupos' => 30]);
+        $programa = new ComplementarioOfertado();
+        $programa->setAttribute('id', 1);
+        $programa->setAttribute('cupos', 30);
 
         $this->programaRepositoryMock->shouldReceive('findWithRelations')
             ->once()

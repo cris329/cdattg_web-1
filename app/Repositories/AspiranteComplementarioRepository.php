@@ -35,6 +35,81 @@ class AspiranteComplementarioRepository
     }
 
     /**
+     * Obtener aspirantes con documentos excluyendo rechazados
+     */
+    public function findByProgramaConDocumentosExcluyendoRechazados(int $programaId): Collection
+    {
+        return AspiranteComplementario::with(['persona.tipoDocumento'])
+            ->where('complementario_id', $programaId)
+            ->where('estado', '!=', 2) // Excluir rechazados
+            ->whereHas('persona', function ($query) {
+                $query->where('condocumento', 1);
+            })
+            ->get()
+            ->sortBy(function ($aspirante) {
+                return $aspirante->persona->numero_documento;
+            });
+    }
+
+    /**
+     * Obtener aspirantes válidos para exportación (excluye rechazados, sin documento y no registrados en Sofia)
+     */
+    public function findByProgramaParaExportacion(int $programaId): Collection
+    {
+        return AspiranteComplementario::with(['persona.tipoDocumento', 'persona.parametroCaracterizacion'])
+            ->where('complementario_id', $programaId)
+            ->where('estado', '!=', 2) // Excluir rechazados
+            ->whereHas('persona', function ($query) {
+                $query->where('condocumento', 1)
+                      ->where('estado_sofia', '!=', 0); // Excluir no registrados en SenasofiaPlus
+            })
+            ->get()
+            ->sortBy(function ($aspirante) {
+                return $aspirante->persona->numero_documento;
+            });
+    }
+
+    /**
+     * Obtener estadísticas de exclusión para un programa
+     */
+    public function getEstadisticasExclusion(int $programaId): array
+    {
+        $totalAspirantes = $this->countByPrograma($programaId);
+        
+        $rechazados = $this->countByEstado($programaId, 2);
+        
+        $sinDocumento = AspiranteComplementario::where('complementario_id', $programaId)
+            ->where('estado', '!=', 2)
+            ->whereHas('persona', function ($query) {
+                $query->where('condocumento', 0);
+            })
+            ->count();
+        
+        $noRegistradosSofia = AspiranteComplementario::where('complementario_id', $programaId)
+            ->where('estado', '!=', 2)
+            ->whereHas('persona', function ($query) {
+                $query->where('estado_sofia', 0);
+            })
+            ->count();
+        
+        $validos = AspiranteComplementario::where('complementario_id', $programaId)
+            ->where('estado', '!=', 2)
+            ->whereHas('persona', function ($query) {
+                $query->where('condocumento', 1)
+                      ->where('estado_sofia', '!=', 0);
+            })
+            ->count();
+
+        return [
+            'total' => $totalAspirantes,
+            'rechazados' => $rechazados,
+            'sin_documento' => $sinDocumento,
+            'no_registrados_sofia' => $noRegistradosSofia,
+            'validos' => $validos
+        ];
+    }
+
+    /**
      * Contar aspirantes por estado en un programa
      */
     public function countByEstado(int $programaId, int $estado): int
