@@ -53,7 +53,8 @@
                                 <div class="table-responsive d-none" id="cart-items-table">
                                     <table class="table table-hover">
                                         <caption id="carrito-description" class="sr-only">
-                                            Vista del carrito de compras con información de producto, stock, cantidad y acciones disponibles.
+                                            Vista del carrito de compras con información de producto, stock,
+                                             cantidad y acciones disponibles.
                                         </caption>
                                         <thead>
                                             <tr>
