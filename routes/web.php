@@ -8,7 +8,6 @@ use App\Http\Controllers\Complementarios\ProgramaComplementarioController;
 use App\Http\Controllers\Complementarios\ValidacionSofiaController;
 use App\Http\Controllers\DepartamentoController;
 use App\Http\Controllers\GoogleDriveController;
-use App\Http\Controllers\Inventario\ProductoController;
 use App\Http\Controllers\MunicipioController;
 use Illuminate\Support\Facades\Route;
 
@@ -109,14 +108,6 @@ Route::middleware(['web', 'auth'])->group(function () {
         [AsistenceQrController::class, 'verifyDocument']
     )->name('api.verifyDocument');
 
-    Route::prefix('inventario')
-        ->name('inventario.')
-        ->group(function () {
-            Route::get(
-                'productos/{id}/etiqueta',
-                [ProductoController::class, 'etiqueta']
-            )->name('productos.etiqueta');
-        });
 
     Route::get(
         '/mi-perfil',

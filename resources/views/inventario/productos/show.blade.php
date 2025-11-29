@@ -2,13 +2,7 @@
 
 @section('title', 'Ver Producto')
 
-@section('css')
-    <link href="{{ asset('css/parametros.css') }}" rel="stylesheet">
-@endsection
-
-@push('css')
-    @vite(['resources/css/inventario/shared/base.css'])
-@endpush
+@include('inventario._components.common-css')
 
 @section('content_header')
     <x-page-header icon="fas fa-eye" title="Ver Producto" subtitle="Detalles del producto" :breadcrumb="[

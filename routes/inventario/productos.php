@@ -24,7 +24,19 @@ Route::prefix('inventario')
         
         // Ruta para búsqueda por código de barras
         Route::get('/productos/buscar/{codigo}', [ProductoController::class, 'buscarPorCodigo']);
+        
+        // Ruta para imprimir etiqueta de código de barras
+        Route::get('productos/{id}/etiqueta', [ProductoController::class, 'etiqueta'])
+            ->name('productos.etiqueta');
             
-        // Rutas administrativas (estilo admin) - resource al final
-        Route::resource('productos', ProductoController::class);
+        // Rutas administrativas - resource al final
+        Route::resource('productos', ProductoController::class)->names([
+            'index' => 'productos.index',
+            'create' => 'productos.create',
+            'store' => 'productos.store',
+            'show' => 'productos.show',
+            'edit' => 'productos.edit',
+            'update' => 'productos.update',
+            'destroy' => 'productos.destroy',
+        ]);
     });
