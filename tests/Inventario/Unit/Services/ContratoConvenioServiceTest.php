@@ -48,7 +48,7 @@ class ContratoConvenioServiceTest extends TestCase
             'fecha_fin' => now()->addYear(),
         ];
 
-        $contratoMock = Mockery::mock(ContratoConvenio::class);
+        $contratoMock = Mockery::mock(ContratoConvenio::class)->makePartial();
         $contratoMock->id = 1;
         $contratoMock->numero_contrato = 'CONT-001';
 
@@ -71,7 +71,7 @@ class ContratoConvenioServiceTest extends TestCase
     #[Test]
     public function puede_actualizar_contrato_convenio(): void
     {
-        $contratoMock = Mockery::mock(ContratoConvenio::class);
+        $contratoMock = Mockery::mock(ContratoConvenio::class)->makePartial();
         $contratoMock->id = 1;
 
         $datos = [
@@ -94,7 +94,7 @@ class ContratoConvenioServiceTest extends TestCase
     #[Test]
     public function puede_eliminar_contrato_convenio_sin_productos(): void
     {
-        $contratoMock = Mockery::mock(ContratoConvenio::class);
+        $contratoMock = Mockery::mock(ContratoConvenio::class)->makePartial();
         $contratoMock->id = 1;
 
         $this->mockRepository->shouldReceive('tieneProductos')
@@ -118,7 +118,7 @@ class ContratoConvenioServiceTest extends TestCase
         $this->expectException(ContratoConvenioException::class);
         $this->expectExceptionMessage('No se puede eliminar el Contrato/Convenio porque está en uso.');
 
-        $contratoMock = Mockery::mock(ContratoConvenio::class);
+        $contratoMock = Mockery::mock(ContratoConvenio::class)->makePartial();
         $contratoMock->id = 1;
 
         $this->mockRepository->shouldReceive('tieneProductos')

@@ -12,13 +12,13 @@ use PHPUnit\Framework\Attributes\Test;
 
 class BarcodeServiceTest extends TestCase
 {
-    private const LONGITUD_CODIGO_BARRAS = 11;
-    private const CODIGO_BARRAS_VALIDO = '12345678901';
+    private const LONGITUD_CODIGO_BARRAS = 10; // Alineado con config('inventario.codigo_barras.longitud_auto', 10)
+    private const CODIGO_BARRAS_VALIDO = '1234567890';
     private const CODIGO_BARRAS_INVALIDO = '123';
-    private const CODIGO_BARRAS_MAX_INICIAL = '00000000001';
-    private const CODIGO_BARRAS_SIGUIENTE = '00000000002';
-    private const CODIGO_BARRAS_SIGUIENTE_2 = '00000000003';
-    private const CODIGO_BARRAS_CON_LETRAS = 'ABC12345678901DEF';
+    private const CODIGO_BARRAS_MAX_INICIAL = '0000000001';
+    private const CODIGO_BARRAS_SIGUIENTE = '0000000002';
+    private const CODIGO_BARRAS_SIGUIENTE_2 = '0000000003';
+    private const CODIGO_BARRAS_CON_LETRAS = 'ABC1234567890DEF';
 
     protected BarcodeService $service;
     protected $mockRepository;
@@ -47,6 +47,7 @@ class BarcodeServiceTest extends TestCase
     #[Test]
     public function puede_resolver_codigo_barras_valido(): void
     {
+        // No necesita mocks porque si el código es válido, lo retorna directamente
         $resultado = $this->service->resolverCodigoBarras(self::CODIGO_BARRAS_VALIDO);
 
         $this->assertEquals(self::CODIGO_BARRAS_VALIDO, $resultado);
@@ -59,33 +60,37 @@ class BarcodeServiceTest extends TestCase
             ->once()
             ->andReturn(self::CODIGO_BARRAS_MAX_INICIAL);
 
+        // Si max es '00000000001', el siguiente será '00000000002'
         $this->mockRepository->shouldReceive('existeCodigoBarras')
             ->once()
-            ->with(Mockery::pattern('/^\d{' . self::LONGITUD_CODIGO_BARRAS . '}$/'))
+            ->with(self::CODIGO_BARRAS_SIGUIENTE)
             ->andReturn(false);
 
         $resultado = $this->service->resolverCodigoBarras(self::CODIGO_BARRAS_INVALIDO);
 
         $this->assertIsString($resultado);
         $this->assertEquals(self::LONGITUD_CODIGO_BARRAS, strlen($resultado));
+        $this->assertEquals(self::CODIGO_BARRAS_SIGUIENTE, $resultado);
     }
 
     #[Test]
     public function genera_siguiente_codigo_barras(): void
     {
+        // Si no hay max, empieza desde 1 (0 + 1)
         $this->mockRepository->shouldReceive('obtenerMaxCodigoBarras')
             ->once()
-            ->andReturn(self::CODIGO_BARRAS_MAX_INICIAL);
+            ->andReturn(null);
 
         $this->mockRepository->shouldReceive('existeCodigoBarras')
             ->once()
-            ->with(self::CODIGO_BARRAS_SIGUIENTE)
+            ->with('0000000001')
             ->andReturn(false);
 
         $codigo = $this->service->generarSiguienteCodigoBarras();
 
         $this->assertIsString($codigo);
         $this->assertEquals(self::LONGITUD_CODIGO_BARRAS, strlen($codigo));
+        $this->assertEquals('0000000001', $codigo);
     }
 
     #[Test]
@@ -95,11 +100,13 @@ class BarcodeServiceTest extends TestCase
             ->once()
             ->andReturn(self::CODIGO_BARRAS_MAX_INICIAL);
 
+        // El siguiente a '00000000001' es '00000000002'
         $this->mockRepository->shouldReceive('existeCodigoBarras')
             ->once()
             ->with(self::CODIGO_BARRAS_SIGUIENTE)
             ->andReturn(true);
 
+        // Si existe, incrementa a '00000000003' (next + i + 1 = 1 + 1 + 1)
         $this->mockRepository->shouldReceive('existeCodigoBarras')
             ->once()
             ->with(self::CODIGO_BARRAS_SIGUIENTE_2)
@@ -107,6 +114,7 @@ class BarcodeServiceTest extends TestCase
 
         $codigo = $this->service->generarSiguienteCodigoBarras();
 
+        $this->assertIsString($codigo);
         $this->assertEquals(self::LONGITUD_CODIGO_BARRAS, strlen($codigo));
         $this->assertEquals(self::CODIGO_BARRAS_SIGUIENTE_2, $codigo);
     }

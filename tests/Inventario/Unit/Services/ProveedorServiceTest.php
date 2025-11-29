@@ -47,7 +47,7 @@ class ProveedorServiceTest extends TestCase
             'telefono' => '1234567890',
         ];
 
-        $proveedorMock = Mockery::mock(Proveedor::class);
+        $proveedorMock = Mockery::mock(Proveedor::class)->makePartial();
         $proveedorMock->id = 1;
         $proveedorMock->nombre = 'Proveedor Test';
 
@@ -70,7 +70,7 @@ class ProveedorServiceTest extends TestCase
     #[Test]
     public function puede_actualizar_proveedor(): void
     {
-        $proveedorMock = Mockery::mock(Proveedor::class);
+        $proveedorMock = Mockery::mock(Proveedor::class)->makePartial();
         $proveedorMock->id = 1;
 
         $datos = [
@@ -93,7 +93,7 @@ class ProveedorServiceTest extends TestCase
     #[Test]
     public function puede_eliminar_proveedor_sin_relaciones(): void
     {
-        $proveedorMock = Mockery::mock(Proveedor::class);
+        $proveedorMock = Mockery::mock(Proveedor::class)->makePartial();
         $proveedorMock->id = 1;
 
         $this->mockRepository->shouldReceive('tieneContratos')
@@ -122,7 +122,7 @@ class ProveedorServiceTest extends TestCase
         $this->expectException(ProveedorException::class);
         $this->expectExceptionMessage('No se puede eliminar el proveedor porque tiene contratos asociados.');
 
-        $proveedorMock = Mockery::mock(Proveedor::class);
+        $proveedorMock = Mockery::mock(Proveedor::class)->makePartial();
         $proveedorMock->id = 1;
 
         $this->mockRepository->shouldReceive('tieneContratos')
@@ -139,7 +139,7 @@ class ProveedorServiceTest extends TestCase
         $this->expectException(ProveedorException::class);
         $this->expectExceptionMessage('No se puede eliminar el proveedor porque tiene productos asociados.');
 
-        $proveedorMock = Mockery::mock(Proveedor::class);
+        $proveedorMock = Mockery::mock(Proveedor::class)->makePartial();
         $proveedorMock->id = 1;
 
         $this->mockRepository->shouldReceive('tieneContratos')

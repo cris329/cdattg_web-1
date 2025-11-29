@@ -45,28 +45,28 @@ class NotificationServiceTest extends TestCase
     #[Test]
     public function puede_notificar_nueva_orden(): void
     {
-        $userMock = Mockery::mock(User::class);
+        $userMock = Mockery::mock(User::class)->makePartial();
         $userMock->id = 1;
 
-        $ordenMock = Mockery::mock(Orden::class);
+        $ordenMock = Mockery::mock(Orden::class)->makePartial();
 
         $this->mockUserRepository->shouldReceive('obtenerSuperAdministradores')
             ->once()
-            ->andReturn(collect([$userMock]));
+            ->andReturn(new \Illuminate\Database\Eloquent\Collection([$userMock]));
 
         $this->service->notificarNuevaOrden($ordenMock);
 
-        Notification::assertNothingSent();
+        Notification::assertSentTo($userMock, \App\Notifications\NuevaOrdenNotification::class);
     }
 
     #[Test]
     public function no_notifica_si_no_hay_super_administradores(): void
     {
-        $ordenMock = Mockery::mock(Orden::class);
+        $ordenMock = Mockery::mock(Orden::class)->makePartial();
 
         $this->mockUserRepository->shouldReceive('obtenerSuperAdministradores')
             ->once()
-            ->andReturn(collect([]));
+            ->andReturn(new \Illuminate\Database\Eloquent\Collection([]));
 
         $this->service->notificarNuevaOrden($ordenMock);
 
@@ -76,30 +76,32 @@ class NotificationServiceTest extends TestCase
     #[Test]
     public function puede_notificar_stock_bajo(): void
     {
-        $userMock = Mockery::mock(User::class);
+        $userMock = Mockery::mock(User::class)->makePartial();
         $userMock->id = 1;
+        $userMock->shouldReceive('notify')
+            ->once()
+            ->with(Mockery::type(\App\Notifications\StockBajoNotification::class));
 
-        $productoMock = Mockery::mock(Producto::class);
+        $productoMock = Mockery::mock(Producto::class)->makePartial();
         $productoMock->id = 1;
-        $productoMock->shouldReceive('notify');
 
         $this->mockUserRepository->shouldReceive('obtenerSuperAdministradores')
             ->once()
-            ->andReturn(collect([$userMock]));
+            ->andReturn(new \Illuminate\Database\Eloquent\Collection([$userMock]));
 
         $this->service->notificarStockBajo($productoMock, 3, 10);
 
-        Notification::assertNothingSent();
+        $this->assertTrue(true);
     }
 
     #[Test]
     public function no_notifica_stock_bajo_si_no_hay_administradores(): void
     {
-        $productoMock = Mockery::mock(Producto::class);
+        $productoMock = Mockery::mock(Producto::class)->makePartial();
 
         $this->mockUserRepository->shouldReceive('obtenerSuperAdministradores')
             ->once()
-            ->andReturn(collect([]));
+            ->andReturn(new \Illuminate\Database\Eloquent\Collection([]));
 
         $this->service->notificarStockBajo($productoMock, 3, 10);
 
