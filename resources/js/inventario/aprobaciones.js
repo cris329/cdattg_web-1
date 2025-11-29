@@ -6,6 +6,42 @@
 import Swal from 'sweetalert2';
 
 /**
+ * Obtiene el token CSRF del meta tag
+ * @returns {string} Token CSRF
+ */
+function obtenerTokenCSRF() {
+    return document.querySelector('meta[name="csrf-token"]').getAttribute('content');
+}
+
+/**
+ * Crea y envía un formulario POST
+ * @param {string} action - URL de acción del formulario
+ * @param {Object} data - Datos adicionales como campos ocultos (key-value)
+ */
+function enviarFormularioPOST(action, data = {}) {
+    const form = document.createElement('form');
+    form.method = 'POST';
+    form.action = action;
+
+    const csrfInput = document.createElement('input');
+    csrfInput.type = 'hidden';
+    csrfInput.name = '_token';
+    csrfInput.value = obtenerTokenCSRF();
+    form.appendChild(csrfInput);
+
+    for (const [key, value] of Object.entries(data)) {
+        const input = document.createElement('input');
+        input.type = 'hidden';
+        input.name = key;
+        input.value = value;
+        form.appendChild(input);
+    }
+
+    document.body.appendChild(form);
+    form.submit();
+}
+
+/**
  * Aprobar un producto individual
  * @param {number} detalleId - ID del detalle de la orden
  * @param {string} nombreProducto - Nombre del producto a aprobar
@@ -22,20 +58,7 @@ function aprobarProducto(detalleId, nombreProducto) {
         cancelButtonText: '<i class="fas fa-times"></i> Cancelar'
     }).then((result) => {
         if (result.isConfirmed) {
-            // Crear formulario y enviarlo
-            const form = document.createElement('form');
-            form.method = 'POST';
-            form.action = `/inventario/aprobaciones/${detalleId}/aprobar`;
-
-            const csrfToken = document.querySelector('meta[name="csrf-token"]').getAttribute('content');
-            const csrfInput = document.createElement('input');
-            csrfInput.type = 'hidden';
-            csrfInput.name = '_token';
-            csrfInput.value = csrfToken;
-            form.appendChild(csrfInput);
-
-            document.body.appendChild(form);
-            form.submit();
+            enviarFormularioPOST(`/inventario/aprobaciones/${detalleId}/aprobar`);
         }
     });
 }
@@ -46,50 +69,10 @@ function aprobarProducto(detalleId, nombreProducto) {
  * @param {string} nombreProducto - Nombre del producto a rechazar
  */
 function rechazarProducto(detalleId, nombreProducto) {
-    Swal.fire({
-        title: '¿Rechazar producto?',
-        html: `¿Está seguro de rechazar este producto?<br><strong>${nombreProducto}</strong>?`,
-        icon: 'warning',
-        showCancelButton: true,
-        confirmButtonColor: '#dc3545',
-        cancelButtonColor: '#6c757d',
-        confirmButtonText: '<i class="fas fa-times"></i> Sí, rechazar',
-        cancelButtonText: '<i class="fas fa-ban"></i> Cancelar',
-        input: 'textarea',
-        inputLabel: 'Motivo del rechazo (obligatorio)',
-        inputPlaceholder: 'Explique el motivo del rechazo...',
-        inputAttributes: {
-            'aria-label': 'Motivo del rechazo',
-            'required': 'required'
-        },
-        inputValidator: (value) => {
-            if (!value) {
-                return 'Debe indicar el motivo del rechazo';
-            }
-        }
-    }).then((result) => {
-        if (result.isConfirmed) {
-            // Crear formulario y enviarlo
-            const form = document.createElement('form');
-            form.method = 'POST';
-            form.action = `/inventario/aprobaciones/${detalleId}/rechazar`;
-
-            const csrfToken = document.querySelector('meta[name="csrf-token"]').getAttribute('content');
-            const csrfInput = document.createElement('input');
-            csrfInput.type = 'hidden';
-            csrfInput.name = '_token';
-            csrfInput.value = csrfToken;
-            form.appendChild(csrfInput);
-
-            const motivoInput = document.createElement('input');
-            motivoInput.type = 'hidden';
-            motivoInput.name = 'motivo_rechazo';
-            motivoInput.value = result.value;
-            form.appendChild(motivoInput);
-
-            document.body.appendChild(form);
-            form.submit();
-        }
+    mostrarConfirmacionRechazo(`¿Está seguro de rechazar este producto?<br><strong>${nombreProducto}</strong>?`, (motivo) => {
+        enviarFormularioPOST(`/inventario/aprobaciones/${detalleId}/rechazar`, {
+            motivo_rechazo: motivo
+        });
     });
 }
 
@@ -110,20 +93,7 @@ function aprobarOrden(ordenId, productos) {
         cancelButtonText: '<i class="fas fa-times"></i> Cancelar'
     }).then((result) => {
         if (result.isConfirmed) {
-            // Crear formulario y enviarlo
-            const form = document.createElement('form');
-            form.method = 'POST';
-            form.action = `/inventario/aprobaciones/orden/${ordenId}/aprobar`;
-
-            const csrfToken = document.querySelector('meta[name="csrf-token"]').getAttribute('content');
-            const csrfInput = document.createElement('input');
-            csrfInput.type = 'hidden';
-            csrfInput.name = '_token';
-            csrfInput.value = csrfToken;
-            form.appendChild(csrfInput);
-
-            document.body.appendChild(form);
-            form.submit();
+            enviarFormularioPOST(`/inventario/aprobaciones/orden/${ordenId}/aprobar`);
         }
     });
 }
@@ -134,18 +104,36 @@ function aprobarOrden(ordenId, productos) {
  * @param {string} productos - Lista de productos en formato texto
  */
 function rechazarOrden(ordenId, productos) {
+    mostrarConfirmacionRechazo(
+        `¿Está seguro de rechazar TODOS los productos de esta orden?<br><br><strong>Productos:</strong> ${productos}`,
+        (motivo) => {
+            enviarFormularioPOST(`/inventario/aprobaciones/orden/${ordenId}/rechazar`, {
+                motivo_rechazo: motivo
+            });
+        },
+        'Explique el motivo del rechazo de toda la orden...'
+    );
+}
+
+/**
+ * Muestra confirmación de rechazo con campo de motivo obligatorio
+ * @param {string} html - HTML del mensaje de confirmación
+ * @param {Function} onConfirm - Callback cuando se confirma (recibe el motivo)
+ * @param {string} placeholder - Placeholder para el textarea
+ */
+function mostrarConfirmacionRechazo(html, onConfirm, placeholder = 'Explique el motivo del rechazo...') {
     Swal.fire({
-        title: '¿Rechazar toda la orden?',
-        html: `¿Está seguro de rechazar TODOS los productos de esta orden?<br><br><strong>Productos:</strong> ${productos}`,
+        title: html.includes('TODOS') ? '¿Rechazar toda la orden?' : '¿Rechazar producto?',
+        html: html,
         icon: 'warning',
         showCancelButton: true,
         confirmButtonColor: '#dc3545',
         cancelButtonColor: '#6c757d',
-        confirmButtonText: '<i class="fas fa-times"></i> Sí, rechazar todo',
+        confirmButtonText: '<i class="fas fa-times"></i> Sí, rechazar' + (html.includes('TODOS') ? ' todo' : ''),
         cancelButtonText: '<i class="fas fa-ban"></i> Cancelar',
         input: 'textarea',
         inputLabel: 'Motivo del rechazo (obligatorio)',
-        inputPlaceholder: 'Explique el motivo del rechazo de toda la orden...',
+        inputPlaceholder: placeholder,
         inputAttributes: {
             'aria-label': 'Motivo del rechazo',
             'required': 'required'
@@ -157,26 +145,7 @@ function rechazarOrden(ordenId, productos) {
         }
     }).then((result) => {
         if (result.isConfirmed) {
-            // Crear formulario y enviarlo
-            const form = document.createElement('form');
-            form.method = 'POST';
-            form.action = `/inventario/aprobaciones/orden/${ordenId}/rechazar`;
-
-            const csrfToken = document.querySelector('meta[name="csrf-token"]').getAttribute('content');
-            const csrfInput = document.createElement('input');
-            csrfInput.type = 'hidden';
-            csrfInput.name = '_token';
-            csrfInput.value = csrfToken;
-            form.appendChild(csrfInput);
-
-            const motivoInput = document.createElement('input');
-            motivoInput.type = 'hidden';
-            motivoInput.name = 'motivo_rechazo';
-            motivoInput.value = result.value;
-            form.appendChild(motivoInput);
-
-            document.body.appendChild(form);
-            form.submit();
+            onConfirm(result.value);
         }
     });
 }
