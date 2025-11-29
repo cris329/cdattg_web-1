@@ -10,9 +10,6 @@ Route::prefix('inventario')
         // Rutas e-commerce (estilo moderno) - DEBEN IR ANTES del resource
         Route::get('productos/catalogo', [ProductoController::class, 'catalogo'])
             ->name('productos.catalogo');
-
-        Route::get('productos/index', [ProductoController::class, 'index'])
-            ->name('productos.index');
         
         // Ruta para detalles del producto (en modal)
         Route::get('productos/detalles/{id}', [ProductoController::class, 'detalles'])
