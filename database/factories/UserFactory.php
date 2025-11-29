@@ -28,18 +28,32 @@ class UserFactory extends Factory
         $uniqueId = uniqid('user_', true);
         $timestamp = time() . rand(1000, 9999);
         
+        // Asegurar que persona_id nunca sea null
+        $personaId = null;
+        
         try {
             $personaId = Persona::query()->inRandomOrder()->value('id');
         } catch (\Exception $e) {
-            $personaId = null;
+            // Ignorar error de consulta, se creará una nueva persona
         }
         
         if (!$personaId) {
             try {
-                $personaId = Persona::factory()->create()->id;
+                $persona = Persona::factory()->create();
+                $personaId = $persona->id;
             } catch (\Exception $e) {
-                $personaId = null;
+                // Si falla la creación del factory, lanzar excepción en lugar de establecer null
+                throw new \RuntimeException(
+                    'No se pudo crear una Persona para el User. Error: ' . $e->getMessage(),
+                    0,
+                    $e
+                );
             }
+        }
+        
+        // Validación final: asegurar que persona_id no sea null
+        if (!$personaId) {
+            throw new \RuntimeException('persona_id no puede ser null. La tabla users requiere persona_id NOT NULL.');
         }
         
         return [
