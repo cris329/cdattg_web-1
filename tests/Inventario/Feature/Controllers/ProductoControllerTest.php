@@ -15,6 +15,32 @@ class ProductoControllerTest extends TestCase
 {
     use RefreshDatabase, WithFaker;
 
+    // Constantes para permisos
+    private const PERMISSION_VER_PRODUCTO = 'VER PRODUCTO';
+    private const PERMISSION_CREAR_PRODUCTO = 'CREAR PRODUCTO';
+    private const PERMISSION_EDITAR_PRODUCTO = 'EDITAR PRODUCTO';
+    private const PERMISSION_ELIMINAR_PRODUCTO = 'ELIMINAR PRODUCTO';
+    private const PERMISSION_BUSCAR_PRODUCTO = 'BUSCAR PRODUCTO';
+    private const PERMISSION_VER_CATALOGO_PRODUCTO = 'VER CATALOGO PRODUCTO';
+
+    // Constantes para rutas
+    private const ROUTE_INDEX = 'inventario.productos.index';
+    private const ROUTE_BUSCAR = 'inventario.productos.buscar';
+    private const ROUTE_CREATE = 'inventario.productos.create';
+    private const ROUTE_STORE = 'inventario.productos.store';
+    private const ROUTE_SHOW = 'inventario.productos.show';
+    private const ROUTE_EDIT = 'inventario.productos.edit';
+    private const ROUTE_UPDATE = 'inventario.productos.update';
+    private const ROUTE_DESTROY = 'inventario.productos.destroy';
+
+    // Constantes para vistas
+    private const VIEW_INDEX = 'inventario.productos.index';
+    private const VIEW_CREATE = 'inventario.productos.create';
+
+    // Constantes para datos
+    private const PRODUCTO_ACTUALIZADO = 'Producto Actualizado';
+    private const ROUTE_LOGIN = 'verificarLogin';
+
     protected User $user;
 
     protected function setUp(): void
@@ -29,16 +55,16 @@ class ProductoControllerTest extends TestCase
         ]);
 
         // Crear permisos necesarios
-        Permission::firstOrCreate(['name' => 'VER PRODUCTO']);
-        Permission::firstOrCreate(['name' => 'CREAR PRODUCTO']);
-        Permission::firstOrCreate(['name' => 'EDITAR PRODUCTO']);
-        Permission::firstOrCreate(['name' => 'ELIMINAR PRODUCTO']);
-        Permission::firstOrCreate(['name' => 'BUSCAR PRODUCTO']);
-        Permission::firstOrCreate(['name' => 'VER CATALOGO PRODUCTO']);
+        Permission::firstOrCreate(['name' => self::PERMISSION_VER_PRODUCTO]);
+        Permission::firstOrCreate(['name' => self::PERMISSION_CREAR_PRODUCTO]);
+        Permission::firstOrCreate(['name' => self::PERMISSION_EDITAR_PRODUCTO]);
+        Permission::firstOrCreate(['name' => self::PERMISSION_ELIMINAR_PRODUCTO]);
+        Permission::firstOrCreate(['name' => self::PERMISSION_BUSCAR_PRODUCTO]);
+        Permission::firstOrCreate(['name' => self::PERMISSION_VER_CATALOGO_PRODUCTO]);
 
         // Crear usuario con permisos usando factory
         $this->user = User::factory()->create();
-        $this->user->givePermissionTo('VER PRODUCTO');
+        $this->user->givePermissionTo(self::PERMISSION_VER_PRODUCTO);
     }
 
     #[Test]
@@ -48,22 +74,22 @@ class ProductoControllerTest extends TestCase
 
         Producto::factory()->count(5)->create();
 
-        $response = $this->get(route('inventario.productos.index'));
+        $response = $this->get(route(self::ROUTE_INDEX));
 
         $response->assertStatus(200);
-        $response->assertViewIs('inventario.productos.index');
+        $response->assertViewIs(self::VIEW_INDEX);
         $response->assertViewHas('productos');
     }
 
     #[Test]
     public function puede_buscar_productos(): void
     {
-        $this->user->givePermissionTo('BUSCAR PRODUCTO');
+        $this->user->givePermissionTo(self::PERMISSION_BUSCAR_PRODUCTO);
         $this->actingAs($this->user);
 
-        $producto = Producto::factory()->create(['producto' => 'Producto Test']);
+        Producto::factory()->create(['producto' => 'Producto Test']);
 
-        $response = $this->get(route('inventario.productos.buscar', ['search' => 'Test']));
+        $response = $this->get(route(self::ROUTE_BUSCAR, ['search' => 'Test']));
 
         $response->assertStatus(200);
     }
@@ -71,19 +97,19 @@ class ProductoControllerTest extends TestCase
     #[Test]
     public function puede_ver_formulario_de_creacion(): void
     {
-        $this->user->givePermissionTo('CREAR PRODUCTO');
+        $this->user->givePermissionTo(self::PERMISSION_CREAR_PRODUCTO);
         $this->actingAs($this->user);
 
-        $response = $this->get(route('inventario.productos.create'));
+        $response = $this->get(route(self::ROUTE_CREATE));
 
         $response->assertStatus(200);
-        $response->assertViewIs('inventario.productos.create');
+        $response->assertViewIs(self::VIEW_CREATE);
     }
 
     #[Test]
     public function puede_crear_producto(): void
     {
-        $this->user->givePermissionTo('CREAR PRODUCTO');
+        $this->user->givePermissionTo(self::PERMISSION_CREAR_PRODUCTO);
         $this->actingAs($this->user);
 
         // Obtener parámetros necesarios
@@ -100,10 +126,10 @@ class ProductoControllerTest extends TestCase
         })->first();
 
         if (! $tipoProducto || ! $unidadMedida || ! $estado) {
-            $this->markTestSkipped('Faltan parámetros necesarios (requiere seeders completos)');
+            $this->markTestSkipped('Faltan parámetros necesarios');
         }
 
-        $response = $this->post(route('inventario.productos.store'), [
+        $response = $this->post(route(self::ROUTE_STORE), [
             'producto' => 'Producto de Prueba '.$this->faker->word(),
             'tipo_producto_id' => $tipoProducto->id,
             'descripcion' => $this->faker->sentence(),
@@ -122,7 +148,7 @@ class ProductoControllerTest extends TestCase
     {
         $this->actingAs($this->user);
 
-        $response = $this->post(route('inventario.productos.store'), []);
+        $response = $this->post(route(self::ROUTE_STORE), []);
 
         $response->assertStatus(403);
     }
@@ -134,7 +160,7 @@ class ProductoControllerTest extends TestCase
 
         $producto = Producto::factory()->create();
 
-        $response = $this->get(route('inventario.productos.show', $producto->id));
+        $response = $this->get(route(self::ROUTE_SHOW, $producto->id));
 
         $response->assertStatus(200);
         $response->assertViewHas('producto');
@@ -143,12 +169,12 @@ class ProductoControllerTest extends TestCase
     #[Test]
     public function puede_ver_formulario_de_edicion(): void
     {
-        $this->user->givePermissionTo('EDITAR PRODUCTO');
+        $this->user->givePermissionTo(self::PERMISSION_EDITAR_PRODUCTO);
         $this->actingAs($this->user);
 
         $producto = Producto::factory()->create();
 
-        $response = $this->get(route('inventario.productos.edit', $producto->id));
+        $response = $this->get(route(self::ROUTE_EDIT, $producto->id));
 
         $response->assertStatus(200);
         $response->assertViewHas('producto');
@@ -157,13 +183,13 @@ class ProductoControllerTest extends TestCase
     #[Test]
     public function puede_actualizar_producto(): void
     {
-        $this->user->givePermissionTo('EDITAR PRODUCTO');
+        $this->user->givePermissionTo(self::PERMISSION_EDITAR_PRODUCTO);
         $this->actingAs($this->user);
 
         $producto = Producto::factory()->create();
 
-        $response = $this->put(route('inventario.productos.update', $producto->id), [
-            'producto' => 'Producto Actualizado',
+        $response = $this->put(route(self::ROUTE_UPDATE, $producto->id), [
+            'producto' => self::PRODUCTO_ACTUALIZADO,
             'tipo_producto_id' => $producto->tipo_producto_id,
             'descripcion' => $producto->descripcion,
             'peso' => $producto->peso,
@@ -175,19 +201,19 @@ class ProductoControllerTest extends TestCase
         $response->assertRedirect();
         $this->assertDatabaseHas('productos', [
             'id' => $producto->id,
-            'producto' => 'Producto Actualizado',
+            'producto' => self::PRODUCTO_ACTUALIZADO,
         ]);
     }
 
     #[Test]
     public function puede_eliminar_producto(): void
     {
-        $this->user->givePermissionTo('ELIMINAR PRODUCTO');
+        $this->user->givePermissionTo(self::PERMISSION_ELIMINAR_PRODUCTO);
         $this->actingAs($this->user);
 
         $producto = Producto::factory()->create();
 
-        $response = $this->delete(route('inventario.productos.destroy', $producto->id));
+        $response = $this->delete(route(self::ROUTE_DESTROY, $producto->id));
 
         $response->assertRedirect();
         $this->assertDatabaseMissing('productos', [
@@ -198,8 +224,8 @@ class ProductoControllerTest extends TestCase
     #[Test]
     public function requiere_autenticacion_para_ver_productos(): void
     {
-        $response = $this->get(route('inventario.productos.index'));
+        $response = $this->get(route(self::ROUTE_INDEX));
 
-        $response->assertRedirect(route('login'));
+        $response->assertRedirect(route(self::ROUTE_LOGIN));
     }
 }

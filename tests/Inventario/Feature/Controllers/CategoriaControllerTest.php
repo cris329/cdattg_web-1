@@ -19,6 +19,32 @@ class CategoriaControllerTest extends TestCase
     protected User $user;
     protected Tema $temaCategorias;
 
+    // Constantes para permisos
+    private const PERMISSION_VER_CATEGORIA = 'VER CATEGORIA';
+    private const PERMISSION_CREAR_CATEGORIA = 'CREAR CATEGORIA';
+    private const PERMISSION_EDITAR_CATEGORIA = 'EDITAR CATEGORIA';
+    private const PERMISSION_ELIMINAR_CATEGORIA = 'ELIMINAR CATEGORIA';
+
+    // Constantes para rutas
+    private const ROUTE_INDEX = 'inventario.categorias.index';
+    private const ROUTE_CREATE = 'inventario.categorias.create';
+    private const ROUTE_STORE = 'inventario.categorias.store';
+    private const ROUTE_SHOW = 'inventario.categorias.show';
+    private const ROUTE_EDIT = 'inventario.categorias.edit';
+    private const ROUTE_UPDATE = 'inventario.categorias.update';
+    private const ROUTE_DESTROY = 'inventario.categorias.destroy';
+
+    // Constantes para vistas
+    private const VIEW_INDEX = 'inventario.categorias.index';
+    private const VIEW_CREATE = 'inventario.categorias.create';
+    private const VIEW_SHOW = 'inventario.categorias.show';
+    private const VIEW_EDIT = 'inventario.categorias.edit';
+
+    // Constantes para datos
+    private const TEMA_CATEGORIAS = 'CATEGORIAS';
+    private const CATEGORIA_TEST = 'CATEGORIA TEST';
+    private const CATEGORIA_ACTUALIZADA = 'CATEGORIA ACTUALIZADA';
+
     protected function setUp(): void
     {
         parent::setUp();
@@ -28,13 +54,13 @@ class CategoriaControllerTest extends TestCase
         
         // Asegurar que los seeders se ejecuten después de RefreshDatabase
         // RefreshDatabase se ejecuta automáticamente, pero necesitamos los seeders
-        if (!\App\Models\Tema::where('name', 'CATEGORIAS')->exists()) {
+        if (!\App\Models\Tema::where('name', self::TEMA_CATEGORIAS)->exists()) {
             $this->artisan('db:seed', ['--force' => true]);
         }
 
         // Crear tema CATEGORIAS
         $this->temaCategorias = Tema::firstOrCreate(
-            ['name' => 'CATEGORIAS'],
+            ['name' => self::TEMA_CATEGORIAS],
             [
                 'status' => true,
                 'user_create_id' => 1,
@@ -43,14 +69,14 @@ class CategoriaControllerTest extends TestCase
         );
 
         // Crear permisos necesarios
-        Permission::firstOrCreate(['name' => 'VER CATEGORIA']);
-        Permission::firstOrCreate(['name' => 'CREAR CATEGORIA']);
-        Permission::firstOrCreate(['name' => 'EDITAR CATEGORIA']);
-        Permission::firstOrCreate(['name' => 'ELIMINAR CATEGORIA']);
+        Permission::firstOrCreate(['name' => self::PERMISSION_VER_CATEGORIA]);
+        Permission::firstOrCreate(['name' => self::PERMISSION_CREAR_CATEGORIA]);
+        Permission::firstOrCreate(['name' => self::PERMISSION_EDITAR_CATEGORIA]);
+        Permission::firstOrCreate(['name' => self::PERMISSION_ELIMINAR_CATEGORIA]);
 
         // Crear usuario con permisos
         $this->user = User::factory()->create();
-        $this->user->givePermissionTo('VER CATEGORIA');
+        $this->user->givePermissionTo(self::PERMISSION_VER_CATEGORIA);
     }
 
     #[Test]
@@ -78,10 +104,10 @@ class CategoriaControllerTest extends TestCase
             'user_edit_id' => $this->user->id,
         ]);
 
-        $response = $this->get(route('inventario.categorias.index'));
+        $response = $this->get(route(self::ROUTE_INDEX));
 
         $response->assertStatus(200);
-        $response->assertViewIs('inventario.categorias.index');
+        $response->assertViewIs(self::VIEW_INDEX);
         $response->assertViewHas('categorias');
     }
 
@@ -100,7 +126,7 @@ class CategoriaControllerTest extends TestCase
             'user_edit_id' => $this->user->id,
         ]);
 
-        $response = $this->get(route('inventario.categorias.index', ['search' => 'ELECTRONICA']));
+        $response = $this->get(route(self::ROUTE_INDEX, ['search' => 'ELECTRONICA']));
 
         $response->assertStatus(200);
         $response->assertSee('ELECTRONICA', false);
@@ -109,26 +135,26 @@ class CategoriaControllerTest extends TestCase
     #[Test]
     public function puede_ver_formulario_de_creacion()
     {
-        $this->user->givePermissionTo('CREAR CATEGORIA');
+        $this->user->givePermissionTo(self::PERMISSION_CREAR_CATEGORIA);
         $this->actingAs($this->user);
 
-        $response = $this->get(route('inventario.categorias.create'));
+        $response = $this->get(route(self::ROUTE_CREATE));
 
         $response->assertStatus(200);
-        $response->assertViewIs('inventario.categorias.create');
+        $response->assertViewIs(self::VIEW_CREATE);
     }
 
     #[Test]
     public function puede_crear_categoria()
     {
-        $this->user->givePermissionTo('CREAR CATEGORIA');
+        $this->user->givePermissionTo(self::PERMISSION_CREAR_CATEGORIA);
         $this->actingAs($this->user);
 
-        $response = $this->post(route('inventario.categorias.store'), [
+        $response = $this->post(route(self::ROUTE_STORE), [
             'name' => 'NUEVA CATEGORIA',
         ]);
 
-        $response->assertRedirect(route('inventario.categorias.index'));
+        $response->assertRedirect(route(self::ROUTE_INDEX));
         $response->assertSessionHas('success');
 
         $this->assertDatabaseHas('parametros', [
@@ -141,7 +167,7 @@ class CategoriaControllerTest extends TestCase
     {
         $this->actingAs($this->user);
 
-        $response = $this->post(route('inventario.categorias.store'), [
+        $response = $this->post(route(self::ROUTE_STORE), [
             'name' => 'CATEGORIA SIN PERMISO',
         ]);
 
@@ -153,7 +179,7 @@ class CategoriaControllerTest extends TestCase
     {
         $this->actingAs($this->user);
 
-        $categoria = Parametro::factory()->create(['name' => 'CATEGORIA TEST']);
+        $categoria = Parametro::factory()->create(['name' => self::CATEGORIA_TEST]);
         
         ParametroTema::create([
             'parametro_id' => $categoria->id,
@@ -163,17 +189,17 @@ class CategoriaControllerTest extends TestCase
             'user_edit_id' => $this->user->id,
         ]);
 
-        $response = $this->get(route('inventario.categorias.show', $categoria->id));
+        $response = $this->get(route(self::ROUTE_SHOW, $categoria->id));
 
         $response->assertStatus(200);
-        $response->assertViewIs('inventario.categorias.show');
+        $response->assertViewIs(self::VIEW_SHOW);
         $response->assertViewHas('categoria');
     }
 
     #[Test]
     public function puede_ver_formulario_de_edicion()
     {
-        $this->user->givePermissionTo('EDITAR CATEGORIA');
+        $this->user->givePermissionTo(self::PERMISSION_EDITAR_CATEGORIA);
         $this->actingAs($this->user);
 
         $categoria = Parametro::factory()->create(['name' => 'CATEGORIA EDITAR']);
@@ -186,17 +212,17 @@ class CategoriaControllerTest extends TestCase
             'user_edit_id' => $this->user->id,
         ]);
 
-        $response = $this->get(route('inventario.categorias.edit', $categoria->id));
+        $response = $this->get(route(self::ROUTE_EDIT, $categoria->id));
 
         $response->assertStatus(200);
-        $response->assertViewIs('inventario.categorias.edit');
+        $response->assertViewIs(self::VIEW_EDIT);
         $response->assertViewHas('categoria');
     }
 
     #[Test]
     public function puede_actualizar_categoria()
     {
-        $this->user->givePermissionTo('EDITAR CATEGORIA');
+        $this->user->givePermissionTo(self::PERMISSION_EDITAR_CATEGORIA);
         $this->actingAs($this->user);
 
         $categoria = Parametro::factory()->create(['name' => 'CATEGORIA ORIGINAL']);
@@ -209,16 +235,16 @@ class CategoriaControllerTest extends TestCase
             'user_edit_id' => $this->user->id,
         ]);
 
-        $response = $this->put(route('inventario.categorias.update', $categoria->id), [
-            'name' => 'CATEGORIA ACTUALIZADA',
+        $response = $this->put(route(self::ROUTE_UPDATE, $categoria->id), [
+            'name' => self::CATEGORIA_ACTUALIZADA,
         ]);
 
-        $response->assertRedirect(route('inventario.categorias.index'));
+        $response->assertRedirect(route(self::ROUTE_INDEX));
         $response->assertSessionHas('success');
 
         $this->assertDatabaseHas('parametros', [
             'id' => $categoria->id,
-            'name' => 'CATEGORIA ACTUALIZADA',
+            'name' => self::CATEGORIA_ACTUALIZADA,
         ]);
     }
 
@@ -227,7 +253,7 @@ class CategoriaControllerTest extends TestCase
     {
         $this->actingAs($this->user);
 
-        $categoria = Parametro::factory()->create(['name' => 'CATEGORIA TEST']);
+        $categoria = Parametro::factory()->create(['name' => self::CATEGORIA_TEST]);
         
         ParametroTema::create([
             'parametro_id' => $categoria->id,
@@ -237,8 +263,8 @@ class CategoriaControllerTest extends TestCase
             'user_edit_id' => $this->user->id,
         ]);
 
-        $response = $this->put(route('inventario.categorias.update', $categoria->id), [
-            'name' => 'CATEGORIA ACTUALIZADA',
+        $response = $this->put(route(self::ROUTE_UPDATE, $categoria->id), [
+            'name' => self::CATEGORIA_ACTUALIZADA,
         ]);
 
         $response->assertStatus(403);
@@ -247,7 +273,7 @@ class CategoriaControllerTest extends TestCase
     #[Test]
     public function puede_eliminar_categoria()
     {
-        $this->user->givePermissionTo('ELIMINAR CATEGORIA');
+        $this->user->givePermissionTo(self::PERMISSION_ELIMINAR_CATEGORIA);
         $this->actingAs($this->user);
 
         $categoria = Parametro::factory()->create(['name' => 'CATEGORIA ELIMINAR']);
@@ -260,9 +286,9 @@ class CategoriaControllerTest extends TestCase
             'user_edit_id' => $this->user->id,
         ]);
 
-        $response = $this->delete(route('inventario.categorias.destroy', $categoria->id));
+        $response = $this->delete(route(self::ROUTE_DESTROY, $categoria->id));
 
-        $response->assertRedirect(route('inventario.categorias.index'));
+        $response->assertRedirect(route(self::ROUTE_INDEX));
         $response->assertSessionHas('success');
     }
 
@@ -271,7 +297,7 @@ class CategoriaControllerTest extends TestCase
     {
         $this->actingAs($this->user);
 
-        $categoria = Parametro::factory()->create(['name' => 'CATEGORIA TEST']);
+        $categoria = Parametro::factory()->create(['name' => self::CATEGORIA_TEST]);
         
         ParametroTema::create([
             'parametro_id' => $categoria->id,
@@ -281,7 +307,7 @@ class CategoriaControllerTest extends TestCase
             'user_edit_id' => $this->user->id,
         ]);
 
-        $response = $this->delete(route('inventario.categorias.destroy', $categoria->id));
+        $response = $this->delete(route(self::ROUTE_DESTROY, $categoria->id));
 
         $response->assertStatus(403);
     }
@@ -294,7 +320,7 @@ class CategoriaControllerTest extends TestCase
         // Eliminar el tema CATEGORIAS
         $this->temaCategorias->delete();
 
-        $response = $this->get(route('inventario.categorias.index'));
+        $response = $this->get(route(self::ROUTE_INDEX));
 
         $response->assertRedirect();
         $response->assertSessionHas('error');

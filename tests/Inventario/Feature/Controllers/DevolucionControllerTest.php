@@ -20,6 +20,18 @@ class DevolucionControllerTest extends TestCase
 {
     use RefreshDatabase, WithFaker;
 
+    // Permisos
+    private const PERMISO_DEVOLVER_PRESTAMO = 'DEVOLVER PRESTAMO';
+
+    // Rutas
+    private const RUTA_INDEX = 'inventario.devoluciones.index';
+    private const RUTA_CREATE = 'inventario.devoluciones.create';
+    private const RUTA_STORE = 'inventario.devoluciones.store';
+
+    // Vistas
+    private const VISTA_INDEX = 'inventario.devoluciones.index';
+    private const VISTA_CREATE = 'inventario.devoluciones.create';
+
     protected User $user;
     protected DetalleOrden $detalleOrden;
     protected ParametroTema $estadoAprobada;
@@ -114,11 +126,11 @@ class DevolucionControllerTest extends TestCase
         ]);
 
         // Crear permisos necesarios
-        Permission::firstOrCreate(['name' => 'DEVOLVER PRESTAMO']);
+        Permission::firstOrCreate(['name' => self::PERMISO_DEVOLVER_PRESTAMO]);
 
         // Crear usuario con permisos
         $this->user = User::factory()->create();
-        $this->user->givePermissionTo('DEVOLVER PRESTAMO');
+        $this->user->givePermissionTo(self::PERMISO_DEVOLVER_PRESTAMO);
     }
 
     #[Test]
@@ -126,20 +138,21 @@ class DevolucionControllerTest extends TestCase
     {
         $this->actingAs($this->user);
 
-        $response = $this->get(route('inventario.devoluciones.index'));
+        $response = $this->get(route(self::RUTA_INDEX));
 
         $response->assertStatus(200);
-        $response->assertViewIs('inventario.devoluciones.index');
+        $response->assertViewIs(self::VISTA_INDEX);
         $response->assertViewHas('prestamos');
     }
 
     #[Test]
     public function no_puede_ver_listado_sin_permiso()
     {
+        /** @var User $userSinPermiso */
         $userSinPermiso = User::factory()->create();
         $this->actingAs($userSinPermiso);
 
-        $response = $this->get(route('inventario.devoluciones.index'));
+        $response = $this->get(route(self::RUTA_INDEX));
 
         $response->assertStatus(403);
     }
@@ -149,10 +162,10 @@ class DevolucionControllerTest extends TestCase
     {
         $this->actingAs($this->user);
 
-        $response = $this->get(route('inventario.devoluciones.create', $this->detalleOrden->id));
+        $response = $this->get(route(self::RUTA_CREATE, $this->detalleOrden->id));
 
         $response->assertStatus(200);
-        $response->assertViewIs('inventario.devoluciones.create');
+        $response->assertViewIs(self::VISTA_CREATE);
         $response->assertViewHas('detalleOrden');
     }
 
@@ -168,9 +181,9 @@ class DevolucionControllerTest extends TestCase
             'cierra_sin_stock' => true,
         ]);
 
-        $response = $this->get(route('inventario.devoluciones.create', $this->detalleOrden->id));
+        $response = $this->get(route(self::RUTA_CREATE, $this->detalleOrden->id));
 
-        $response->assertRedirect(route('inventario.devoluciones.index'));
+        $response->assertRedirect(route(self::RUTA_INDEX));
         $response->assertSessionHas('error');
     }
 
@@ -179,13 +192,13 @@ class DevolucionControllerTest extends TestCase
     {
         $this->actingAs($this->user);
 
-        $response = $this->post(route('inventario.devoluciones.store'), [
+        $response = $this->post(route(self::RUTA_STORE), [
             'detalle_orden_id' => $this->detalleOrden->id,
             'cantidad_devuelta' => 3,
             'observaciones' => 'Devolución parcial de prueba',
         ]);
 
-        $response->assertRedirect(route('inventario.devoluciones.index'));
+        $response->assertRedirect(route(self::RUTA_INDEX));
         $response->assertSessionHas('success');
 
         $this->assertDatabaseHas('devoluciones', [
@@ -199,13 +212,13 @@ class DevolucionControllerTest extends TestCase
     {
         $this->actingAs($this->user);
 
-        $response = $this->post(route('inventario.devoluciones.store'), [
+        $response = $this->post(route(self::RUTA_STORE), [
             'detalle_orden_id' => $this->detalleOrden->id,
             'cantidad_devuelta' => $this->detalleOrden->cantidad,
             'observaciones' => 'Devolución completa',
         ]);
 
-        $response->assertRedirect(route('inventario.devoluciones.index'));
+        $response->assertRedirect(route(self::RUTA_INDEX));
         $response->assertSessionHas('success');
     }
 
@@ -214,7 +227,7 @@ class DevolucionControllerTest extends TestCase
     {
         $this->actingAs($this->user);
 
-        $response = $this->post(route('inventario.devoluciones.store'), [
+        $response = $this->post(route(self::RUTA_STORE), [
             'detalle_orden_id' => $this->detalleOrden->id,
             'cantidad_devuelta' => 0,
             'observaciones' => '', // Sin observaciones
@@ -228,23 +241,24 @@ class DevolucionControllerTest extends TestCase
     {
         $this->actingAs($this->user);
 
-        $response = $this->post(route('inventario.devoluciones.store'), [
+        $response = $this->post(route(self::RUTA_STORE), [
             'detalle_orden_id' => $this->detalleOrden->id,
             'cantidad_devuelta' => 0,
             'observaciones' => 'Producto perdido o dañado',
         ]);
 
-        $response->assertRedirect(route('inventario.devoluciones.index'));
+        $response->assertRedirect(route(self::RUTA_INDEX));
         $response->assertSessionHas('success');
     }
 
     #[Test]
     public function no_puede_registrar_devolucion_sin_permiso()
     {
+        /** @var User $userSinPermiso */
         $userSinPermiso = User::factory()->create();
         $this->actingAs($userSinPermiso);
 
-        $response = $this->post(route('inventario.devoluciones.store'), [
+        $response = $this->post(route(self::RUTA_STORE), [
             'detalle_orden_id' => $this->detalleOrden->id,
             'cantidad_devuelta' => 2,
         ]);
@@ -257,7 +271,7 @@ class DevolucionControllerTest extends TestCase
     {
         $this->actingAs($this->user);
 
-        $response = $this->post(route('inventario.devoluciones.store'), [
+        $response = $this->post(route(self::RUTA_STORE), [
             'detalle_orden_id' => 99999, // ID inexistente
             'cantidad_devuelta' => 2,
         ]);
@@ -270,7 +284,7 @@ class DevolucionControllerTest extends TestCase
     {
         $this->actingAs($this->user);
 
-        $response = $this->post(route('inventario.devoluciones.store'), [
+        $response = $this->post(route(self::RUTA_STORE), [
             'detalle_orden_id' => $this->detalleOrden->id,
             'cantidad_devuelta' => -1, // Cantidad negativa
         ]);

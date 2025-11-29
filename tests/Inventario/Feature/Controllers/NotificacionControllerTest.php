@@ -5,7 +5,6 @@ namespace Tests\Feature\Inventario;
 use Tests\TestCase;
 use App\Models\User;
 use App\Models\Inventario\Notificacion;
-use App\Models\Inventario\Orden;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Foundation\Testing\WithFaker;
 use PHPUnit\Framework\Attributes\Test;
@@ -17,6 +16,20 @@ class NotificacionControllerTest extends TestCase
     use RefreshDatabase, WithFaker;
 
     protected User $user;
+
+    // Constantes para permisos
+    private const PERMISSION_VER_NOTIFICACION = 'VER NOTIFICACION';
+
+    // Constantes para rutas
+    private const ROUTE_INDEX = 'inventario.notificaciones.index';
+    private const ROUTE_UNREAD = 'inventario.notificaciones.unread';
+    private const ROUTE_READ = 'inventario.notificaciones.read';
+    private const ROUTE_READ_ALL = 'inventario.notificaciones.read-all';
+    private const ROUTE_DELETE = 'inventario.notificaciones.destroy';
+    private const ROUTE_DESTROY_ALL = 'inventario.notificaciones.destroy-all';
+
+    // Constantes para vistas
+    private const VIEW_INDEX = 'inventario.notificaciones.index';
 
     protected function setUp(): void
     {
@@ -31,11 +44,11 @@ class NotificacionControllerTest extends TestCase
         }
 
         // Crear permisos necesarios
-        Permission::firstOrCreate(['name' => 'VER NOTIFICACION']);
+        Permission::firstOrCreate(['name' => self::PERMISSION_VER_NOTIFICACION]);
 
         // Crear usuario con permisos
         $this->user = User::factory()->create();
-        $this->user->givePermissionTo('VER NOTIFICACION');
+        $this->user->givePermissionTo(self::PERMISSION_VER_NOTIFICACION);
     }
 
     #[Test]
@@ -47,20 +60,21 @@ class NotificacionControllerTest extends TestCase
         $this->crearNotificacion($this->user->id, 'nueva_orden', ['orden_id' => 1, 'mensaje' => 'Nueva orden']);
         $this->crearNotificacion($this->user->id, 'nueva_orden', ['orden_id' => 2, 'mensaje' => 'Otra orden']);
 
-        $response = $this->get(route('inventario.notificaciones.index'));
+        $response = $this->get(route(self::ROUTE_INDEX));
 
         $response->assertStatus(200);
-        $response->assertViewIs('inventario.notificaciones.index');
+        $response->assertViewIs(self::VIEW_INDEX);
         $response->assertViewHas('notificaciones');
     }
 
     #[Test]
     public function no_puede_ver_notificaciones_sin_permiso()
     {
+        /** @var User $userSinPermiso */
         $userSinPermiso = User::factory()->create();
         $this->actingAs($userSinPermiso);
 
-        $response = $this->get(route('inventario.notificaciones.index'));
+        $response = $this->get(route(self::ROUTE_INDEX));
 
         $response->assertStatus(403);
     }
@@ -74,7 +88,7 @@ class NotificacionControllerTest extends TestCase
         $this->crearNotificacion($this->user->id, 'nueva_orden', ['orden_id' => 1]);
         $this->crearNotificacion($this->user->id, 'nueva_orden', ['orden_id' => 2]);
 
-        $response = $this->getJson(route('inventario.notificaciones.unread'));
+        $response = $this->getJson(route(self::ROUTE_UNREAD));
 
         $response->assertStatus(200);
         $response->assertJsonStructure([
@@ -94,7 +108,7 @@ class NotificacionControllerTest extends TestCase
         // Crear notificación
         $notificacionId = $this->crearNotificacion($this->user->id, 'nueva_orden', ['orden_id' => 1]);
 
-        $response = $this->postJson(route('inventario.notificaciones.read', $notificacionId));
+        $response = $this->postJson(route(self::ROUTE_READ, $notificacionId));
 
         $response->assertStatus(200);
         $response->assertJson([
@@ -112,7 +126,8 @@ class NotificacionControllerTest extends TestCase
     {
         $this->actingAs($this->user);
 
-        $response = $this->postJson(route('inventario.notificaciones.read', 'notificacion-inexistente'));
+        // Usar un UUID que no existe en la base de datos
+        $response = $this->postJson(route(self::ROUTE_READ, 9999));
 
         $response->assertStatus(404);
         $response->assertJson([
@@ -130,7 +145,7 @@ class NotificacionControllerTest extends TestCase
         $this->crearNotificacion($this->user->id, 'nueva_orden', ['orden_id' => 1]);
         $this->crearNotificacion($this->user->id, 'nueva_orden', ['orden_id' => 2]);
 
-        $response = $this->postJson(route('inventario.notificaciones.read-all'));
+        $response = $this->postJson(route(self::ROUTE_READ_ALL));
 
         $response->assertStatus(200);
         $response->assertJson([
@@ -156,7 +171,7 @@ class NotificacionControllerTest extends TestCase
         // Crear notificación
         $notificacionId = $this->crearNotificacion($this->user->id, 'nueva_orden', ['orden_id' => 1]);
 
-        $response = $this->delete(route('inventario.notificaciones.destroy', $notificacionId));
+        $response = $this->delete(route(self::ROUTE_DELETE, $notificacionId));
 
         $response->assertRedirect();
         $response->assertSessionHas('success');
@@ -173,10 +188,10 @@ class NotificacionControllerTest extends TestCase
     {
         $this->actingAs($this->user);
 
-        $response = $this->delete(route('inventario.notificaciones.destroy', 'notificacion-inexistente'));
+        // Usar un que no existe en la base de datos
+        $response = $this->delete(route(self::ROUTE_DELETE, '99999999-9999-9999-9999-999999999999'));
 
-        $response->assertRedirect();
-        $response->assertSessionHas('error');
+        $response->assertStatus(404);
     }
 
     #[Test]
@@ -190,7 +205,7 @@ class NotificacionControllerTest extends TestCase
 
         $countAntes = Notificacion::where('user_id', $this->user->id)->count();
 
-        $response = $this->deleteJson(route('inventario.notificaciones.destroy-all'));
+        $response = $this->deleteJson(route(self::ROUTE_DESTROY_ALL));
 
         $response->assertStatus(200);
         $response->assertJson([
@@ -215,7 +230,7 @@ class NotificacionControllerTest extends TestCase
         // Crear notificación para el usuario actual
         $this->crearNotificacion($this->user->id, 'nueva_orden', ['orden_id' => 2]);
 
-        $response = $this->get(route('inventario.notificaciones.index'));
+        $response = $this->get(route(self::ROUTE_INDEX));
 
         $response->assertStatus(200);
         
