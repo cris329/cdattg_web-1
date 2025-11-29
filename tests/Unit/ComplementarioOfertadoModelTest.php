@@ -23,15 +23,40 @@ class ComplementarioOfertadoModelTest extends TestCase
         $this->seed([
             \Database\Seeders\RolePermissionSeeder::class,
             \Database\Seeders\ParametroSeeder::class,
+            \Database\Seeders\TemaSeeder::class,
+            \Database\Seeders\PaisSeeder::class,
+            \Database\Seeders\DepartamentoSeeder::class,
+            \Database\Seeders\MunicipioSeeder::class,
+            \Database\Seeders\PersonaSeeder::class,
+            \Database\Seeders\UsersSeeder::class,
+            \Database\Seeders\RegionalSeeder::class,
+            \Database\Seeders\CentroFormacionSeeder::class,
+            \Database\Seeders\SedeSeeder::class,
+            \Database\Seeders\BloqueSeeder::class,
+            \Database\Seeders\PisoSeeder::class,
         ]);
     }
 
     #[Test]
     public function tiene_relacion_con_modalidad(): void
     {
-        $parametro = Parametro::first();
+        // Los parámetros de modalidad son 18, 19, 20 (PRESENCIAL, VIRTUAL, MIXTA)
+        $parametro = Parametro::whereIn('id', [18, 19, 20])->first();
+        if (!$parametro) {
+            // Crear un parámetro de modalidad si no existe
+            $parametro = Parametro::firstOrCreate(
+                ['id' => 18],
+                ['name' => 'PRESENCIAL', 'status' => 1]
+            );
+        }
+        
+        $tema = \App\Models\Tema::firstOrCreate(
+            ['id' => 5],
+            ['name' => 'MODALIDADES DE FORMACION', 'status' => 1]
+        );
+        
         $modalidad = ParametroTema::firstOrCreate([
-            'tema_id' => 5,
+            'tema_id' => $tema->id,
             'parametro_id' => $parametro->id,
         ]);
 

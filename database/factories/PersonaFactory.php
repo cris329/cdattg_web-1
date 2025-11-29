@@ -98,9 +98,9 @@ class PersonaFactory extends Factory
             'telefono' => (rand(1, 100) <= 60) ? '60' . rand(10000000, 99999999) : null,
             'celular' => '3' . rand(100000000, 999999999),
             'email' => $email,
-            'pais_id' => 1,
-            'departamento_id' => $ubicacion['departamento_id'],
-            'municipio_id' => $ubicacion['municipio_id'],
+            'pais_id' => $ubicacion['pais_id'] ?? null,
+            'departamento_id' => $ubicacion['departamento_id'] ?? null,
+            'municipio_id' => $ubicacion['municipio_id'] ?? null,
             'direccion' => 'Calle ' . rand(1, 100) . ' #' . rand(1, 50) . '-' . rand(1, 99),
             'status' => 1,
             'user_create_id' => $userId,
@@ -237,33 +237,53 @@ class PersonaFactory extends Factory
      */
     private function obtenerUbicacionValida(): array
     {
-        $ubicaciones = [
-            ['departamento_id' => 95, 'municipio_id' => 824],
-            ['departamento_id' => 11, 'municipio_id' => 100],
-            ['departamento_id' => 25, 'municipio_id' => 126],
-            ['departamento_id' => 50, 'municipio_id' => 113],
-            ['departamento_id' => 63, 'municipio_id' => 339],
-            ['departamento_id' => 5, 'municipio_id' => 1],
-            ['departamento_id' => 73, 'municipio_id' => 432],
-        ];
-
         // Intentar obtener una ubicación existente de la base de datos
-        if (Schema::hasTable('municipios') && Schema::hasTable('departamentos')) {
-            $municipio = DB::table('municipios')
-                ->join('departamentos', 'municipios.departamento_id', '=', 'departamentos.id')
-                ->select('municipios.id as municipio_id', 'departamentos.id as departamento_id')
-                ->inRandomOrder()
-                ->first();
+        // Solo usar valores que realmente existen para evitar problemas de foreign keys
+        if (Schema::hasTable('municipios') && Schema::hasTable('departamentos') && Schema::hasTable('pais')) {
+            try {
+                // Obtener un municipio con su departamento y país validando que todo existe
+                $ubicacion = DB::table('municipios')
+                    ->join('departamentos', 'municipios.departamento_id', '=', 'departamentos.id')
+                    ->join('pais', 'departamentos.pais_id', '=', 'pais.id')
+                    ->whereNotNull('municipios.departamento_id')
+                    ->whereNotNull('departamentos.pais_id')
+                    ->select(
+                        'municipios.id as municipio_id',
+                        'municipios.departamento_id as departamento_id',
+                        'departamentos.pais_id as pais_id'
+                    )
+                    ->inRandomOrder()
+                    ->first();
 
-            if ($municipio) {
-                return [
-                    'departamento_id' => $municipio->departamento_id,
-                    'municipio_id' => $municipio->municipio_id,
-                ];
+                if ($ubicacion && 
+                    isset($ubicacion->municipio_id) && 
+                    isset($ubicacion->departamento_id) && 
+                    isset($ubicacion->pais_id)) {
+                    // Verificar que el municipio realmente pertenece al departamento
+                    $verificacion = DB::table('municipios')
+                        ->where('id', $ubicacion->municipio_id)
+                        ->where('departamento_id', $ubicacion->departamento_id)
+                        ->exists();
+                    
+                    if ($verificacion) {
+                        return [
+                            'pais_id' => (int) $ubicacion->pais_id,
+                            'departamento_id' => (int) $ubicacion->departamento_id,
+                            'municipio_id' => (int) $ubicacion->municipio_id,
+                        ];
+                    }
+                }
+            } catch (\Exception $e) {
+                // Continuar si hay error
             }
         }
 
-        // Si no hay datos en la BD, usar valores por defecto
-        return $ubicaciones[array_rand($ubicaciones)];
+        // Si no hay datos válidos, usar null (los campos son nullable)
+        // En tests, los seeders deberían proporcionar estos datos
+        return [
+            'pais_id' => null,
+            'departamento_id' => null,
+            'municipio_id' => null,
+        ];
     }
 }

@@ -19,23 +19,39 @@ class AmbienteFactory extends Factory
     public function definition(): array
     {
         // Obtener o crear usuario para user_create_id y user_edit_id
-        $userId = null;
+        // Usar un ID por defecto para evitar crear usuarios sin persona_id
+        $userId = 1;
         if (Schema::hasTable('users')) {
             try {
-                $userId = User::query()->inRandomOrder()->value('id');
-                if (!$userId) {
-                    $userId = User::factory()->create()->id;
+                $existingUser = User::query()->inRandomOrder()->first();
+                if ($existingUser) {
+                    $userId = $existingUser->id;
                 }
             } catch (\Exception $e) {
-                $userId = User::factory()->create()->id;
+                // Si no hay usuarios, usar ID por defecto
+                $userId = 1;
+            }
+        }
+
+        // Obtener un piso existente o usar null si no existe
+        $pisoId = null;
+        if (Schema::hasTable('pisos')) {
+            try {
+                $piso = \App\Models\Piso::inRandomOrder()->first();
+                if ($piso) {
+                    $pisoId = $piso->id;
+                }
+            } catch (\Exception $e) {
+                // Si no hay pisos, usar null
+                $pisoId = null;
             }
         }
 
         return [
             'title' => $this->faker->unique()->words(2, true),
-            'piso_id' => 1,
-            'user_create_id' => $userId ?? 1,
-            'user_edit_id' => $userId ?? 1,
+            'piso_id' => $pisoId,
+            'user_create_id' => $userId,
+            'user_edit_id' => $userId,
             'status' => 1,
         ];
     }
