@@ -1,0 +1,269 @@
+<?php
+
+namespace Tests\Feature\Complementarios;
+
+use Tests\TestCase;
+use App\Models\ComplementarioOfertado;
+use App\Models\AspiranteComplementario;
+use App\Models\Persona;
+use App\Models\SofiaValidationProgress;
+use App\Models\User;
+use App\Jobs\ValidarSofiaJob;
+use Illuminate\Foundation\Testing\RefreshDatabase;
+use Illuminate\Support\Facades\Queue;
+use PHPUnit\Framework\Attributes\Test;
+
+class ValidacionSofiaControllerTest extends TestCase
+{
+    use RefreshDatabase;
+
+    protected User $user;
+
+    protected function setUp(): void
+    {
+        parent::setUp();
+
+        $this->seed([
+            \Database\Seeders\RolePermissionSeeder::class,
+            \Database\Seeders\ParametroSeeder::class,
+        ]);
+
+        $this->user = User::factory()->create();
+        Queue::fake();
+    }
+
+    #[Test]
+    public function puede_iniciar_validacion_sofia(): void
+    {
+        $this->actingAs($this->user);
+
+        $programa = ComplementarioOfertado::factory()->create();
+
+        $persona1 = Persona::factory()->create(['estado_sofia' => 0]);
+        $persona2 = Persona::factory()->create(['estado_sofia' => 2]);
+
+        AspiranteComplementario::factory()->create([
+            'persona_id' => $persona1->id,
+            'complementario_id' => $programa->id,
+        ]);
+
+        AspiranteComplementario::factory()->create([
+            'persona_id' => $persona2->id,
+            'complementario_id' => $programa->id,
+        ]);
+
+        $response = $this->post(route('validar-sofia', $programa->id));
+
+        $response->assertStatus(200);
+        $response->assertJson([
+            'success' => true,
+        ]);
+        $response->assertJsonStructure([
+            'success',
+            'message',
+            'aspirantes_count',
+            'progress_id',
+        ]);
+
+        Queue::assertPushed(ValidarSofiaJob::class, function ($job) use ($programa) {
+            return $job->complementarioId === $programa->id;
+        });
+
+        $this->assertDatabaseHas('sofia_validation_progress', [
+            'complementario_id' => $programa->id,
+            'user_id' => $this->user->id,
+            'status' => 'pending',
+        ]);
+    }
+
+    #[Test]
+    public function no_inicia_validacion_si_no_hay_aspirantes(): void
+    {
+        $this->actingAs($this->user);
+
+        $programa = ComplementarioOfertado::factory()->create();
+
+        // Crear aspirantes pero todos ya validados (estado_sofia = 1)
+        $persona = Persona::factory()->create(['estado_sofia' => 1]);
+        AspiranteComplementario::factory()->create([
+            'persona_id' => $persona->id,
+            'complementario_id' => $programa->id,
+        ]);
+
+        $response = $this->post(route('validar-sofia', $programa->id));
+
+        $response->assertStatus(200);
+        $response->assertJson([
+            'success' => false,
+            'message' => 'No hay aspirantes que necesiten validación en este programa.',
+        ]);
+
+        Queue::assertNothingPushed();
+    }
+
+    #[Test]
+    public function no_inicia_validacion_si_ya_hay_una_en_progreso(): void
+    {
+        $this->actingAs($this->user);
+
+        $programa = ComplementarioOfertado::factory()->create();
+
+        $persona = Persona::factory()->create(['estado_sofia' => 0]);
+        AspiranteComplementario::factory()->create([
+            'persona_id' => $persona->id,
+            'complementario_id' => $programa->id,
+        ]);
+
+        // Crear validación en progreso
+        SofiaValidationProgress::factory()->create([
+            'complementario_id' => $programa->id,
+            'status' => 'processing',
+        ]);
+
+        $response = $this->post(route('validar-sofia', $programa->id));
+
+        $response->assertStatus(200);
+        $response->assertJson([
+            'success' => false,
+            'message' => 'Ya hay una validación en progreso para este programa. Espere a que termine.',
+        ]);
+
+        Queue::assertNothingPushed();
+    }
+
+    #[Test]
+    public function retorna_error_si_programa_no_existe(): void
+    {
+        $this->actingAs($this->user);
+
+        $response = $this->post(route('validar-sofia', 99999));
+
+        $response->assertStatus(404);
+        $response->assertJson([
+            'success' => false,
+            'message' => 'Programa no encontrado.',
+        ]);
+
+        Queue::assertNothingPushed();
+    }
+
+    #[Test]
+    public function puede_obtener_progreso_de_validacion(): void
+    {
+        $this->actingAs($this->user);
+
+        $programa = ComplementarioOfertado::factory()->create();
+        $progress = SofiaValidationProgress::factory()->create([
+            'complementario_id' => $programa->id,
+            'status' => 'processing',
+            'total_aspirantes' => 10,
+            'processed_aspirantes' => 5,
+            'successful_validations' => 4,
+            'failed_validations' => 1,
+        ]);
+
+        $response = $this->get(route('sofia-validation.progress', $progress->id));
+
+        $response->assertStatus(200);
+        $response->assertJson([
+            'success' => true,
+        ]);
+        $response->assertJsonStructure([
+            'success',
+            'progress' => [
+                'id',
+                'status',
+                'status_label',
+                'total_aspirantes',
+                'processed_aspirantes',
+                'successful_validations',
+                'failed_validations',
+                'progress_percentage',
+                'started_at',
+                'completed_at',
+                'errors',
+            ],
+        ]);
+
+        $responseData = $response->json();
+        $this->assertEquals($progress->id, $responseData['progress']['id']);
+        $this->assertEquals('processing', $responseData['progress']['status']);
+        $this->assertEquals(10, $responseData['progress']['total_aspirantes']);
+        $this->assertEquals(5, $responseData['progress']['processed_aspirantes']);
+    }
+
+    #[Test]
+    public function retorna_error_si_progreso_no_existe(): void
+    {
+        $this->actingAs($this->user);
+
+        $response = $this->get(route('sofia-validation.progress', 99999));
+
+        $response->assertStatus(500);
+        $response->assertJson([
+            'success' => false,
+        ]);
+        $response->assertJsonStructure([
+            'success',
+            'message',
+        ]);
+    }
+
+    #[Test]
+    public function crea_registro_de_progreso_con_datos_correctos(): void
+    {
+        $this->actingAs($this->user);
+
+        $programa = ComplementarioOfertado::factory()->create();
+
+        $persona1 = Persona::factory()->create(['estado_sofia' => 0]);
+        $persona2 = Persona::factory()->create(['estado_sofia' => 2]);
+
+        AspiranteComplementario::factory()->create([
+            'persona_id' => $persona1->id,
+            'complementario_id' => $programa->id,
+        ]);
+
+        AspiranteComplementario::factory()->create([
+            'persona_id' => $persona2->id,
+            'complementario_id' => $programa->id,
+        ]);
+
+        $response = $this->post(route('validar-sofia', $programa->id));
+
+        $response->assertStatus(200);
+
+        $this->assertDatabaseHas('sofia_validation_progress', [
+            'complementario_id' => $programa->id,
+            'user_id' => $this->user->id,
+            'status' => 'pending',
+            'total_aspirantes' => 2,
+            'processed_aspirantes' => 0,
+            'successful_validations' => 0,
+            'failed_validations' => 0,
+        ]);
+    }
+
+    #[Test]
+    public function despacha_job_con_configuracion_correcta(): void
+    {
+        $this->actingAs($this->user);
+
+        $programa = ComplementarioOfertado::factory()->create();
+
+        $persona = Persona::factory()->create(['estado_sofia' => 0]);
+        AspiranteComplementario::factory()->create([
+            'persona_id' => $persona->id,
+            'complementario_id' => $programa->id,
+        ]);
+
+        $this->post(route('validar-sofia', $programa->id));
+
+        Queue::assertPushed(ValidarSofiaJob::class, function ($job) use ($programa) {
+            return $job->complementarioId === $programa->id &&
+                   $job->userId === $this->user->id &&
+                   $job->progressId !== null;
+        });
+    }
+}
+
