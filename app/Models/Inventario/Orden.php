@@ -38,13 +38,13 @@ class Orden extends Model
         return $this->hasMany(DetalleOrden::class, 'orden_id');
     }
 
-    // Verificar si es un préstamo 
+    // Verificar si es un préstamo
     public function Prestamo() : bool
     {
         return $this->tipoOrden && strtoupper($this->tipoOrden->parametro->name ?? '') === 'PRÉSTAMO';
     }
 
-    
+
     // Verificar si es una salida
     public function Salida() : bool
     {

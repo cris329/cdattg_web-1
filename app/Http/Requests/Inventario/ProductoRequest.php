@@ -31,7 +31,7 @@ class ProductoRequest extends FormRequest
 
         // Validación para update y store
         $rules = $this->getProductoBaseRules();
-        
+
         if ($this->isMethod('PUT') || $this->isMethod('PATCH')) {
             $productoId = $this->route('producto');
             $rules['producto'] = 'required|unique:productos,producto,' . $productoId;

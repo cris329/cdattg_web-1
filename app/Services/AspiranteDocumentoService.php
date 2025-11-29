@@ -32,13 +32,13 @@ class AspiranteDocumentoService
     {
         // Crear variantes del patrón para manejar diferentes formatos
         $patrones = [$patron];
-        
+
         // Si el patrón tiene guiones bajos, crear versión con espacios
         if (strpos($patron, '_') !== false) {
             $patronConEspacios = str_replace('_', ' ', $patron);
             $patrones[] = $patronConEspacios;
         }
-        
+
         // Si el patrón tiene espacios, crear versión con guiones bajos
         if (strpos($patron, ' ') !== false) {
             $patronConGuiones = str_replace(' ', '_', $patron);
@@ -50,7 +50,7 @@ class AspiranteDocumentoService
         $patronSinNombres = $this->crearPatronSinNombres($patron);
         if ($patronSinNombres) {
             $patrones[] = $patronSinNombres;
-            
+
             // También crear versión con espacios
             $patronSinNombresConEspacios = str_replace('_', ' ', $patronSinNombres);
             $patrones[] = $patronSinNombresConEspacios;
@@ -58,7 +58,7 @@ class AspiranteDocumentoService
 
         foreach ($files as $file) {
             $fileName = basename($file);
-            
+
             // Buscar archivos que contengan cualquiera de los patrones
             foreach ($patrones as $patronActual) {
                 if (strpos($fileName, $patronActual) !== false) {
@@ -79,7 +79,7 @@ class AspiranteDocumentoService
                 }
             }
         }
-        
+
         Log::warning("Documento no encontrado en Google Drive", [
             'patron' => $patron,
             'patrones_buscados' => $patrones,
@@ -96,15 +96,15 @@ class AspiranteDocumentoService
     {
         // El patrón completo es: tipo_documento_numero_documento_primer_nombre_primer_apellido_
         // Queremos extraer: tipo_documento_numero_documento_
-        
+
         // Dividir por guiones bajos
         $partes = explode('_', $patron);
-        
+
         // Necesitamos al menos tipo_documento, numero_documento y nombres
         if (count($partes) < 4) {
             return null;
         }
-        
+
         // El tipo de documento puede tener múltiples partes (ej: CÉDULA_DE_CIUDADANÍA)
         // Buscamos el número de documento (debe ser numérico)
         $numeroDocumentoIndex = null;
@@ -114,22 +114,22 @@ class AspiranteDocumentoService
                 break;
             }
         }
-        
+
         if ($numeroDocumentoIndex === null) {
             return null;
         }
-        
+
         // Reconstruir desde el inicio hasta el número de documento
         $patronSinNombres = '';
         for ($i = 0; $i <= $numeroDocumentoIndex; $i++) {
             $patronSinNombres .= $partes[$i] . '_';
         }
-        
+
         Log::info("Patrón sin nombres creado", [
             'patron_original' => $patron,
             'patron_sin_nombres' => $patronSinNombres
         ]);
-        
+
         return $patronSinNombres;
     }
 
@@ -157,13 +157,13 @@ class AspiranteDocumentoService
 
         // Crear variantes del patrón para manejar diferentes formatos
         $patrones = [$patron];
-        
+
         // Si el patrón tiene guiones bajos, crear versión con espacios
         if (strpos($patron, '_') !== false) {
             $patronConEspacios = str_replace('_', ' ', $patron);
             $patrones[] = $patronConEspacios;
         }
-        
+
         // Si el patrón tiene espacios, crear versión con guiones bajos
         if (strpos($patron, ' ') !== false) {
             $patronConGuiones = str_replace(' ', '_', $patron);
@@ -175,7 +175,7 @@ class AspiranteDocumentoService
         $patronSinNombres = $this->crearPatronSinNombres($patron);
         if ($patronSinNombres) {
             $patrones[] = $patronSinNombres;
-            
+
             // También crear versión con espacios
             $patronSinNombresConEspacios = str_replace('_', ' ', $patronSinNombres);
             $patrones[] = $patronSinNombresConEspacios;
@@ -183,7 +183,7 @@ class AspiranteDocumentoService
 
         foreach ($files as $file) {
             $fileName = basename($file);
-            
+
             // Buscar archivos que contengan cualquiera de los patrones
             foreach ($patrones as $patronActual) {
                 if (strpos($fileName, $patronActual) !== false) {

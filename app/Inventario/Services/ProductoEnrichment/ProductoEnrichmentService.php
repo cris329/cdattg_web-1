@@ -47,7 +47,7 @@ class ProductoEnrichmentService
         $marcas = !empty($marcaIds)
             ? $this->marcaRepository->encontrarMultiples(array_unique($marcaIds))
             : collect();
-            
+
         $categorias = !empty($categoriaIds)
             ? $this->categoriaRepository->encontrarMultiples(array_unique($categoriaIds))
             : collect();

@@ -227,7 +227,7 @@ class ComplementarioService
     public function obtenerEstadisticasPrograma($programaId)
     {
         $programa = $this->programaRepository->findWithRelations($programaId);
-        
+
         if (!$programa) {
             throw new ProgramaNoEncontradoException('Programa no encontrado');
         }

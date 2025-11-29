@@ -21,7 +21,7 @@ class InscripcionComplementarioController extends Controller
     public function inscripcionGeneral(): View
     {
         $data = $this->inscripcionService->prepararFormularioGeneral();
-        
+
         return view('complementarios.inscripciones.general', $data);
     }
 
@@ -39,7 +39,7 @@ class InscripcionComplementarioController extends Controller
     public function formularioInscripcion(int $id): View
     {
         $data = $this->inscripcionService->prepararFormularioInscripcion($id);
-        
+
         return view('complementarios.inscripciones.create', $data);
     }
 

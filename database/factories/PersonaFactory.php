@@ -109,7 +109,10 @@ class PersonaFactory extends Factory
     }
 
     /**
-     * Obtiene el ID de parametros_temas basado en tema_id y parametro_id, o lo crea si no existe
+     * Obtiene el ID de parametros_temas basado en tema_id y parametro_id
+     * 
+     * IMPORTANTE: Este método debe devolver el ID de la tabla parametros_temas, NO el parametro_id
+     * El seeder debe crear estos registros antes de que el factory los use
      */
     private function obtenerOCrearParametroTema(int $temaId, int $parametroId, int $userId): int
     {
@@ -117,119 +120,80 @@ class PersonaFactory extends Factory
             throw new DatabaseTableNotFoundException('parametros_temas');
         }
 
-        // Buscar el parametro_tema existente
-        $parametroTema = ParametroTema::query()
+        // Usar el mismo método que PersonaSeeder::getParametroTemaId
+        // IMPORTANTE: Necesitamos el ID de la columna 'id' de parametros_temas, NO el parametro_id
+        // NO usar select() para evitar problemas con el orden de los campos
+        $parametroTema = DB::table('parametros_temas')
             ->where('tema_id', $temaId)
             ->where('parametro_id', $parametroId)
             ->first();
 
-        if ($parametroTema && $parametroTema->id) {
-            // Verificar que el ID realmente existe en parametros_temas y tiene el tema_id y parametro_id correctos
-            $verificacion = ParametroTema::query()->find($parametroTema->id);
-            if (! $verificacion) {
-                // Si no se encuentra, continuar con la creación
-            } elseif ($verificacion->tema_id === $temaId && $verificacion->parametro_id === $parametroId) {
-                // Validación final antes de devolver - asegurar que los valores coinciden exactamente
-                if ($verificacion->tema_id !== $temaId || $verificacion->parametro_id !== $parametroId) {
-                    throw new ParametroTemaCreationException($temaId, $parametroId, "El ID encontrado ({$parametroTema->id}) no coincide con los valores esperados. Tema_id: {$verificacion->tema_id}, Parametro_id: {$verificacion->parametro_id}");
-                }
-                return (int) $parametroTema->id;
+        $parametroTemaId = null;
+        if ($parametroTema) {
+            // Acceder directamente al campo 'id' del resultado
+            // CRÍTICO: Verificar que estamos accediendo al campo correcto
+            // El campo 'id' debe ser el ID de parametros_temas, NO el parametro_id
+            if (isset($parametroTema->id)) {
+                $parametroTemaId = (int) $parametroTema->id;
             } else {
-                // Si los valores no coinciden, continuar con la creación en lugar de devolver un ID incorrecto
+                throw new ParametroTemaCreationException($temaId, $parametroId, "ERROR CRÍTICO: El resultado no tiene un campo 'id'. Resultado: " . json_encode($parametroTema));
             }
-        }
-
-        // Verificar que el usuario existe, si no usar null
-        $validUserId = User::query()->find($userId) ? $userId : null;
-
-        // Si no existe, buscar o crear el tema
-        if (Schema::hasTable('temas') && ! Tema::query()->find($temaId)) {
-            $temaNombres = [
-                2 => 'TIPO DE DOCUMENTO',
-                3 => 'GENERO',
-            ];
-            Tema::query()->firstOrCreate(
-                ['id' => $temaId],
-                [
-                    'name' => $temaNombres[$temaId] ?? 'TEMA ' . $temaId,
-                    'status' => 1,
-                    'user_create_id' => $validUserId,
-                    'user_edit_id' => $validUserId,
-                ]
-            );
-        }
-
-        // Buscar o crear el parámetro
-        if (Schema::hasTable('parametros') && ! Parametro::query()->find($parametroId)) {
-            $parametroNombres = [
-                3 => 'CÉDULA DE CIUDADANÍA',
-                4 => 'CÉDULA DE EXTRANJERÍA',
-                5 => 'PASAPORTE',
-                6 => 'TARJETA DE IDENTIDAD',
-                9 => 'MASCULINO',
-                10 => 'FEMENINO',
-                11 => 'NO DEFINE',
-            ];
-            Parametro::query()->firstOrCreate(
-                ['id' => $parametroId],
-                [
-                    'name' => $parametroNombres[$parametroId] ?? 'PARAMETRO ' . $parametroId,
-                    'status' => 1,
-                    'user_create_id' => $validUserId,
-                    'user_edit_id' => $validUserId,
-                ]
-            );
-        }
-
-        // Crear el parametro_tema
-        try {
-            $parametroTema = ParametroTema::query()->create([
-                'tema_id' => $temaId,
-                'parametro_id' => $parametroId,
-                'status' => 1,
-                'user_create_id' => $validUserId,
-                'user_edit_id' => $validUserId,
-            ]);
-
-            // Verificar que se creó correctamente
-            if (! $parametroTema || ! $parametroTema->id) {
-                throw new ParametroTemaCreationException($temaId, $parametroId);
-            }
-
-            // Verificar que el ID realmente existe en parametros_temas y tiene el tema_id y parametro_id correctos
-            $verificacion = ParametroTema::query()->find($parametroTema->id);
-            if (! $verificacion || $verificacion->tema_id !== $temaId || $verificacion->parametro_id !== $parametroId) {
-                throw new ParametroTemaCreationException($temaId, $parametroId, 'El parametro_tema se creó pero no se puede verificar o tiene valores incorrectos');
-            }
-
-            // Validación final antes de devolver
-            $verificacionFinal = ParametroTema::query()->find($parametroTema->id);
-            if (! $verificacionFinal || $verificacionFinal->tema_id !== $temaId || $verificacionFinal->parametro_id !== $parametroId) {
-                throw new ParametroTemaCreationException($temaId, $parametroId, "El ID creado ({$parametroTema->id}) no coincide con los valores esperados después de la creación");
-            }
-
-            return $parametroTema->id;
-        } catch (\Exception $e) {
-            // Si falla la creación, intentar buscar nuevamente (puede haber sido creado por otro proceso)
-            $parametroTema = ParametroTema::query()
+            
+            // Verificación final: el ID debe existir y tener los valores correctos
+            // Esta verificación es suficiente - si el ID existe con los valores correctos, es válido
+            // (incluso si coincide con el parametro_id por casualidad)
+            $verificacion = DB::table('parametros_temas')
+                ->where('id', $parametroTemaId)
                 ->where('tema_id', $temaId)
                 ->where('parametro_id', $parametroId)
-                ->first();
+                ->exists();
 
-            if ($parametroTema && $parametroTema->id) {
-                // Verificar que el ID realmente existe y tiene el tema_id y parametro_id correctos
-                $verificacion = ParametroTema::query()->find($parametroTema->id);
-                if ($verificacion && $verificacion->tema_id === $temaId && $verificacion->parametro_id === $parametroId) {
-                    // Validación final antes de devolver
-                    if ($verificacion->tema_id !== $temaId || $verificacion->parametro_id !== $parametroId) {
-                        throw new ParametroTemaCreationException($temaId, $parametroId, "El ID encontrado después del error ({$parametroTema->id}) no coincide con los valores esperados");
-                    }
-                    return $parametroTema->id;
-                }
+            if ($verificacion) {
+                return $parametroTemaId;
             }
-
-            throw new ParametroTemaCreationException($temaId, $parametroId, $e->getMessage());
         }
+
+        // Si no existe, intentar crearlo usando el modelo Tema y sync (igual que el seeder)
+        $tema = Tema::find($temaId);
+        if (!$tema) {
+            throw new ParametroTemaCreationException($temaId, $parametroId, "El tema con ID {$temaId} no existe. Asegúrate de ejecutar TemaSeeder primero.");
+        }
+
+        // Usar sync para crear el ParametroTema, igual que el seeder
+        $tema->parametros()->syncWithoutDetaching([
+            $parametroId => ['status' => 1]
+        ]);
+
+        // Después de syncWithoutDetaching, buscar el registro recién creado
+        // Usar el mismo método que PersonaSeeder::getParametroTemaId
+        $parametroTema = DB::table('parametros_temas')
+            ->where('tema_id', $temaId)
+            ->where('parametro_id', $parametroId)
+            ->orderBy('id', 'desc') // Obtener el más reciente
+            ->first();
+        
+        $parametroTemaId = $parametroTema && isset($parametroTema->id) ? (int) $parametroTema->id : null;
+
+        if (!$parametroTemaId) {
+            throw new ParametroTemaCreationException($temaId, $parametroId, "No se pudo encontrar o crear el parametro_tema. Tema_id: {$temaId}, Parametro_id: {$parametroId}");
+        }
+
+        $parametroTemaId = (int) $parametroTemaId;
+        
+        // Verificación final: el ID debe existir y tener los valores correctos
+        // Esta verificación es suficiente - si el ID existe con los valores correctos, es válido
+        // (incluso si coincide con el parametro_id por casualidad)
+        $verificacion = DB::table('parametros_temas')
+            ->where('id', $parametroTemaId)
+            ->where('tema_id', $temaId)
+            ->where('parametro_id', $parametroId)
+            ->exists();
+
+        if (!$verificacion) {
+            throw new ParametroTemaCreationException($temaId, $parametroId, "El ID ({$parametroTemaId}) no es válido. Tema_id: {$temaId}, Parametro_id: {$parametroId}");
+        }
+
+        return $parametroTemaId;
     }
 
     /**
@@ -237,49 +201,9 @@ class PersonaFactory extends Factory
      */
     private function obtenerUbicacionValida(): array
     {
-        // Intentar obtener una ubicación existente de la base de datos
-        // Solo usar valores que realmente existen para evitar problemas de foreign keys
-        if (Schema::hasTable('municipios') && Schema::hasTable('departamentos') && Schema::hasTable('pais')) {
-            try {
-                // Obtener un municipio con su departamento y país validando que todo existe
-                $ubicacion = DB::table('municipios')
-                    ->join('departamentos', 'municipios.departamento_id', '=', 'departamentos.id')
-                    ->join('pais', 'departamentos.pais_id', '=', 'pais.id')
-                    ->whereNotNull('municipios.departamento_id')
-                    ->whereNotNull('departamentos.pais_id')
-                    ->select(
-                        'municipios.id as municipio_id',
-                        'municipios.departamento_id as departamento_id',
-                        'departamentos.pais_id as pais_id'
-                    )
-                    ->inRandomOrder()
-                    ->first();
-
-                if ($ubicacion && 
-                    isset($ubicacion->municipio_id) && 
-                    isset($ubicacion->departamento_id) && 
-                    isset($ubicacion->pais_id)) {
-                    // Verificar que el municipio realmente pertenece al departamento
-                    $verificacion = DB::table('municipios')
-                        ->where('id', $ubicacion->municipio_id)
-                        ->where('departamento_id', $ubicacion->departamento_id)
-                        ->exists();
-                    
-                    if ($verificacion) {
-                        return [
-                            'pais_id' => (int) $ubicacion->pais_id,
-                            'departamento_id' => (int) $ubicacion->departamento_id,
-                            'municipio_id' => (int) $ubicacion->municipio_id,
-                        ];
-                    }
-                }
-            } catch (\Exception $e) {
-                // Continuar si hay error
-            }
-        }
-
-        // Si no hay datos válidos, usar null (los campos son nullable)
-        // En tests, los seeders deberían proporcionar estos datos
+        // En tests, usar null por defecto para evitar problemas de foreign keys
+        // Los campos son nullable según la migración
+        // Si se necesita una ubicación específica, se puede pasar explícitamente al factory
         return [
             'pais_id' => null,
             'departamento_id' => null,

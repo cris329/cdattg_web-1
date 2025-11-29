@@ -40,14 +40,14 @@ class ProductoController extends Controller
         FormDataService $formDataService
     ) {
         $this->middleware('auth');
-        
+
         $this->repository = $repository;
         $this->service = $service;
         $this->formOptionsService = $formOptionsService;
         $this->stockValidator = $stockValidator;
         $this->enrichmentService = $enrichmentService;
         $this->formDataService = $formDataService;
-        
+
         // Middlewares de permisos de inventario
         $this->middleware('can:VER PRODUCTO')->only(['index', 'show']);
         $this->middleware('can:VER CATALOGO PRODUCTO')->only(['catalogo']);
@@ -73,7 +73,7 @@ class ProductoController extends Controller
         $this->enrichmentService->enriquecerConMarcasYCategorias($productos);
 
         $tiposProductos = $this->repository->obtenerTiposProductos();
-        
+
         return view('inventario.productos.index', compact('productos', 'tiposProductos'));
     }
 
@@ -124,7 +124,7 @@ class ProductoController extends Controller
     public function show(string $id): View
     {
         $producto = $this->repository->encontrarConRelaciones((int) $id);
-        
+
         if (!$producto) {
             abort(404);
         }
@@ -138,13 +138,13 @@ class ProductoController extends Controller
     public function edit(string $id): View
     {
         $producto = $this->repository->encontrarConRelaciones((int) $id);
-        
+
         if (!$producto) {
             abort(404);
         }
         $opciones = $this->formOptionsService->obtenerOpcionesProducto(self::THEME_PRODUCT_STATES);
         $datosFormulario = $this->formDataService->obtenerDatosFormulario();
-    
+
         return view('inventario.productos.edit', array_merge($opciones, $datosFormulario, [
             'producto' => $producto
         ]));
@@ -156,12 +156,12 @@ class ProductoController extends Controller
     public function update(ProductoRequest $request, string $id): RedirectResponse
     {
         $producto = $this->repository->encontrar((int) $id);
-        
+
         if (!$producto) {
             abort(404);
         }
         $validated = $request->validated();
-        
+
         if ($request->hasFile('imagen')) {
             $validated['imagen'] = $request->file('imagen');
         }
@@ -179,17 +179,17 @@ class ProductoController extends Controller
     public function destroy(string $id): RedirectResponse
     {
         $producto = $this->repository->encontrar((int) $id);
-        
+
         if (!$producto) {
             abort(404);
         }
         $this->service->eliminar($producto);
-        
+
         return redirect()
             ->route('inventario.productos.index')
             ->with('success', 'Producto eliminado correctamente');
     }
-    
+
     public function buscarPorCodigo(string $codigo): JsonResponse
     {
         $producto = $this->repository->buscarPorCodigoBarras($codigo);
@@ -207,7 +207,7 @@ class ProductoController extends Controller
     public function catalogo(Request $request): View
     {
         $estadoAgotado = $this->formOptionsService->obtenerEstadoAgotado(self::THEME_PRODUCT_STATES);
-        
+
         $filtros = [
             'search' => $request->input('search'),
             'tipo_producto_id' => $request->input('tipo_producto_id'),
@@ -267,7 +267,7 @@ class ProductoController extends Controller
     {
         $validated = $request->validated();
         $producto = $this->repository->encontrar((int) $validated['producto_id']);
-        
+
         if (!$producto) {
             return response()->json([
                 'success' => false,
@@ -302,7 +302,7 @@ class ProductoController extends Controller
     public function detalles(string $id): View
     {
         $producto = $this->repository->encontrarConRelaciones((int) $id);
-        
+
         if (!$producto) {
             abort(404);
         }
@@ -319,7 +319,7 @@ class ProductoController extends Controller
     public function etiqueta(string $id): View
     {
         $producto = $this->repository->encontrar((int) $id);
-        
+
         if (!$producto) {
             abort(404);
         }

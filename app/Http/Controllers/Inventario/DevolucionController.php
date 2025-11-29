@@ -28,7 +28,7 @@ class DevolucionController extends Controller
         DevolucionService $service
     ) {
         $this->middleware('can:DEVOLVER PRESTAMO')->only(['index', 'create', 'store']);
-        
+
         $this->repository = $repository;
         $this->detalleOrdenRepository = $detalleOrdenRepository;
         $this->service = $service;
@@ -48,11 +48,11 @@ class DevolucionController extends Controller
     public function create(int $detalleOrdenId): View|RedirectResponse
     {
         $detalleOrden = $this->detalleOrdenRepository->encontrarConRelaciones($detalleOrdenId);
-        
+
         if (!$detalleOrden) {
             abort(404);
         }
-        
+
         if ($detalleOrden->estaCompletamenteDevuelto()) {
             return redirect()
                 ->route('inventario.devoluciones.index')
@@ -62,7 +62,7 @@ class DevolucionController extends Controller
         return view('inventario.devoluciones.create', compact('detalleOrden'));
     }
 
-    
+
     // Registrar devolución
     public function store(DevolucionRequest $request): RedirectResponse
     {
@@ -111,7 +111,7 @@ class DevolucionController extends Controller
     public function show(int $id): View
     {
         $devolucion = $this->repository->encontrarConRelaciones($id);
-        
+
         if (!$devolucion) {
             abort(404);
         }

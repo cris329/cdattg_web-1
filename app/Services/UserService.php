@@ -35,7 +35,7 @@ class UserService
         ]);
 
         $user->assignRole('ASPIRANTE');
-        
+
         // Enviar email de verificación automáticamente
         $user->sendEmailVerificationNotification();
 

@@ -27,7 +27,7 @@ class NotificacionController extends Controller
     public function index() : View
     {
         $notificaciones = $this->service->obtenerNotificacionesPaginadas(Auth::id());
-        
+
         return view('inventario.notificaciones.index', compact('notificaciones'));
     }
 
@@ -37,7 +37,7 @@ class NotificacionController extends Controller
     public function getUnread() : JsonResponse
     {
         $datos = $this->service->obtenerDatosDropdown(Auth::id());
-        
+
         return response()->json($datos);
     }
 
@@ -47,7 +47,7 @@ class NotificacionController extends Controller
     public function markAsRead(string $id) : JsonResponse
     {
         $resultado = $this->service->marcarComoLeida(Auth::id(), $id);
-        
+
         if ($resultado) {
             return response()->json([
                 'success' => true,
@@ -67,7 +67,7 @@ class NotificacionController extends Controller
     public function markAllAsRead() : JsonResponse
     {
         $count = $this->service->marcarTodasComoLeidas(Auth::id());
-        
+
         return response()->json([
             'success' => true,
             'message' => "Todas las notificaciones marcadas como leídas ({$count})"
@@ -80,7 +80,7 @@ class NotificacionController extends Controller
     public function destroy(string $id) : RedirectResponse
     {
         $resultado = $this->service->eliminar(Auth::id(), $id);
-        
+
         if ($resultado) {
             return back()->with('success', 'Notificación eliminada exitosamente');
         }

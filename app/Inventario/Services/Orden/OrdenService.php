@@ -95,7 +95,7 @@ class OrdenService
             $this->transactionService->beginTransaction();
 
             $carrito = json_decode($datos['carrito'], true);
-            
+
             if (empty($carrito) || !is_array($carrito)) {
                 throw new OrdenException('El carrito está vacío.');
             }
@@ -104,7 +104,7 @@ class OrdenService
                 'prestamo' => 'PRÉSTAMO',
                 'salida' => 'SALIDA'
             ];
-            
+
             $codigoTipoOrden = $tipoMap[$datos['tipo']] ?? strtoupper($datos['tipo']);
             $parametroTipoOrden = $this->obtenerParametroTipoOrden($codigoTipoOrden);
             $estadoEnEspera = $this->obtenerEstadoEnEspera();
@@ -129,7 +129,7 @@ class OrdenService
                 }
 
                 $producto = $this->productoRepository->encontrar($productoId);
-                
+
                 if (!$producto) {
                     throw new OrdenException("Producto con ID {$productoId} no encontrado.");
                 }

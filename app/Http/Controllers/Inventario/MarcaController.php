@@ -30,7 +30,7 @@ class MarcaController extends Controller
         $this->middleware('can:CREAR MARCA')->only('create', 'store');
         $this->middleware('can:EDITAR MARCA')->only('edit', 'update');
         $this->middleware('can:ELIMINAR MARCA')->only('destroy');
-        
+
         $this->repository = $repository;
         $this->service = $service;
     }
@@ -38,7 +38,7 @@ class MarcaController extends Controller
     public function index(Request $request): View|RedirectResponse
     {
         $temaMarcas = $this->repository->obtenerTemaMarcas();
-        
+
         if (!$temaMarcas) {
             return back()->with('error', 'No existe el tema "MARCAS" en la base de datos.');
         }
@@ -92,7 +92,7 @@ class MarcaController extends Controller
     {
         $validated = $request->validated();
         $marcaModel = $this->repository->encontrar($marca->id);
-        
+
         if (!$marcaModel) {
             abort(404);
         }
@@ -108,7 +108,7 @@ class MarcaController extends Controller
     {
         try {
             $marcaModel = $this->repository->encontrar($marca->id);
-            
+
             if (!$marcaModel) {
                 abort(404);
             }
@@ -126,7 +126,7 @@ class MarcaController extends Controller
     public function show(Parametro $marca): View
     {
         $marca = $this->repository->encontrarConRelaciones($marca->id);
-        
+
         if (!$marca) {
             abort(404);
         }

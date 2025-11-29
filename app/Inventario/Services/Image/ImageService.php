@@ -59,7 +59,7 @@ class ImageService implements ImageServiceInterface
     public function eliminarImagenSiExiste(Producto $producto): void
     {
         $defaultImage = $this->getDefaultImage();
-        
+
         if ($producto->imagen &&
             $producto->imagen !== $defaultImage &&
             file_exists(public_path($producto->imagen))) {

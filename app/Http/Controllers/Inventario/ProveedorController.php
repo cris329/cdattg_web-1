@@ -31,7 +31,7 @@ class ProveedorController extends Controller
         $this->middleware('can:CREAR PROVEEDOR')->only('create', 'store');
         $this->middleware('can:EDITAR PROVEEDOR')->only('edit', 'update');
         $this->middleware('can:ELIMINAR PROVEEDOR')->only('destroy');
-        
+
         $this->repository = $repository;
         $this->service = $service;
     }
@@ -59,7 +59,7 @@ class ProveedorController extends Controller
     public function show(Proveedor $proveedor): View
     {
         $proveedor = $this->repository->encontrarConRelaciones($proveedor->id);
-        
+
         if (!$proveedor) {
             abort(404);
         }

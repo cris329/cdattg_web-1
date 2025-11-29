@@ -128,7 +128,7 @@ class ProgramaComplementarioController extends Controller
     public function edit(ComplementarioOfertado $programa): View
     {
         $programa->load(['modalidad', 'jornada', 'diasFormacion', 'ambiente', 'competencias', 'raps', 'guiasAprendizaje']);
-        
+
         $dias = $programa->diasFormacion->map(static function ($dia) {
             return [
                 'dia_id' => $dia->id,
@@ -138,7 +138,7 @@ class ProgramaComplementarioController extends Controller
         });
 
         $datosFormulario = $this->complementarioService->obtenerDatosFormulario();
-        
+
         return view(
             'complementarios.programas.admin.edit',
             array_merge(
@@ -197,7 +197,7 @@ class ProgramaComplementarioController extends Controller
 
             // Sincronizar días de formación
             $this->complementarioService->sincronizarDiasFormacion($programa, $payload['dias'] ?? null);
-            
+
             // Sincronizar estructura académica
             $this->sincronizarEstructuraAcademica($programa, $payload);
         });
@@ -220,7 +220,7 @@ class ProgramaComplementarioController extends Controller
             $programa->update($this->extractProgramaAtributos($payload));
 
             $this->complementarioService->sincronizarDiasFormacion($programa, $payload['dias'] ?? null);
-            
+
             // Sincronizar estructura académica
             $this->sincronizarEstructuraAcademica($programa, $payload);
         });
@@ -271,12 +271,12 @@ class ProgramaComplementarioController extends Controller
         if (isset($payload['competencias'])) {
             $programa->competencias()->sync($payload['competencias']);
         }
-        
+
         // Sincronizar resultados de aprendizaje (RAPs)
         if (isset($payload['raps'])) {
             $programa->raps()->sync($payload['raps']);
         }
-        
+
         // Sincronizar guías de aprendizaje
         if (isset($payload['guias'])) {
             $programa->guiasAprendizaje()->sync($payload['guias']);

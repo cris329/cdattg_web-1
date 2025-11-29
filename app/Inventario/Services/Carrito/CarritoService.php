@@ -101,7 +101,7 @@ class CarritoService
 
         foreach ($items as $item) {
             $productoId = $item['id'] ?? $item['producto_id'] ?? null;
-            
+
             if (!$productoId) {
                 continue;
             }

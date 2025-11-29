@@ -248,7 +248,7 @@ class PersonaService
     {
         // Guardar caracterizaciones múltiples en la tabla pivote
         $persona->caracterizacionesComplementarias()->sync($caracterizacionesIds);
-        
+
         // Guardar la primera caracterización como caracterización principal en parametro_id
         if (!empty($caracterizacionesIds)) {
             $persona->update(['parametro_id' => $caracterizacionesIds[0]]);

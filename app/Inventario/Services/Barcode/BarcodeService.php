@@ -29,7 +29,7 @@ class BarcodeService implements BarcodeServiceInterface
     public function resolverCodigoBarras(?string $codigo): string
     {
         $digits = preg_replace('/\D/', '', (string) $codigo);
-        
+
         if (strlen($digits) === $this->getBarcodeLength()) {
             return $digits;
         }
@@ -70,7 +70,7 @@ class BarcodeService implements BarcodeServiceInterface
         }
 
         $digits = preg_replace('/\D/', '', $codigo);
-        
+
         return strlen($digits) === $this->getBarcodeLength() ? $digits : null;
     }
 }

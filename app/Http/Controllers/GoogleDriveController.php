@@ -114,9 +114,9 @@ class GoogleDriveController extends Controller
         try {
             $path = 'documentos_aspirantes/_connectivity_check_' . time() . '.txt';
             $content = 'Drive connectivity OK at ' . now()->toDateTimeString();
-            
+
             Storage::disk('google')->put($path, $content);
-            
+
             return response()->json(['success' => true, 'path' => $path]);
         } catch (\Throwable $e) {
             return response()->json(['success' => false, 'error' => $e->getMessage()], 500);

@@ -120,7 +120,7 @@ class Devolucion extends Model
         }
     }
 
-    
+
     // Verificar si la devolución fue a tiempo
     public function fueATiempo() : ?bool
     {

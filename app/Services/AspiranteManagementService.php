@@ -160,7 +160,7 @@ class AspiranteManagementService
     public function obtenerEstadisticasPrograma(int $programaId): array
     {
         $programa = $this->programaRepository->findWithRelations($programaId);
-        
+
         if (!$programa) {
             throw new ProgramaNoEncontradoException(self::PROGRAMA_NO_ENCONTRADO_SIN_PUNTO);
         }

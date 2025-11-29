@@ -28,7 +28,7 @@ class CarritoController extends Controller
         $this->middleware('can:ACTUALIZAR CARRITO')->only(['actualizar', 'update']);
         $this->middleware('can:ELIMINAR CARRITO')->only(['eliminar', 'destroy']);
         $this->middleware('can:VACIAR CARRITO')->only(['vaciar']);
-        
+
         $this->service = $service;
         $this->productoRepository = $productoRepository;
     }

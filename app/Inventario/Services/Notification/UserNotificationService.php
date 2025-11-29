@@ -102,7 +102,7 @@ class UserNotificationService
     public function obtenerDatosDropdown(int $userId): array
     {
         $limit = config('inventario.notificaciones.dropdown_limit', 5);
-        
+
         return [
             'notificaciones' => $this->obtenerNoLeidas($userId, $limit),
             'count' => $this->contarNoLeidas($userId)

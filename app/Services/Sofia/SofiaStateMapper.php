@@ -36,7 +36,7 @@ class SofiaStateMapper
 
     /**
      * Mapear resultado de validación a estado Sofia
-     * 
+     *
      * @param string $resultado Resultado de la validación
      * @return int Estado Sofia (0: No registrado, 1: Registrado, 2: Requiere cambio)
      */

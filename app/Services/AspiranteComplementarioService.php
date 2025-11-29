@@ -4,6 +4,8 @@ namespace App\Services;
 
 use App\Models\AspiranteComplementario;
 use App\Models\ComplementarioOfertado;
+use App\Repositories\AspiranteComplementarioRepository;
+use App\Repositories\PersonaRepository;
 use Illuminate\Support\Facades\Log;
 use Symfony\Component\HttpFoundation\StreamedResponse;
 use setasign\Fpdi\Fpdi;
@@ -11,10 +13,17 @@ use setasign\Fpdi\Fpdi;
 class AspiranteComplementarioService
 {
     protected $documentoService;
+    protected $aspiranteRepository;
+    protected $personaRepository;
 
-    public function __construct(AspiranteDocumentoService $documentoService)
-    {
+    public function __construct(
+        AspiranteDocumentoService $documentoService,
+        AspiranteComplementarioRepository $aspiranteRepository,
+        PersonaRepository $personaRepository
+    ) {
         $this->documentoService = $documentoService;
+        $this->aspiranteRepository = $aspiranteRepository;
+        $this->personaRepository = $personaRepository;
     }
 
     /**
@@ -22,16 +31,7 @@ class AspiranteComplementarioService
      */
     public function getAspirantesConDocumentos($complementarioId)
     {
-        return AspiranteComplementario::with(['persona.tipoDocumento'])
-            ->where('complementario_id', $complementarioId)
-            ->where('estado', '!=', 2) // Excluir rechazados
-            ->whereHas('persona', function ($query) {
-                $query->where('condocumento', 1);
-            })
-            ->get()
-            ->sortBy(function ($aspirante) {
-                return $aspirante->persona->numero_documento;
-            });
+        return $this->aspiranteRepository->findByProgramaConDocumentosExcluyendoRechazados($complementarioId);
     }
 
     /**
@@ -39,17 +39,7 @@ class AspiranteComplementarioService
      */
     public function getAspirantesParaExportacion($complementarioId)
     {
-        return AspiranteComplementario::with(['persona.tipoDocumento', 'persona.parametroCaracterizacion'])
-            ->where('complementario_id', $complementarioId)
-            ->where('estado', '!=', 2) // Excluir rechazados
-            ->whereHas('persona', function ($query) {
-                $query->where('condocumento', 1)
-                      ->where('estado_sofia', '!=', 0); // Excluir no registrados en SenasofiaPlus
-            })
-            ->get()
-            ->sortBy(function ($aspirante) {
-                return $aspirante->persona->numero_documento;
-            });
+        return $this->aspiranteRepository->findByProgramaParaExportacion($complementarioId);
     }
 
     /**
@@ -57,37 +47,7 @@ class AspiranteComplementarioService
      */
     public function getEstadisticasExclusion($complementarioId)
     {
-        $totalAspirantes = AspiranteComplementario::where('complementario_id', $complementarioId)->count();
-        $rechazados = AspiranteComplementario::where('complementario_id', $complementarioId)
-            ->where('estado', 2)
-            ->count();
-        $sinDocumento = AspiranteComplementario::where('complementario_id', $complementarioId)
-            ->where('estado', '!=', 2)
-            ->whereHas('persona', function ($query) {
-                $query->where('condocumento', 0);
-            })
-            ->count();
-        $noRegistradosSofia = AspiranteComplementario::where('complementario_id', $complementarioId)
-            ->where('estado', '!=', 2)
-            ->whereHas('persona', function ($query) {
-                $query->where('estado_sofia', 0);
-            })
-            ->count();
-        $validos = AspiranteComplementario::where('complementario_id', $complementarioId)
-            ->where('estado', '!=', 2)
-            ->whereHas('persona', function ($query) {
-                $query->where('condocumento', 1)
-                      ->where('estado_sofia', '!=', 0);
-            })
-            ->count();
-
-        return [
-            'total' => $totalAspirantes,
-            'rechazados' => $rechazados,
-            'sin_documento' => $sinDocumento,
-            'no_registrados_sofia' => $noRegistradosSofia,
-            'validos' => $validos
-        ];
+        return $this->aspiranteRepository->getEstadisticasExclusion($complementarioId);
     }
 
     /**
@@ -201,8 +161,8 @@ class AspiranteComplementarioService
 
                 $tieneDocumento = $this->documentoService->buscarDocumentoEnGoogleDrive($files, $patron);
 
-                // Actualizar condocumento en la persona
-                $persona->update(['condocumento' => $tieneDocumento ? 1 : 0]);
+                // Actualizar condocumento en la persona usando el repositorio
+                $this->personaRepository->updateDocumentoStatus($persona, $tieneDocumento);
 
                 if ($tieneDocumento) {
                     $conDocumento++;

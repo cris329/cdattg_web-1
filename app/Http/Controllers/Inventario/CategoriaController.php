@@ -29,7 +29,7 @@ class CategoriaController extends Controller
         $this->middleware('can:CREAR CATEGORIA')->only('create', 'store');
         $this->middleware('can:EDITAR CATEGORIA')->only('edit', 'update');
         $this->middleware('can:ELIMINAR CATEGORIA')->only('destroy');
-        
+
         $this->repository = $repository;
         $this->service = $service;
     }
@@ -37,7 +37,7 @@ class CategoriaController extends Controller
     public function index(Request $request): View|RedirectResponse
     {
         $temaCategorias = $this->repository->obtenerTemaCategorias();
-        
+
         if (!$temaCategorias) {
             return back()->with('error', 'No existe el tema "CATEGORIAS" en la base de datos.');
         }
@@ -91,7 +91,7 @@ class CategoriaController extends Controller
     {
         $validated = $request->validated();
         $categoriaModel = $this->repository->encontrar($categoria->id);
-        
+
         if (!$categoriaModel) {
             abort(404);
         }
@@ -107,7 +107,7 @@ class CategoriaController extends Controller
     {
         try {
             $categoriaModel = $this->repository->encontrar($categoria->id);
-            
+
             if (!$categoriaModel) {
                 abort(404);
             }
@@ -125,7 +125,7 @@ class CategoriaController extends Controller
     public function show(Parametro $categoria): View
     {
         $categoria = $this->repository->encontrarConRelaciones($categoria->id);
-        
+
         if (!$categoria) {
             abort(404);
         }

@@ -24,7 +24,7 @@ class NotificationService implements NotificationServiceInterface
     public function notificarNuevaOrden(Orden $orden): void
     {
         $superadmins = $this->userRepository->obtenerSuperAdministradores();
-        
+
         if ($superadmins->isNotEmpty()) {
             Notification::send($superadmins, new NuevaOrdenNotification($orden));
         }

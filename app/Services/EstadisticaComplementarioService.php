@@ -32,7 +32,7 @@ class EstadisticaComplementarioService
         $estadisticas = $this->aspiranteRepository->getEstadisticas();
         $totalAspirantes = $estadisticas['total'];
         $aspirantesAceptados = $estadisticas['aceptados'];
-        
+
         $aspirantesPendientes = AspiranteComplementario::whereIn('estado', [1, 2])->count();
         $programasActivos = $this->programaRepository->countActivos();
         $tendenciaInscripciones = $this->aspiranteRepository->getTendenciaInscripciones(6);

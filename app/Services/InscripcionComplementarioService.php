@@ -95,16 +95,16 @@ class InscripcionComplementarioService
             $this->temaRepository->obtenerTiposDocumento(),
             $this->complementarioService->getTiposDocumento()
         );
-        
+
         $generos = $this->buildTemaPayload(
             $this->temaRepository->obtenerGeneros(),
             $this->complementarioService->getGeneros()
         );
-        
+
         $caracterizaciones = $this->buildTemaPayload(
             $this->temaRepository->obtenerCaracterizacionesComplementarias()
         );
-        
+
         $vias = $this->buildTemaPayload($this->temaRepository->obtenerVias());
         $letras = $this->buildTemaPayload($this->temaRepository->obtenerLetras());
         $cardinales = $this->buildTemaPayload($this->temaRepository->obtenerCardinales());
@@ -147,13 +147,13 @@ class InscripcionComplementarioService
             return DB::transaction(function () use ($data, $programaId) {
                 // Procesar persona
                 $persona = $this->procesarPersona($data);
-                
+
                 // Procesar usuario
                 $this->procesarUsuario($data, $persona);
-                
+
                 // Crear aspirante
                 $aspirante = $this->crearAspirante($persona, $programaId, $data);
-                
+
                 // Procesar documento
                 $this->procesarDocumento($data, $aspirante, $persona);
 
@@ -257,7 +257,7 @@ class InscripcionComplementarioService
 
             // Mantener aspirante en estado "En proceso"
             $this->aspiranteRepository->update($aspirante, ['estado' => 1]);
-            
+
             throw new ProcesarDocumentoIdentidadException('Error al procesar el documento de identidad');
         }
     }

@@ -77,7 +77,7 @@ class MarcaService
         }
 
         $temaMarcas = $this->repository->obtenerTemaMarcas();
-        
+
         if (!$temaMarcas) {
             throw new MarcaException('No existe el tema "MARCAS" en la base de datos.');
         }

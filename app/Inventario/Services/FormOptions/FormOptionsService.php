@@ -127,7 +127,7 @@ class FormOptionsService implements FormOptionsServiceInterface
     public function obtenerEstadoAgotado(?string $temaEstados = null)
     {
         $temaEstados = $temaEstados ?? config('inventario.temas.estados_producto', 'ESTADOS DE PRODUCTO');
-        
+
         return $this->obtenerEstadoOrdenPorNombre('AGOTADO', $temaEstados);
     }
 
@@ -140,9 +140,9 @@ class FormOptionsService implements FormOptionsServiceInterface
     public function obtenerEstadoOrdenPorNombre(string $nombreEstado, ?string $temaEstados = null)
     {
         $temaEstados = $temaEstados ?? config('inventario.temas.estados_orden', 'ESTADOS DE ORDEN');
-        
+
         $tema = Tema::where('name', $temaEstados)->first();
-        
+
         if (!$tema) {
             return null;
         }
@@ -161,7 +161,7 @@ class FormOptionsService implements FormOptionsServiceInterface
     private function obtenerParametrosPorTema(string $nombreTema)
     {
         $tema = Tema::where('name', $nombreTema)->first();
-        
+
         if (!$tema) {
             return collect([]);
         }

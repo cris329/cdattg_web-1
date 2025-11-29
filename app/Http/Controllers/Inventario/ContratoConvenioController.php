@@ -32,7 +32,7 @@ class ContratoConvenioController extends Controller
         $this->middleware('can:CREAR CONTRATO')->only('create', 'store');
         $this->middleware('can:EDITAR CONTRATO')->only('edit', 'update');
         $this->middleware('can:ELIMINAR CONTRATO')->only('destroy');
-        
+
         $this->repository = $repository;
         $this->service = $service;
         $this->proveedorRepository = $proveedorRepository;
@@ -66,7 +66,7 @@ class ContratoConvenioController extends Controller
     public function show(ContratoConvenio $contratoConvenio): View
     {
         $contratoConvenio = $this->repository->encontrarConRelaciones($contratoConvenio->id);
-        
+
         if (!$contratoConvenio) {
             abort(404);
         }

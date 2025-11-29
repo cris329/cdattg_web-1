@@ -32,7 +32,7 @@ class OrdenController extends Controller
         $this->middleware('can:ELIMINAR ORDEN')->only(['destroy']);
         $this->middleware('can:APROBAR ORDEN')->only(['aprobar']);
         $this->middleware('can:COMPLETAR ORDEN')->only(['completar']);
-        
+
         $this->repository = $repository;
         $this->service = $service;
     }
@@ -49,7 +49,7 @@ class OrdenController extends Controller
 
         $ordenes = $this->repository->obtenerConFiltros($filtros);
         $ordenes->appends($request->only('search'));
-        
+
         return view('inventario.ordenes.index', compact('ordenes'));
     }
 
@@ -123,7 +123,7 @@ class OrdenController extends Controller
         // Obtener estado RECHAZADA desde AprobacionService
         $estadoRechazada = app(\App\Inventario\Services\Aprobacion\AprobacionService::class)->obtenerEstadoRechazada();
         $ordenes = $this->repository->obtenerRechazadas($estadoRechazada->id);
-        
+
         return view('inventario.ordenes.rechazadas', compact('ordenes'));
     }
 
@@ -156,7 +156,7 @@ class OrdenController extends Controller
     public function update(OrdenRequest $request, string $id): RedirectResponse
     {
         $orden = $this->repository->encontrarConDetallesYDevoluciones((int) $id);
-        
+
         if (!$orden) {
             abort(404);
         }
@@ -188,7 +188,7 @@ class OrdenController extends Controller
     public function destroy(string $id): RedirectResponse
     {
         $orden = $this->repository->encontrarConDetallesYDevoluciones((int) $id);
-        
+
         if (!$orden) {
             abort(404);
         }
@@ -219,7 +219,7 @@ class OrdenController extends Controller
     public function show(Orden $orden): View
     {
         $orden = $this->repository->encontrarConRelaciones($orden->id);
-        
+
         if (!$orden) {
             abort(404);
         }

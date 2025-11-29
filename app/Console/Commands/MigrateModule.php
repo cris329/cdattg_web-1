@@ -194,15 +194,15 @@ class MigrateModule extends Command
     protected function freshDatabase(): void
     {
         $this->warn('⚠️  Limpiando base de datos...');
-        
+
         try {
             // Deshabilitar las restricciones de claves foráneas
             Schema::disableForeignKeyConstraints();
-            
+
             // Obtener todas las tablas
             $driver = DB::getDriverName();
             $tables = [];
-            
+
             if ($driver === 'mysql') {
                 $databaseName = DB::getDatabaseName();
                 $tables = DB::select("SHOW TABLES");
@@ -225,13 +225,13 @@ class MigrateModule extends Command
                 $this->warn("⚠️  Driver de base de datos no soportado: {$driver}");
                 return;
             }
-            
+
             if (empty($tableNames)) {
                 $this->info('  ℹ No hay tablas para eliminar');
                 Schema::enableForeignKeyConstraints();
                 return;
             }
-            
+
             // Eliminar todas las tablas
             foreach ($tableNames as $table) {
                 try {
@@ -241,10 +241,10 @@ class MigrateModule extends Command
                     $this->warn("  ⚠ No se pudo eliminar la tabla {$table}: {$e->getMessage()}");
                 }
             }
-            
+
             // Habilitar nuevamente las restricciones de claves foráneas
             Schema::enableForeignKeyConstraints();
-            
+
             $this->info('✓ Base de datos limpiada exitosamente');
         } catch (\Exception $e) {
             Schema::enableForeignKeyConstraints();

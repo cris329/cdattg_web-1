@@ -28,6 +28,8 @@ class StoreProgramaComplementarioRequestTest extends TestCase
         $datos = [
             'codigo' => 'COMP001',
             'nombre' => 'Programa Complementario Test',
+            'justificacion' => 'Esta es una justificación de prueba para el programa complementario.',
+            'requisitos_ingreso' => 'Requisitos de ingreso para el programa complementario.',
             'duracion' => 40,
             'cupos' => 20,
             'estado' => 1,

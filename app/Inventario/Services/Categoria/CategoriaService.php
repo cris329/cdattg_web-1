@@ -77,7 +77,7 @@ class CategoriaService
         }
 
         $temaCategorias = $this->repository->obtenerTemaCategorias();
-        
+
         if (!$temaCategorias) {
             throw new CategoriaException('No existe el tema "CATEGORIAS" en la base de datos.');
         }
