@@ -29,17 +29,7 @@ class DevolucionRepository implements DevolucionRepositoryInterface
                 return !$detalle->estaCompletamenteDevuelto();
             });
 
-        $page = request()->get('page', 1);
-        $perPage = 10;
-        $items = $prestamos->forPage($page, $perPage)->values();
-        
-        return new \Illuminate\Pagination\LengthAwarePaginator(
-            $items,
-            $prestamos->count(),
-            $perPage,
-            $page,
-            ['path' => request()->url(), 'query' => request()->query()]
-        );
+        return $this->paginacionManual($prestamos, 10);
     }
 
     /**
@@ -90,17 +80,7 @@ class DevolucionRepository implements DevolucionRepositoryInterface
                 return !$detalle->estaCompletamenteDevuelto();
             });
 
-        $page = request()->get('page', 1);
-        $perPage = 10;
-        $items = $prestamos->forPage($page, $perPage)->values();
-        
-        return new \Illuminate\Pagination\LengthAwarePaginator(
-            $items,
-            $prestamos->count(),
-            $perPage,
-            $page,
-            ['path' => request()->url(), 'query' => request()->query()]
-        );
+        return $this->paginacionManual($prestamos, 10);
     }
 
     /**
@@ -118,6 +98,27 @@ class DevolucionRepository implements DevolucionRepositoryInterface
             })
             ->orderBy('created_at', 'desc')
             ->paginate(15);
+    }
+
+    /**
+     * Crea paginación manual para colecciones filtradas
+     *
+     * @param \Illuminate\Support\Collection $items
+     * @param int $perPage
+     * @return LengthAwarePaginator
+     */
+    private function paginacionManual(\Illuminate\Support\Collection $items, int $perPage): LengthAwarePaginator
+    {
+        $page = request()->get('page', 1);
+        $paginatedItems = $items->forPage($page, $perPage)->values();
+
+        return new \Illuminate\Pagination\LengthAwarePaginator(
+            $paginatedItems,
+            $items->count(),
+            $perPage,
+            $page,
+            ['path' => request()->url(), 'query' => request()->query()]
+        );
     }
 }
 
