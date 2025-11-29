@@ -17,6 +17,7 @@ use App\Models\Pais;
 use App\Models\Departamento;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Auth;
 use Mockery;
 
 class InscripcionComplementarioServiceTest extends TestCase
@@ -133,8 +134,128 @@ class InscripcionComplementarioServiceTest extends TestCase
     /** @test */
     public function lanza_excepcion_si_programa_no_existe()
     {
-        $this->expectException(\Symfony\Component\HttpKernel\Exception\HttpException::class);
+        $this->expectException(\Symfony\Component\HttpKernel\Exception\NotFoundHttpException::class);
 
         $this->service->prepararFormularioInscripcion(99999);
+    }
+
+    /** @test */
+    public function puede_procesar_inscripcion_a_programa()
+    {
+        $this->seed([
+            \Database\Seeders\RolePermissionSeeder::class,
+        ]);
+
+        $pais = Pais::create(['pais' => 'Colombia', 'status' => 1]);
+        $departamento = Departamento::create(['departamento' => 'Cundinamarca', 'pais_id' => $pais->id, 'status' => 1]);
+        $municipio = \App\Models\Municipio::create(['municipio' => 'Bogotá', 'departamento_id' => $departamento->id, 'status' => 1]);
+        $programa = ComplementarioOfertado::factory()->conOferta()->create();
+
+        // Crear servicio real sin mocks para este test
+        $userService = new \App\Services\UserService();
+        $complementarioService = new \App\Services\ComplementarioService(
+            Mockery::mock(TemaRepository::class),
+            new ComplementarioOfertadoRepository(),
+            new AspiranteComplementarioRepository()
+        );
+
+        $service = new InscripcionComplementarioService(
+            new PersonaRepository(),
+            new AspiranteComplementarioRepository(),
+            new ComplementarioOfertadoRepository(),
+            Mockery::mock(TemaRepository::class),
+            $complementarioService,
+            $userService
+        );
+
+        $data = [
+            'tipo_documento' => 1,
+            'numero_documento' => '1234567890',
+            'primer_nombre' => 'Juan',
+            'primer_apellido' => 'Pérez',
+            'fecha_nacimiento' => '1990-01-01',
+            'genero' => 1,
+            'celular' => '3001234567',
+            'email' => 'juan@test.com',
+            'pais_id' => $pais->id,
+            'departamento_id' => $departamento->id,
+            'municipio_id' => $municipio->id,
+            'direccion' => 'Calle 123',
+            'acepto_privacidad' => '1',
+            'acepto_terminos' => '1',
+        ];
+
+        $response = $service->procesarInscripcion($data, $programa->id);
+
+        // Validar que se creó la persona
+        $this->assertDatabaseHas('personas', [
+            'numero_documento' => '1234567890',
+            'email' => 'juan@test.com',
+        ]);
+
+        // Validar que se creó el aspirante
+        $this->assertDatabaseHas('aspirantes_complementarios', [
+            'complementario_id' => $programa->id,
+        ]);
+
+        // Validar que se creó el usuario
+        $persona = Persona::where('numero_documento', '1234567890')->first();
+        $this->assertDatabaseHas('users', [
+            'email' => 'juan@test.com',
+            'persona_id' => $persona->id,
+        ]);
+
+        // Validar redirect
+        $this->assertTrue($response->isRedirect(route('login.index')));
+        $this->assertTrue($response->getSession()->has('success'));
+    }
+
+    /** @test */
+    public function no_procesa_inscripcion_si_usuario_ya_esta_inscrito()
+    {
+        $this->seed([
+            \Database\Seeders\RolePermissionSeeder::class,
+        ]);
+
+        $pais = Pais::create(['pais' => 'Colombia', 'status' => 1]);
+        $departamento = Departamento::create(['departamento' => 'Cundinamarca', 'pais_id' => $pais->id, 'status' => 1]);
+        $municipio = \App\Models\Municipio::create(['municipio' => 'Bogotá', 'departamento_id' => $departamento->id, 'status' => 1]);
+        $programa = ComplementarioOfertado::factory()->conOferta()->create();
+
+        $persona = Persona::factory()->create([
+            'numero_documento' => '1234567890',
+            'email' => 'juan@test.com',
+        ]);
+
+        $user = \App\Models\User::factory()->create([
+            'email' => 'juan@test.com',
+            'persona_id' => $persona->id,
+        ]);
+
+        AspiranteComplementario::factory()->create([
+            'persona_id' => $persona->id,
+            'complementario_id' => $programa->id,
+        ]);
+
+        $this->actingAs($user);
+
+        $data = [
+            'tipo_documento' => 1,
+            'numero_documento' => '1234567890',
+            'primer_nombre' => 'Juan',
+            'primer_apellido' => 'Pérez',
+            'fecha_nacimiento' => '1990-01-01',
+            'genero' => 1,
+            'celular' => '3001234567',
+            'email' => 'juan@test.com',
+            'pais_id' => $pais->id,
+            'departamento_id' => $departamento->id,
+            'municipio_id' => $municipio->id,
+            'direccion' => 'Calle 123',
+        ];
+
+        $response = $this->service->procesarInscripcion($data, $programa->id);
+
+        $this->assertTrue($response->getSession()->has('error'));
     }
 }
