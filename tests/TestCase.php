@@ -4,31 +4,76 @@ namespace Tests;
 
 use App\Exceptions\MigrationBatchException;
 use Illuminate\Foundation\Testing\TestCase as BaseTestCase;
+use Illuminate\Support\Facades\DB;
 
 abstract class TestCase extends BaseTestCase
 {
     use CreatesApplication;
 
     /**
-     * Ejecuta las migraciones para los tests usando el sistema de migraciones modulares.
-     * Esto asegura que las migraciones se ejecuten en el orden correcto según las dependencias.
+     * Sobrescribe el método migrateDatabases() que usa RefreshDatabase.
+     * Esto asegura que las migraciones se ejecuten en el orden correcto según los batches
+     * en lugar del orden alfabético por nombre de archivo.
      *
      * @return void
      */
     protected function migrateDatabases()
     {
-        // Limpiar completamente la base de datos
-        // Usar migrate:reset para limpiar todas las migraciones primero
-        try {
-            $this->artisan('migrate:reset', ['--force' => true]);
-        } catch (\Exception $e) {
-            // Si no hay migraciones, continuar
+        // Forzar el uso de SQLite para tests (sobrescribe cualquier configuración del .env)
+        config(['database.default' => 'sqlite']);
+        config(['database.connections.sqlite.database' => database_path('testing.sqlite')]);
+        
+        $connection = config('database.default');
+        $driver = config("database.connections.{$connection}.driver");
+
+        // Asegurar que el archivo SQLite existe
+        $databasePath = config("database.connections.{$connection}.database");
+        if ($driver === 'sqlite' && !file_exists($databasePath)) {
+            touch($databasePath);
         }
 
-        // Eliminar todas las tablas manualmente (para SQLite)
-        $tables = \Illuminate\Support\Facades\DB::select("SELECT name FROM sqlite_master WHERE type='table' AND name != 'sqlite_sequence'");
-        foreach ($tables as $table) {
-            \Illuminate\Support\Facades\DB::statement('DROP TABLE IF EXISTS ' . $table->name);
+        // Limpiar completamente la base de datos según el driver
+        if ($driver === 'sqlite') {
+            // Para SQLite, eliminar todas las tablas manualmente
+            try {
+                $tables = DB::connection($connection)->select("SELECT name FROM sqlite_master WHERE type='table' AND name != 'sqlite_sequence'");
+                foreach ($tables as $table) {
+                    DB::connection($connection)->statement('DROP TABLE IF EXISTS ' . $table->name);
+                }
+                // También limpiar la tabla de migraciones
+                DB::connection($connection)->statement('DROP TABLE IF EXISTS migrations');
+            } catch (\Exception $e) {
+                // Continuar si hay error
+            }
+        } else {
+            // Para MySQL/PostgreSQL, eliminar todas las tablas manualmente para evitar problemas de orden
+            try {
+                // Primero desactivar las foreign keys temporalmente
+                if ($driver === 'mysql') {
+                    DB::connection($connection)->statement('SET FOREIGN_KEY_CHECKS=0');
+                }
+                
+                // Obtener todas las tablas
+                $tables = DB::connection($connection)->select("SHOW TABLES");
+                $tableKey = 'Tables_in_' . config("database.connections.{$connection}.database");
+                
+                foreach ($tables as $table) {
+                    $tableName = $table->$tableKey;
+                    DB::connection($connection)->statement("DROP TABLE IF EXISTS `{$tableName}`");
+                }
+                
+                // Reactivar las foreign keys
+                if ($driver === 'mysql') {
+                    DB::connection($connection)->statement('SET FOREIGN_KEY_CHECKS=1');
+                }
+            } catch (\Exception $e) {
+                // Si falla, intentar con migrate:reset
+                try {
+                    $this->artisan('migrate:reset', ['--force' => true]);
+                } catch (\Exception $e2) {
+                    // Continuar si no hay migraciones
+                }
+            }
         }
 
         // Ejecutar todas las migraciones modulares en orden
@@ -59,6 +104,7 @@ abstract class TestCase extends BaseTestCase
                 $result = $this->artisan('migrate', [
                     '--path' => $path,
                     '--force' => true,
+                    '--database' => $connection,
                 ]);
 
                 if ($result !== 0) {
@@ -66,8 +112,5 @@ abstract class TestCase extends BaseTestCase
                 }
             }
         }
-
-        // seeders
-        $this->artisan('db:seed');
     }
 }

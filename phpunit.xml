@@ -4,7 +4,7 @@
          bootstrap="vendor/autoload.php"
          colors="true"
          stopOnFailure="true"
-         stopOnError="true"
+         stopOnError="false"
 >
     <testsuites>
         <testsuite name="Unit">
