@@ -26,7 +26,11 @@ class ContratoConvenioModelTest extends TestCase
     #[Test]
     public function convierte_name_a_mayusculas_al_crear(): void
     {
-        $contrato = ContratoConvenio::create(['name' => 'contrato test']);
+        $proveedor = Proveedor::factory()->create();
+        $contrato = ContratoConvenio::factory()->create([
+            'name' => 'contrato test',
+            'proveedor_id' => $proveedor->id,
+        ]);
 
         $this->assertEquals('CONTRATO TEST', $contrato->name);
     }

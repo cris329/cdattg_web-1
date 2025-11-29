@@ -12,6 +12,8 @@ class NotificacionModelTest extends TestCase
 {
     use RefreshDatabase;
 
+    protected User $user;
+
     protected function setUp(): void
     {
         parent::setUp();
@@ -19,7 +21,20 @@ class NotificacionModelTest extends TestCase
         $this->seed([
             \Database\Seeders\RolePermissionSeeder::class,
             \Database\Seeders\ParametroSeeder::class,
+            \Database\Seeders\TemaSeeder::class,
+            \Database\Seeders\PaisSeeder::class,
+            \Database\Seeders\DepartamentoSeeder::class,
+            \Database\Seeders\MunicipioSeeder::class,
         ]);
+
+        // Crear un User directamente sin PersonaSeeder para evitar dependencias
+        $user = User::first();
+        if (!$user) {
+            // Crear una Persona básica primero
+            $persona = \App\Models\Persona::factory()->create();
+            $user = User::factory()->create(['persona_id' => $persona->id]);
+        }
+        $this->user = $user;
     }
 
     #[Test]
@@ -29,7 +44,7 @@ class NotificacionModelTest extends TestCase
             'id' => 'test-id',
             'tipo' => 'test',
             'notificable_type' => User::class,
-            'notificable_id' => 1,
+            'notificable_id' => $this->user->id,
             'datos' => ['campo' => 'valor'],
         ]);
 
@@ -43,7 +58,8 @@ class NotificacionModelTest extends TestCase
             'id' => 'test-id-2',
             'tipo' => 'test-type',
             'notificable_type' => User::class,
-            'notificable_id' => 1,
+            'notificable_id' => $this->user->id,
+            'datos' => [],
         ]);
 
         $this->assertEquals('test-type', $notificacion->type);
@@ -56,7 +72,8 @@ class NotificacionModelTest extends TestCase
             'id' => 'test-id-3',
             'tipo' => 'test',
             'notificable_type' => User::class,
-            'notificable_id' => 1,
+            'notificable_id' => $this->user->id,
+            'datos' => [],
             'leida_en' => null,
         ]);
 
@@ -72,7 +89,8 @@ class NotificacionModelTest extends TestCase
             'id' => 'test-id-4',
             'tipo' => 'test',
             'notificable_type' => User::class,
-            'notificable_id' => 1,
+            'notificable_id' => $this->user->id,
+            'datos' => [],
             'leida_en' => now(),
         ]);
 

@@ -47,16 +47,100 @@ class ContratoConvenioFactory extends Factory
             rand(1000, 9999)
         );
 
+        // Obtener o crear proveedor - campo requerido
+        $proveedorId = null;
+        try {
+            $proveedorId = Proveedor::query()->inRandomOrder()->value('id');
+        } catch (\Exception $e) {
+            // Ignorar error de consulta
+        }
+
+        if (!$proveedorId) {
+            $proveedorId = Proveedor::factory()->create()->id;
+        }
+
+        // Obtener estado_id de parametros_temas - campo NOT NULL
+        $estadoId = $this->obtenerParametroTemaAleatorio();
+
         return [
             'name' => $name,
             'codigo' => $codigo,
-            'proveedor_id' => Proveedor::factory(),
+            'proveedor_id' => $proveedorId,
             'fecha_inicio' => $fechaInicio->format('Y-m-d'),
             'fecha_fin' => $fechaFin->format('Y-m-d'),
-            'estado_id' => 1,
+            'estado_id' => $estadoId,
             'user_create_id' => $this->getUserId(),
             'user_update_id' => $this->getUserId(),
         ];
+    }
+
+    /**
+     * Obtiene un parametro_tema aleatorio o crea uno básico si no existe ninguno
+     */
+    private function obtenerParametroTemaAleatorio(): int
+    {
+        try {
+            $parametroTemaId = \App\Models\ParametroTema::query()->inRandomOrder()->value('id');
+            if ($parametroTemaId) {
+                return $parametroTemaId;
+            }
+        } catch (\Exception $e) {
+            // Ignorar error de consulta
+        }
+
+        // Si no hay parametros_temas, intentar crear uno básico
+        try {
+            $tema = \App\Models\Tema::query()->inRandomOrder()->first();
+            $parametro = \App\Models\Parametro::query()->inRandomOrder()->first();
+            
+            // Si no hay tema, crear uno básico (user_create_id y user_edit_id son nullable)
+            if (!$tema) {
+                $tema = \App\Models\Tema::query()->create([
+                    'name' => 'TEMA FACTORY ' . uniqid(),
+                    'status' => 1,
+                    'user_create_id' => null,
+                    'user_edit_id' => null,
+                ]);
+            }
+            
+            // Si no hay parametro, crear uno básico (user_create_id y user_edit_id son nullable)
+            if (!$parametro) {
+                $parametro = \App\Models\Parametro::query()->create([
+                    'name' => 'PARAMETRO FACTORY ' . uniqid(),
+                    'status' => 1,
+                    'user_create_id' => null,
+                    'user_edit_id' => null,
+                ]);
+            }
+            
+            // Crear el parametro_tema
+            $tema->parametros()->syncWithoutDetaching([
+                $parametro->id => ['status' => 1]
+            ]);
+            
+            $parametroTema = \App\Models\ParametroTema::query()
+                ->where('tema_id', $tema->id)
+                ->where('parametro_id', $parametro->id)
+                ->orderBy('id', 'desc')
+                ->first();
+            
+            if ($parametroTema) {
+                return $parametroTema->id;
+            }
+        } catch (\Exception $e) {
+            throw new \RuntimeException(
+                'No se encontró ningún parametro_tema y no se pudo crear uno. ' .
+                'Error: ' . $e->getMessage() . '. ' .
+                'Ejecuta los seeders necesarios (TemaSeeder, ParametroSeeder).',
+                0,
+                $e
+            );
+        }
+
+        throw new \RuntimeException(
+            'No se encontró ningún parametro_tema y no se pudo crear uno. ' .
+            'Ejecuta los seeders necesarios (TemaSeeder, ParametroSeeder).'
+        );
     }
 }
 
