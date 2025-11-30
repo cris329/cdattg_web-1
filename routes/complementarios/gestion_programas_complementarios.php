@@ -1,6 +1,6 @@
 <?php
 
-use App\Complementarios\Controllers\ProgramaComplementarioController;
+use App\Http\Controllers\Complementarios\ProgramaComplementarioController;
 use Illuminate\Support\Facades\Route;
 
 Route::middleware('auth')

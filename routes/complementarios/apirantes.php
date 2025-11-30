@@ -1,7 +1,7 @@
 <?php
 
 use Illuminate\Support\Facades\Route;
-use App\Complementarios\Controllers\AspiranteComplementarioController;
+use App\Http\Controllers\Complementarios\AspiranteComplementarioController;
 
 // Ruta antigua mantenida por compatibilidad - redirige a la nueva ruta RESTful
 Route::get('/aspirantes/{curso}', function ($curso) {

@@ -1,6 +1,6 @@
 <?php
 
-use App\Complementarios\Controllers\AspiranteComplementarioController;
+use App\Http\Controllers\Complementarios\AspiranteComplementarioController;
 use Illuminate\Support\Facades\Route;
 
 if (!defined('ROUTE_PATTERN_NUMERIC')) {

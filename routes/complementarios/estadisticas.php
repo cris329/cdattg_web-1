@@ -1,7 +1,7 @@
 <?php
 
 use Illuminate\Support\Facades\Route;
-use App\Complementarios\Controllers\EstadisticaComplementarioController;
+use App\Http\Controllers\Complementarios\EstadisticaComplementarioController;
 
 Route::middleware('auth')
     ->prefix('complementarios')

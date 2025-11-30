@@ -1,7 +1,7 @@
 <?php
 
 use Illuminate\Support\Facades\Route;
-use App\Complementarios\Controllers\DocumentoComplementarioController;
+use App\Http\Controllers\Complementarios\DocumentoComplementarioController;
 
 Route::get('/procesar-documentos', [DocumentoComplementarioController::class, 'procesarDocumentos'])
     ->name('procesar-documentos')
