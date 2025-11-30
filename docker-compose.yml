@@ -148,6 +148,8 @@ services:
     volumes:
       - ./resources/js/sofia-validator.js:/app/sofia-validator.js:ro
       - ./resources/js/sofia-validator-server.js:/app/sofia-validator-server.js:ro
+      - ./resources/js/sofia-validator:/app/sofia-validator:ro
+      - ./resources/js/sofia-validator-server:/app/sofia-validator-server:ro
     depends_on:
       - app
     networks:

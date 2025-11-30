@@ -20,6 +20,9 @@ ensure_permissions() {
         echo "🔧 Ajustando permisos en $path"
         chown -R www-data:www-data "$path"
         chmod -R 775 "$path"
+        # Asegurar permisos en subdirectorios específicos de Laravel
+        find "$path" -type d -exec chmod 775 {} \; 2>/dev/null || true
+        find "$path" -type f -exec chmod 664 {} \; 2>/dev/null || true
     fi
 }
 
@@ -83,7 +86,7 @@ if [ "${WAIT_FOR_DB,,}" != "false" ]; then
     wait_for_database
 fi
 
-mkdir -p storage/logs storage/framework/cache storage/framework/sessions storage/framework/views bootstrap/cache
+mkdir -p storage/logs storage/framework/cache storage/framework/cache/data storage/framework/sessions storage/framework/views bootstrap/cache
 
 ensure_permissions storage
 ensure_permissions bootstrap/cache

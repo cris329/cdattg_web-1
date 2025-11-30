@@ -32,7 +32,7 @@ class HomeController extends Controller
             $personaId = Auth::user()->persona->id;
 
             // Debug: Verificar si hay datos en la tabla aspirantes_complementarios
-            $aspirantesCount = \App\Models\AspiranteComplementario::where('persona_id', $personaId)
+            $aspirantesCount = \App\Models\Complementarios\AspiranteComplementario::where('persona_id', $personaId)
                 ->where('estado', 1)
                 ->count();
 

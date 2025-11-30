@@ -13,6 +13,8 @@ RUN set -eux; \
 # Copiar los archivos de la aplicación
 COPY resources/js/sofia-validator.js ./sofia-validator.js
 COPY resources/js/sofia-validator-server.js ./sofia-validator-server.js
+COPY resources/js/sofia-validator ./sofia-validator
+COPY resources/js/sofia-validator-server ./sofia-validator-server
 
 # La imagen oficial de Playwright corre como root por defecto
 # No necesitamos cambiar usuario, pero podemos crear uno si es necesario
