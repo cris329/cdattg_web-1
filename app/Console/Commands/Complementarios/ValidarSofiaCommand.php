@@ -1,10 +1,10 @@
 <?php
 
-namespace App\Console\Commands;
+namespace App\Console\Commands\Complementarios;
 
 use Illuminate\Console\Command;
-use App\Services\Sofia\SofiaValidationService;
-use App\Services\Sofia\SofiaValidationProcessor;
+use App\Services\Complementarios\Sofia\SofiaValidationService;
+use App\Services\Complementarios\Sofia\SofiaValidationProcessor;
 
 class ValidarSofiaCommand extends Command
 {

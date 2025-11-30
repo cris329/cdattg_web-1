@@ -3,14 +3,14 @@
 namespace Tests\Complementarios\Unit\Services;
 
 use Tests\TestCase;
-use App\Services\InscripcionComplementarioService;
+use App\Services\Complementarios\InscripcionComplementarioService;
 use App\Repositories\PersonaRepository;
-use App\Repositories\AspiranteComplementarioRepository;
-use App\Repositories\ComplementarioOfertadoRepository;
+use App\Repositories\Complementarios\AspiranteComplementarioRepository;
+use App\Repositories\Complementarios\ComplementarioOfertadoRepository;
 use App\Repositories\TemaRepository;
-use App\Services\ComplementarioService;
+use App\Services\Complementarios\ComplementarioService;
 use App\Services\UserService;
-use App\Models\ComplementarioOfertado;
+use App\Models\Complementarios\ComplementarioOfertado;
 use App\Models\Persona;
 use App\Models\Pais;
 use App\Models\Departamento;
@@ -297,8 +297,8 @@ class InscripcionComplementarioServiceTest extends TestCase
         }
 
         // Crear servicio real sin mocks para este test
-        $userService = new \App\Services\UserService();
-        $complementarioService = new \App\Services\ComplementarioService(
+        $userService = new UserService();
+        $complementarioService = new ComplementarioService(
             Mockery::mock(TemaRepository::class),
             new ComplementarioOfertadoRepository(),
             new AspiranteComplementarioRepository()

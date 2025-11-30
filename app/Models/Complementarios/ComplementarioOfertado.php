@@ -1,13 +1,29 @@
 <?php
 
-namespace App\Models;
+namespace App\Models\Complementarios;
 
+use App\Models\Ambiente;
+use App\Models\Competencia;
+use App\Models\GuiasAprendizaje;
+use App\Models\JornadaFormacion;
+use App\Models\Parametro;
+use App\Models\ParametroTema;
+use App\Models\ResultadosAprendizaje;
+use Database\Factories\ComplementarioOfertadoFactory;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 
 class ComplementarioOfertado extends Model
 {
     use HasFactory;
+
+    /**
+     * Create a new factory instance for the model.
+     */
+    protected static function newFactory()
+    {
+        return ComplementarioOfertadoFactory::new();
+    }
 
     protected $table = 'complementarios_ofertados';
 

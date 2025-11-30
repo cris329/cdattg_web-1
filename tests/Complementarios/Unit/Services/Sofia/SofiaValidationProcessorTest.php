@@ -3,11 +3,12 @@
 namespace Tests\Complementarios\Unit\Services\Sofia;
 
 use Tests\TestCase;
-use App\Services\Sofia\SofiaValidationProcessor;
-use App\Services\Sofia\SofiaValidationService;
-use App\Models\AspiranteComplementario;
+use App\Services\Complementarios\Sofia\SofiaValidationProcessor;
+use App\Services\Complementarios\Sofia\SofiaValidationService;
+use App\Models\Complementarios\AspiranteComplementario;
+use App\Models\Complementarios\ComplementarioOfertado;
 use App\Models\Persona;
-use App\Models\SofiaValidationProgress;
+use App\Models\Complementarios\SofiaValidationProgress;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use PHPUnit\Framework\Attributes\Test;
 use Mockery;
@@ -54,7 +55,7 @@ class SofiaValidationProcessorTest extends TestCase
     #[Test]
     public function puede_procesar_batch_de_aspirantes(): void
     {
-        $programa = \App\Models\ComplementarioOfertado::factory()->create();
+        $programa = ComplementarioOfertado::factory()->create();
 
         $persona1 = Persona::factory()->create(['numero_documento' => '1111111111']);
         $persona2 = Persona::factory()->create(['numero_documento' => '2222222222']);
@@ -98,7 +99,7 @@ class SofiaValidationProcessorTest extends TestCase
     #[Test]
     public function maneja_errores_en_validacion(): void
     {
-        $programa = \App\Models\ComplementarioOfertado::factory()->create();
+        $programa = ComplementarioOfertado::factory()->create();
 
         $persona1 = Persona::factory()->create(['numero_documento' => '1111111111']);
         $persona2 = Persona::factory()->create(['numero_documento' => '2222222222']);
@@ -140,7 +141,7 @@ class SofiaValidationProcessorTest extends TestCase
     #[Test]
     public function procesa_aspirantes_en_lotes(): void
     {
-        $programa = \App\Models\ComplementarioOfertado::factory()->create();
+        $programa = ComplementarioOfertado::factory()->create();
 
         // Crear 7 aspirantes (se procesarán en 2 lotes de 5 y 2)
         $aspirantes = collect();
@@ -171,7 +172,7 @@ class SofiaValidationProcessorTest extends TestCase
     #[Test]
     public function actualiza_progreso_durante_procesamiento(): void
     {
-        $programa = \App\Models\ComplementarioOfertado::factory()->create();
+        $programa = ComplementarioOfertado::factory()->create();
 
         $persona = Persona::factory()->create(['numero_documento' => '1111111111']);
         $aspirante = AspiranteComplementario::factory()->create([
@@ -205,7 +206,7 @@ class SofiaValidationProcessorTest extends TestCase
     #[Test]
     public function retorna_estadisticas_correctas(): void
     {
-        $programa = \App\Models\ComplementarioOfertado::factory()->create();
+        $programa = ComplementarioOfertado::factory()->create();
 
         $persona1 = Persona::factory()->create(['numero_documento' => '1111111111']);
         $persona2 = Persona::factory()->create(['numero_documento' => '2222222222']);
@@ -255,7 +256,7 @@ class SofiaValidationProcessorTest extends TestCase
     #[Test]
     public function procesa_batch_vacio(): void
     {
-        $programa = \App\Models\ComplementarioOfertado::factory()->create();
+        $programa = ComplementarioOfertado::factory()->create();
 
         $resultado = $this->processor->processBatch(collect(), $programa->id);
 

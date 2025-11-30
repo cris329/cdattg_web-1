@@ -1,13 +1,23 @@
 <?php
 
-namespace App\Models;
+namespace App\Models\Complementarios;
 
+use App\Models\User;
+use Database\Factories\SofiaValidationProgressFactory;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 
 class SofiaValidationProgress extends Model
 {
     use HasFactory;
+
+    /**
+     * Create a new factory instance for the model.
+     */
+    protected static function newFactory()
+    {
+        return SofiaValidationProgressFactory::new();
+    }
 
     protected $table = 'sofia_validation_progress';
 

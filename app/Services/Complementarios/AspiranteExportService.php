@@ -1,13 +1,15 @@
 <?php
 
-namespace App\Services;
+namespace App\Services\Complementarios;
 
 use App\Exceptions\AspirantesSinDocumentosException;
 use App\Exceptions\DescargaDocumentosException;
 use App\Exceptions\ProgramaNoEncontradoException;
-use App\Models\ComplementarioOfertado;
-use App\Repositories\AspiranteComplementarioRepository;
-use App\Repositories\ComplementarioOfertadoRepository;
+use App\Models\Complementarios\ComplementarioOfertado;
+use App\Repositories\Complementarios\AspiranteComplementarioRepository;
+use App\Repositories\Complementarios\ComplementarioOfertadoRepository;
+use App\Services\Complementarios\AspiranteComplementarioService;
+use App\Services\Complementarios\AspiranteDocumentoService;
 use Illuminate\Support\Facades\Log;
 use PhpOffice\PhpSpreadsheet\Spreadsheet;
 use PhpOffice\PhpSpreadsheet\Writer\Xlsx;

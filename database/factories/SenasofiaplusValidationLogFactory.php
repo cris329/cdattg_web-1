@@ -2,16 +2,22 @@
 
 namespace Database\Factories;
 
-use App\Models\AspiranteComplementario;
-use App\Models\SenasofiaplusValidationLog;
+use App\Models\Complementarios\AspiranteComplementario;
+use App\Models\Complementarios\SenasofiaplusValidationLog;
 use App\Models\User;
 use Illuminate\Database\Eloquent\Factories\Factory;
 
 /**
- * @extends \Illuminate\Database\Eloquent\Factories\Factory<\App\Models\SenasofiaplusValidationLog>
+ * @extends \Illuminate\Database\Eloquent\Factories\Factory<\App\Models\Complementarios\SenasofiaplusValidationLog>
  */
 class SenasofiaplusValidationLogFactory extends Factory
 {
+    /**
+     * The name of the factory's corresponding model.
+     *
+     * @var string
+     */
+    protected $model = SenasofiaplusValidationLog::class;
     /**
      * Define the model's default state.
      *

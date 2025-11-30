@@ -3,11 +3,11 @@
 namespace Tests\Complementarios\Unit\Services;
 
 use Tests\TestCase;
-use App\Services\EstadisticaComplementarioService;
-use App\Repositories\AspiranteComplementarioRepository;
-use App\Repositories\ComplementarioOfertadoRepository;
+use App\Services\Complementarios\EstadisticaComplementarioService;
+use App\Repositories\Complementarios\AspiranteComplementarioRepository;
+use App\Repositories\Complementarios\ComplementarioOfertadoRepository;
 use App\Repositories\PersonaRepository;
-use App\Models\AspiranteComplementario;
+use App\Models\Complementarios\AspiranteComplementario;
 use Illuminate\Database\Eloquent\Collection as EloquentCollection;
 use Illuminate\Support\Collection;
 use Illuminate\Database\Eloquent\Builder;

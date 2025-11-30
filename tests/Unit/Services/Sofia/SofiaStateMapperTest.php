@@ -3,7 +3,7 @@
 namespace Tests\Complementarios\Unit\Services\Sofia;
 
 use Tests\TestCase;
-use App\Services\Sofia\SofiaStateMapper;
+use App\Services\Complementarios\Sofia\SofiaStateMapper;
 use PHPUnit\Framework\Attributes\Test;
 
 class SofiaStateMapperTest extends TestCase

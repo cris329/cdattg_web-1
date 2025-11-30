@@ -3,7 +3,7 @@
 namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
-use App\Models\ComplementarioOfertado;
+use App\Models\Complementarios\ComplementarioOfertado;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Log;
 
@@ -32,7 +32,7 @@ class HomeController extends Controller
             $personaId = Auth::user()->persona->id;
 
             // Debug: Verificar si hay datos en la tabla aspirantes_complementarios
-            $aspirantesCount = \App\Models\AspiranteComplementario::where('persona_id', $personaId)
+            $aspirantesCount = \App\Models\Complementarios\AspiranteComplementario::where('persona_id', $personaId)
                 ->where('estado', 1)
                 ->count();
 

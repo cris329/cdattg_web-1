@@ -3,13 +3,13 @@
 namespace Tests\Complementarios\Unit\Jobs;
 
 use Tests\TestCase;
-use App\Jobs\ValidarSofiaJob;
-use App\Services\Sofia\SofiaValidationService;
-use App\Services\Sofia\SofiaValidationProcessor;
-use App\Models\ComplementarioOfertado;
-use App\Models\AspiranteComplementario;
+use App\Jobs\Complementarios\ValidarSofiaJob;
+use App\Services\Complementarios\Sofia\SofiaValidationService;
+use App\Services\Complementarios\Sofia\SofiaValidationProcessor;
+use App\Models\Complementarios\ComplementarioOfertado;
+use App\Models\Complementarios\AspiranteComplementario;
 use App\Models\Persona;
-use App\Models\SofiaValidationProgress;
+use App\Models\Complementarios\SofiaValidationProgress;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use PHPUnit\Framework\Attributes\Test;
 use Mockery;

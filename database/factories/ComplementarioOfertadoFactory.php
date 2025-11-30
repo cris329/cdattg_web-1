@@ -3,13 +3,13 @@
 namespace Database\Factories;
 
 use App\Models\Ambiente;
-use App\Models\ComplementarioOfertado;
+use App\Models\Complementarios\ComplementarioOfertado;
 use App\Models\JornadaFormacion;
 use App\Models\ParametroTema;
 use Illuminate\Database\Eloquent\Factories\Factory;
 
 /**
- * @extends \Illuminate\Database\Eloquent\Factories\Factory<\App\Models\ComplementarioOfertado>
+ * @extends \Illuminate\Database\Eloquent\Factories\Factory<\App\Models\Complementarios\ComplementarioOfertado>
  */
 class ComplementarioOfertadoFactory extends Factory
 {

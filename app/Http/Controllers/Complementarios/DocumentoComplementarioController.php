@@ -4,11 +4,11 @@ namespace App\Http\Controllers\Complementarios;
 
 use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
-use App\Models\ComplementarioOfertado;
-use App\Models\AspiranteComplementario;
+use App\Models\Complementarios\ComplementarioOfertado;
+use App\Models\Complementarios\AspiranteComplementario;
 use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Storage;
-use App\Services\ComplementarioService;
+use App\Services\Complementarios\ComplementarioService;
 
 class DocumentoComplementarioController extends Controller
 {

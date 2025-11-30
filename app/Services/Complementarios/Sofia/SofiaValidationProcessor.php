@@ -1,8 +1,8 @@
 <?php
 
-namespace App\Services\Sofia;
+namespace App\Services\Complementarios\Sofia;
 
-use App\Models\SofiaValidationProgress;
+use App\Models\Complementarios\SofiaValidationProgress;
 use Illuminate\Support\Facades\Log;
 
 class SofiaValidationProcessor

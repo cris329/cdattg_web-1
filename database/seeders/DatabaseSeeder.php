@@ -5,7 +5,7 @@ namespace Database\Seeders;
 use App\Models\Ambiente;
 use App\Models\Aprendiz;
 use App\Models\AprendizFicha;
-use App\Models\AspiranteComplementario;
+use App\Models\Complementarios\AspiranteComplementario;
 use App\Models\ComplementarioOfertado;
 use App\Models\FichaCaracterizacion;
 use App\Models\FichaDiasFormacion;

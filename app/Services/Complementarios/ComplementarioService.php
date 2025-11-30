@@ -1,14 +1,14 @@
 <?php
 
-namespace App\Services;
+namespace App\Services\Complementarios;
 
 use App\Exceptions\ProgramaNoEncontradoException;
 use App\Models\Ambiente;
-use App\Models\ComplementarioOfertado;
+use App\Models\Complementarios\ComplementarioOfertado;
 use App\Models\JornadaFormacion;
 use App\Models\ParametroTema;
-use App\Repositories\AspiranteComplementarioRepository;
-use App\Repositories\ComplementarioOfertadoRepository;
+use App\Repositories\Complementarios\AspiranteComplementarioRepository;
+use App\Repositories\Complementarios\ComplementarioOfertadoRepository;
 use App\Repositories\TemaRepository;
 use Illuminate\Database\Eloquent\Collection;
 

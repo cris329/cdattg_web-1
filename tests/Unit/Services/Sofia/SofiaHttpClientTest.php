@@ -3,7 +3,7 @@
 namespace Tests\Complementarios\Unit\Services\Sofia;
 
 use Tests\TestCase;
-use App\Services\Sofia\SofiaHttpClient;
+use App\Services\Complementarios\Sofia\SofiaHttpClient;
 use Illuminate\Support\Facades\Http;
 use Illuminate\Http\Client\ConnectionException;
 use Illuminate\Http\Client\RequestException;

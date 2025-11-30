@@ -2,23 +2,34 @@
 <phpunit xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
          xsi:noNamespaceSchemaLocation="vendor/phpunit/phpunit/phpunit.xsd"
          bootstrap="vendor/autoload.php"
-        colors="true"
-        stopOnFailure="false"
-        stopOnError="false"
->
-    <testsuites>
-        <testsuite name="Unit">
-            <directory>tests/Unit</directory>
-        </testsuite>
-        <testsuite name="Feature">
-            <directory>tests/Feature</directory>
-        </testsuite>
-    </testsuites>
+         colors="true"
+         stopOnFailure="false"
+         stopOnError="false"
+> 
+<testsuites>
+    <testsuite name="Unit">
+        <directory>tests/Unit</directory>
+    </testsuite>
+    <testsuite name="Feature">
+        <directory>tests/Feature</directory>
+    </testsuite>
+</testsuites>
     <source>
         <include>
             <directory>app</directory>
         </include>
     </source>
+
+    <coverage processUncoveredFiles="true">
+        <include>
+            <directory suffix=".php">app/</directory>
+        </include>
+        <report>
+            <text outputFile="php://stdout" />
+            <html outputDirectory="storage/coverage" />
+        </report>
+    </coverage>
+
     <php>
         <env name="APP_ENV" value="testing"/>
         <env name="BCRYPT_ROUNDS" value="4"/>

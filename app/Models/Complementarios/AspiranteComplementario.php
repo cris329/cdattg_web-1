@@ -1,13 +1,23 @@
 <?php
 
-namespace App\Models;
+namespace App\Models\Complementarios;
 
+use App\Models\Persona;
+use Database\Factories\AspiranteComplementarioFactory;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 
 class AspiranteComplementario extends Model
 {
     use HasFactory;
+
+    /**
+     * Create a new factory instance for the model.
+     */
+    protected static function newFactory()
+    {
+        return AspiranteComplementarioFactory::new();
+    }
 
     /**
      * The table associated with the model.

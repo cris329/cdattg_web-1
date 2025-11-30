@@ -2,7 +2,7 @@
 
 namespace Tests\Complementarios\Unit\Models;
 
-use App\Models\AspiranteComplementario;
+use App\Models\Complementarios\AspiranteComplementario;
 use App\Models\ComplementarioOfertado;
 use App\Models\Persona;
 use Illuminate\Foundation\Testing\RefreshDatabase;

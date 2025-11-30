@@ -2,7 +2,7 @@
 
 namespace Tests\Complementarios\Unit\Models;
 
-use App\Models\CategoriaCaracterizacionComplementario;
+use App\Models\Complementarios\CategoriaCaracterizacionComplementario;
 use App\Models\Persona;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use PHPUnit\Framework\Attributes\Test;

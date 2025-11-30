@@ -1,18 +1,19 @@
 <?php
 
-namespace App\Services;
+namespace App\Services\Complementarios;
 
 use App\Exceptions\ProcesarDocumentoIdentidadException;
-use App\Models\AspiranteComplementario;
-use App\Models\ComplementarioOfertado;
+use App\Models\Complementarios\AspiranteComplementario;
+use App\Models\Complementarios\ComplementarioOfertado;
 use App\Models\Departamento;
 use App\Models\Pais;
 use App\Models\Persona;
 use App\Models\User;
-use App\Repositories\AspiranteComplementarioRepository;
-use App\Repositories\ComplementarioOfertadoRepository;
+use App\Repositories\Complementarios\AspiranteComplementarioRepository;
+use App\Repositories\Complementarios\ComplementarioOfertadoRepository;
 use App\Repositories\PersonaRepository;
 use App\Repositories\TemaRepository;
+use App\Services\UserService;
 use Illuminate\Contracts\View\View;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Support\Collection;
@@ -30,7 +31,7 @@ class InscripcionComplementarioService
         private readonly AspiranteComplementarioRepository $aspiranteRepository,
         private readonly ComplementarioOfertadoRepository $programaRepository,
         private readonly TemaRepository $temaRepository,
-        private readonly ComplementarioService $complementarioService,
+        private readonly \App\Services\Complementarios\ComplementarioService $complementarioService,
         private readonly UserService $userService
     ) {}
 
@@ -199,7 +200,7 @@ class InscripcionComplementarioService
     {
         // Convertir parametro_id a parametros_temas.id
         $data = $this->convertirParametrosAParametrosTemas($data);
-        
+
         return $this->personaRepository->createOrUpdate($data);
     }
 
@@ -213,7 +214,7 @@ class InscripcionComplementarioService
             $parametroTema = \App\Models\ParametroTema::where('tema_id', 2) // TIPO DE DOCUMENTO
                 ->where('parametro_id', $data['tipo_documento'])
                 ->first();
-            
+
             if ($parametroTema) {
                 $data['tipo_documento'] = $parametroTema->id;
             }
@@ -224,7 +225,7 @@ class InscripcionComplementarioService
             $parametroTema = \App\Models\ParametroTema::where('tema_id', 3) // GENERO
                 ->where('parametro_id', $data['genero'])
                 ->first();
-            
+
             if ($parametroTema) {
                 $data['genero'] = $parametroTema->id;
             }

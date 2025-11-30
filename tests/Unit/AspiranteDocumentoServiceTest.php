@@ -3,7 +3,7 @@
 namespace Tests\Complementarios\Unit\Services;
 
 use App\Models\Persona;
-use App\Services\AspiranteDocumentoService;
+use App\Services\Complementarios\AspiranteDocumentoService;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use PHPUnit\Framework\Attributes\Test;
 use Tests\TestCase;

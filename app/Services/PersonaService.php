@@ -12,6 +12,7 @@ use Illuminate\Auth\AuthenticationException;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Hash;
+use Illuminate\Support\Facades\Log;
 
 class PersonaService
 {
@@ -217,8 +218,17 @@ class PersonaService
         // Asignar rol VISITANTE por defecto
         $user->assignRole('VISITANTE');
 
-        // Enviar email de verificación automáticamente
-        $user->sendEmailVerificationNotification();
+        // Enviar email de verificación automáticamente (manejar errores silenciosamente)
+        try {
+            $user->sendEmailVerificationNotification();
+        } catch (\Exception $e) {
+            // Log del error pero no fallar la creación de la persona
+            Log::warning('No se pudo enviar email de verificación al crear usuario', [
+                'user_id' => $user->id,
+                'persona_id' => $persona->id,
+                'error' => $e->getMessage()
+            ]);
+        }
 
         return $user;
     }

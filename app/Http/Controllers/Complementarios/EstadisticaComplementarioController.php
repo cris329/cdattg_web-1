@@ -4,11 +4,11 @@ namespace App\Http\Controllers\Complementarios;
 
 use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
-use App\Models\AspiranteComplementario;
-use App\Models\ComplementarioOfertado;
+use App\Models\Complementarios\AspiranteComplementario;
+use App\Models\Complementarios\ComplementarioOfertado;
 use App\Models\Departamento;
 use App\Models\Municipio;
-use App\Services\EstadisticaComplementarioService;
+use App\Services\Complementarios\EstadisticaComplementarioService;
 use Symfony\Component\HttpFoundation\StreamedResponse;
 use Illuminate\Support\Facades\Log;
 

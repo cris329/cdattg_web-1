@@ -1,9 +1,9 @@
 <?php
 
-namespace App\Repositories;
+namespace App\Repositories\Complementarios;
 
-use App\Models\AspiranteComplementario;
-use App\Models\ComplementarioOfertado;
+use App\Models\Complementarios\AspiranteComplementario;
+use App\Models\Complementarios\ComplementarioOfertado;
 use Illuminate\Database\Eloquent\Collection;
 
 class AspiranteComplementarioRepository
@@ -209,7 +209,7 @@ class AspiranteComplementarioRepository
     public function getTendenciaInscripciones(int $meses = 6): Collection
     {
         $isSqlite = \Illuminate\Support\Facades\DB::getDriverName() === 'sqlite';
-        
+
         if ($isSqlite) {
             return AspiranteComplementario::selectRaw('
                     CAST(strftime("%Y", created_at) AS INTEGER) as year,
@@ -222,7 +222,7 @@ class AspiranteComplementarioRepository
                 ->orderBy('month', 'asc')
                 ->get();
         }
-        
+
         return AspiranteComplementario::selectRaw('
                 YEAR(created_at) as year,
                 MONTH(created_at) as month,

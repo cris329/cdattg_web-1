@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Services\Sofia;
+namespace App\Services\Complementarios\Sofia;
 
 use Illuminate\Support\Facades\Http;
 use Illuminate\Support\Facades\Log;

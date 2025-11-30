@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Services\Sofia;
+namespace App\Services\Complementarios\Sofia;
 
 use Illuminate\Support\Facades\Log;
 
@@ -100,7 +100,7 @@ class SofiaStateMapper
     private function getDirectState(string $resultado): ?int
     {
         $resultadoUpper = strtoupper($resultado);
-        
+
         return match($resultadoUpper) {
             self::RESULTADO_YA_EXISTE => self::ESTADO_REGISTRADO,
             self::RESULTADO_NO_REGISTRADO, self::RESULTADO_DESCONOCIDO => self::ESTADO_NO_REGISTRADO,

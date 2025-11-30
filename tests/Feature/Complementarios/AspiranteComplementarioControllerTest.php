@@ -3,9 +3,9 @@
 namespace Tests\Complementarios\Feature\Controllers;
 
 use Tests\TestCase;
-use App\Models\ComplementarioOfertado;
+use App\Models\Complementarios\ComplementarioOfertado;
 use App\Models\Persona;
-use App\Models\AspiranteComplementario;
+use App\Models\Complementarios\AspiranteComplementario;
 use App\Models\User;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 

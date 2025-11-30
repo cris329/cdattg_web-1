@@ -2,13 +2,13 @@
 
 namespace Database\Factories;
 
-use App\Models\AspiranteComplementario;
-use App\Models\ComplementarioOfertado;
+use App\Models\Complementarios\AspiranteComplementario;
+use App\Models\Complementarios\ComplementarioOfertado;
 use App\Models\Persona;
 use Illuminate\Database\Eloquent\Factories\Factory;
 
 /**
- * @extends \Illuminate\Database\Eloquent\Factories\Factory<\App\Models\AspiranteComplementario>
+ * @extends \Illuminate\Database\Eloquent\Factories\Factory<\App\Models\Complementarios\AspiranteComplementario>
  */
 class AspiranteComplementarioFactory extends Factory
 {

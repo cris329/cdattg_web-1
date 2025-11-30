@@ -1,12 +1,12 @@
 <?php
 
-namespace App\Jobs;
+namespace App\Jobs\Complementarios;
 
 use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Foundation\Queue\Queueable;
-use App\Services\Sofia\SofiaValidationService;
-use App\Services\Sofia\SofiaValidationProcessor;
-use App\Models\SofiaValidationProgress;
+use App\Services\Complementarios\Sofia\SofiaValidationService;
+use App\Services\Complementarios\Sofia\SofiaValidationProcessor;
+use App\Models\Complementarios\SofiaValidationProgress;
 use Illuminate\Support\Facades\Log;
 
 class ValidarSofiaJob implements ShouldQueue

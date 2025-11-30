@@ -1,8 +1,8 @@
 <?php
 
-namespace App\Repositories;
+namespace App\Repositories\Complementarios;
 
-use App\Models\ComplementarioOfertado;
+use App\Models\Complementarios\ComplementarioOfertado;
 use Illuminate\Database\Eloquent\Collection;
 
 class ComplementarioOfertadoRepository

@@ -3,12 +3,12 @@
 namespace Tests\Complementarios\Unit\Services;
 
 use Tests\TestCase;
-use App\Services\ComplementarioService;
+use App\Services\Complementarios\ComplementarioService;
 use App\Repositories\TemaRepository;
-use App\Repositories\ComplementarioOfertadoRepository;
-use App\Repositories\AspiranteComplementarioRepository;
-use App\Models\ComplementarioOfertado;
-use App\Models\AspiranteComplementario;
+use App\Repositories\Complementarios\ComplementarioOfertadoRepository;
+use App\Repositories\Complementarios\AspiranteComplementarioRepository;
+use App\Models\Complementarios\ComplementarioOfertado;
+use App\Models\Complementarios\AspiranteComplementario;
 use App\Models\ParametroTema;
 use App\Models\JornadaFormacion;
 use App\Models\Ambiente;

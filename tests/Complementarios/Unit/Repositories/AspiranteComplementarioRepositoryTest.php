@@ -3,9 +3,9 @@
 namespace Tests\Complementarios\Unit\Repositories;
 
 use Tests\TestCase;
-use App\Repositories\AspiranteComplementarioRepository;
-use App\Models\AspiranteComplementario;
-use App\Models\ComplementarioOfertado;
+use App\Repositories\Complementarios\AspiranteComplementarioRepository;
+use App\Models\Complementarios\AspiranteComplementario;
+use App\Models\Complementarios\ComplementarioOfertado;
 use App\Models\Persona;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 

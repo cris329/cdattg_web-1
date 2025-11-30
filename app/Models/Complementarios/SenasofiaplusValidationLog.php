@@ -1,7 +1,9 @@
 <?php
 
-namespace App\Models;
+namespace App\Models\Complementarios;
 
+use App\Models\User;
+use Database\Factories\SenasofiaplusValidationLogFactory;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
@@ -9,6 +11,14 @@ use Illuminate\Database\Eloquent\Relations\BelongsTo;
 class SenasofiaplusValidationLog extends Model
 {
     use HasFactory;
+
+    /**
+     * Create a new factory instance for the model.
+     */
+    protected static function newFactory()
+    {
+        return SenasofiaplusValidationLogFactory::new();
+    }
 
     protected $table = 'senasofiaplus_validation_logs';
 

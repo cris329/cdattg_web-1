@@ -5,7 +5,7 @@ namespace App\Http\Controllers\Complementarios;
 use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
-use App\Services\ComplementarioService;
+use App\Services\Complementarios\ComplementarioService;
 
 class PerfilComplementarioController extends Controller
 {
@@ -40,7 +40,7 @@ class PerfilComplementarioController extends Controller
         // Si es aspirante, también obtener sus programas complementarios
         $aspirantes = [];
         if ($user->hasRole('ASPIRANTE')) {
-            $aspirantes = \App\Models\AspiranteComplementario::with(['persona', 'complementario'])
+            $aspirantes = \App\Models\Complementarios\AspiranteComplementario::with(['persona', 'complementario'])
                 ->where('persona_id', $user->persona_id)
                 ->get();
         }
