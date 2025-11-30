@@ -26,7 +26,7 @@ class OrdenControllerTest extends TestCase
 
     // Constantes para rutas
     private const ROUTE_INDEX = 'inventario.ordenes.index';
-    private const ROUTE_STORE = 'inventario.ordenes.store';
+    private const ROUTE_STORE = 'inventario.prestamos-salidas.store';
     private const ROUTE_SHOW = 'inventario.ordenes.show';
     private const ROUTE_DESTROY = 'inventario.ordenes.destroy';
 

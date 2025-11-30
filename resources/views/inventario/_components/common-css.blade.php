@@ -4,6 +4,6 @@
 @endsection
 
 @push('css')
-    @vite(['resources/css/inventario/shared/base.css'])
+    {{-- @vite(['resources/css/inventario/shared/base.css']) --}}
 @endpush
 

@@ -54,6 +54,12 @@ class ContratoConvenioControllerTest extends TestCase
         // Ejecutar migraciones y seeders de todos los módulos
         $this->migrateDatabases();
         
+        // Desactivar CSRF para tests
+        $this->withoutMiddleware([
+            \Illuminate\Foundation\Http\Middleware\VerifyCsrfToken::class,
+            \App\Http\Middleware\VerifyCsrfToken::class,
+        ]);
+        
         // Asegurar que los seeders se ejecuten después de RefreshDatabase
         if (!\App\Models\Pais::where('pais', self::PAIS_COLOMBIA)->exists()) {
             $this->artisan('db:seed', ['--force' => true]);

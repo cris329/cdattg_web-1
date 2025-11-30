@@ -157,7 +157,9 @@ class NotificacionControllerTest extends TestCase
         ]);
 
         // Verificar que todas fueron marcadas como leídas
-        $notificaciones = Notificacion::where('user_id', $this->user->id)->get();
+        $notificaciones = Notificacion::where('notificable_type', \App\Models\User::class)
+            ->where('notificable_id', $this->user->id)
+            ->get();
         foreach ($notificaciones as $notificacion) {
             $this->assertNotNull($notificacion->leida_en);
         }
@@ -179,7 +181,8 @@ class NotificacionControllerTest extends TestCase
         // Verificar que la notificación fue eliminada
         $this->assertDatabaseMissing('notificaciones', [
             'id' => $notificacionId,
-            'user_id' => $this->user->id,
+            'notificable_type' => \App\Models\User::class,
+            'notificable_id' => $this->user->id,
         ]);
     }
 
@@ -203,7 +206,9 @@ class NotificacionControllerTest extends TestCase
         $this->crearNotificacion($this->user->id, 'nueva_orden', ['orden_id' => 1]);
         $this->crearNotificacion($this->user->id, 'nueva_orden', ['orden_id' => 2]);
 
-        $countAntes = Notificacion::where('user_id', $this->user->id)->count();
+        $countAntes = Notificacion::where('notificable_type', \App\Models\User::class)
+            ->where('notificable_id', $this->user->id)
+            ->count();
 
         $response = $this->deleteJson(route(self::ROUTE_DESTROY_ALL));
 
@@ -215,7 +220,9 @@ class NotificacionControllerTest extends TestCase
         ]);
 
         // Verificar que todas fueron eliminadas
-        $this->assertEquals(0, Notificacion::where('user_id', $this->user->id)->count());
+        $this->assertEquals(0, Notificacion::where('notificable_type', \App\Models\User::class)
+            ->where('notificable_id', $this->user->id)
+            ->count());
     }
 
     #[Test]
@@ -237,7 +244,8 @@ class NotificacionControllerTest extends TestCase
         // Verificar que solo ve sus propias notificaciones
         $notificaciones = $response->viewData('notificaciones');
         foreach ($notificaciones as $notificacion) {
-            $this->assertEquals($this->user->id, $notificacion->user_id);
+            $this->assertEquals(\App\Models\User::class, $notificacion->notificable_type);
+            $this->assertEquals($this->user->id, $notificacion->notificable_id);
         }
     }
 
@@ -250,7 +258,8 @@ class NotificacionControllerTest extends TestCase
         
         DB::table('notificaciones')->insert([
             'id' => $id,
-            'user_id' => $userId,
+            'notificable_type' => \App\Models\User::class,
+            'notificable_id' => $userId,
             'tipo' => $tipo,
             'datos' => json_encode($datos),
             'leida_en' => null,

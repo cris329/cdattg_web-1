@@ -170,4 +170,3 @@
 @endsection
 
 @include('inventario._components.common-footer')
-@endsection

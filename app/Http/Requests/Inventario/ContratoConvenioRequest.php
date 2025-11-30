@@ -23,7 +23,8 @@ class ContratoConvenioRequest extends FormRequest
     {
         // Update
         if ($this->isMethod('PUT') || $this->isMethod('PATCH')) {
-            $contratoId = $this->route('contratos_convenio') ? $this->route('contratos_convenio')->id : null;
+            $contratoConvenio = $this->route('contratoConvenio');
+            $contratoId = $contratoConvenio ? $contratoConvenio->id : null;
             return [
                 'name' => 'required|string|max:255|unique:contratos_convenios,name,' . $contratoId,
                 'codigo' => 'nullable|string|max:100|unique:contratos_convenios,codigo,' . $contratoId,

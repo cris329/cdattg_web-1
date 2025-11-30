@@ -52,6 +52,12 @@ class CategoriaControllerTest extends TestCase
         // Ejecutar migraciones y seeders de todos los módulos
         $this->migrateDatabases();
         
+        // Desactivar CSRF para tests
+        $this->withoutMiddleware([
+            \Illuminate\Foundation\Http\Middleware\VerifyCsrfToken::class,
+            \App\Http\Middleware\VerifyCsrfToken::class,
+        ]);
+        
         // Asegurar que los seeders se ejecuten después de RefreshDatabase
         // RefreshDatabase se ejecuta automáticamente, pero necesitamos los seeders
         if (!\App\Models\Tema::where('name', self::TEMA_CATEGORIAS)->exists()) {

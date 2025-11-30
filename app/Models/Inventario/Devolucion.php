@@ -74,6 +74,11 @@ class Devolucion extends Model
             throw new DevolucionException('Este préstamo ya fue cerrado sin devolución de stock.');
         }
 
+        // Si la cantidad es 0, se permite cerrar sin stock (validación aparte)
+        if ($cantidadDevuelta === 0) {
+            return;
+        }
+
         $cantidadPendiente = $detalleOrden->getCantidadPendiente();
         if ($cantidadPendiente <= 0) {
             throw new DevolucionException('No hay cantidades pendientes por devolver.');

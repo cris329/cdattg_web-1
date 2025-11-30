@@ -19,7 +19,7 @@ class DevolucionRepository implements DevolucionRepositoryInterface
      */
     public function obtenerPrestamosPendientes(int $estadoAprobadaId): LengthAwarePaginator
     {
-        $prestamos = DetalleOrden::with(['orden.tipoOrden', 'producto', 'devoluciones'])
+        $prestamos = DetalleOrden::with(['orden.tipoOrden.parametro', 'producto', 'devoluciones'])
             ->whereHas('orden', function ($query) {
                 $query->whereNotNull('fecha_devolucion');
             })
@@ -69,7 +69,7 @@ class DevolucionRepository implements DevolucionRepositoryInterface
      */
     public function obtenerPrestamosActivosUsuario(int $userId, int $estadoAprobadaId): LengthAwarePaginator
     {
-        $prestamos = DetalleOrden::with(['orden.tipoOrden', 'producto', 'devoluciones'])
+        $prestamos = DetalleOrden::with(['orden.tipoOrden.parametro', 'producto', 'devoluciones'])
             ->whereHas('orden', function ($query) use ($userId) {
                 $query->where('user_create_id', $userId)
                     ->whereNotNull('fecha_devolucion');
@@ -110,14 +110,26 @@ class DevolucionRepository implements DevolucionRepositoryInterface
     private function paginacionManual(\Illuminate\Support\Collection $items, int $perPage): LengthAwarePaginator
     {
         $page = request()->get('page', 1);
-        $paginatedItems = $items->forPage($page, $perPage)->values();
+        $paginatedItems = $items->forPage((int) $page, $perPage)->values();
+        
+        try {
+            $path = request()->url();
+        } catch (\Exception $e) {
+            $path = route('inventario.devoluciones.index');
+        }
+        
+        if (!$path) {
+            $path = route('inventario.devoluciones.index');
+        }
+        
+        $query = request()->query() ?? [];
 
         return new \Illuminate\Pagination\LengthAwarePaginator(
             $paginatedItems,
             $items->count(),
             $perPage,
-            $page,
-            ['path' => request()->url(), 'query' => request()->query()]
+            (int) $page,
+            ['path' => $path, 'query' => $query]
         );
     }
 }

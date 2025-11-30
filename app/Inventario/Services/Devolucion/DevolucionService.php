@@ -84,10 +84,10 @@ class DevolucionService
     }
 
     /**
-     * Obtiene el estado APROBADA
-     * Uso directo del modelo Tema/Parametro (clase externa, sin SOLID)
+     * Obtiene el estado APROBADA como ParametroTema
+     * Necesita devolver ParametroTema porque el repositorio usa estado_orden_id que referencia a parametros_temas
      *
-     * @return \App\Models\Parametro
+     * @return \App\Models\ParametroTema
      * @throws DevolucionException
      */
     public function obtenerEstadoAprobada()
@@ -97,16 +97,21 @@ class DevolucionService
             throw new DevolucionException("Tema 'ESTADOS DE ORDEN' no encontrado.");
         }
 
-        $estado = $tema->parametros()
-            ->where('name', 'APROBADA')
-            ->wherePivot('status', 1)
-            ->first();
-
-        if (!$estado) {
-            throw new DevolucionException("Estado 'APROBADA' no encontrado.");
+        $parametro = \App\Models\Parametro::where('name', 'APROBADA')->first();
+        if (!$parametro) {
+            throw new DevolucionException("Parámetro 'APROBADA' no encontrado.");
         }
 
-        return $estado;
+        $parametroTema = \App\Models\ParametroTema::where('tema_id', $tema->id)
+            ->where('parametro_id', $parametro->id)
+            ->where('status', 1)
+            ->first();
+
+        if (!$parametroTema) {
+            throw new DevolucionException("Estado 'APROBADA' no encontrado en el tema 'ESTADOS DE ORDEN'.");
+        }
+
+        return $parametroTema;
     }
 }
 

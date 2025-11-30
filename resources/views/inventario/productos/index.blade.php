@@ -202,12 +202,10 @@
 
 
 @push('css')
-    @vite([
-        'resources/css/inventario/shared/base.css',
-        'resources/js/inventario/escaner.js'
-    ])
+    {{-- base.css se carga desde common-css.blade.php --}}
 @endpush
 
 @push('scripts')
+    @vite(['resources/js/inventario/escaner.js'])
     @vite(['resources/js/pages/formularios-generico.js'])
 @endpush

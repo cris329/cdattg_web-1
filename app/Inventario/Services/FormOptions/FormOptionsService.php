@@ -147,9 +147,17 @@ class FormOptionsService implements FormOptionsServiceInterface
             return null;
         }
 
-        return $tema->parametros()
-            ->where('name', $nombreEstado)
-            ->wherePivot('status', 1)
+        // Buscar el parámetro primero
+        $parametro = \App\Models\Parametro::where('name', $nombreEstado)->first();
+        
+        if (!$parametro) {
+            return null;
+        }
+
+        // Buscar el ParametroTema que relaciona el parámetro con el tema
+        return \App\Models\ParametroTema::where('tema_id', $tema->id)
+            ->where('parametro_id', $parametro->id)
+            ->where('status', 1)
             ->first();
     }
 

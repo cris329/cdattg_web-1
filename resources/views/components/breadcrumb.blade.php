@@ -12,7 +12,7 @@
                 </li>
             @else
                 <li class="breadcrumb-item">
-                    <a href="{{ $item['url'] ?? '#' }}" class="link_right_header" wire:navigate>
+                    <a href="{{ $item['url'] ?? '#' }}" class="link_right_header">
                         @if(isset($item['icon']))
                             <i class="fas {{ $item['icon'] }}"></i>
                         @endif

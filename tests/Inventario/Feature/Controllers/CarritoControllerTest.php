@@ -42,6 +42,12 @@ class CarritoControllerTest extends TestCase
         // Ejecutar migraciones y seeders de todos los módulos
         $this->migrateDatabases();
         
+        // Desactivar CSRF para tests
+        $this->withoutMiddleware([
+            \Illuminate\Foundation\Http\Middleware\VerifyCsrfToken::class,
+            \App\Http\Middleware\VerifyCsrfToken::class,
+        ]);
+        
         // Asegurar que los seeders se ejecuten después de RefreshDatabase
         if (!\App\Models\Tema::where('name', 'CATEGORIAS')->exists()) {
             $this->artisan('db:seed', ['--force' => true]);
@@ -133,7 +139,11 @@ class CarritoControllerTest extends TestCase
             'success' => false,
             'message' => 'Stock insuficiente para algunos productos',
         ]);
-        $response->assertJsonHas('errores');
+        $response->assertJsonStructure([
+            'success',
+            'message',
+            'errores',
+        ]);
     }
 
     #[Test]

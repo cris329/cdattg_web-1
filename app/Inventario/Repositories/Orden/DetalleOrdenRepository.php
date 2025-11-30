@@ -73,7 +73,12 @@ class DetalleOrdenRepository implements DetalleOrdenRepositoryInterface
      */
     public function encontrarConRelaciones(int $id): ?DetalleOrden
     {
-        return DetalleOrden::with(['orden', 'producto', 'estadoOrden'])->find($id);
+        return DetalleOrden::with([
+            'orden.tipoOrden.parametro',
+            'producto',
+            'estadoOrden.parametro',
+            'devoluciones'
+        ])->find($id);
     }
 }
 

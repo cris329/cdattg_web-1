@@ -40,7 +40,7 @@
                                     <h6>Orden #{{ $detalleOrden->orden->id }}</h6>
                                     <p class="mb-0">
                                         Fecha préstamo:
-                                        {{ $detalleOrden->orden->fecha_prestamo ? $detalleOrden->orden->fecha_prestamo->format('d/m/Y') : 'N/A' }}
+                                        {{ $detalleOrden->orden->created_at ? $detalleOrden->orden->created_at->format('d/m/Y') : 'N/A' }}
                                     </p>
                                     @if($detalleOrden->orden->fecha_devolucion)
                                         <p class="mb-0">

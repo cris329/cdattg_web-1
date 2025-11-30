@@ -56,37 +56,37 @@ class AprobacionService
     }
 
     /**
-     * @return Parametro|null
+     * @return \App\Models\ParametroTema|null
      */
-    public function obtenerEstadoEnEspera(): ?Parametro
+    public function obtenerEstadoEnEspera(): ?\App\Models\ParametroTema
     {
         return $this->obtenerEstadoPorNombre(self::STATUS_PENDING);
     }
 
     /**
-     * @return Parametro
+     * @return \App\Models\ParametroTema
      * @throws AprobacionException
      */
-    public function obtenerEstadoAprobada(): Parametro
+    public function obtenerEstadoAprobada(): \App\Models\ParametroTema
     {
-        $estado = $this->obtenerEstadoPorNombre(self::STATUS_APPROVED);
-        if (!$estado) {
+        $parametroTema = $this->obtenerEstadoPorNombre(self::STATUS_APPROVED);
+        if (!$parametroTema) {
             throw new AprobacionException("Estado '" . self::STATUS_APPROVED . "' no encontrado en '" . self::ORDER_STATUS_THEME . "'.");
         }
-        return $estado;
+        return $parametroTema;
     }
 
     /**
-     * @return Parametro
+     * @return \App\Models\ParametroTema
      * @throws AprobacionException
      */
-    public function obtenerEstadoRechazada(): Parametro
+    public function obtenerEstadoRechazada(): \App\Models\ParametroTema
     {
-        $estado = $this->obtenerEstadoPorNombre(self::STATUS_REJECTED);
-        if (!$estado) {
+        $parametroTema = $this->obtenerEstadoPorNombre(self::STATUS_REJECTED);
+        if (!$parametroTema) {
             throw new AprobacionException("Estado '" . self::STATUS_REJECTED . "' no encontrado en '" . self::ORDER_STATUS_THEME . "'.");
         }
-        return $estado;
+        return $parametroTema;
     }
 
     /**
@@ -94,9 +94,9 @@ class AprobacionService
      * Usa FormOptionsService para centralizar acceso a Tema (SRP)
      *
      * @param string $name
-     * @return Parametro|null
+     * @return \App\Models\ParametroTema|null
      */
-    private function obtenerEstadoPorNombre(string $name): ?Parametro
+    private function obtenerEstadoPorNombre(string $name): ?\App\Models\ParametroTema
     {
         return $this->formOptionsService->obtenerEstadoOrdenPorNombre($name, self::ORDER_STATUS_THEME);
     }
@@ -156,11 +156,11 @@ class AprobacionService
      * Valida que el detalle esté pendiente de aprobación
      *
      * @param DetalleOrden $detalleOrden
-     * @param Parametro|null $estadoEnEspera
+     * @param \App\Models\ParametroTema|null $estadoEnEspera
      * @return void
      * @throws AprobacionException
      */
-    private function validarDetallePendiente(DetalleOrden $detalleOrden, ?Parametro $estadoEnEspera): void
+    private function validarDetallePendiente(DetalleOrden $detalleOrden, ?\App\Models\ParametroTema $estadoEnEspera): void
     {
         if (!$estadoEnEspera || $detalleOrden->estado_orden_id != $estadoEnEspera->id) {
             throw new AprobacionException('Esta solicitud no está pendiente de aprobación.');
@@ -397,17 +397,22 @@ class AprobacionService
     /**
      * Obtiene detalles pendientes de aprobación
      *
-     * @return \Illuminate\Support\Collection
+     * @return \Illuminate\Support\Collection|\Illuminate\Database\Eloquent\Collection
      */
-    public function obtenerDetallesPendientes(): \Illuminate\Support\Collection
+    public function obtenerDetallesPendientes()
     {
         $estadoEnEspera = $this->obtenerEstadoEnEspera();
 
-        if (!$estadoEnEspera) {
-            return collect([]);
+        if (!$estadoEnEspera || !isset($estadoEnEspera->id)) {
+            return \Illuminate\Support\Collection::make([]);
         }
 
-        return $this->ordenRepository->obtenerDetallesPendientes($estadoEnEspera->id);
+        $detalles = $this->ordenRepository->obtenerDetallesPendientes($estadoEnEspera->id);
+        
+        // Asegurar que siempre sea una colección (convertir Eloquent Collection a Support Collection si es necesario)
+        return $detalles instanceof \Illuminate\Database\Eloquent\Collection 
+            ? $detalles 
+            : \Illuminate\Support\Collection::make($detalles);
     }
 
     /**

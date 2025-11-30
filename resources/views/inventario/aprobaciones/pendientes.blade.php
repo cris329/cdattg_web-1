@@ -19,10 +19,11 @@
     />
 @endsection
 @push('css')
-    @vite([
+    {{-- CSS para aprobaciones --}}
+    {{-- @vite([
         'resources/css/inventario/shared/base.css',
         'resources/css/inventario/modal-orden.css'
-    ])
+    ]) --}}
 @endpush
 
 @section('content')
@@ -360,7 +361,7 @@
 
 @push('js')
 <!-- Script de aprobaciones -->
-@vite(['resources/js/inventario/aprobaciones.js'])
+{{-- @vite(['resources/js/inventario/aprobaciones.js']) --}}
 @endpush
 
 

@@ -23,12 +23,27 @@ class Notificacion extends DatabaseNotification
         'tipo',
         'datos',
         'leida_en',
-        'user_id',
         'notificable_type',
         'notificable_id',
         'created_at',
         'updated_at',
     ];
+
+    /**
+     * Override para usar nuestros nombres de columna personalizados
+     */
+    public function getNotifiableTypeAttribute(): ?string
+    {
+        return $this->attributes['notificable_type'] ?? null;
+    }
+
+    /**
+     * Override para usar nuestros nombres de columna personalizados
+     */
+    public function getNotifiableIdAttribute(): int|string|null
+    {
+        return $this->attributes['notificable_id'] ?? null;
+    }
 
     protected $casts = [
         'datos' => 'array',

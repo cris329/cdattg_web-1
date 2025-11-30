@@ -38,7 +38,12 @@ class AprobacionController extends Controller
     public function pendientes(): View
     {
         $detalles = $this->service->obtenerDetallesPendientes();
-
+        
+        // Asegurar que siempre sea una colección
+        if (!$detalles || !($detalles instanceof \Illuminate\Support\Collection)) {
+            $detalles = collect([]);
+        }
+        
         return view('inventario.aprobaciones.pendientes', compact('detalles'));
     }
 

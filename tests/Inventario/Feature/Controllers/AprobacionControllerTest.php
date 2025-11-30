@@ -42,12 +42,54 @@ class AprobacionControllerTest extends TestCase
     {
         parent::setUp();
 
-        // Seeders base para datos realistas
-        $this->seed([
-            \Database\Seeders\RolePermissionSeeder::class,
-            \Database\Seeders\ParametroSeeder::class,
-            \Database\Seeders\TemaSeeder::class,
+        // Ejecutar migraciones y seeders de todos los módulos
+        $this->migrateDatabases();
+        
+        // Desactivar CSRF para tests (después de migrateDatabases)
+        $this->withoutMiddleware([
+            \Illuminate\Foundation\Http\Middleware\VerifyCsrfToken::class,
+            \App\Http\Middleware\VerifyCsrfToken::class,
         ]);
+        
+        // Asegurar que los seeders se ejecuten después de RefreshDatabase
+        if (!\App\Models\Tema::where('name', self::ESTADO_DE_ORDEN)->exists()) {
+            $this->artisan('db:seed', ['--force' => true]);
+        }
+
+        // Crear tema ESTADOS DE ORDEN si no existe
+        $temaEstados = \App\Models\Tema::firstOrCreate(
+            ['name' => self::ESTADO_DE_ORDEN],
+            [
+                'status' => true,
+                'user_create_id' => null,
+                'user_edit_id' => null,
+            ]
+        );
+
+        // Crear estados necesarios si no existen
+        $estados = ['EN ESPERA', 'APROBADA', 'RECHAZADA'];
+        foreach ($estados as $nombreEstado) {
+            $parametro = \App\Models\Parametro::firstOrCreate(
+                ['name' => $nombreEstado],
+                [
+                    'status' => true,
+                    'user_create_id' => null,
+                    'user_edit_id' => null,
+                ]
+            );
+            
+            \App\Models\ParametroTema::firstOrCreate(
+                [
+                    'parametro_id' => $parametro->id,
+                    'tema_id' => $temaEstados->id,
+                ],
+                [
+                    'status' => true,
+                    'user_create_id' => null,
+                    'user_edit_id' => null,
+                ]
+            );
+        }
 
         // Crear permisos necesarios
         Permission::firstOrCreate(['name' => self::PERMISSION_APROBAR_ORDEN]);
@@ -115,6 +157,12 @@ class AprobacionControllerTest extends TestCase
 
         $response = $this->get(route(self::ROUTE_PENDIENTES));
 
+        // Si hay un error 500, mostrar el contenido para debug
+        if ($response->status() === 500) {
+            $content = $response->getContent();
+            $this->fail("Error 500: " . substr($content, 0, 1000));
+        }
+
         $response->assertStatus(200);
         $response->assertViewIs(self::VIEW_PENDIENTES);
         $response->assertViewHas('detalles');
@@ -134,7 +182,8 @@ class AprobacionControllerTest extends TestCase
 
         $detalleOrden = $this->crearDetalleOrdenConEstado($orden, $producto, $estadoEnEspera);
 
-        $response = $this->post(route(self::ROUTE_APROBAR, $detalleOrden->id));
+        $response = $this->from(route(self::ROUTE_PENDIENTES))
+            ->post(route(self::ROUTE_APROBAR, $detalleOrden->id));
 
         $response->assertRedirect();
         $response->assertSessionHas('success');
@@ -153,9 +202,10 @@ class AprobacionControllerTest extends TestCase
 
         $detalleOrden = $this->crearDetalleOrdenConEstado($orden, $producto, $estadoEnEspera);
 
-        $response = $this->post(route(self::ROUTE_RECHAZAR, $detalleOrden->id), [
-            'motivo' => 'Motivo de rechazo de prueba',
-        ]);
+        $response = $this->from(route(self::ROUTE_PENDIENTES))
+            ->post(route(self::ROUTE_RECHAZAR, $detalleOrden->id), [
+                'motivo_rechazo' => 'Motivo de rechazo de prueba',
+            ]);
 
         $response->assertRedirect();
     }
@@ -194,7 +244,8 @@ class AprobacionControllerTest extends TestCase
         $this->crearDetalleOrdenConEstado($orden, $producto1, $estadoEnEspera);
         $this->crearDetalleOrdenConEstado($orden, $producto2, $estadoEnEspera, 1);
 
-        $response = $this->post(route(self::ROUTE_APROBAR_ORDEN, $orden->id));
+        $response = $this->from(route(self::ROUTE_PENDIENTES))
+            ->post(route(self::ROUTE_APROBAR_ORDEN, $orden->id));
 
         $response->assertRedirect();
         $response->assertSessionHas('success');
@@ -213,9 +264,10 @@ class AprobacionControllerTest extends TestCase
 
         $this->crearDetalleOrdenConEstado($orden, $producto, $estadoEnEspera);
 
-        $response = $this->post(route(self::ROUTE_RECHAZAR_ORDEN, $orden->id), [
-            'motivo_rechazo' => 'Motivo de rechazo de orden completa',
-        ]);
+        $response = $this->from(route(self::ROUTE_PENDIENTES))
+            ->post(route(self::ROUTE_RECHAZAR_ORDEN, $orden->id), [
+                'motivo_rechazo' => 'Motivo de rechazo de orden completa',
+            ]);
 
         $response->assertRedirect();
         $response->assertSessionHas('success');

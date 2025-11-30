@@ -27,7 +27,7 @@ class ContratoConvenioService
     public function crear(array $datos, int $userId): ContratoConvenio
     {
         $datos['user_create_id'] = $userId;
-        $datos['user_edit_id'] = $userId;
+        $datos['user_update_id'] = $userId;
 
         return $this->repository->crear($datos);
     }
@@ -42,7 +42,7 @@ class ContratoConvenioService
      */
     public function actualizar(ContratoConvenio $contrato, array $datos, int $userId): bool
     {
-        $datos['user_edit_id'] = $userId;
+        $datos['user_update_id'] = $userId;
         return $this->repository->actualizar($contrato->id, $datos);
     }
 

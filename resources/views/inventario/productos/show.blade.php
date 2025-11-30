@@ -288,7 +288,8 @@
 @endsection
 
 @push('css')
-    @vite(['resources/css/inventario/shared/base.css', 'resources/css/inventario/inventario.css', 'resources/css/inventario/imagen.css'])
+    {{-- base.css se carga desde common-css.blade.php --}}
+    @vite(['resources/css/inventario/inventario.css', 'resources/css/inventario/imagen.css'])
 @endpush
 
 @push('js')

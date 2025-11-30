@@ -11,6 +11,19 @@ abstract class TestCase extends BaseTestCase
     use CreatesApplication;
 
     /**
+     * Setup the test environment.
+     */
+    protected function setUp(): void
+    {
+        parent::setUp();
+        
+        // Configurar APP_KEY para tests si no está configurado
+        if (empty(config('app.key'))) {
+            config(['app.key' => 'base64:' . base64_encode('12345678901234567890123456789012')]);
+        }
+    }
+
+    /**
      * Sobrescribe el método migrateDatabases() que usa RefreshDatabase.
      * Esto asegura que las migraciones se ejecuten en el orden correcto según los batches
      * en lugar del orden alfabético por nombre de archivo.

@@ -43,14 +43,20 @@ class DevolucionControllerTest extends TestCase
         // Ejecutar migraciones y seeders de todos los módulos
         $this->migrateDatabases();
         
+        // Desactivar CSRF para tests
+        $this->withoutMiddleware([
+            \Illuminate\Foundation\Http\Middleware\VerifyCsrfToken::class,
+            \App\Http\Middleware\VerifyCsrfToken::class,
+        ]);
+        
         // Asegurar que los seeders se ejecuten después de RefreshDatabase
         if (!\App\Models\Pais::where('pais', 'COLOMBIA')->exists()) {
             $this->artisan('db:seed', ['--force' => true]);
         }
 
-        // Crear tema ESTADOS si no existe
+        // Crear tema ESTADOS DE ORDEN si no existe
         $temaEstados = Tema::firstOrCreate(
-            ['name' => 'ESTADOS'],
+            ['name' => 'ESTADOS DE ORDEN'],
             [
                 'status' => true,
                 'user_create_id' => 1,
@@ -82,7 +88,7 @@ class DevolucionControllerTest extends TestCase
 
         // Crear tipo de orden PRESTAMO
         $temaTipoOrden = Tema::firstOrCreate(
-            ['name' => 'TIPO ORDEN'],
+            ['name' => 'TIPOS DE ORDEN'],
             [
                 'status' => true,
                 'user_create_id' => 1,
@@ -114,9 +120,44 @@ class DevolucionControllerTest extends TestCase
         // Crear orden y detalle orden
         $orden = Orden::factory()->create([
             'tipo_orden_id' => $tipoPrestamo->id,
+            'fecha_devolucion' => now(),
         ]);
 
-        $producto = Producto::factory()->create(['cantidad' => 10]);
+        // Crear tipo de producto CONSUMIBLE para permitir devoluciones con cantidad 0
+        $temaTiposProducto = Tema::firstOrCreate(
+            ['name' => 'TIPOS DE PRODUCTO'],
+            [
+                'status' => true,
+                'user_create_id' => 1,
+                'user_edit_id' => 1,
+            ]
+        );
+
+        $tipoConsumibleParametro = Parametro::firstOrCreate(
+            ['name' => 'CONSUMIBLE'],
+            [
+                'status' => true,
+                'user_create_id' => 1,
+                'user_edit_id' => 1,
+            ]
+        );
+
+        $tipoConsumible = ParametroTema::firstOrCreate(
+            [
+                'parametro_id' => $tipoConsumibleParametro->id,
+                'tema_id' => $temaTiposProducto->id,
+            ],
+            [
+                'status' => true,
+                'user_create_id' => 1,
+                'user_edit_id' => 1,
+            ]
+        );
+
+        $producto = Producto::factory()->create([
+            'cantidad' => 10,
+            'tipo_producto_id' => $tipoConsumible->id,
+        ]);
 
         $this->detalleOrden = DetalleOrden::factory()->create([
             'orden_id' => $orden->id,

@@ -59,7 +59,8 @@ class DetalleOrden extends Model
     // Obtener la cantidad total devuelta
     public function getCantidadDevuelta() : int
     {
-        return $this->devoluciones()->sum('cantidad_devuelta');
+        $suma = $this->devoluciones()->sum('cantidad_devuelta');
+        return (int) ($suma ?? 0);
     }
 
     public function tieneCierreSinStock(): bool

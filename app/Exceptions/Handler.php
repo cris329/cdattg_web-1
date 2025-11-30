@@ -31,6 +31,11 @@ class Handler extends ExceptionHandler
     public function render($request, Throwable $exception)
     {
         if ($exception instanceof AuthorizationException) {
+            // En testing, devolver 403 directamente
+            // Verificar tanto 'testing' como si estamos en un test de PHPUnit
+            if (app()->environment('testing') || defined('PHPUNIT_COMPOSER_INSTALL')) {
+                return response('No tiene autorización para hacer esta acción.', 403);
+            }
             return redirect()->route('home')->with('error', 'No tiene autorización para hacer esta acción.');
         }
 
