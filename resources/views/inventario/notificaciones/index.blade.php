@@ -4,9 +4,9 @@
 
 @section('css')
 <!-- Estilos personalizados para notificaciones -->
-@vite([
+{{-- @vite([
         'resources/css/inventario/notificaciones.css'
-    ])
+    ]) --}}
 @endsection
 
 @section('content_header')
@@ -250,7 +250,7 @@
 @section('js')
 <!-- SweetAlert2 -->
 <!-- Script de notificaciones -->
-@vite(['resources/js/inventario/notificaciones.js'])
+{{-- @vite(['resources/js/inventario/notificaciones.js']) --}}
 @endsection
 
 

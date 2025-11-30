@@ -85,7 +85,7 @@ class NotificacionController extends Controller
             return back()->with('success', 'Notificación eliminada exitosamente');
         }
 
-        return back()->with('error', 'Notificación no encontrada');
+        abort(404, 'Notificación no encontrada');
     }
 
     /**
