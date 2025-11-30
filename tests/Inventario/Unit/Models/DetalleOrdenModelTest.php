@@ -77,6 +77,7 @@ class DetalleOrdenModelTest extends TestCase
         Devolucion::factory()->create([
             'detalle_orden_id' => $detalle->id,
             'cantidad_devuelta' => 3,
+            'cierra_sin_stock' => false,
         ]);
 
         $this->assertEquals(7, $detalle->getCantidadPendiente());

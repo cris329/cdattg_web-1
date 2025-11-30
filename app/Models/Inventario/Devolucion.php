@@ -143,7 +143,14 @@ class Devolucion extends Model
             return 0;
         }
 
-        return $this->fecha_devolucion->diffInDays($fechaEsperada);
+        // Si la devolución fue antes de la fecha esperada, no hay retraso
+        if ($this->fecha_devolucion->lt($fechaEsperada)) {
+            return 0;
+        }
+
+        // Calcular días de retraso (siempre positivo)
+        $dias = $this->fecha_devolucion->diffInDays($fechaEsperada, false);
+        return (int) max(0, $dias);
     }
 
     // Alias para compatibilidad con el controlador

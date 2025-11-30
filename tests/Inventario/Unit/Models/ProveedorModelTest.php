@@ -31,7 +31,7 @@ class ProveedorModelTest extends TestCase
     #[Test]
     public function convierte_proveedor_a_mayusculas_al_crear(): void
     {
-        $proveedor = Proveedor::create(['proveedor' => 'proveedor test']);
+        $proveedor = Proveedor::factory()->create(['proveedor' => 'proveedor test']);
 
         $this->assertEquals('PROVEEDOR TEST', $proveedor->proveedor);
     }

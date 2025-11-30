@@ -40,10 +40,11 @@ class ProductoModelTest extends TestCase
     {
         $this->producto->update(['producto' => 'Producto Actualizado']);
 
-        $this->assertEquals('Producto Actualizado', $this->producto->producto);
+        // El modelo convierte automáticamente a mayúsculas
+        $this->assertEquals('PRODUCTO ACTUALIZADO', $this->producto->producto);
         $this->assertDatabaseHas('productos', [
             'id' => $this->producto->id,
-            'producto' => 'Producto Actualizado',
+            'producto' => 'PRODUCTO ACTUALIZADO',
         ]);
     }
 }
