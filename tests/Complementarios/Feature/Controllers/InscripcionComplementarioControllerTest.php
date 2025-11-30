@@ -29,6 +29,15 @@ class InscripcionComplementarioControllerTest extends TestCase
             \Database\Seeders\PaisSeeder::class,
             \Database\Seeders\DepartamentoSeeder::class,
             \Database\Seeders\MunicipioSeeder::class,
+            \Database\Seeders\PersonaSeeder::class,
+            \Database\Seeders\UsersSeeder::class,
+            \Database\Seeders\RegionalSeeder::class,
+            \Database\Seeders\CentroFormacionSeeder::class,
+            \Database\Seeders\SedeSeeder::class,
+            \Database\Seeders\BloqueSeeder::class,
+            \Database\Seeders\PisoSeeder::class,
+            \Database\Seeders\AmbienteSeeder::class,
+            \Database\Seeders\JornadaFormacionSeeder::class,
         ]);
         
         Storage::fake('google');
@@ -58,16 +67,36 @@ class InscripcionComplementarioControllerTest extends TestCase
     /** @test */
     public function puede_procesar_inscripcion_general()
     {
-        // Usar datos del seeder para evitar problemas de unique constraints
-        $pais = Pais::findOrFail(1); // COLOMBIA
-        $departamento = Departamento::findOrFail(25); // CUNDINAMARCA
-        $municipio = Municipio::where('departamento_id', 25)->first();
+        // Obtener datos del seeder
+        $pais = Pais::first();
+        $departamento = Departamento::where('pais_id', $pais->id)->first();
+        $municipio = Municipio::where('departamento_id', $departamento->id)->first();
         
-        // Si no hay municipio de Cundinamarca, crear uno
-        if (!$municipio) {
-            $municipio = Municipio::create([
-                'municipio' => 'Bogotá',
-                'departamento_id' => $departamento->id,
+        // Obtener parametros_temas correctos del seeder
+        $tipoDocumentoParametroTema = \App\Models\ParametroTema::where('tema_id', 2)
+            ->where('parametro_id', 3)
+            ->first();
+        $generoParametroTema = \App\Models\ParametroTema::where('tema_id', 3)
+            ->where('parametro_id', 9)
+            ->first();
+
+        // Si no existen, crear los necesarios
+        if (!$tipoDocumentoParametroTema) {
+            $parametro = \App\Models\Parametro::find(3) ?? \App\Models\Parametro::create(['id' => 3, 'name' => 'CÉDULA DE CIUDADANÍA', 'status' => 1]);
+            $tema = \App\Models\Tema::find(2) ?? \App\Models\Tema::create(['id' => 2, 'name' => 'TIPO DE DOCUMENTO', 'status' => 1]);
+            $tipoDocumentoParametroTema = \App\Models\ParametroTema::create([
+                'parametro_id' => $parametro->id,
+                'tema_id' => $tema->id,
+                'status' => 1,
+            ]);
+        }
+
+        if (!$generoParametroTema) {
+            $parametro = \App\Models\Parametro::find(9) ?? \App\Models\Parametro::create(['id' => 9, 'name' => 'MASCULINO', 'status' => 1]);
+            $tema = \App\Models\Tema::find(3) ?? \App\Models\Tema::create(['id' => 3, 'name' => 'GÉNERO', 'status' => 1]);
+            $generoParametroTema = \App\Models\ParametroTema::create([
+                'parametro_id' => $parametro->id,
+                'tema_id' => $tema->id,
                 'status' => 1,
             ]);
         }
@@ -103,19 +132,10 @@ class InscripcionComplementarioControllerTest extends TestCase
     /** @test */
     public function no_procesa_inscripcion_general_si_persona_ya_existe()
     {
-        // Usar datos del seeder para evitar problemas de unique constraints
-        $pais = Pais::findOrFail(1); // COLOMBIA
-        $departamento = Departamento::findOrFail(25); // CUNDINAMARCA
-        $municipio = Municipio::where('departamento_id', 25)->first();
-        
-        // Si no hay municipio de Cundinamarca, crear uno
-        if (!$municipio) {
-            $municipio = Municipio::create([
-                'municipio' => 'Bogotá',
-                'departamento_id' => $departamento->id,
-                'status' => 1,
-            ]);
-        }
+        // Obtener datos del seeder
+        $pais = Pais::first();
+        $departamento = Departamento::where('pais_id', $pais->id)->first();
+        $municipio = Municipio::where('departamento_id', $departamento->id)->first();
         
         $numeroDocumento = uniqid('doc_');
         $email = uniqid('test_') . '@test.com';
@@ -148,21 +168,41 @@ class InscripcionComplementarioControllerTest extends TestCase
     /** @test */
     public function puede_procesar_inscripcion_a_programa()
     {
-        // Usar datos del seeder para evitar problemas de unique constraints
-        $pais = Pais::findOrFail(1); // COLOMBIA
-        $departamento = Departamento::findOrFail(25); // CUNDINAMARCA
-        $municipio = Municipio::where('departamento_id', 25)->first();
+        // Obtener datos del seeder
+        $pais = Pais::first();
+        $departamento = Departamento::where('pais_id', $pais->id)->first();
+        $municipio = Municipio::where('departamento_id', $departamento->id)->first();
         
-        // Si no hay municipio de Cundinamarca, crear uno
-        if (!$municipio) {
-            $municipio = Municipio::create([
-                'municipio' => 'Bogotá',
-                'departamento_id' => $departamento->id,
+        $programa = ComplementarioOfertado::factory()->conOferta()->create();
+
+        // Obtener parametros_temas correctos del seeder
+        $tipoDocumentoParametroTema = \App\Models\ParametroTema::where('tema_id', 2)
+            ->where('parametro_id', 3)
+            ->first();
+        $generoParametroTema = \App\Models\ParametroTema::where('tema_id', 3)
+            ->where('parametro_id', 9)
+            ->first();
+
+        // Si no existen, crear los necesarios
+        if (!$tipoDocumentoParametroTema) {
+            $parametro = \App\Models\Parametro::find(3) ?? \App\Models\Parametro::create(['id' => 3, 'name' => 'CÉDULA DE CIUDADANÍA', 'status' => 1]);
+            $tema = \App\Models\Tema::find(2) ?? \App\Models\Tema::create(['id' => 2, 'name' => 'TIPO DE DOCUMENTO', 'status' => 1]);
+            $tipoDocumentoParametroTema = \App\Models\ParametroTema::create([
+                'parametro_id' => $parametro->id,
+                'tema_id' => $tema->id,
                 'status' => 1,
             ]);
         }
-        
-        $programa = ComplementarioOfertado::factory()->conOferta()->create();
+
+        if (!$generoParametroTema) {
+            $parametro = \App\Models\Parametro::find(9) ?? \App\Models\Parametro::create(['id' => 9, 'name' => 'MASCULINO', 'status' => 1]);
+            $tema = \App\Models\Tema::find(3) ?? \App\Models\Tema::create(['id' => 3, 'name' => 'GÉNERO', 'status' => 1]);
+            $generoParametroTema = \App\Models\ParametroTema::create([
+                'parametro_id' => $parametro->id,
+                'tema_id' => $tema->id,
+                'status' => 1,
+            ]);
+        }
 
         $numeroDocumento = uniqid('doc_');
         $email = uniqid('test_') . '@test.com';

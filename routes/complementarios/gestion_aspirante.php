@@ -8,8 +8,11 @@ Route::get('/gestion-aspirantes', [AspiranteComplementarioController::class, 'ge
     ->name('gestion-aspirantes')
     ->middleware('auth');
 
+// Esta ruta debe estar antes de la ruta genérica {programa} en web.php
+// Usar where para restringir el parámetro a strings que no sean numéricos puros
 Route::get('/programas-complementarios/{curso}', [AspiranteComplementarioController::class, 'verAspirantes'])
     ->name('programas-complementarios.ver-aspirantes')
+    ->where('curso', '[^0-9]+.*') // Acepta cualquier string que no sea solo números
     ->middleware('auth');
 
 Route::post(

@@ -21,8 +21,10 @@ class ValidarSofiaCommandTest extends TestCase
     #[Test]
     public function tiene_signature_correcto(): void
     {
+        // Verificar que el comando tiene el nombre correcto usando getName()
+        // getName() devuelve el nombre base del comando sin argumentos
         $command = new ValidarSofiaCommand;
-
-        $this->assertStringContainsString('sofia:validar', $command->getSignature());
+        
+        $this->assertEquals('sofia:validar', $command->getName());
     }
 }

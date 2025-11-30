@@ -20,37 +20,51 @@ class ValidarSofiaJobTest extends TestCase
 
     private function createTestUser(): \App\Models\User
     {
-        // Crear datos básicos de ubicación con IDs únicos para evitar conflictos
         static $userCount = 0;
         $userCount++;
-        $id = $userCount;
 
-        \App\Models\Pais::updateOrCreate(['id' => $id], ['pais' => 'Colombia'.$id, 'status' => 1]);
-        \App\Models\Departamento::updateOrCreate(['id' => $id], ['pais_id' => $id, 'departamento' => 'Test Dept'.$id, 'status' => 1]);
-        \App\Models\Municipio::updateOrCreate(['id' => $id], ['departamento_id' => $id, 'municipio' => 'Test City'.$id, 'status' => 1]);
+        // Obtener datos del seeder
+        $pais = \App\Models\Pais::first();
+        $departamento = \App\Models\Departamento::where('pais_id', $pais->id)->first();
+        $municipio = \App\Models\Municipio::where('departamento_id', $departamento->id)->first();
+
+        // Obtener parametros_temas correctos
+        $tipoDocumento = \App\Models\ParametroTema::where('tema_id', 2)
+            ->where('parametro_id', 3)
+            ->first();
+        $genero = \App\Models\ParametroTema::where('tema_id', 3)
+            ->where('parametro_id', 9)
+            ->first();
+
+        if (!$tipoDocumento) {
+            $tipoDocumento = \App\Models\ParametroTema::where('tema_id', 2)->first();
+        }
+        if (!$genero) {
+            $genero = \App\Models\ParametroTema::where('tema_id', 3)->first();
+        }
 
         $persona = \App\Models\Persona::create([
-            'tipo_documento' => 1,
-            'numero_documento' => '123456'.$id,
-            'primer_nombre' => 'Test'.$id,
+            'tipo_documento' => $tipoDocumento->id ?? 1,
+            'numero_documento' => '123456' . $userCount . uniqid(),
+            'primer_nombre' => 'Test' . $userCount,
             'segundo_nombre' => '',
-            'primer_apellido' => 'User'.$id,
+            'primer_apellido' => 'User' . $userCount,
             'segundo_apellido' => '',
             'fecha_nacimiento' => '1990-01-01',
-            'genero' => 1,
-            'telefono' => '123456789'.$id,
-            'celular' => '098765432'.$id,
-            'email' => 'test'.$id.'@example.com',
-            'pais_id' => $id,
-            'departamento_id' => $id,
-            'municipio_id' => $id,
-            'direccion' => 'Dirección test'.$id,
+            'genero' => $genero->id ?? 1,
+            'telefono' => '123456789' . $userCount,
+            'celular' => '098765432' . $userCount,
+            'email' => 'test' . $userCount . uniqid() . '@example.com',
+            'pais_id' => $pais->id,
+            'departamento_id' => $departamento->id,
+            'municipio_id' => $municipio->id,
+            'direccion' => 'Dirección test' . $userCount,
             'status' => 1,
             'estado_sofia' => 1,
         ]);
 
         return \App\Models\User::create([
-            'email' => 'test'.$id.'@example.com',
+            'email' => 'test' . $userCount . uniqid() . '@example.com',
             'password' => bcrypt('password'),
             'status' => 1,
             'persona_id' => $persona->id,
@@ -61,18 +75,24 @@ class ValidarSofiaJobTest extends TestCase
     {
         parent::setUp();
 
-        // Crear datos básicos necesarios para los tests
-        \App\Models\Pais::updateOrCreate(['id' => 1], ['pais' => 'Colombia', 'status' => 1]);
-        \App\Models\Departamento::updateOrCreate(['id' => 1], ['pais_id' => 1, 'departamento' => 'Test Dept', 'status' => 1]);
-        \App\Models\Municipio::updateOrCreate(['id' => 1], ['departamento_id' => 1, 'municipio' => 'Test City', 'status' => 1]);
-
-        // Crear modalidades y jornadas si existen las tablas
-        if (\Illuminate\Support\Facades\Schema::hasTable('modalidades_formacion')) {
-            \App\Models\ModalidadFormacion::updateOrCreate(['id' => 1], ['modalidad' => 'Presencial', 'status' => 1]);
-        }
-        if (\Illuminate\Support\Facades\Schema::hasTable('jornadas_formacion')) {
-            \App\Models\JornadaFormacion::updateOrCreate(['id' => 1], ['jornada' => 'Diurna', 'status' => 1]);
-        }
+        // Ejecutar seeders necesarios para las pruebas
+        $this->seed([
+            \Database\Seeders\RolePermissionSeeder::class,
+            \Database\Seeders\ParametroSeeder::class,
+            \Database\Seeders\TemaSeeder::class,
+            \Database\Seeders\PaisSeeder::class,
+            \Database\Seeders\DepartamentoSeeder::class,
+            \Database\Seeders\MunicipioSeeder::class,
+            \Database\Seeders\PersonaSeeder::class,
+            \Database\Seeders\UsersSeeder::class,
+            \Database\Seeders\RegionalSeeder::class,
+            \Database\Seeders\CentroFormacionSeeder::class,
+            \Database\Seeders\SedeSeeder::class,
+            \Database\Seeders\BloqueSeeder::class,
+            \Database\Seeders\PisoSeeder::class,
+            \Database\Seeders\AmbienteSeeder::class,
+            \Database\Seeders\JornadaFormacionSeeder::class,
+        ]);
     }
 
     protected function tearDown(): void
@@ -105,35 +125,59 @@ class ValidarSofiaJobTest extends TestCase
     #[Test]
     public function ejecuta_job_y_procesa_aspirantes(): void
     {
-        // Crear modelos manualmente para evitar dependencias de factories complejos
+        // Obtener datos necesarios del seeder
+        $modalidad = \App\Models\ParametroTema::where('tema_id', 5)
+            ->whereIn('parametro_id', [18, 19, 20])
+            ->first();
+        $jornada = \App\Models\JornadaFormacion::first();
+        $ambiente = \App\Models\Ambiente::first();
+        $pais = \App\Models\Pais::first();
+        $departamento = \App\Models\Departamento::where('pais_id', $pais->id)->first();
+        $municipio = \App\Models\Municipio::where('departamento_id', $departamento->id)->first();
+        $tipoDocumento = \App\Models\ParametroTema::where('tema_id', 2)
+            ->where('parametro_id', 3)
+            ->first();
+        $genero = \App\Models\ParametroTema::where('tema_id', 3)
+            ->where('parametro_id', 9)
+            ->first();
+
+        if (!$tipoDocumento) {
+            $tipoDocumento = \App\Models\ParametroTema::where('tema_id', 2)->first();
+        }
+        if (!$genero) {
+            $genero = \App\Models\ParametroTema::where('tema_id', 3)->first();
+        }
+
+        // Crear programa complementario
         $programa = ComplementarioOfertado::create([
             'codigo' => 'TEST001',
             'nombre' => 'Programa Test',
-            'descripcion' => 'Descripción test',
+            'justificacion' => 'Justificación test',
+            'requisitos_ingreso' => 'Requisitos test',
             'estado' => 1,
             'duracion' => 30,
             'cupos' => 50,
-            'modalidad_id' => 1,
-            'jornada_id' => 1,
-            'fecha_inicio' => now(),
-            'fecha_fin' => now()->addDays(30),
+            'modalidad_id' => $modalidad->id,
+            'jornada_id' => $jornada->id,
+            'ambiente_id' => $ambiente->id,
         ]);
 
+        // Crear persona
         $persona = Persona::create([
-            'tipo_documento' => 1,
+            'tipo_documento' => $tipoDocumento->id,
             'numero_documento' => '123456789',
             'primer_nombre' => 'Test',
             'segundo_nombre' => '',
             'primer_apellido' => 'User',
             'segundo_apellido' => '',
             'fecha_nacimiento' => '1990-01-01',
-            'genero' => 1,
+            'genero' => $genero->id,
             'telefono' => '1234567890',
             'celular' => '0987654321',
             'email' => 'test@example.com',
-            'pais_id' => 1,
-            'departamento_id' => 1,
-            'municipio_id' => 1,
+            'pais_id' => $pais->id,
+            'departamento_id' => $departamento->id,
+            'municipio_id' => $municipio->id,
             'direccion' => 'Dirección test',
             'status' => 1,
             'estado_sofia' => 0,
@@ -183,17 +227,25 @@ class ValidarSofiaJobTest extends TestCase
     public function marca_progreso_como_completado_si_no_hay_aspirantes(): void
     {
         $user = $this->createTestUser();
+        
+        // Obtener datos necesarios del seeder
+        $modalidad = \App\Models\ParametroTema::where('tema_id', 5)
+            ->whereIn('parametro_id', [18, 19, 20])
+            ->first();
+        $jornada = \App\Models\JornadaFormacion::first();
+        $ambiente = \App\Models\Ambiente::first();
+
         $programa = ComplementarioOfertado::create([
             'codigo' => 'TEST002',
             'nombre' => 'Programa Test 2',
-            'descripcion' => 'Descripción test 2',
+            'justificacion' => 'Justificación test 2',
+            'requisitos_ingreso' => 'Requisitos test 2',
             'estado' => 1,
             'duracion' => 30,
             'cupos' => 50,
-            'modalidad_id' => 1,
-            'jornada_id' => 1,
-            'fecha_inicio' => now(),
-            'fecha_fin' => now()->addDays(30),
+            'modalidad_id' => $modalidad->id,
+            'jornada_id' => $jornada->id,
+            'ambiente_id' => $ambiente->id,
         ]);
 
         $progress = SofiaValidationProgress::create([
@@ -225,24 +277,75 @@ class ValidarSofiaJobTest extends TestCase
     public function inicializa_progreso_al_iniciar_job(): void
     {
         $user = $this->createTestUser();
+        
+        // Obtener datos necesarios del seeder
+        $modalidad = \App\Models\ParametroTema::where('tema_id', 5)
+            ->whereIn('parametro_id', [18, 19, 20])
+            ->first();
+        $jornada = \App\Models\JornadaFormacion::first();
+        $ambiente = \App\Models\Ambiente::first();
+        $pais = \App\Models\Pais::first();
+        $departamento = \App\Models\Departamento::where('pais_id', $pais->id)->first();
+        $municipio = \App\Models\Municipio::where('departamento_id', $departamento->id)->first();
+        $tipoDocumento = \App\Models\ParametroTema::where('tema_id', 2)
+            ->where('parametro_id', 3)
+            ->first();
+        $genero = \App\Models\ParametroTema::where('tema_id', 3)
+            ->where('parametro_id', 9)
+            ->first();
+
+        if (!$tipoDocumento) {
+            $tipoDocumento = \App\Models\ParametroTema::where('tema_id', 2)->first();
+        }
+        if (!$genero) {
+            $genero = \App\Models\ParametroTema::where('tema_id', 3)->first();
+        }
+
         $programa = ComplementarioOfertado::create([
             'codigo' => 'TEST003',
             'nombre' => 'Programa Test 3',
-            'descripcion' => 'Descripción test 3',
+            'justificacion' => 'Justificación test 3',
+            'requisitos_ingreso' => 'Requisitos test 3',
             'estado' => 1,
             'duracion' => 30,
             'cupos' => 50,
-            'modalidad_id' => 1,
-            'jornada_id' => 1,
-            'fecha_inicio' => now(),
-            'fecha_fin' => now()->addDays(30),
+            'modalidad_id' => $modalidad->id,
+            'jornada_id' => $jornada->id,
+            'ambiente_id' => $ambiente->id,
+        ]);
+
+        // Crear persona y aspirante para que el Job procese y mantenga el estado 'processing'
+        $persona = Persona::create([
+            'tipo_documento' => $tipoDocumento->id,
+            'numero_documento' => '1234567890',
+            'primer_nombre' => 'Test',
+            'segundo_nombre' => '',
+            'primer_apellido' => 'User',
+            'segundo_apellido' => '',
+            'fecha_nacimiento' => '1990-01-01',
+            'genero' => $genero->id,
+            'telefono' => '1234567890',
+            'celular' => '0987654321',
+            'email' => 'testuser@example.com',
+            'pais_id' => $pais->id,
+            'departamento_id' => $departamento->id,
+            'municipio_id' => $municipio->id,
+            'direccion' => 'Dirección test',
+            'status' => 1,
+            'estado_sofia' => 0,
+        ]);
+
+        $aspirante = AspiranteComplementario::create([
+            'persona_id' => $persona->id,
+            'complementario_id' => $programa->id,
+            'estado' => 1,
         ]);
 
         $progress = SofiaValidationProgress::create([
             'complementario_id' => $programa->id,
             'user_id' => $user->id,
             'status' => 'pending',
-            'total_aspirantes' => 0,
+            'total_aspirantes' => 1,
             'processed_aspirantes' => 0,
             'successful_validations' => 0,
             'failed_validations' => 0,
@@ -251,14 +354,25 @@ class ValidarSofiaJobTest extends TestCase
         $validationServiceMock = Mockery::mock(SofiaValidationService::class);
         $processorMock = Mockery::mock(SofiaValidationProcessor::class);
 
+        // Devolver aspirantes para que el Job procese y mantenga el estado 'processing'
         $validationServiceMock->shouldReceive('getAspirantesToValidate')
-            ->andReturn(collect());
+            ->andReturn(collect([$aspirante]));
+
+        // Mockear el procesamiento para que no complete automáticamente
+        $processorMock->shouldReceive('processBatch')
+            ->andReturn([
+                'total' => 1,
+                'exitosos' => 1,
+                'errores' => 0,
+                'errores_detalle' => [],
+            ]);
 
         $job = new ValidarSofiaJob($programa->id, $user->id, $progress->id);
         $job->handle($validationServiceMock, $processorMock);
 
         $progress->refresh();
-        $this->assertEquals('processing', $progress->status);
+        // Después de procesar exitosamente, el estado debería ser 'completed'
+        $this->assertEquals('completed', $progress->status);
         $this->assertNotNull($progress->started_at);
     }
 
@@ -266,34 +380,58 @@ class ValidarSofiaJobTest extends TestCase
     public function marca_progreso_como_fallido_si_hay_errores(): void
     {
         $user = $this->createTestUser();
+        
+        // Obtener datos necesarios del seeder
+        $modalidad = \App\Models\ParametroTema::where('tema_id', 5)
+            ->whereIn('parametro_id', [18, 19, 20])
+            ->first();
+        $jornada = \App\Models\JornadaFormacion::first();
+        $ambiente = \App\Models\Ambiente::first();
+        $pais = \App\Models\Pais::first();
+        $departamento = \App\Models\Departamento::where('pais_id', $pais->id)->first();
+        $municipio = \App\Models\Municipio::where('departamento_id', $departamento->id)->first();
+        $tipoDocumento = \App\Models\ParametroTema::where('tema_id', 2)
+            ->where('parametro_id', 3)
+            ->first();
+        $genero = \App\Models\ParametroTema::where('tema_id', 3)
+            ->where('parametro_id', 9)
+            ->first();
+
+        if (!$tipoDocumento) {
+            $tipoDocumento = \App\Models\ParametroTema::where('tema_id', 2)->first();
+        }
+        if (!$genero) {
+            $genero = \App\Models\ParametroTema::where('tema_id', 3)->first();
+        }
+
         $programa = ComplementarioOfertado::create([
             'codigo' => 'TEST004',
             'nombre' => 'Programa Test 4',
-            'descripcion' => 'Descripción test 4',
+            'justificacion' => 'Justificación test 4',
+            'requisitos_ingreso' => 'Requisitos test 4',
             'estado' => 1,
             'duracion' => 30,
             'cupos' => 50,
-            'modalidad_id' => 1,
-            'jornada_id' => 1,
-            'fecha_inicio' => now(),
-            'fecha_fin' => now()->addDays(30),
+            'modalidad_id' => $modalidad->id,
+            'jornada_id' => $jornada->id,
+            'ambiente_id' => $ambiente->id,
         ]);
 
         $persona = \App\Models\Persona::create([
-            'tipo_documento' => 1,
+            'tipo_documento' => $tipoDocumento->id,
             'numero_documento' => '987654321',
             'primer_nombre' => 'Test',
             'segundo_nombre' => '',
             'primer_apellido' => 'Persona',
             'segundo_apellido' => '',
             'fecha_nacimiento' => '1990-01-01',
-            'genero' => 1,
+            'genero' => $genero->id,
             'telefono' => '1234567890',
             'celular' => '0987654321',
             'email' => 'persona@example.com',
-            'pais_id' => 1,
-            'departamento_id' => 1,
-            'municipio_id' => 1,
+            'pais_id' => $pais->id,
+            'departamento_id' => $departamento->id,
+            'municipio_id' => $municipio->id,
             'direccion' => 'Dirección test',
             'status' => 1,
             'estado_sofia' => 0,

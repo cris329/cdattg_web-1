@@ -23,7 +23,6 @@ class ProgramaComplementarioControllerTest extends TestCase
         parent::setUp();
         
         // Ejecutar seeders necesarios para las pruebas
-        // Estos datos son requeridos por las claves foráneas en PersonaFactory
         $this->seed([
             \Database\Seeders\RolePermissionSeeder::class,
             \Database\Seeders\ParametroSeeder::class,
@@ -31,6 +30,15 @@ class ProgramaComplementarioControllerTest extends TestCase
             \Database\Seeders\PaisSeeder::class,
             \Database\Seeders\DepartamentoSeeder::class,
             \Database\Seeders\MunicipioSeeder::class,
+            \Database\Seeders\PersonaSeeder::class,
+            \Database\Seeders\UsersSeeder::class,
+            \Database\Seeders\RegionalSeeder::class,
+            \Database\Seeders\CentroFormacionSeeder::class,
+            \Database\Seeders\SedeSeeder::class,
+            \Database\Seeders\BloqueSeeder::class,
+            \Database\Seeders\PisoSeeder::class,
+            \Database\Seeders\AmbienteSeeder::class,
+            \Database\Seeders\JornadaFormacionSeeder::class,
         ]);
         
         $this->user = User::factory()->create();
@@ -116,9 +124,28 @@ class ProgramaComplementarioControllerTest extends TestCase
     {
         $this->actingAs($this->user);
 
-        // Crear datos necesarios para días de formación (días de la semana)
-        $dia1 = Parametro::factory()->create();
-        $dia2 = Parametro::factory()->create();
+        // Obtener datos necesarios del seeder
+        $modalidad = \App\Models\ParametroTema::where('tema_id', 5)
+            ->whereIn('parametro_id', [18, 19, 20])
+            ->first();
+        $jornada = \App\Models\JornadaFormacion::first();
+        $ambiente = \App\Models\Ambiente::first();
+
+        // Obtener días de la semana del seeder (tema_id 4 es DIAS)
+        $dias = \App\Models\ParametroTema::where('tema_id', 4)
+            ->whereIn('parametro_id', [12, 13, 14, 15, 16, 17, 18])
+            ->take(2)
+            ->get();
+        
+        if ($dias->count() < 2) {
+            // Si no hay suficientes días, usar los primeros parámetros de días disponibles
+            $parametrosDias = \App\Models\Parametro::whereIn('id', [12, 13, 14, 15, 16, 17, 18])->take(2)->get();
+            $dia1 = $parametrosDias->first();
+            $dia2 = $parametrosDias->last();
+        } else {
+            $dia1 = $dias->first()->parametro;
+            $dia2 = $dias->last()->parametro;
+        }
 
         $data = [
             'codigo' => 'COMP0001',
@@ -128,19 +155,19 @@ class ProgramaComplementarioControllerTest extends TestCase
             'duracion' => 60,
             'cupos' => 30,
             'estado' => 1,
-            'modalidad_id' => 18,
-            'jornada_id' => 1,
-            'ambiente_id' => 1,
+            'modalidad_id' => $modalidad->id,
+            'jornada_id' => $jornada->id,
+            'ambiente_id' => $ambiente->id,
             'dias' => [
                 [
                     'dia_id' => $dia1->id,
-                    'hora_inicio' => '08:00:00',
-                    'hora_fin' => '12:00:00',
+                    'hora_inicio' => '08:00',
+                    'hora_fin' => '12:00',
                 ],
                 [
                     'dia_id' => $dia2->id,
-                    'hora_inicio' => '14:00:00',
-                    'hora_fin' => '18:00:00',
+                    'hora_inicio' => '14:00',
+                    'hora_fin' => '18:00',
                 ],
             ],
         ];
@@ -165,8 +192,8 @@ class ProgramaComplementarioControllerTest extends TestCase
         
         // Validar horas en el pivot
         $dia1Pivot = $programa->diasFormacion->firstWhere('id', $dia1->id)->pivot;
-        $this->assertEquals('08:00:00', $dia1Pivot->hora_inicio);
-        $this->assertEquals('12:00:00', $dia1Pivot->hora_fin);
+        $this->assertEquals('08:00', $dia1Pivot->hora_inicio);
+        $this->assertEquals('12:00', $dia1Pivot->hora_fin);
     }
 
     /** @test */
@@ -174,9 +201,43 @@ class ProgramaComplementarioControllerTest extends TestCase
     {
         $this->actingAs($this->user);
 
-        $competencia = Competencia::factory()->create();
-        $rap = ResultadosAprendizaje::factory()->create();
-        $guia = GuiasAprendizaje::factory()->create();
+        // Obtener datos necesarios del seeder
+        $modalidad = \App\Models\ParametroTema::where('tema_id', 5)
+            ->whereIn('parametro_id', [18, 19, 20])
+            ->first();
+        $jornada = \App\Models\JornadaFormacion::first();
+        $ambiente = \App\Models\Ambiente::first();
+
+        // Crear competencia con todos los campos requeridos
+        $competencia = Competencia::create([
+            'codigo' => 'COMP-' . uniqid(),
+            'nombre' => 'Competencia Test',
+            'descripcion' => 'Descripción de prueba',
+            'duracion' => 40,
+            'fecha_inicio' => now()->format('Y-m-d'),
+            'fecha_fin' => now()->addMonths(6)->format('Y-m-d'),
+            'status' => true,
+            'user_create_id' => $this->user->id,
+        ]);
+
+        // Crear ResultadosAprendizaje con todos los campos requeridos
+        $rap = ResultadosAprendizaje::create([
+            'codigo' => 'RAP-' . uniqid(),
+            'nombre' => 'Resultado de Aprendizaje Test',
+            'duracion' => 20,
+            'fecha_inicio' => now()->format('Y-m-d'),
+            'fecha_fin' => now()->addMonths(3)->format('Y-m-d'),
+            'status' => true,
+            'user_create_id' => $this->user->id,
+        ]);
+
+        // Crear GuiasAprendizaje con todos los campos requeridos
+        $guia = GuiasAprendizaje::create([
+            'codigo' => 'GUIA-' . uniqid(),
+            'nombre' => 'Guía de Aprendizaje Test',
+            'status' => true,
+            'user_create_id' => $this->user->id,
+        ]);
 
         $data = [
             'codigo' => 'COMP0002',
@@ -186,9 +247,9 @@ class ProgramaComplementarioControllerTest extends TestCase
             'duracion' => 60,
             'cupos' => 30,
             'estado' => 1,
-            'modalidad_id' => 18,
-            'jornada_id' => 1,
-            'ambiente_id' => 1,
+            'modalidad_id' => $modalidad->id,
+            'jornada_id' => $jornada->id,
+            'ambiente_id' => $ambiente->id,
             'competencias' => [$competencia->id],
             'raps' => [$rap->id],
             'guias' => [$guia->id],
@@ -212,6 +273,13 @@ class ProgramaComplementarioControllerTest extends TestCase
     {
         $this->actingAs($this->user);
         $programa = ComplementarioOfertado::factory()->create();
+
+        // Asegurar que el programa tenga ambiente_id válido
+        if (!$programa->ambiente_id) {
+            $ambiente = \App\Models\Ambiente::first();
+            $programa->ambiente_id = $ambiente->id;
+            $programa->save();
+        }
 
         $data = [
             'codigo' => $programa->codigo,
