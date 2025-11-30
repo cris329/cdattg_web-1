@@ -8,7 +8,7 @@
 
     @php
         $aspiranteEmail = $aspirante_id
-            ? strtolower(optional(optional(\App\Models\AspiranteComplementario::find($aspirante_id))->persona)->email)
+            ? strtolower(optional(optional(\App\Models\Complementarios\AspiranteComplementario::find($aspirante_id))->persona)->email)
             : 'N/A';
     @endphp
 
