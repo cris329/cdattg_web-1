@@ -21,6 +21,16 @@ class ProgramaComplementarioControllerTest extends TestCase
     protected function setUp(): void
     {
         parent::setUp();
+        
+        $this->seed([
+            \Database\Seeders\RolePermissionSeeder::class,
+            \Database\Seeders\ParametroSeeder::class,
+            \Database\Seeders\TemaSeeder::class,
+            \Database\Seeders\PaisSeeder::class,
+            \Database\Seeders\DepartamentoSeeder::class,
+            \Database\Seeders\MunicipioSeeder::class,
+        ]);
+        
         $this->user = User::factory()->create();
     }
 
@@ -262,5 +272,185 @@ class ProgramaComplementarioControllerTest extends TestCase
         $response->assertStatus(200);
         $response->assertViewIs('complementarios.programas.public.show');
         $response->assertViewHas('programaData');
+    }
+
+    /** @test */
+    public function puede_actualizar_programa_con_dias_formacion()
+    {
+        $this->actingAs($this->user);
+        $programa = ComplementarioOfertado::factory()->create();
+        $dia1 = Parametro::factory()->create();
+        $dia2 = Parametro::factory()->create();
+
+        $data = [
+            'codigo' => $programa->codigo,
+            'nombre' => 'Programa Actualizado con Días',
+            'justificacion' => 'Nueva justificación',
+            'requisitos_ingreso' => 'Nuevos requisitos',
+            'duracion' => 80,
+            'cupos' => 40,
+            'estado' => 1,
+            'modalidad_id' => $programa->modalidad_id,
+            'jornada_id' => $programa->jornada_id,
+            'ambiente_id' => $programa->ambiente_id,
+            'dias' => [
+                [
+                    'dia_id' => $dia1->id,
+                    'hora_inicio' => '09:00:00',
+                    'hora_fin' => '13:00:00',
+                ],
+                [
+                    'dia_id' => $dia2->id,
+                    'hora_inicio' => '14:00:00',
+                    'hora_fin' => '18:00:00',
+                ],
+            ],
+        ];
+
+        $response = $this->put(route('complementarios-ofertados.update', $programa->id), $data);
+
+        $response->assertRedirect(route('complementarios-ofertados.show', $programa->id));
+        $response->assertSessionHas('success');
+        
+        $programa->refresh();
+        $this->assertCount(2, $programa->diasFormacion);
+    }
+
+    /** @test */
+    public function puede_actualizar_programa_con_estructura_academica()
+    {
+        $this->actingAs($this->user);
+        $programa = ComplementarioOfertado::factory()->create();
+        $competencia = Competencia::factory()->create();
+        $rap = ResultadosAprendizaje::factory()->create();
+        $guia = GuiasAprendizaje::factory()->create();
+
+        $data = [
+            'codigo' => $programa->codigo,
+            'nombre' => 'Programa con Estructura Actualizada',
+            'justificacion' => 'Justificación',
+            'requisitos_ingreso' => 'Requisitos',
+            'duracion' => 60,
+            'cupos' => 30,
+            'estado' => 1,
+            'modalidad_id' => $programa->modalidad_id,
+            'jornada_id' => $programa->jornada_id,
+            'ambiente_id' => $programa->ambiente_id,
+            'competencias' => [$competencia->id],
+            'raps' => [$rap->id],
+            'guias' => [$guia->id],
+        ];
+
+        $response = $this->put(route('complementarios-ofertados.update', $programa->id), $data);
+
+        $response->assertRedirect(route('complementarios-ofertados.show', $programa->id));
+        
+        $programa->refresh();
+        $this->assertTrue($programa->competencias->contains($competencia->id));
+        $this->assertTrue($programa->raps->contains($rap->id));
+        $this->assertTrue($programa->guiasAprendizaje->contains($guia->id));
+    }
+
+    /** @test */
+    public function retorna_error_al_eliminar_programa_inexistente()
+    {
+        $this->actingAs($this->user);
+
+        $response = $this->delete(route('complementarios-ofertados.destroy', 99999));
+
+        $response->assertStatus(404);
+    }
+
+    /** @test */
+    public function puede_ver_programas_publicos_solo_con_oferta()
+    {
+        ComplementarioOfertado::factory()->conOferta()->count(3)->create();
+        ComplementarioOfertado::factory()->sinOferta()->count(2)->create();
+        ComplementarioOfertado::factory()->cuposLlenos()->count(1)->create();
+
+        $response = $this->get(route('programas-complementarios.index'));
+
+        $response->assertStatus(200);
+        $response->assertViewIs('complementarios.programas.public.index');
+        
+        $programas = $response->viewData('programas');
+        // Solo debe mostrar programas con estado 1 (con oferta)
+        foreach ($programas as $programa) {
+            $this->assertEquals(1, $programa->estado);
+        }
+    }
+
+    /** @test */
+    public function puede_ver_detalles_programa_con_relaciones()
+    {
+        $this->actingAs($this->user);
+        $programa = ComplementarioOfertado::factory()->create();
+        $competencia = Competencia::factory()->create();
+        $rap = ResultadosAprendizaje::factory()->create();
+        
+        $programa->competencias()->attach($competencia->id);
+        $programa->raps()->attach($rap->id);
+
+        $response = $this->get(route('complementarios-ofertados.show', $programa->id));
+
+        $response->assertStatus(200);
+        $response->assertViewIs('complementarios.programas.admin.show');
+        $programaView = $response->viewData('programa');
+        $this->assertTrue($programaView->competencias->contains($competencia->id));
+        $this->assertTrue($programaView->raps->contains($rap->id));
+    }
+
+    /** @test */
+    public function puede_crear_programa_sin_dias_formacion()
+    {
+        $this->actingAs($this->user);
+
+        $data = [
+            'codigo' => 'COMP0003',
+            'nombre' => 'Programa Sin Días',
+            'justificacion' => 'Justificación',
+            'requisitos_ingreso' => 'Requisitos',
+            'duracion' => 60,
+            'cupos' => 30,
+            'estado' => 1,
+            'modalidad_id' => 18,
+            'jornada_id' => 1,
+            'ambiente_id' => 1,
+        ];
+
+        $response = $this->post(route('complementarios-ofertados.store'), $data);
+
+        $response->assertRedirect(route('complementarios-ofertados.index'));
+        $this->assertDatabaseHas('complementarios_ofertados', [
+            'codigo' => 'COMP0003',
+        ]);
+    }
+
+    /** @test */
+    public function puede_actualizar_programa_sin_estructura_academica()
+    {
+        $this->actingAs($this->user);
+        $programa = ComplementarioOfertado::factory()->create();
+
+        $data = [
+            'codigo' => $programa->codigo,
+            'nombre' => 'Programa Sin Estructura',
+            'justificacion' => 'Justificación',
+            'requisitos_ingreso' => 'Requisitos',
+            'duracion' => 60,
+            'cupos' => 30,
+            'estado' => 1,
+            'modalidad_id' => $programa->modalidad_id,
+            'jornada_id' => $programa->jornada_id,
+            'ambiente_id' => $programa->ambiente_id,
+        ];
+
+        $response = $this->put(route('complementarios-ofertados.update', $programa->id), $data);
+
+        $response->assertRedirect(route('complementarios-ofertados.show', $programa->id));
+        $this->assertDatabaseHas('complementarios_ofertados', [
+            'id' => $programa->id,
+            'nombre' => 'Programa Sin Estructura',
+        ]);
     }
 }
