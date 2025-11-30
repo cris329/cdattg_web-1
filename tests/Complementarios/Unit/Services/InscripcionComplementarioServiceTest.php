@@ -297,8 +297,8 @@ class InscripcionComplementarioServiceTest extends TestCase
         }
 
         // Crear servicio real sin mocks para este test
-        $userService = new \App\Services\UserService();
-        $complementarioService = new \App\Services\ComplementarioService(
+        $userService = new UserService();
+        $complementarioService = new ComplementarioService(
             Mockery::mock(TemaRepository::class),
             new ComplementarioOfertadoRepository(),
             new AspiranteComplementarioRepository()
