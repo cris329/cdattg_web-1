@@ -88,7 +88,8 @@ class InscripcionComplementarioRequestTest extends TestCase
             'acepto_terminos' => '1',
         ];
 
-        $validator = Validator::make($data, (new InscripcionComplementarioRequest())->rules());
+        $request = new InscripcionComplementarioRequest();
+        $validator = Validator::make($data, $request->rules(), $request->messages());
 
         $this->assertTrue($validator->fails());
         $this->assertStringContainsString('PDF', $validator->errors()->first('documento_identidad'));

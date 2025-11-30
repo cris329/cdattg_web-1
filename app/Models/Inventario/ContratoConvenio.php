@@ -35,7 +35,7 @@ class ContratoConvenio extends Model
         'fecha_inicio',
         'fecha_fin',
         'user_create_id',
-        'user_edit_id'
+        'user_update_id'
     ];
 
     protected $dates = [

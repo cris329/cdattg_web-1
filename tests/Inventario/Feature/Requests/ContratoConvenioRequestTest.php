@@ -21,6 +21,22 @@ class ContratoConvenioRequestTest extends TestCase
     {
         parent::setUp();
         $this->migrateDatabases();
+
+        $this->seed([
+            \Database\Seeders\RolePermissionSeeder::class,
+            \Database\Seeders\ParametroSeeder::class,
+            \Database\Seeders\TemaSeeder::class,
+            \Database\Seeders\PaisSeeder::class,
+            \Database\Seeders\DepartamentoSeeder::class,
+            \Database\Seeders\MunicipioSeeder::class,
+            \Database\Seeders\PersonaSeeder::class,
+            \Database\Seeders\UsersSeeder::class,
+            \Database\Seeders\RegionalSeeder::class,
+            \Database\Seeders\SedeSeeder::class,
+            \Database\Seeders\BloqueSeeder::class,
+            \Database\Seeders\PisoSeeder::class,
+            \Database\Seeders\AmbienteSeeder::class,
+        ]);
     }
 
     #[Test]
@@ -161,7 +177,7 @@ class ContratoConvenioRequestTest extends TestCase
     public function acepta_datos_validos_para_store(): void
     {
         $proveedor = Proveedor::factory()->create();
-        $estado = ParametroTema::factory()->create();
+        $estado = ParametroTema::query()->inRandomOrder()->first();
 
         $request = new ContratoConvenioRequest();
         $rules = $request->rules();

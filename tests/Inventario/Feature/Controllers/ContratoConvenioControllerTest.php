@@ -18,6 +18,31 @@ class ContratoConvenioControllerTest extends TestCase
 {
     use RefreshDatabase, WithFaker;
 
+    // Constantes para permisos
+    private const PERMISSION_VER_CONTRATO = 'VER CONTRATO';
+    private const PERMISSION_CREAR_CONTRATO = 'CREAR CONTRATO';
+    private const PERMISSION_EDITAR_CONTRATO = 'EDITAR CONTRATO';
+    private const PERMISSION_ELIMINAR_CONTRATO = 'ELIMINAR CONTRATO';
+
+    // Constantes para rutas
+    private const ROUTE_INDEX = 'inventario.contratos-convenios.index';
+    private const ROUTE_CREATE = 'inventario.contratos-convenios.create';
+    private const ROUTE_STORE = 'inventario.contratos-convenios.store';
+    private const ROUTE_SHOW = 'inventario.contratos-convenios.show';
+    private const ROUTE_EDIT = 'inventario.contratos-convenios.edit';
+    private const ROUTE_UPDATE = 'inventario.contratos-convenios.update';
+    private const ROUTE_DESTROY = 'inventario.contratos-convenios.destroy';
+
+    // Constantes para nombres de temas y estados
+    private const TEMA_ESTADOS = 'ESTADOS';
+    private const ESTADO_ACTIVO = 'ACTIVO';
+    private const PAIS_COLOMBIA = 'COLOMBIA';
+    private const DEPARTAMENTO_ANTIOQUIA = 'ANTIOQUIA';
+    private const MUNICIPIO_MEDELLIN = 'MEDELLIN';
+
+    // Constantes para nombres de contratos
+    private const CONTRATO_ACTUALIZADO = 'CONTRATO ACTUALIZADO';
+
     protected User $user;
     protected Proveedor $proveedor;
     protected ParametroTema $estado;
@@ -30,13 +55,13 @@ class ContratoConvenioControllerTest extends TestCase
         $this->migrateDatabases();
         
         // Asegurar que los seeders se ejecuten después de RefreshDatabase
-        if (!\App\Models\Pais::where('pais', 'COLOMBIA')->exists()) {
+        if (!\App\Models\Pais::where('pais', self::PAIS_COLOMBIA)->exists()) {
             $this->artisan('db:seed', ['--force' => true]);
         }
 
         // Crear tema ESTADOS si no existe
         $temaEstados = Tema::firstOrCreate(
-            ['name' => 'ESTADOS'],
+            ['name' => self::TEMA_ESTADOS],
             [
                 'status' => true,
                 'user_create_id' => 1,
@@ -46,7 +71,7 @@ class ContratoConvenioControllerTest extends TestCase
 
         // Crear estado para contratos
         $estadoParametro = Parametro::firstOrCreate(
-            ['name' => 'ACTIVO'],
+            ['name' => self::ESTADO_ACTIVO],
             [
                 'status' => true,
                 'user_create_id' => 1,
@@ -68,12 +93,12 @@ class ContratoConvenioControllerTest extends TestCase
 
         // Crear país y ubicación para proveedor
         $pais = \App\Models\Pais::firstOrCreate(
-            ['pais' => 'COLOMBIA'],
+            ['pais' => self::PAIS_COLOMBIA],
             ['status' => true]
         );
 
         $departamento = \App\Models\Departamento::firstOrCreate(
-            ['departamento' => 'ANTIOQUIA'],
+            ['departamento' => self::DEPARTAMENTO_ANTIOQUIA],
             [
                 'pais_id' => $pais->id,
                 'status' => true,
@@ -82,7 +107,7 @@ class ContratoConvenioControllerTest extends TestCase
 
         $municipio = \App\Models\Municipio::firstOrCreate(
             [
-                'municipio' => 'MEDELLIN',
+                'municipio' => self::MUNICIPIO_MEDELLIN,
                 'departamento_id' => $departamento->id,
             ],
             ['status' => true]
@@ -95,14 +120,14 @@ class ContratoConvenioControllerTest extends TestCase
         ]);
 
         // Crear permisos necesarios
-        Permission::firstOrCreate(['name' => 'VER CONTRATO']);
-        Permission::firstOrCreate(['name' => 'CREAR CONTRATO']);
-        Permission::firstOrCreate(['name' => 'EDITAR CONTRATO']);
-        Permission::firstOrCreate(['name' => 'ELIMINAR CONTRATO']);
+        Permission::firstOrCreate(['name' => self::PERMISSION_VER_CONTRATO]);
+        Permission::firstOrCreate(['name' => self::PERMISSION_CREAR_CONTRATO]);
+        Permission::firstOrCreate(['name' => self::PERMISSION_EDITAR_CONTRATO]);
+        Permission::firstOrCreate(['name' => self::PERMISSION_ELIMINAR_CONTRATO]);
 
         // Crear usuario con permisos
         $this->user = User::factory()->create();
-        $this->user->givePermissionTo('VER CONTRATO');
+        $this->user->givePermissionTo(self::PERMISSION_VER_CONTRATO);
     }
 
     #[Test]
@@ -115,7 +140,7 @@ class ContratoConvenioControllerTest extends TestCase
             'estado_id' => $this->estado->id,
         ]);
 
-        $response = $this->get(route('inventario.contratos-convenios.index'));
+        $response = $this->get(route(self::ROUTE_INDEX));
 
         $response->assertStatus(200);
         $response->assertViewIs('inventario.contratos_convenios.index');
@@ -129,13 +154,14 @@ class ContratoConvenioControllerTest extends TestCase
     {
         $this->actingAs($this->user);
 
-        $contrato = ContratoConvenio::factory()->create([
+        // Crear contrato para la búsqueda
+        ContratoConvenio::factory()->create([
             'name' => 'CONTRATO ESPECIAL 2024',
             'proveedor_id' => $this->proveedor->id,
             'estado_id' => $this->estado->id,
         ]);
 
-        $response = $this->get(route('inventario.contratos-convenios.index', ['search' => 'ESPECIAL']));
+        $response = $this->get(route(self::ROUTE_INDEX, ['search' => 'ESPECIAL']));
 
         $response->assertStatus(200);
         $response->assertSee('ESPECIAL', false);
@@ -144,10 +170,10 @@ class ContratoConvenioControllerTest extends TestCase
     #[Test]
     public function puede_ver_formulario_de_creacion()
     {
-        $this->user->givePermissionTo('CREAR CONTRATO');
+        $this->user->givePermissionTo(self::PERMISSION_CREAR_CONTRATO);
         $this->actingAs($this->user);
 
-        $response = $this->get(route('inventario.contratos-convenios.create'));
+        $response = $this->get(route(self::ROUTE_CREATE));
 
         $response->assertStatus(200);
         $response->assertViewIs('inventario.contratos_convenios.create');
@@ -157,10 +183,10 @@ class ContratoConvenioControllerTest extends TestCase
     #[Test]
     public function puede_crear_contrato_convenio()
     {
-        $this->user->givePermissionTo('CREAR CONTRATO');
+        $this->user->givePermissionTo(self::PERMISSION_CREAR_CONTRATO);
         $this->actingAs($this->user);
 
-        $response = $this->post(route('inventario.contratos-convenios.store'), [
+        $response = $this->post(route(self::ROUTE_STORE), [
             'name' => 'NUEVO CONTRATO 2024',
             'codigo' => 'CT-2024-001',
             'proveedor_id' => $this->proveedor->id,
@@ -183,7 +209,7 @@ class ContratoConvenioControllerTest extends TestCase
     {
         $this->actingAs($this->user);
 
-        $response = $this->post(route('inventario.contratos-convenios.store'), [
+        $response = $this->post(route(self::ROUTE_STORE), [
             'name' => 'CONTRATO SIN PERMISO',
             'estado_id' => $this->estado->id,
         ]);
@@ -201,7 +227,7 @@ class ContratoConvenioControllerTest extends TestCase
             'estado_id' => $this->estado->id,
         ]);
 
-        $response = $this->get(route('inventario.contratos-convenios.show', $contrato->id));
+        $response = $this->get(route(self::ROUTE_SHOW, $contrato->id));
 
         $response->assertStatus(200);
         $response->assertViewIs('inventario.contratos_convenios.show');
@@ -211,7 +237,7 @@ class ContratoConvenioControllerTest extends TestCase
     #[Test]
     public function puede_ver_formulario_de_edicion()
     {
-        $this->user->givePermissionTo('EDITAR CONTRATO');
+        $this->user->givePermissionTo(self::PERMISSION_EDITAR_CONTRATO);
         $this->actingAs($this->user);
 
         $contrato = ContratoConvenio::factory()->create([
@@ -219,7 +245,7 @@ class ContratoConvenioControllerTest extends TestCase
             'estado_id' => $this->estado->id,
         ]);
 
-        $response = $this->get(route('inventario.contratos-convenios.edit', $contrato->id));
+        $response = $this->get(route(self::ROUTE_EDIT, $contrato->id));
 
         $response->assertStatus(200);
         $response->assertViewIs('inventario.contratos_convenios.edit');
@@ -230,7 +256,7 @@ class ContratoConvenioControllerTest extends TestCase
     #[Test]
     public function puede_actualizar_contrato_convenio()
     {
-        $this->user->givePermissionTo('EDITAR CONTRATO');
+        $this->user->givePermissionTo(self::PERMISSION_EDITAR_CONTRATO);
         $this->actingAs($this->user);
 
         $contrato = ContratoConvenio::factory()->create([
@@ -239,8 +265,8 @@ class ContratoConvenioControllerTest extends TestCase
             'estado_id' => $this->estado->id,
         ]);
 
-        $response = $this->put(route('inventario.contratos-convenios.update', $contrato->id), [
-            'name' => 'CONTRATO ACTUALIZADO',
+        $response = $this->put(route(self::ROUTE_UPDATE, $contrato->id), [
+            'name' => self::CONTRATO_ACTUALIZADO,
             'codigo' => $contrato->codigo,
             'proveedor_id' => $this->proveedor->id,
             'fecha_inicio' => $contrato->fecha_inicio,
@@ -248,12 +274,12 @@ class ContratoConvenioControllerTest extends TestCase
             'estado_id' => $this->estado->id,
         ]);
 
-        $response->assertRedirect(route('inventario.contratos-convenios.index'));
+        $response->assertRedirect(route(self::ROUTE_INDEX));
         $response->assertSessionHas('success');
 
         $this->assertDatabaseHas('contratos_convenios', [
             'id' => $contrato->id,
-            'name' => 'CONTRATO ACTUALIZADO',
+            'name' => self::CONTRATO_ACTUALIZADO,
         ]);
     }
 
@@ -267,8 +293,8 @@ class ContratoConvenioControllerTest extends TestCase
             'estado_id' => $this->estado->id,
         ]);
 
-        $response = $this->put(route('inventario.contratos-convenios.update', $contrato->id), [
-            'name' => 'CONTRATO ACTUALIZADO',
+        $response = $this->put(route(self::ROUTE_UPDATE, $contrato->id), [
+            'name' => self::CONTRATO_ACTUALIZADO,
             'estado_id' => $this->estado->id,
         ]);
 
@@ -278,7 +304,7 @@ class ContratoConvenioControllerTest extends TestCase
     #[Test]
     public function puede_eliminar_contrato_convenio()
     {
-        $this->user->givePermissionTo('ELIMINAR CONTRATO');
+        $this->user->givePermissionTo(self::PERMISSION_ELIMINAR_CONTRATO);
         $this->actingAs($this->user);
 
         $contrato = ContratoConvenio::factory()->create([
@@ -286,7 +312,7 @@ class ContratoConvenioControllerTest extends TestCase
             'estado_id' => $this->estado->id,
         ]);
 
-        $response = $this->delete(route('inventario.contratos-convenios.destroy', $contrato->id));
+        $response = $this->delete(route(self::ROUTE_DESTROY, $contrato->id));
 
         $response->assertRedirect(route('inventario.contratos-convenios.index'));
         $response->assertSessionHas('success');
@@ -302,7 +328,7 @@ class ContratoConvenioControllerTest extends TestCase
             'estado_id' => $this->estado->id,
         ]);
 
-        $response = $this->delete(route('inventario.contratos-convenios.destroy', $contrato->id));
+        $response = $this->delete(route(self::ROUTE_DESTROY, $contrato->id));
 
         $response->assertStatus(403);
     }

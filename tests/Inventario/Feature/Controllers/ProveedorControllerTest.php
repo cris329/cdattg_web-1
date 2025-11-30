@@ -18,6 +18,32 @@ class ProveedorControllerTest extends TestCase
 {
     use RefreshDatabase, WithFaker;
 
+    // Constantes para permisos
+    private const PERMISSION_VER_PROVEEDOR = 'VER PROVEEDOR';
+    private const PERMISSION_CREAR_PROVEEDOR = 'CREAR PROVEEDOR';
+    private const PERMISSION_EDITAR_PROVEEDOR = 'EDITAR PROVEEDOR';
+    private const PERMISSION_ELIMINAR_PROVEEDOR = 'ELIMINAR PROVEEDOR';
+
+    // Constantes para rutas
+    private const ROUTE_INDEX = 'inventario.proveedores.index';
+    private const ROUTE_CREATE = 'inventario.proveedores.create';
+    private const ROUTE_STORE = 'inventario.proveedores.store';
+    private const ROUTE_SHOW = 'inventario.proveedores.show';
+    private const ROUTE_EDIT = 'inventario.proveedores.edit';
+    private const ROUTE_UPDATE = 'inventario.proveedores.update';
+    private const ROUTE_DESTROY = 'inventario.proveedores.destroy';
+    private const ROUTE_MUNICIPIOS = 'inventario.proveedores.municipios';
+
+    // Constantes para vistas
+    private const VIEW_INDEX = 'inventario.proveedores.index';
+    private const VIEW_CREATE = 'inventario.proveedores.create';
+    private const VIEW_SHOW = 'inventario.proveedores.show';
+    private const VIEW_EDIT = 'inventario.proveedores.edit';
+
+    // Constantes para datos
+    private const PROVEEDOR_ACTUALIZADO = 'PROVEEDOR ACTUALIZADO';
+    private const NIT_EJEMPLO = '900123456-7';
+
     protected User $user;
     protected Departamento $departamento;
     protected Municipio $municipio;
@@ -89,14 +115,14 @@ class ProveedorControllerTest extends TestCase
         );
 
         // Crear permisos necesarios
-        Permission::firstOrCreate(['name' => 'VER PROVEEDOR']);
-        Permission::firstOrCreate(['name' => 'CREAR PROVEEDOR']);
-        Permission::firstOrCreate(['name' => 'EDITAR PROVEEDOR']);
-        Permission::firstOrCreate(['name' => 'ELIMINAR PROVEEDOR']);
+        Permission::firstOrCreate(['name' => self::PERMISSION_VER_PROVEEDOR]);
+        Permission::firstOrCreate(['name' => self::PERMISSION_CREAR_PROVEEDOR]);
+        Permission::firstOrCreate(['name' => self::PERMISSION_EDITAR_PROVEEDOR]);
+        Permission::firstOrCreate(['name' => self::PERMISSION_ELIMINAR_PROVEEDOR]);
 
         // Crear usuario con permisos
         $this->user = User::factory()->create();
-        $this->user->givePermissionTo('VER PROVEEDOR');
+        $this->user->givePermissionTo(self::PERMISSION_VER_PROVEEDOR);
     }
 
     #[Test]
@@ -110,10 +136,10 @@ class ProveedorControllerTest extends TestCase
             'municipio_id' => $this->municipio->id,
         ]);
 
-        $response = $this->get(route('inventario.proveedores.index'));
+        $response = $this->get(route(self::ROUTE_INDEX));
 
         $response->assertStatus(200);
-        $response->assertViewIs('inventario.proveedores.index');
+        $response->assertViewIs(self::VIEW_INDEX);
         $response->assertViewHas('proveedores');
     }
 
@@ -122,13 +148,13 @@ class ProveedorControllerTest extends TestCase
     {
         $this->actingAs($this->user);
 
-        $proveedor = Proveedor::factory()->create([
+        Proveedor::factory()->create([
             'proveedor' => 'TECNOLOGIA SISTEMAS LTDA',
             'departamento_id' => $this->departamento->id,
             'municipio_id' => $this->municipio->id,
         ]);
 
-        $response = $this->get(route('inventario.proveedores.index', ['search' => 'TECNOLOGIA']));
+        $response = $this->get(route(self::ROUTE_INDEX, ['search' => 'TECNOLOGIA']));
 
         $response->assertStatus(200);
         $response->assertSee('TECNOLOGIA', false);
@@ -137,13 +163,13 @@ class ProveedorControllerTest extends TestCase
     #[Test]
     public function puede_ver_formulario_de_creacion()
     {
-        $this->user->givePermissionTo('CREAR PROVEEDOR');
+        $this->user->givePermissionTo(self::PERMISSION_CREAR_PROVEEDOR);
         $this->actingAs($this->user);
 
-        $response = $this->get(route('inventario.proveedores.create'));
+        $response = $this->get(route(self::ROUTE_CREATE));
 
         $response->assertStatus(200);
-        $response->assertViewIs('inventario.proveedores.create');
+        $response->assertViewIs(self::VIEW_CREATE);
         $response->assertViewHas('departamentos');
         $response->assertViewHas('municipios');
     }
@@ -151,16 +177,16 @@ class ProveedorControllerTest extends TestCase
     #[Test]
     public function puede_crear_proveedor()
     {
-        $this->user->givePermissionTo('CREAR PROVEEDOR');
+        $this->user->givePermissionTo(self::PERMISSION_CREAR_PROVEEDOR);
         $this->actingAs($this->user);
 
         $estadoId = ParametroTema::whereHas('tema', function($q) {
             $q->where('name', 'ESTADOS');
         })->first()->id ?? 1;
 
-        $response = $this->post(route('inventario.proveedores.store'), [
+        $response = $this->post(route(self::ROUTE_STORE), [
             'proveedor' => 'NUEVO PROVEEDOR LTDA',
-            'nit' => '900123456-7',
+            'nit' => self::NIT_EJEMPLO,
             'email' => 'contacto@proveedor.com',
             'telefono' => '6012345678',
             'direccion' => 'Calle 123 #45-67',
@@ -170,12 +196,12 @@ class ProveedorControllerTest extends TestCase
             'estado_id' => $estadoId,
         ]);
 
-        $response->assertRedirect(route('inventario.proveedores.index'));
+        $response->assertRedirect(route(self::ROUTE_INDEX));
         $response->assertSessionHas('success');
 
         $this->assertDatabaseHas('proveedores', [
             'proveedor' => 'NUEVO PROVEEDOR LTDA',
-            'nit' => '900123456-7',
+            'nit' => self::NIT_EJEMPLO,
         ]);
     }
 
@@ -184,9 +210,9 @@ class ProveedorControllerTest extends TestCase
     {
         $this->actingAs($this->user);
 
-        $response = $this->post(route('inventario.proveedores.store'), [
+        $response = $this->post(route(self::ROUTE_STORE), [
             'proveedor' => 'PROVEEDOR SIN PERMISO',
-            'nit' => '900123456-7',
+            'nit' => self::NIT_EJEMPLO,
         ]);
 
         $response->assertStatus(403);
@@ -202,17 +228,17 @@ class ProveedorControllerTest extends TestCase
             'municipio_id' => $this->municipio->id,
         ]);
 
-        $response = $this->get(route('inventario.proveedores.show', $proveedor->id));
+        $response = $this->get(route(self::ROUTE_SHOW, $proveedor->id));
 
         $response->assertStatus(200);
-        $response->assertViewIs('inventario.proveedores.show');
+        $response->assertViewIs(self::VIEW_SHOW);
         $response->assertViewHas('proveedor');
     }
 
     #[Test]
     public function puede_ver_formulario_de_edicion()
     {
-        $this->user->givePermissionTo('EDITAR PROVEEDOR');
+        $this->user->givePermissionTo(self::PERMISSION_EDITAR_PROVEEDOR);
         $this->actingAs($this->user);
 
         $proveedor = Proveedor::factory()->create([
@@ -220,10 +246,10 @@ class ProveedorControllerTest extends TestCase
             'municipio_id' => $this->municipio->id,
         ]);
 
-        $response = $this->get(route('inventario.proveedores.edit', $proveedor->id));
+        $response = $this->get(route(self::ROUTE_EDIT, $proveedor->id));
 
         $response->assertStatus(200);
-        $response->assertViewIs('inventario.proveedores.edit');
+        $response->assertViewIs(self::VIEW_EDIT);
         $response->assertViewHas('proveedor');
         $response->assertViewHas('departamentos');
         $response->assertViewHas('municipios');
@@ -232,7 +258,7 @@ class ProveedorControllerTest extends TestCase
     #[Test]
     public function puede_actualizar_proveedor()
     {
-        $this->user->givePermissionTo('EDITAR PROVEEDOR');
+        $this->user->givePermissionTo(self::PERMISSION_EDITAR_PROVEEDOR);
         $this->actingAs($this->user);
 
         $proveedor = Proveedor::factory()->create([
@@ -245,8 +271,8 @@ class ProveedorControllerTest extends TestCase
             $q->where('name', 'ESTADOS');
         })->first()->id ?? 1;
 
-        $response = $this->put(route('inventario.proveedores.update', $proveedor->id), [
-            'proveedor' => 'PROVEEDOR ACTUALIZADO',
+        $response = $this->put(route(self::ROUTE_UPDATE, $proveedor->id), [
+            'proveedor' => self::PROVEEDOR_ACTUALIZADO,
             'nit' => $proveedor->nit,
             'email' => 'nuevo@email.com',
             'telefono' => $proveedor->telefono,
@@ -257,12 +283,12 @@ class ProveedorControllerTest extends TestCase
             'estado_id' => $estadoId,
         ]);
 
-        $response->assertRedirect(route('inventario.proveedores.index'));
+        $response->assertRedirect(route(self::ROUTE_INDEX));
         $response->assertSessionHas('success');
 
         $this->assertDatabaseHas('proveedores', [
             'id' => $proveedor->id,
-            'proveedor' => 'PROVEEDOR ACTUALIZADO',
+            'proveedor' => self::PROVEEDOR_ACTUALIZADO,
         ]);
     }
 
@@ -276,8 +302,8 @@ class ProveedorControllerTest extends TestCase
             'municipio_id' => $this->municipio->id,
         ]);
 
-        $response = $this->put(route('inventario.proveedores.update', $proveedor->id), [
-            'proveedor' => 'PROVEEDOR ACTUALIZADO',
+        $response = $this->put(route(self::ROUTE_UPDATE, $proveedor->id), [
+            'proveedor' => self::PROVEEDOR_ACTUALIZADO,
             'nit' => $proveedor->nit,
         ]);
 
@@ -287,7 +313,7 @@ class ProveedorControllerTest extends TestCase
     #[Test]
     public function puede_eliminar_proveedor()
     {
-        $this->user->givePermissionTo('ELIMINAR PROVEEDOR');
+        $this->user->givePermissionTo(self::PERMISSION_ELIMINAR_PROVEEDOR);
         $this->actingAs($this->user);
 
         $proveedor = Proveedor::factory()->create([
@@ -295,9 +321,9 @@ class ProveedorControllerTest extends TestCase
             'municipio_id' => $this->municipio->id,
         ]);
 
-        $response = $this->delete(route('inventario.proveedores.destroy', $proveedor->id));
+        $response = $this->delete(route(self::ROUTE_DESTROY, $proveedor->id));
 
-        $response->assertRedirect(route('inventario.proveedores.index'));
+        $response->assertRedirect(route(self::ROUTE_INDEX));
         $response->assertSessionHas('success');
     }
 
@@ -311,7 +337,7 @@ class ProveedorControllerTest extends TestCase
             'municipio_id' => $this->municipio->id,
         ]);
 
-        $response = $this->delete(route('inventario.proveedores.destroy', $proveedor->id));
+        $response = $this->delete(route(self::ROUTE_DESTROY, $proveedor->id));
 
         $response->assertStatus(403);
     }
@@ -322,7 +348,7 @@ class ProveedorControllerTest extends TestCase
         $this->actingAs($this->user);
 
         // Crear otro municipio en el mismo departamento
-        $municipio2 = Municipio::firstOrCreate(
+        Municipio::firstOrCreate(
             [
                 'municipio' => 'BOGOTA',
                 'departamento_id' => $this->departamento->id,
@@ -331,7 +357,7 @@ class ProveedorControllerTest extends TestCase
         );
 
         $response = $this->getJson(
-            route('inventario.proveedores.municipios', $this->departamento->id)
+            route(self::ROUTE_MUNICIPIOS, $this->departamento->id)
         );
 
         $response->assertStatus(200);
@@ -353,7 +379,7 @@ class ProveedorControllerTest extends TestCase
         $departamentoVacio = Departamento::factory()->create();
 
         $response = $this->getJson(
-            route('inventario.proveedores.municipios', $departamentoVacio->id)
+            route(self::ROUTE_MUNICIPIOS, $departamentoVacio->id)
         );
 
         $response->assertStatus(200);

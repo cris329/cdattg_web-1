@@ -18,6 +18,27 @@ class AspiranteComplementarioRepositoryTest extends TestCase
     protected function setUp(): void
     {
         parent::setUp();
+        
+        // Ejecutar seeders necesarios para las pruebas
+        // Estos datos son requeridos por las claves foráneas en PersonaFactory y ComplementarioOfertado
+        $this->seed([
+            \Database\Seeders\RolePermissionSeeder::class,
+            \Database\Seeders\ParametroSeeder::class,
+            \Database\Seeders\TemaSeeder::class,
+            \Database\Seeders\PaisSeeder::class,
+            \Database\Seeders\DepartamentoSeeder::class,
+            \Database\Seeders\MunicipioSeeder::class,
+            \Database\Seeders\PersonaSeeder::class,
+            \Database\Seeders\UsersSeeder::class,
+            \Database\Seeders\RegionalSeeder::class,
+            \Database\Seeders\CentroFormacionSeeder::class,
+            \Database\Seeders\SedeSeeder::class,
+            \Database\Seeders\BloqueSeeder::class,
+            \Database\Seeders\PisoSeeder::class,
+            \Database\Seeders\AmbienteSeeder::class,
+            \Database\Seeders\JornadaFormacionSeeder::class,
+        ]);
+        
         $this->repository = new AspiranteComplementarioRepository();
     }
 

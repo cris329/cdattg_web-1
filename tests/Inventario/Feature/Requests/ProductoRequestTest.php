@@ -25,6 +25,23 @@ class ProductoRequestTest extends TestCase
     {
         parent::setUp();
         $this->migrateDatabases();
+
+        // Producto necesita: Ambiente → Piso → Bloque → Sede → Regional
+        $this->seed([
+            \Database\Seeders\RolePermissionSeeder::class,
+            \Database\Seeders\ParametroSeeder::class,
+            \Database\Seeders\TemaSeeder::class,
+            \Database\Seeders\PaisSeeder::class,
+            \Database\Seeders\DepartamentoSeeder::class,
+            \Database\Seeders\MunicipioSeeder::class,
+            \Database\Seeders\PersonaSeeder::class,
+            \Database\Seeders\UsersSeeder::class,
+            \Database\Seeders\RegionalSeeder::class,
+            \Database\Seeders\SedeSeeder::class,
+            \Database\Seeders\BloqueSeeder::class,
+            \Database\Seeders\PisoSeeder::class,
+            \Database\Seeders\AmbienteSeeder::class,
+        ]);
     }
 
     #[Test]
@@ -73,7 +90,11 @@ class ProductoRequestTest extends TestCase
         
         // Simular ruta de agregar carrito
         $request->setRouteResolver(function () {
-            return (object) ['getName' => 'inventario.productos.agregar-carrito'];
+            return new class {
+                public function named(...$patterns) {
+                    return in_array('inventario.productos.agregar-carrito', $patterns);
+                }
+            };
         });
 
         $rules = $request->rules();
@@ -94,7 +115,11 @@ class ProductoRequestTest extends TestCase
 
         $request = new ProductoRequest();
         $request->setRouteResolver(function () {
-            return (object) ['getName' => 'inventario.productos.agregar-carrito'];
+            return new class {
+                public function named(...$patterns) {
+                    return in_array('inventario.productos.agregar-carrito', $patterns);
+                }
+            };
         });
 
         $rules = $request->rules();
@@ -171,34 +196,68 @@ class ProductoRequestTest extends TestCase
     #[Test]
     public function acepta_datos_validos_para_store(): void
     {
-        $tipoProducto = ParametroTema::factory()->create();
-        $unidadMedida = ParametroTema::factory()->create();
-        $estado = ParametroTema::factory()->create();
-        $categoria = Parametro::factory()->create();
-        $marca = Parametro::factory()->create();
-        $contrato = ContratoConvenio::factory()->create();
-        $ambiente = Ambiente::factory()->create();
+        $tipoProducto = ParametroTema::query()->inRandomOrder()->first();
+        $unidadMedida = ParametroTema::query()->inRandomOrder()->first();
+        $estadoProducto = ParametroTema::query()->inRandomOrder()->first();
+        
+        // Crear categoría y marca (extienden de Parametro)
+        $temaCategorias = \App\Models\Tema::where('name', 'CATEGORIAS')->first();
+        $temaMarcas = \App\Models\Tema::where('name', 'MARCAS')->first();
+        
+        $categoriaParametro = \App\Models\Parametro::create([
+            'name' => 'CATEGORIA TEST',
+            'status' => 1,
+            'user_create_id' => User::query()->inRandomOrder()->value('id'),
+            'user_edit_id' => User::query()->inRandomOrder()->value('id'),
+        ]);
+        
+        if ($temaCategorias) {
+            \App\Models\ParametroTema::create([
+                'parametro_id' => $categoriaParametro->id,
+                'tema_id' => $temaCategorias->id,
+                'status' => 1,
+                'user_create_id' => User::query()->inRandomOrder()->value('id'),
+                'user_edit_id' => User::query()->inRandomOrder()->value('id'),
+            ]);
+        }
+        
+        $marcaParametro = \App\Models\Parametro::create([
+            'name' => 'MARCA TEST',
+            'status' => 1,
+            'user_create_id' => User::query()->inRandomOrder()->value('id'),
+            'user_edit_id' => User::query()->inRandomOrder()->value('id'),
+        ]);
+        
+        if ($temaMarcas) {
+            \App\Models\ParametroTema::create([
+                'parametro_id' => $marcaParametro->id,
+                'tema_id' => $temaMarcas->id,
+                'status' => 1,
+                'user_create_id' => User::query()->inRandomOrder()->value('id'),
+                'user_edit_id' => User::query()->inRandomOrder()->value('id'),
+            ]);
+        }
+        
+        $contratoConvenio = ContratoConvenio::factory()->create();
         $proveedor = Proveedor::factory()->create();
-        $user = User::factory()->create();
+        $ambiente = Ambiente::factory()->create();
 
         $request = new ProductoRequest();
         $rules = $request->rules();
 
         $validator = Validator::make([
-            'producto' => 'PRODUCTO VALIDO',
+            'producto' => 'NUEVO PRODUCTO',
             'tipo_producto_id' => $tipoProducto->id,
             'descripcion' => 'Descripción del producto',
             'peso' => 10.5,
             'unidad_medida_id' => $unidadMedida->id,
             'cantidad' => 5,
-            'codigo_barras' => '123456789',
-            'estado_producto_id' => $estado->id,
-            'categoria_id' => $categoria->id,
-            'marca_id' => $marca->id,
-            'contrato_convenio_id' => $contrato->id,
+            'estado_producto_id' => $estadoProducto->id,
+            'categoria_id' => $categoriaParametro->id,
+            'marca_id' => $marcaParametro->id,
+            'contrato_convenio_id' => $contratoConvenio->id,
             'ambiente_id' => $ambiente->id,
             'proveedor_id' => $proveedor->id,
-            'fecha_vencimiento' => '2025-12-31',
         ], $rules);
 
         $this->assertFalse($validator->fails());

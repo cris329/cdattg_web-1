@@ -16,6 +16,26 @@ class OrdenControllerTest extends TestCase
 {
     use RefreshDatabase, WithFaker;
 
+    // Constantes para permisos
+    private const PERMISSION_VER_ORDEN = 'VER ORDEN';
+    private const PERMISSION_CREAR_ORDEN = 'CREAR ORDEN';
+    private const PERMISSION_EDITAR_ORDEN = 'EDITAR ORDEN';
+    private const PERMISSION_ELIMINAR_ORDEN = 'ELIMINAR ORDEN';
+    private const PERMISSION_APROBAR_ORDEN = 'APROBAR ORDEN';
+    private const PERMISSION_COMPLETAR_ORDEN = 'COMPLETAR ORDEN';
+
+    // Constantes para rutas
+    private const ROUTE_INDEX = 'inventario.ordenes.index';
+    private const ROUTE_STORE = 'inventario.ordenes.store';
+    private const ROUTE_SHOW = 'inventario.ordenes.show';
+    private const ROUTE_DESTROY = 'inventario.ordenes.destroy';
+
+    // Constantes para vistas
+    private const VIEW_INDEX = 'inventario.ordenes.index';
+
+    // Constantes para datos
+    private const ROUTE_LOGIN = 'verificarLogin';
+
     protected User $user;
 
     protected function setUp(): void
@@ -30,16 +50,16 @@ class OrdenControllerTest extends TestCase
         ]);
 
         // Crear permisos necesarios
-        Permission::firstOrCreate(['name' => 'VER ORDEN']);
-        Permission::firstOrCreate(['name' => 'CREAR ORDEN']);
-        Permission::firstOrCreate(['name' => 'EDITAR ORDEN']);
-        Permission::firstOrCreate(['name' => 'ELIMINAR ORDEN']);
-        Permission::firstOrCreate(['name' => 'APROBAR ORDEN']);
-        Permission::firstOrCreate(['name' => 'COMPLETAR ORDEN']);
+        Permission::firstOrCreate(['name' => self::PERMISSION_VER_ORDEN]);
+        Permission::firstOrCreate(['name' => self::PERMISSION_CREAR_ORDEN]);
+        Permission::firstOrCreate(['name' => self::PERMISSION_EDITAR_ORDEN]);
+        Permission::firstOrCreate(['name' => self::PERMISSION_ELIMINAR_ORDEN]);
+        Permission::firstOrCreate(['name' => self::PERMISSION_APROBAR_ORDEN]);
+        Permission::firstOrCreate(['name' => self::PERMISSION_COMPLETAR_ORDEN]);
 
         // Crear usuario con permisos usando factory
         $this->user = User::factory()->create();
-        $this->user->givePermissionTo('VER ORDEN');
+        $this->user->givePermissionTo(self::PERMISSION_VER_ORDEN);
     }
 
     #[Test]
@@ -49,10 +69,10 @@ class OrdenControllerTest extends TestCase
 
         Orden::factory()->count(5)->create();
 
-        $response = $this->get(route('inventario.ordenes.index'));
+        $response = $this->get(route(self::ROUTE_INDEX));
 
         $response->assertStatus(200);
-        $response->assertViewIs('inventario.ordenes.index');
+        $response->assertViewIs(self::VIEW_INDEX);
         $response->assertViewHas('ordenes');
     }
 
@@ -61,9 +81,9 @@ class OrdenControllerTest extends TestCase
     {
         $this->actingAs($this->user);
 
-        $orden = Orden::factory()->create(['descripcion_orden' => 'Orden Test']);
+        Orden::factory()->create(['descripcion_orden' => 'Orden Test']);
 
-        $response = $this->get(route('inventario.ordenes.index', ['search' => 'Test']));
+        $response = $this->get(route(self::ROUTE_INDEX, ['search' => 'Test']));
 
         $response->assertStatus(200);
         $response->assertViewHas('ordenes');
@@ -72,7 +92,7 @@ class OrdenControllerTest extends TestCase
     #[Test]
     public function puede_crear_orden(): void
     {
-        $this->user->givePermissionTo('CREAR ORDEN');
+        $this->user->givePermissionTo(self::PERMISSION_CREAR_ORDEN);
         $this->actingAs($this->user);
 
         $producto = Producto::factory()->create(['cantidad' => 10]);
@@ -85,10 +105,10 @@ class OrdenControllerTest extends TestCase
         })->first();
 
         if (! $tipoOrden || ! $estadoOrden) {
-            $this->markTestSkipped('Faltan parámetros necesarios (requiere seeders completos)');
+            $this->markTestSkipped('Faltan parámetros necesarios');
         }
 
-        $response = $this->post(route('inventario.ordenes.store'), [
+        $response = $this->post(route(self::ROUTE_STORE), [
             'descripcion_orden' => 'Orden de Prueba',
             'tipo_orden_id' => $tipoOrden->id,
             'fecha_devolucion' => now()->addDays(7)->format('Y-m-d'),
@@ -110,7 +130,7 @@ class OrdenControllerTest extends TestCase
     {
         $this->actingAs($this->user);
 
-        $response = $this->post(route('inventario.ordenes.store'), []);
+        $response = $this->post(route(self::ROUTE_STORE), []);
 
         $response->assertStatus(403);
     }
@@ -122,7 +142,7 @@ class OrdenControllerTest extends TestCase
 
         $orden = Orden::factory()->create();
 
-        $response = $this->get(route('inventario.ordenes.show', $orden->id));
+        $response = $this->get(route(self::ROUTE_SHOW, $orden->id));
 
         $response->assertStatus(200);
         $response->assertViewHas('orden');
@@ -131,12 +151,12 @@ class OrdenControllerTest extends TestCase
     #[Test]
     public function puede_eliminar_orden(): void
     {
-        $this->user->givePermissionTo('ELIMINAR ORDEN');
+        $this->user->givePermissionTo(self::PERMISSION_ELIMINAR_ORDEN);
         $this->actingAs($this->user);
 
         $orden = Orden::factory()->create();
 
-        $response = $this->delete(route('inventario.ordenes.destroy', $orden->id));
+        $response = $this->delete(route(self::ROUTE_DESTROY, $orden->id));
 
         $response->assertRedirect();
         $this->assertDatabaseMissing('ordenes', [
@@ -147,8 +167,8 @@ class OrdenControllerTest extends TestCase
     #[Test]
     public function requiere_autenticacion_para_ver_ordenes(): void
     {
-        $response = $this->get(route('inventario.ordenes.index'));
+        $response = $this->get(route(self::ROUTE_INDEX));
 
-        $response->assertRedirect(route('login'));
+        $response->assertRedirect(route(self::ROUTE_LOGIN));
     }
 }

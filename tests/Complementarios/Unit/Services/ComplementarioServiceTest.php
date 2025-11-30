@@ -253,12 +253,22 @@ class ComplementarioServiceTest extends TestCase
     public function puede_obtener_datos_formulario()
     {
         $this->seed([
+            \Database\Seeders\RolePermissionSeeder::class,
             \Database\Seeders\ParametroSeeder::class,
+            \Database\Seeders\TemaSeeder::class,
+            \Database\Seeders\PaisSeeder::class,
+            \Database\Seeders\DepartamentoSeeder::class,
+            \Database\Seeders\MunicipioSeeder::class,
+            \Database\Seeders\PersonaSeeder::class,
+            \Database\Seeders\UsersSeeder::class,
+            \Database\Seeders\RegionalSeeder::class,
+            \Database\Seeders\CentroFormacionSeeder::class,
+            \Database\Seeders\SedeSeeder::class,
+            \Database\Seeders\BloqueSeeder::class,
+            \Database\Seeders\PisoSeeder::class,
+            \Database\Seeders\AmbienteSeeder::class,
+            \Database\Seeders\JornadaFormacionSeeder::class,
         ]);
-
-        ParametroTema::where('tema_id', 5)->first() ?? ParametroTema::factory()->create(['tema_id' => 5]);
-        JornadaFormacion::factory()->create();
-        Ambiente::factory()->create(['status' => 1]);
 
         $datos = $this->service->obtenerDatosFormulario();
 
@@ -272,9 +282,29 @@ class ComplementarioServiceTest extends TestCase
     /** @test */
     public function puede_sincronizar_dias_formacion()
     {
+        $this->seed([
+            \Database\Seeders\RolePermissionSeeder::class,
+            \Database\Seeders\ParametroSeeder::class,
+            \Database\Seeders\TemaSeeder::class,
+            \Database\Seeders\PaisSeeder::class,
+            \Database\Seeders\DepartamentoSeeder::class,
+            \Database\Seeders\MunicipioSeeder::class,
+            \Database\Seeders\PersonaSeeder::class,
+            \Database\Seeders\UsersSeeder::class,
+            \Database\Seeders\RegionalSeeder::class,
+            \Database\Seeders\CentroFormacionSeeder::class,
+            \Database\Seeders\SedeSeeder::class,
+            \Database\Seeders\BloqueSeeder::class,
+            \Database\Seeders\PisoSeeder::class,
+            \Database\Seeders\AmbienteSeeder::class,
+            \Database\Seeders\JornadaFormacionSeeder::class,
+        ]);
+
         $programa = ComplementarioOfertado::factory()->create();
-        $dia1 = Parametro::factory()->create();
-        $dia2 = Parametro::factory()->create();
+        
+        // Crear parámetros con nombres únicos para evitar violaciones de UNIQUE constraint
+        $dia1 = Parametro::create(['name' => 'LUNES_TEST_' . uniqid(), 'status' => 1]);
+        $dia2 = Parametro::create(['name' => 'MARTES_TEST_' . uniqid(), 'status' => 1]);
 
         $dias = [
             [
@@ -304,8 +334,28 @@ class ComplementarioServiceTest extends TestCase
     /** @test */
     public function puede_eliminar_dias_formacion()
     {
+        $this->seed([
+            \Database\Seeders\RolePermissionSeeder::class,
+            \Database\Seeders\ParametroSeeder::class,
+            \Database\Seeders\TemaSeeder::class,
+            \Database\Seeders\PaisSeeder::class,
+            \Database\Seeders\DepartamentoSeeder::class,
+            \Database\Seeders\MunicipioSeeder::class,
+            \Database\Seeders\PersonaSeeder::class,
+            \Database\Seeders\UsersSeeder::class,
+            \Database\Seeders\RegionalSeeder::class,
+            \Database\Seeders\CentroFormacionSeeder::class,
+            \Database\Seeders\SedeSeeder::class,
+            \Database\Seeders\BloqueSeeder::class,
+            \Database\Seeders\PisoSeeder::class,
+            \Database\Seeders\AmbienteSeeder::class,
+            \Database\Seeders\JornadaFormacionSeeder::class,
+        ]);
+
         $programa = ComplementarioOfertado::factory()->create();
-        $dia = Parametro::factory()->create();
+        
+        // Crear parámetro con nombre único para evitar violaciones de UNIQUE constraint
+        $dia = Parametro::create(['name' => 'MIERCOLES_TEST_' . uniqid(), 'status' => 1]);
 
         $programa->diasFormacion()->attach($dia->id, [
             'hora_inicio' => '08:00:00',
@@ -326,8 +376,8 @@ class ComplementarioServiceTest extends TestCase
             (object) ['id' => 2, 'name' => 'Tarjeta de Identidad'],
         ]);
 
-        // Crear un mock del tema con método parametros()
-        $temaMock = Mockery::mock();
+        // Crear un mock del tema que extienda de Tema o sea una instancia de Tema
+        $temaMock = Mockery::mock(\App\Models\Tema::class)->makePartial();
         $temaMock->id = 1;
         
         $builderMock = Mockery::mock();
@@ -366,8 +416,8 @@ class ComplementarioServiceTest extends TestCase
             (object) ['id' => 10, 'name' => 'Femenino'],
         ]);
 
-        // Crear un mock del tema con método parametros()
-        $temaMock = Mockery::mock();
+        // Crear un mock del tema que extienda de Tema o sea una instancia de Tema
+        $temaMock = Mockery::mock(\App\Models\Tema::class)->makePartial();
         $temaMock->id = 1;
         
         $builderMock = Mockery::mock();

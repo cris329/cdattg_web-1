@@ -105,7 +105,7 @@ class MarcaRepository implements MarcaRepositoryInterface
      */
     public function actualizar(int $id, array $datos): bool
     {
-        return Parametro::where('id', $id)->update($datos);
+        return Parametro::where('id', $id)->update($datos) > 0;
     }
 
     /**

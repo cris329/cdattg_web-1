@@ -15,6 +15,18 @@ class DashboardControllerTest extends TestCase
 
     protected User $user;
 
+    // Constantes para permisos
+    private const PERMISSION_VER_DASHBOARD = 'VER DASHBOARD INVENTARIO';
+
+    // Constantes para rutas
+    private const ROUTE_DASHBOARD = 'inventario.dashboard';
+
+    // Constantes para vistas
+    private const VIEW_DASHBOARD = 'inventario.dashboard.index';
+
+    // Constantes para datos
+    private const ROUTE_LOGIN = 'verificarLogin';
+
     protected function setUp(): void
     {
         parent::setUp();
@@ -28,11 +40,11 @@ class DashboardControllerTest extends TestCase
         }
 
         // Crear permisos necesarios
-        Permission::firstOrCreate(['name' => 'VER DASHBOARD INVENTARIO']);
+        Permission::firstOrCreate(['name' => self::PERMISSION_VER_DASHBOARD]);
 
         // Crear usuario con permisos
         $this->user = User::factory()->create();
-        $this->user->givePermissionTo('VER DASHBOARD INVENTARIO');
+        $this->user->givePermissionTo(self::PERMISSION_VER_DASHBOARD);
     }
 
     #[Test]
@@ -40,19 +52,20 @@ class DashboardControllerTest extends TestCase
     {
         $this->actingAs($this->user);
 
-        $response = $this->get(route('inventario.dashboard'));
+        $response = $this->get(route(self::ROUTE_DASHBOARD));
 
         $response->assertStatus(200);
-        $response->assertViewIs('inventario.dashboard.index');
+        $response->assertViewIs(self::VIEW_DASHBOARD);
     }
 
     #[Test]
     public function no_puede_ver_dashboard_sin_permiso()
     {
+        /** @var User $userSinPermiso */
         $userSinPermiso = User::factory()->create();
         $this->actingAs($userSinPermiso);
 
-        $response = $this->get(route('inventario.dashboard'));
+        $response = $this->get(route(self::ROUTE_DASHBOARD));
 
         $response->assertStatus(403);
     }
@@ -60,9 +73,9 @@ class DashboardControllerTest extends TestCase
     #[Test]
     public function requiere_autenticacion_para_ver_dashboard()
     {
-        $response = $this->get(route('inventario.dashboard'));
+        $response = $this->get(route(self::ROUTE_DASHBOARD));
 
-        $response->assertRedirect(route('login'));
+        $response->assertRedirect(route(self::ROUTE_LOGIN));
     }
 }
 

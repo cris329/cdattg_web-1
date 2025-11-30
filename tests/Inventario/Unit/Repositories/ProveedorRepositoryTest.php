@@ -91,12 +91,35 @@ class ProveedorRepositoryTest extends TestCase
     #[Test]
     public function puede_crear_proveedor()
     {
+        $estado = \App\Models\ParametroTema::query()->inRandomOrder()->first();
+        
+        // Si no hay estado disponible, crear uno básico
+        if (!$estado) {
+            $tema = \App\Models\Tema::firstOrCreate(
+                ['name' => 'ESTADOS'],
+                ['status' => 1, 'user_create_id' => null, 'user_edit_id' => null]
+            );
+            $parametro = \App\Models\Parametro::firstOrCreate(
+                ['name' => 'ACTIVO'],
+                ['status' => 1, 'user_create_id' => null, 'user_edit_id' => null]
+            );
+            $tema->parametros()->syncWithoutDetaching([
+                $parametro->id => ['status' => 1]
+            ]);
+            $estado = \App\Models\ParametroTema::query()
+                ->where('tema_id', $tema->id)
+                ->where('parametro_id', $parametro->id)
+                ->first();
+        }
+        
         $datos = [
             'proveedor' => 'PROVEEDOR TEST',
             'nit' => '123456789-0',
             'email' => 'test@example.com',
             'telefono' => '6012345678',
-            'estado_id' => 1,
+            'estado_id' => $estado->id,
+            'user_create_id' => 1,
+            'user_update_id' => 1,
         ];
 
         $resultado = $this->repository->crear($datos);

@@ -72,12 +72,23 @@ class MarcaCategoriaRequestTest extends TestCase
         $request = new MarcaCategoriaRequest();
         $request->setMethod('PUT');
         $request->setRouteResolver(function () use ($parametro2) {
-            return (object) [
-                'parameter' => [
-                    'categoria' => $parametro2,
-                    'marca' => null,
-                ],
-            ];
+            return new class($parametro2) {
+                private $parametro;
+                
+                public function __construct($parametro) {
+                    $this->parametro = $parametro;
+                }
+                
+                public function parameter($name) {
+                    if ($name === 'categoria') {
+                        return $this->parametro;
+                    }
+                    if ($name === 'marca') {
+                        return null;
+                    }
+                    return null;
+                }
+            };
         });
 
         $rules = $request->rules();
@@ -98,12 +109,23 @@ class MarcaCategoriaRequestTest extends TestCase
         $request = new MarcaCategoriaRequest();
         $request->setMethod('PUT');
         $request->setRouteResolver(function () use ($parametro) {
-            return (object) [
-                'parameter' => [
-                    'categoria' => $parametro,
-                    'marca' => null,
-                ],
-            ];
+            return new class($parametro) {
+                private $parametro;
+                
+                public function __construct($parametro) {
+                    $this->parametro = $parametro;
+                }
+                
+                public function parameter($name) {
+                    if ($name === 'categoria') {
+                        return $this->parametro;
+                    }
+                    if ($name === 'marca') {
+                        return null;
+                    }
+                    return null;
+                }
+            };
         });
 
         $rules = $request->rules();

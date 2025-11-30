@@ -19,6 +19,27 @@ class InscripcionComplementarioControllerTest extends TestCase
     protected function setUp(): void
     {
         parent::setUp();
+        
+        // Ejecutar seeders necesarios para las pruebas
+        // Estos datos son requeridos por las claves foráneas en PersonaFactory
+        $this->seed([
+            \Database\Seeders\RolePermissionSeeder::class,
+            \Database\Seeders\ParametroSeeder::class,
+            \Database\Seeders\TemaSeeder::class,
+            \Database\Seeders\PaisSeeder::class,
+            \Database\Seeders\DepartamentoSeeder::class,
+            \Database\Seeders\MunicipioSeeder::class,
+            \Database\Seeders\PersonaSeeder::class,
+            \Database\Seeders\UsersSeeder::class,
+            \Database\Seeders\RegionalSeeder::class,
+            \Database\Seeders\CentroFormacionSeeder::class,
+            \Database\Seeders\SedeSeeder::class,
+            \Database\Seeders\BloqueSeeder::class,
+            \Database\Seeders\PisoSeeder::class,
+            \Database\Seeders\AmbienteSeeder::class,
+            \Database\Seeders\JornadaFormacionSeeder::class,
+        ]);
+        
         Storage::fake('google');
     }
 
@@ -46,19 +67,52 @@ class InscripcionComplementarioControllerTest extends TestCase
     /** @test */
     public function puede_procesar_inscripcion_general()
     {
-        $pais = Pais::create(['pais' => 'Colombia', 'status' => 1]);
-        $departamento = Departamento::create(['departamento' => 'Cundinamarca', 'pais_id' => $pais->id, 'status' => 1]);
-        $municipio = Municipio::create(['municipio' => 'Bogotá', 'departamento_id' => $departamento->id, 'status' => 1]);
+        // Obtener datos del seeder
+        $pais = Pais::first();
+        $departamento = Departamento::where('pais_id', $pais->id)->first();
+        $municipio = Municipio::where('departamento_id', $departamento->id)->first();
+        
+        // Obtener parametros_temas correctos del seeder
+        $tipoDocumentoParametroTema = \App\Models\ParametroTema::where('tema_id', 2)
+            ->where('parametro_id', 3)
+            ->first();
+        $generoParametroTema = \App\Models\ParametroTema::where('tema_id', 3)
+            ->where('parametro_id', 9)
+            ->first();
+
+        // Si no existen, crear los necesarios
+        if (!$tipoDocumentoParametroTema) {
+            $parametro = \App\Models\Parametro::find(3) ?? \App\Models\Parametro::create(['id' => 3, 'name' => 'CÉDULA DE CIUDADANÍA', 'status' => 1]);
+            $tema = \App\Models\Tema::find(2) ?? \App\Models\Tema::create(['id' => 2, 'name' => 'TIPO DE DOCUMENTO', 'status' => 1]);
+            $tipoDocumentoParametroTema = \App\Models\ParametroTema::create([
+                'parametro_id' => $parametro->id,
+                'tema_id' => $tema->id,
+                'status' => 1,
+            ]);
+        }
+
+        if (!$generoParametroTema) {
+            $parametro = \App\Models\Parametro::find(9) ?? \App\Models\Parametro::create(['id' => 9, 'name' => 'MASCULINO', 'status' => 1]);
+            $tema = \App\Models\Tema::find(3) ?? \App\Models\Tema::create(['id' => 3, 'name' => 'GÉNERO', 'status' => 1]);
+            $generoParametroTema = \App\Models\ParametroTema::create([
+                'parametro_id' => $parametro->id,
+                'tema_id' => $tema->id,
+                'status' => 1,
+            ]);
+        }
+
+        $numeroDocumento = uniqid('doc_');
+        $email = uniqid('test_') . '@test.com';
 
         $data = [
-            'tipo_documento' => 1,
-            'numero_documento' => '1234567890',
+            'tipo_documento' => 3, // CÉDULA DE CIUDADANÍA (parametro_id, el servicio lo convierte a parametros_temas.id)
+            'numero_documento' => $numeroDocumento,
             'primer_nombre' => 'Juan',
             'primer_apellido' => 'Pérez',
             'fecha_nacimiento' => '1990-01-01',
-            'genero' => 1,
+            'genero' => 9, // MASCULINO (parametro_id, el servicio lo convierte a parametros_temas.id)
             'celular' => '3001234567',
-            'email' => 'juan@test.com',
+            'email' => $email,
             'pais_id' => $pais->id,
             'departamento_id' => $departamento->id,
             'municipio_id' => $municipio->id,
@@ -70,31 +124,35 @@ class InscripcionComplementarioControllerTest extends TestCase
         $response->assertRedirect(route('inscripcion.general'));
         $response->assertSessionHas('success');
         $this->assertDatabaseHas('personas', [
-            'numero_documento' => '1234567890',
-            'email' => 'juan@test.com',
+            'numero_documento' => $numeroDocumento,
+            'email' => $email,
         ]);
     }
 
     /** @test */
     public function no_procesa_inscripcion_general_si_persona_ya_existe()
     {
-        $pais = Pais::create(['pais' => 'Colombia', 'status' => 1]);
-        $departamento = Departamento::create(['departamento' => 'Cundinamarca', 'pais_id' => $pais->id, 'status' => 1]);
-        $municipio = Municipio::create(['municipio' => 'Bogotá', 'departamento_id' => $departamento->id, 'status' => 1]);
+        // Obtener datos del seeder
+        $pais = Pais::first();
+        $departamento = Departamento::where('pais_id', $pais->id)->first();
+        $municipio = Municipio::where('departamento_id', $departamento->id)->first();
+        
+        $numeroDocumento = uniqid('doc_');
+        $email = uniqid('test_') . '@test.com';
         
         Persona::factory()->create([
-            'numero_documento' => '1234567890',
-            'email' => 'juan@test.com',
+            'numero_documento' => $numeroDocumento,
+            'email' => $email,
         ]);
 
         $data = [
-            'tipo_documento' => 1,
-            'numero_documento' => '1234567890',
-            'email' => 'juan@test.com',
+            'tipo_documento' => 3, // CÉDULA DE CIUDADANÍA (parametro_id, el servicio lo convierte a parametros_temas.id)
+            'numero_documento' => $numeroDocumento,
+            'email' => $email,
             'primer_nombre' => 'Juan',
             'primer_apellido' => 'Pérez',
             'fecha_nacimiento' => '1990-01-01',
-            'genero' => 1,
+            'genero' => 9, // MASCULINO (parametro_id, el servicio lo convierte a parametros_temas.id)
             'celular' => '3001234567',
             'pais_id' => $pais->id,
             'departamento_id' => $departamento->id,
@@ -104,26 +162,60 @@ class InscripcionComplementarioControllerTest extends TestCase
 
         $response = $this->post(route('inscripcion.general.store'), $data);
 
-        $response->assertSessionHas('error');
+        $response->assertSessionHasErrors(['numero_documento', 'email']);
     }
 
     /** @test */
     public function puede_procesar_inscripcion_a_programa()
     {
-        $pais = Pais::create(['pais' => 'Colombia', 'status' => 1]);
-        $departamento = Departamento::create(['departamento' => 'Cundinamarca', 'pais_id' => $pais->id, 'status' => 1]);
-        $municipio = Municipio::create(['municipio' => 'Bogotá', 'departamento_id' => $departamento->id, 'status' => 1]);
+        // Obtener datos del seeder
+        $pais = Pais::first();
+        $departamento = Departamento::where('pais_id', $pais->id)->first();
+        $municipio = Municipio::where('departamento_id', $departamento->id)->first();
+        
         $programa = ComplementarioOfertado::factory()->conOferta()->create();
 
+        // Obtener parametros_temas correctos del seeder
+        $tipoDocumentoParametroTema = \App\Models\ParametroTema::where('tema_id', 2)
+            ->where('parametro_id', 3)
+            ->first();
+        $generoParametroTema = \App\Models\ParametroTema::where('tema_id', 3)
+            ->where('parametro_id', 9)
+            ->first();
+
+        // Si no existen, crear los necesarios
+        if (!$tipoDocumentoParametroTema) {
+            $parametro = \App\Models\Parametro::find(3) ?? \App\Models\Parametro::create(['id' => 3, 'name' => 'CÉDULA DE CIUDADANÍA', 'status' => 1]);
+            $tema = \App\Models\Tema::find(2) ?? \App\Models\Tema::create(['id' => 2, 'name' => 'TIPO DE DOCUMENTO', 'status' => 1]);
+            $tipoDocumentoParametroTema = \App\Models\ParametroTema::create([
+                'parametro_id' => $parametro->id,
+                'tema_id' => $tema->id,
+                'status' => 1,
+            ]);
+        }
+
+        if (!$generoParametroTema) {
+            $parametro = \App\Models\Parametro::find(9) ?? \App\Models\Parametro::create(['id' => 9, 'name' => 'MASCULINO', 'status' => 1]);
+            $tema = \App\Models\Tema::find(3) ?? \App\Models\Tema::create(['id' => 3, 'name' => 'GÉNERO', 'status' => 1]);
+            $generoParametroTema = \App\Models\ParametroTema::create([
+                'parametro_id' => $parametro->id,
+                'tema_id' => $tema->id,
+                'status' => 1,
+            ]);
+        }
+
+        $numeroDocumento = uniqid('doc_');
+        $email = uniqid('test_') . '@test.com';
+
         $data = [
-            'tipo_documento' => 1,
-            'numero_documento' => '1234567890',
+            'tipo_documento' => 3, // CÉDULA DE CIUDADANÍA (parametro_id, el servicio lo convierte a parametros_temas.id)
+            'numero_documento' => $numeroDocumento,
             'primer_nombre' => 'Juan',
             'primer_apellido' => 'Pérez',
             'fecha_nacimiento' => '1990-01-01',
-            'genero' => 1,
+            'genero' => 9, // MASCULINO (parametro_id, el servicio lo convierte a parametros_temas.id)
             'celular' => '3001234567',
-            'email' => 'juan@test.com',
+            'email' => $email,
             'pais_id' => $pais->id,
             'departamento_id' => $departamento->id,
             'municipio_id' => $municipio->id,
@@ -138,7 +230,7 @@ class InscripcionComplementarioControllerTest extends TestCase
         $response->assertRedirect(route('login.index'));
         $response->assertSessionHas('success');
         $this->assertDatabaseHas('personas', [
-            'numero_documento' => '1234567890',
+            'numero_documento' => $numeroDocumento,
         ]);
         $this->assertDatabaseHas('aspirantes_complementarios', [
             'complementario_id' => $programa->id,

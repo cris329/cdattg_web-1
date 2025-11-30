@@ -533,14 +533,16 @@ function truncateText(text, maxLength) {
     return `${value.slice(0, maxLength)}...`;
 }
 
-function getStockClass(quantity) {
-    const qty = quantity || 0;
-    if (qty <= 0) {
+function getStockClass(quantity = 0) {
+
+    if (quantity <= 0) {
         return 'danger';
     }
-    if (qty <= 5) {
+
+    if (quantity <= 5) {
         return 'warning';
     }
+
     return 'success';
 }
 

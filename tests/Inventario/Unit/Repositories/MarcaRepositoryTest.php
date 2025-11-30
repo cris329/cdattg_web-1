@@ -103,7 +103,7 @@ class MarcaRepositoryTest extends TestCase
     #[Test]
     public function puede_encontrar_marca_por_id()
     {
-        $marca = \App\Models\Inventario\Marca::create(['name' => 'TEST']);
+        $marca = \App\Models\Inventario\Marca::create(['name' => 'TEST MARCA ' . uniqid()]);
 
         $resultado = $this->repository->encontrar($marca->id);
 

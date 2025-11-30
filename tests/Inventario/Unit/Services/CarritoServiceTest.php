@@ -45,7 +45,7 @@ class CarritoServiceTest extends TestCase
     #[Test]
     public function puede_verificar_disponibilidad_de_productos(): void
     {
-        $productoMock = Mockery::mock(Producto::class);
+        $productoMock = Mockery::mock(Producto::class)->makePartial();
         $productoMock->id = self::ID_PRODUCTO_TEST;
         $productoMock->producto = self::NOMBRE_PRODUCTO_TEST;
         $productoMock->cantidad = 10;
@@ -71,7 +71,7 @@ class CarritoServiceTest extends TestCase
     #[Test]
     public function detecta_errores_de_stock_insuficiente(): void
     {
-        $productoMock = Mockery::mock(Producto::class);
+        $productoMock = Mockery::mock(Producto::class)->makePartial();
         $productoMock->id = self::ID_PRODUCTO_TEST;
         $productoMock->producto = self::NOMBRE_PRODUCTO_TEST;
         $productoMock->cantidad = 5;
@@ -120,7 +120,7 @@ class CarritoServiceTest extends TestCase
     #[Test]
     public function puede_validar_item_individual(): void
     {
-        $productoMock = Mockery::mock(Producto::class);
+        $productoMock = Mockery::mock(Producto::class)->makePartial();
         $productoMock->id = self::ID_PRODUCTO_TEST;
         $productoMock->producto = self::NOMBRE_PRODUCTO_TEST;
         $productoMock->cantidad = 10;
@@ -141,7 +141,7 @@ class CarritoServiceTest extends TestCase
     #[Test]
     public function detecta_stock_insuficiente_en_item_individual(): void
     {
-        $productoMock = Mockery::mock(Producto::class);
+        $productoMock = Mockery::mock(Producto::class)->makePartial();
         $productoMock->id = self::ID_PRODUCTO_TEST;
         $productoMock->producto = self::NOMBRE_PRODUCTO_TEST;
         $productoMock->cantidad = 5;
@@ -175,7 +175,7 @@ class CarritoServiceTest extends TestCase
     #[Test]
     public function puede_obtener_productos_para_carrito(): void
     {
-        $productoMock = Mockery::mock(Producto::class);
+        $productoMock = Mockery::mock(Producto::class)->makePartial();
         $productoMock->id = self::ID_PRODUCTO_TEST;
         $productoMock->producto = self::NOMBRE_PRODUCTO_TEST;
         $productoMock->codigo_barras = '12345678901';
@@ -183,11 +183,11 @@ class CarritoServiceTest extends TestCase
         $productoMock->cantidad = 10;
         $productoMock->descripcion = 'Descripción';
         
-        $categoriaMock = Mockery::mock();
+        $categoriaMock = Mockery::mock()->makePartial();
         $categoriaMock->name = 'Categoria Test';
         $productoMock->categoria = $categoriaMock;
         
-        $marcaMock = Mockery::mock();
+        $marcaMock = Mockery::mock()->makePartial();
         $marcaMock->name = 'Marca Test';
         $productoMock->marca = $marcaMock;
 

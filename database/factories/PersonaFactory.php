@@ -25,11 +25,24 @@ class PersonaFactory extends Factory
      */
     public function definition(): array
     {
-        // Obtener un usuario existente o usar ID por defecto para evitar dependencia circular
-        $userId = User::query()->inRandomOrder()->value('id') ?? config('app.audit_default_user_id', 1);
+        // Obtener un usuario existente o usar null para evitar dependencia circular
+        // Los campos user_create_id y user_edit_id son nullable en la tabla personas
+        $userId = null;
+        try {
+            $userId = User::query()->inRandomOrder()->value('id');
+        } catch (\Exception $e) {
+            // Si no hay usuarios disponibles, usar null
+            $userId = null;
+        }
+
+        // Si no hay userId, usar un valor por defecto solo para crear parametros_temas
+        // Asegurar que siempre sea un int válido (no null)
+        $configUserId = config('app.audit_default_user_id');
+        $userIdForParametros = $userId ?? $configUserId ?? 1;
+        $userIdForParametros = (int) $userIdForParametros;
 
         $generoParametroId = [9, 10, 11][array_rand([9, 10, 11])];
-        $generoParametroTemaId = $this->obtenerOCrearParametroTema(3, $generoParametroId, $userId); // Tema: GENERO (3)
+        $generoParametroTemaId = $this->obtenerOCrearParametroTema(3, $generoParametroId, $userIdForParametros); // Tema: GENERO (3)
 
         // Validar que se obtuvo un ID válido y que existe en parametros_temas
         if (! $generoParametroTemaId) {
@@ -73,7 +86,7 @@ class PersonaFactory extends Factory
         // Obtener tipo_documento de parametros_temas
         $tiposDocumentoParametroIds = [3, 4, 5, 6]; // CÉDULA, EXTRANJERÍA, PASAPORTE, TARJETA
         $tipoDocumentoParametroId = $tiposDocumentoParametroIds[array_rand($tiposDocumentoParametroIds)];
-        $tipoDocumentoParametroTemaId = $this->obtenerOCrearParametroTema(2, $tipoDocumentoParametroId, $userId); // Tema: TIPO DE DOCUMENTO (2)
+        $tipoDocumentoParametroTemaId = $this->obtenerOCrearParametroTema(2, $tipoDocumentoParametroId, $userIdForParametros); // Tema: TIPO DE DOCUMENTO (2)
 
         // Validar que se obtuvo un ID válido y que existe en parametros_temas
         if (! $tipoDocumentoParametroTemaId) {
@@ -103,14 +116,14 @@ class PersonaFactory extends Factory
             'municipio_id' => $ubicacion['municipio_id'] ?? null,
             'direccion' => 'Calle ' . rand(1, 100) . ' #' . rand(1, 50) . '-' . rand(1, 99),
             'status' => 1,
-            'user_create_id' => $userId,
-            'user_edit_id' => $userId,
+            'user_create_id' => $userId, // Puede ser null si no hay usuarios disponibles
+            'user_edit_id' => $userId, // Puede ser null si no hay usuarios disponibles
         ];
     }
 
     /**
      * Obtiene el ID de parametros_temas basado en tema_id y parametro_id
-     * 
+     *
      * IMPORTANTE: Este método debe devolver el ID de la tabla parametros_temas, NO el parametro_id
      * El seeder debe crear estos registros antes de que el factory los use
      */

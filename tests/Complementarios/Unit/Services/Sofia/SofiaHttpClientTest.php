@@ -7,6 +7,7 @@ use App\Services\Sofia\SofiaHttpClient;
 use Illuminate\Support\Facades\Http;
 use Illuminate\Http\Client\ConnectionException;
 use Illuminate\Http\Client\RequestException;
+use Illuminate\Http\Client\Response;
 use PHPUnit\Framework\Attributes\Test;
 
 class SofiaHttpClientTest extends TestCase
@@ -156,9 +157,14 @@ class SofiaHttpClientTest extends TestCase
     #[Test]
     public function maneja_error_de_peticion(): void
     {
-        Http::fake(function () {
-            throw new RequestException('Request failed');
-        });
+        Http::fake([
+            'test-playwright:3000/health' => Http::response(['status' => 'ok'], 200),
+            'test-playwright:3000/validate' => function () {
+                $psrResponse = new \GuzzleHttp\Psr7\Response(400, [], json_encode(['error' => 'Request failed']));
+                $response = new Response($psrResponse);
+                throw new RequestException($response);
+            },
+        ]);
 
         $this->expectException(\RuntimeException::class);
         $this->expectExceptionMessage('Error en la peticion');

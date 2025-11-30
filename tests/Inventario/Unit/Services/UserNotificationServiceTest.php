@@ -67,7 +67,9 @@ class UserNotificationServiceTest extends TestCase
             ->with($userId, $perPageDefault)
             ->andReturn($paginatorMock);
 
-        $this->service->obtenerNotificacionesPaginadas($userId);
+        $resultado = $this->service->obtenerNotificacionesPaginadas($userId);
+
+        $this->assertInstanceOf(\Illuminate\Contracts\Pagination\LengthAwarePaginator::class, $resultado);
     }
 
     #[Test]
@@ -101,7 +103,9 @@ class UserNotificationServiceTest extends TestCase
             ->with($userId, $limitDefault)
             ->andReturn($collectionMock);
 
-        $this->service->obtenerNoLeidas($userId);
+        $resultado = $this->service->obtenerNoLeidas($userId);
+
+        $this->assertInstanceOf(\Illuminate\Support\Collection::class, $resultado);
     }
 
     #[Test]

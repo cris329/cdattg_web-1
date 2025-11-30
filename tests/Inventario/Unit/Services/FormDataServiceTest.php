@@ -47,11 +47,11 @@ class FormDataServiceTest extends TestCase
     {
         $this->mockContratoRepository->shouldReceive('obtenerTodos')
             ->once()
-            ->andReturn(collect([]));
+            ->andReturn(new \Illuminate\Database\Eloquent\Collection([]));
 
         $this->mockProveedorRepository->shouldReceive('obtenerTodos')
             ->once()
-            ->andReturn(collect([]));
+            ->andReturn(new \Illuminate\Database\Eloquent\Collection([]));
 
         $datos = $this->service->obtenerDatosFormulario();
 
@@ -64,7 +64,7 @@ class FormDataServiceTest extends TestCase
     #[Test]
     public function puede_obtener_contratos_convenios(): void
     {
-        $contratosMock = collect([]);
+        $contratosMock = new \Illuminate\Database\Eloquent\Collection([]);
 
         $this->mockContratoRepository->shouldReceive('obtenerTodos')
             ->once()
@@ -78,7 +78,7 @@ class FormDataServiceTest extends TestCase
     #[Test]
     public function puede_obtener_proveedores(): void
     {
-        $proveedoresMock = collect([]);
+        $proveedoresMock = new \Illuminate\Database\Eloquent\Collection([]);
 
         $this->mockProveedorRepository->shouldReceive('obtenerTodos')
             ->once()

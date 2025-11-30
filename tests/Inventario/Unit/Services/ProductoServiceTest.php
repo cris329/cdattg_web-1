@@ -61,7 +61,7 @@ class ProductoServiceTest extends TestCase
             'cantidad' => 10,
         ];
 
-        $productoMock = Mockery::mock(Producto::class);
+        $productoMock = Mockery::mock(Producto::class)->makePartial();
         $productoMock->id = 1;
         $productoMock->producto = 'Producto Test';
 
@@ -100,7 +100,7 @@ class ProductoServiceTest extends TestCase
             'codigo_barras' => '98765432109',
         ];
 
-        $productoMock = Mockery::mock(Producto::class);
+        $productoMock = Mockery::mock(Producto::class)->makePartial();
         $productoMock->id = 1;
 
         $this->mockBarcodeService->shouldReceive('resolverCodigoBarras')
@@ -125,7 +125,7 @@ class ProductoServiceTest extends TestCase
     #[Test]
     public function puede_actualizar_producto(): void
     {
-        $productoMock = Mockery::mock(Producto::class);
+        $productoMock = Mockery::mock(Producto::class)->makePartial();
         $productoMock->cantidad = 10;
         $productoMock->shouldReceive('refresh')->once();
 
@@ -161,7 +161,7 @@ class ProductoServiceTest extends TestCase
     #[Test]
     public function puede_actualizar_producto_con_nueva_imagen(): void
     {
-        $productoMock = Mockery::mock(Producto::class);
+        $productoMock = Mockery::mock(Producto::class)->makePartial();
         $productoMock->cantidad = 10;
         $productoMock->shouldReceive('refresh')->once();
 
@@ -191,7 +191,7 @@ class ProductoServiceTest extends TestCase
     #[Test]
     public function puede_actualizar_codigo_barras_normalizado(): void
     {
-        $productoMock = Mockery::mock(Producto::class);
+        $productoMock = Mockery::mock(Producto::class)->makePartial();
         $productoMock->cantidad = 10;
         $productoMock->shouldReceive('refresh')->once();
 
@@ -222,7 +222,7 @@ class ProductoServiceTest extends TestCase
     #[Test]
     public function genera_nuevo_codigo_barras_si_no_se_puede_normalizar(): void
     {
-        $productoMock = Mockery::mock(Producto::class);
+        $productoMock = Mockery::mock(Producto::class)->makePartial();
         $productoMock->cantidad = 10;
         $productoMock->shouldReceive('refresh')->once();
 
@@ -257,7 +257,7 @@ class ProductoServiceTest extends TestCase
     #[Test]
     public function puede_eliminar_producto(): void
     {
-        $productoMock = Mockery::mock(Producto::class);
+        $productoMock = Mockery::mock(Producto::class)->makePartial();
 
         $this->mockImageService->shouldReceive('eliminarImagenSiExiste')
             ->once()

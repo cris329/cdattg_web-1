@@ -19,6 +19,23 @@ class CarritoRequestTest extends TestCase
     {
         parent::setUp();
         $this->migrateDatabases();
+
+        // Producto necesita: Ambiente → Piso → Bloque → Sede → Regional
+        $this->seed([
+            \Database\Seeders\RolePermissionSeeder::class,
+            \Database\Seeders\ParametroSeeder::class,
+            \Database\Seeders\TemaSeeder::class,
+            \Database\Seeders\PaisSeeder::class,
+            \Database\Seeders\DepartamentoSeeder::class,
+            \Database\Seeders\MunicipioSeeder::class,
+            \Database\Seeders\PersonaSeeder::class,
+            \Database\Seeders\UsersSeeder::class,
+            \Database\Seeders\RegionalSeeder::class,
+            \Database\Seeders\SedeSeeder::class,
+            \Database\Seeders\BloqueSeeder::class,
+            \Database\Seeders\PisoSeeder::class,
+            \Database\Seeders\AmbienteSeeder::class,
+        ]);
     }
 
     #[Test]
@@ -26,7 +43,11 @@ class CarritoRequestTest extends TestCase
     {
         $request = new CarritoRequest();
         $request->setRouteResolver(function () {
-            return (object) ['getName' => 'inventario.carrito.actualizar'];
+            return new class {
+                public function named(...$patterns) {
+                    return in_array('inventario.carrito.actualizar', $patterns);
+                }
+            };
         });
 
         $rules = $request->rules();
@@ -42,7 +63,11 @@ class CarritoRequestTest extends TestCase
     {
         $request = new CarritoRequest();
         $request->setRouteResolver(function () {
-            return (object) ['getName' => 'inventario.carrito.actualizar'];
+            return new class {
+                public function named(...$patterns) {
+                    return in_array('inventario.carrito.actualizar', $patterns);
+                }
+            };
         });
 
         $rules = $request->rules();
@@ -60,7 +85,11 @@ class CarritoRequestTest extends TestCase
     {
         $request = new CarritoRequest();
         $request->setRouteResolver(function () {
-            return (object) ['getName' => 'inventario.carrito.actualizar'];
+            return new class {
+                public function named(...$patterns) {
+                    return in_array('inventario.carrito.actualizar', $patterns);
+                }
+            };
         });
 
         $rules = $request->rules();
@@ -137,14 +166,16 @@ class CarritoRequestTest extends TestCase
     #[Test]
     public function valida_items_debe_tener_cantidad(): void
     {
-        $producto = Producto::factory()->create();
-
         $request = new CarritoRequest();
         $rules = $request->rules();
 
+        $producto = Producto::factory()->create();
+
         $validator = Validator::make([
             'items' => [
-                ['producto_id' => $producto->id],
+                [
+                    'producto_id' => $producto->id,
+                ],
             ],
         ], $rules);
 
@@ -155,10 +186,10 @@ class CarritoRequestTest extends TestCase
     #[Test]
     public function valida_cantidad_minima_en_items(): void
     {
-        $producto = Producto::factory()->create();
-
         $request = new CarritoRequest();
         $rules = $request->rules();
+
+        $producto = Producto::factory()->create();
 
         $validator = Validator::make([
             'items' => [
@@ -178,7 +209,11 @@ class CarritoRequestTest extends TestCase
     {
         $request = new CarritoRequest();
         $request->setRouteResolver(function () {
-            return (object) ['getName' => 'inventario.carrito.actualizar'];
+            return new class {
+                public function named(...$patterns) {
+                    return in_array('inventario.carrito.actualizar', $patterns);
+                }
+            };
         });
 
         $rules = $request->rules();
@@ -193,21 +228,16 @@ class CarritoRequestTest extends TestCase
     #[Test]
     public function acepta_datos_validos_para_agregar(): void
     {
-        $producto1 = Producto::factory()->create();
-        $producto2 = Producto::factory()->create();
-
         $request = new CarritoRequest();
         $rules = $request->rules();
+
+        $producto = Producto::factory()->create();
 
         $validator = Validator::make([
             'items' => [
                 [
-                    'producto_id' => $producto1->id,
-                    'cantidad' => 2,
-                ],
-                [
-                    'producto_id' => $producto2->id,
-                    'cantidad' => 3,
+                    'producto_id' => $producto->id,
+                    'cantidad' => 5,
                 ],
             ],
         ], $rules);

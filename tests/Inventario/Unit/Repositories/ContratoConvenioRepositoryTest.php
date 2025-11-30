@@ -25,6 +25,7 @@ class ContratoConvenioRepositoryTest extends TestCase
         $this->seed([
             \Database\Seeders\RolePermissionSeeder::class,
             \Database\Seeders\ParametroSeeder::class,
+            \Database\Seeders\TemaSeeder::class,
             \Database\Seeders\PaisSeeder::class,
             \Database\Seeders\DepartamentoSeeder::class,
             \Database\Seeders\MunicipioSeeder::class,
@@ -93,13 +94,17 @@ class ContratoConvenioRepositoryTest extends TestCase
     public function puede_crear_contrato()
     {
         $proveedor = Proveedor::factory()->create();
+        $estado = \App\Models\ParametroTema::query()->inRandomOrder()->first();
+        
         $datos = [
             'name' => 'CONTRATO TEST',
             'codigo' => 'TEST-001',
             'proveedor_id' => $proveedor->id,
             'fecha_inicio' => now()->format('Y-m-d'),
             'fecha_fin' => now()->addYear()->format('Y-m-d'),
-            'estado_id' => 1,
+            'estado_id' => $estado->id,
+            'user_create_id' => 1,
+            'user_update_id' => 1,
         ];
 
         $resultado = $this->repository->crear($datos);

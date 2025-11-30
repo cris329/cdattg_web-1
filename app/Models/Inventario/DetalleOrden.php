@@ -22,7 +22,7 @@ class DetalleOrden extends Model
         'cantidad',
         'estado_orden_id',
         'user_create_id',
-        'user_edit_id'
+        'user_update_id'
     ];
 
     // Relación con la orden

@@ -28,11 +28,17 @@ class DashboardRepositoryTest extends TestCase
         $this->seed([
             \Database\Seeders\RolePermissionSeeder::class,
             \Database\Seeders\ParametroSeeder::class,
+            \Database\Seeders\TemaSeeder::class,
             \Database\Seeders\PaisSeeder::class,
             \Database\Seeders\DepartamentoSeeder::class,
             \Database\Seeders\MunicipioSeeder::class,
             \Database\Seeders\PersonaSeeder::class,
             \Database\Seeders\UsersSeeder::class,
+            \Database\Seeders\RegionalSeeder::class,
+            \Database\Seeders\SedeSeeder::class,
+            \Database\Seeders\BloqueSeeder::class,
+            \Database\Seeders\PisoSeeder::class,
+            \Database\Seeders\AmbienteSeeder::class,
         ]);
     }
 
@@ -49,14 +55,19 @@ class DashboardRepositoryTest extends TestCase
     #[Test]
     public function puede_obtener_productos_consumibles()
     {
-        // Crear tipo de producto CONSUMIBLE
-        $tema = Tema::create(['name' => 'TIPOS DE PRODUCTO']);
-        $parametroConsumible = Parametro::create(['name' => 'CONSUMIBLE']);
-        $parametroTema = ParametroTema::create([
-            'parametro_id' => $parametroConsumible->id,
-            'tema_id' => $tema->id,
-            'status' => 1
-        ]);
+        // Crear tipo de producto CONSUMIBLE (el método busca por nombre exacto "CONSUMIBLE")
+        $tema = Tema::firstOrCreate(['name' => 'TIPOS DE PRODUCTO'], ['status' => 1]);
+        $parametroConsumible = Parametro::firstOrCreate(
+            ['name' => 'CONSUMIBLE'],
+            ['status' => 1, 'user_create_id' => null, 'user_edit_id' => null]
+        );
+        $parametroTema = ParametroTema::firstOrCreate(
+            [
+                'parametro_id' => $parametroConsumible->id,
+                'tema_id' => $tema->id,
+            ],
+            ['status' => 1, 'user_create_id' => null, 'user_edit_id' => null]
+        );
 
         Producto::factory()->create(['tipo_producto_id' => $parametroTema->id]);
 
@@ -68,14 +79,19 @@ class DashboardRepositoryTest extends TestCase
     #[Test]
     public function puede_obtener_productos_no_consumibles()
     {
-        // Crear tipo de producto NO CONSUMIBLE
-        $tema = Tema::create(['name' => 'TIPOS DE PRODUCTO']);
-        $parametroNoConsumible = Parametro::create(['name' => 'NO CONSUMIBLE']);
-        $parametroTema = ParametroTema::create([
-            'parametro_id' => $parametroNoConsumible->id,
-            'tema_id' => $tema->id,
-            'status' => 1
-        ]);
+        // Crear tipo de producto NO CONSUMIBLE (el método busca por nombre exacto "NO CONSUMIBLE")
+        $tema = Tema::firstOrCreate(['name' => 'TIPOS DE PRODUCTO'], ['status' => 1]);
+        $parametroNoConsumible = Parametro::firstOrCreate(
+            ['name' => 'NO CONSUMIBLE'],
+            ['status' => 1, 'user_create_id' => null, 'user_edit_id' => null]
+        );
+        $parametroTema = ParametroTema::firstOrCreate(
+            [
+                'parametro_id' => $parametroNoConsumible->id,
+                'tema_id' => $tema->id,
+            ],
+            ['status' => 1, 'user_create_id' => null, 'user_edit_id' => null]
+        );
 
         Producto::factory()->create(['tipo_producto_id' => $parametroTema->id]);
 

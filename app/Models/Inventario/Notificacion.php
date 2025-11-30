@@ -2,11 +2,14 @@
 
 namespace App\Models\Inventario;
 
+use Database\Factories\Inventario\NotificacionFactory;
+use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Notifications\DatabaseNotification;
 use Illuminate\Support\Carbon;
 
 class Notificacion extends DatabaseNotification
 {
+    use HasFactory;
     protected $table = 'notificaciones';
 
     public $timestamps = true;
@@ -21,6 +24,8 @@ class Notificacion extends DatabaseNotification
         'datos',
         'leida_en',
         'user_id',
+        'notificable_type',
+        'notificable_id',
         'created_at',
         'updated_at',
     ];
@@ -37,7 +42,24 @@ class Notificacion extends DatabaseNotification
      */
     public function getDataAttribute() : array
     {
-        return $this->attributes['datos'] ?? [];
+        $datos = $this->attributes['datos'] ?? null;
+        
+        if ($datos === null) {
+            return [];
+        }
+        
+        // Si ya es un array, devolverlo
+        if (is_array($datos)) {
+            return $datos;
+        }
+        
+        // Si es JSON string, decodificarlo
+        if (is_string($datos)) {
+            $decoded = json_decode($datos, true);
+            return is_array($decoded) ? $decoded : [];
+        }
+        
+        return [];
     }
 
     /**

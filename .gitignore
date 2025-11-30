@@ -3,6 +3,7 @@
 /public/build
 /public/hot
 /public/storage
+/public/imagenes_productos
 /storage/*.key
 /storage/app/public/*
 !storage/app/public/.gitignore

@@ -99,7 +99,9 @@ class SofiaStateMapper
      */
     private function getDirectState(string $resultado): ?int
     {
-        return match($resultado) {
+        $resultadoUpper = strtoupper($resultado);
+        
+        return match($resultadoUpper) {
             self::RESULTADO_YA_EXISTE => self::ESTADO_REGISTRADO,
             self::RESULTADO_NO_REGISTRADO, self::RESULTADO_DESCONOCIDO => self::ESTADO_NO_REGISTRADO,
             self::RESULTADO_REQUIERE_CAMBIO => self::ESTADO_REQUIERE_CAMBIO,

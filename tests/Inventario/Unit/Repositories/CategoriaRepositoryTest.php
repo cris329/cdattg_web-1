@@ -105,7 +105,7 @@ class CategoriaRepositoryTest extends TestCase
     #[Test]
     public function puede_encontrar_categoria_por_id()
     {
-        $categoria = \App\Models\Inventario\Categoria::create(['name' => 'TEST']);
+        $categoria = \App\Models\Inventario\Categoria::create(['name' => 'TEST CATEGORIA ' . uniqid()]);
 
         $resultado = $this->repository->encontrar($categoria->id);
 

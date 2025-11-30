@@ -2,10 +2,13 @@
 
 namespace App\Models;
 
+use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 
 class SofiaValidationProgress extends Model
 {
+    use HasFactory;
+
     protected $table = 'sofia_validation_progress';
 
     protected $fillable = [

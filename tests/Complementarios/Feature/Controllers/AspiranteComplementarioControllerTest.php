@@ -8,6 +8,7 @@ use App\Models\Persona;
 use App\Models\AspiranteComplementario;
 use App\Models\User;
 use Illuminate\Foundation\Testing\RefreshDatabase;
+use Spatie\Permission\Models\Permission;
 
 class AspiranteComplementarioControllerTest extends TestCase
 {
@@ -19,6 +20,7 @@ class AspiranteComplementarioControllerTest extends TestCase
     {
         parent::setUp();
         
+        // Ejecutar seeders necesarios para las pruebas
         $this->seed([
             \Database\Seeders\RolePermissionSeeder::class,
             \Database\Seeders\ParametroSeeder::class,
@@ -26,9 +28,22 @@ class AspiranteComplementarioControllerTest extends TestCase
             \Database\Seeders\PaisSeeder::class,
             \Database\Seeders\DepartamentoSeeder::class,
             \Database\Seeders\MunicipioSeeder::class,
+            \Database\Seeders\PersonaSeeder::class,
+            \Database\Seeders\UsersSeeder::class,
+            \Database\Seeders\RegionalSeeder::class,
+            \Database\Seeders\CentroFormacionSeeder::class,
+            \Database\Seeders\SedeSeeder::class,
+            \Database\Seeders\BloqueSeeder::class,
+            \Database\Seeders\PisoSeeder::class,
+            \Database\Seeders\AmbienteSeeder::class,
+            \Database\Seeders\JornadaFormacionSeeder::class,
         ]);
         
         $this->user = User::factory()->create();
+        
+        // Asignar permisos necesarios para los tests
+        Permission::firstOrCreate(['name' => 'ELIMINAR ASPIRANTE COMPLEMENTARIO']);
+        $this->user->givePermissionTo('ELIMINAR ASPIRANTE COMPLEMENTARIO');
     }
 
     /** @test */
@@ -48,9 +63,60 @@ class AspiranteComplementarioControllerTest extends TestCase
     public function puede_ver_aspirantes_de_programa_por_nombre()
     {
         $this->actingAs($this->user);
-        $programa = ComplementarioOfertado::factory()->create(['nombre' => 'Auxiliar de Cocina']);
+        
+        // Obtener datos necesarios del seeder
+        $modalidad = \App\Models\ParametroTema::where('tema_id', 5)
+            ->whereIn('parametro_id', [18, 19, 20])
+            ->first();
+        
+        if (!$modalidad) {
+            $this->fail('No se encontró modalidad. Asegúrate de que los seeders estén ejecutándose correctamente.');
+        }
+        
+        $jornada = \App\Models\JornadaFormacion::first();
+        if (!$jornada) {
+            $this->fail('No se encontró jornada. Asegúrate de que JornadaFormacionSeeder esté ejecutándose correctamente.');
+        }
+        
+        $ambiente = \App\Models\Ambiente::first();
+        if (!$ambiente) {
+            $this->fail('No se encontró ambiente. Asegúrate de que AmbienteSeeder esté ejecutándose correctamente.');
+        }
+
+        // Crear programa con nombre exacto que coincida con la búsqueda (guiones convertidos a espacios)
+        $programa = ComplementarioOfertado::create([
+            'codigo' => 'TEST-PROG-' . uniqid(),
+            'nombre' => 'Auxiliar de Cocina',
+            'justificacion' => 'Justificación de prueba',
+            'requisitos_ingreso' => 'Requisitos de prueba',
+            'estado' => 1,
+            'duracion' => 30,
+            'cupos' => 50,
+            'modalidad_id' => $modalidad->id,
+            'jornada_id' => $jornada->id,
+            'ambiente_id' => $ambiente->id,
+        ]);
+        
+        // Verificar que el programa se creó correctamente
+        $this->assertDatabaseHas('complementarios_ofertados', [
+            'nombre' => 'Auxiliar de Cocina',
+        ]);
+        
+        // Verificar que el repositorio puede encontrarlo antes de hacer la petición HTTP
+        $repo = new \App\Repositories\ComplementarioOfertadoRepository();
+        $programaEncontrado = $repo->findByNombre('Auxiliar-de-Cocina');
+        
+        if (!$programaEncontrado) {
+            $this->fail(
+                "El repositorio no encontró el programa antes de la petición HTTP. " .
+                "Programa creado ID: {$programa->id}, Nombre: '{$programa->nombre}'. " .
+                "Búsqueda con: 'Auxiliar-de-Cocina' (convertido a: '" . str_replace('-', ' ', 'Auxiliar-de-Cocina') . "')"
+            );
+        }
+        
         AspiranteComplementario::factory()->count(3)->paraPrograma($programa)->create();
 
+        // La ruta convierte guiones a espacios, así que 'Auxiliar-de-Cocina' busca 'Auxiliar de Cocina'
         $response = $this->get(route('programas-complementarios.ver-aspirantes', 'Auxiliar-de-Cocina'));
 
         $response->assertStatus(200);
@@ -99,12 +165,14 @@ class AspiranteComplementarioControllerTest extends TestCase
         $this->actingAs($this->user);
         $programa = ComplementarioOfertado::factory()->create();
 
+        // El servicio valida si existe la persona y devuelve JSON con success: false
         $response = $this->post(route('programas-complementarios.agregar-aspirante', $programa->id), [
             'numero_documento' => '9999999999',
         ]);
 
         $response->assertStatus(200);
         $response->assertJson(['success' => false]);
+        $response->assertJsonFragment(['message' => 'No se encontró ninguna persona registrada con el número de documento "9999999999".']);
     }
 
     /** @test */

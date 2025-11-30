@@ -208,6 +208,21 @@ class AspiranteComplementarioRepository
      */
     public function getTendenciaInscripciones(int $meses = 6): Collection
     {
+        $isSqlite = \Illuminate\Support\Facades\DB::getDriverName() === 'sqlite';
+        
+        if ($isSqlite) {
+            return AspiranteComplementario::selectRaw('
+                    CAST(strftime("%Y", created_at) AS INTEGER) as year,
+                    CAST(strftime("%m", created_at) AS INTEGER) as month,
+                    COUNT(*) as total
+                ')
+                ->where('created_at', '>=', now()->subMonths($meses))
+                ->groupBy('year', 'month')
+                ->orderBy('year', 'asc')
+                ->orderBy('month', 'asc')
+                ->get();
+        }
+        
         return AspiranteComplementario::selectRaw('
                 YEAR(created_at) as year,
                 MONTH(created_at) as month,

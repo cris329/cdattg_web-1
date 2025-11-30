@@ -99,7 +99,7 @@ class ProveedorRepository implements ProveedorRepositoryInterface
      */
     public function actualizar(int $id, array $datos): bool
     {
-        return Proveedor::where('id', $id)->update($datos);
+        return Proveedor::where('id', $id)->update($datos) > 0;
     }
 
     /**

@@ -24,6 +24,7 @@ class OrdenRepositoryTest extends TestCase
         $this->seed([
             \Database\Seeders\RolePermissionSeeder::class,
             \Database\Seeders\ParametroSeeder::class,
+            \Database\Seeders\TemaSeeder::class,
             \Database\Seeders\PaisSeeder::class,
             \Database\Seeders\DepartamentoSeeder::class,
             \Database\Seeders\MunicipioSeeder::class,
@@ -45,8 +46,7 @@ class OrdenRepositoryTest extends TestCase
     #[Test]
     public function puede_filtrar_ordenes_por_busqueda()
     {
-        $orden = Orden::factory()->create();
-        $orden->update(['descripcion_orden' => 'ORDEN TEST']);
+        $orden = Orden::factory()->create(['descripcion_orden' => 'ORDEN TEST']);
 
         $resultado = $this->repository->obtenerConFiltros(['search' => 'TEST']);
 
@@ -56,11 +56,10 @@ class OrdenRepositoryTest extends TestCase
     #[Test]
     public function puede_filtrar_ordenes_por_tipo()
     {
-        $tipoOrdenId = 44;
-        Orden::factory()->create(['tipo_orden_id' => $tipoOrdenId]);
-        Orden::factory()->create(['tipo_orden_id' => 45]);
+        $orden1 = Orden::factory()->create();
+        $orden2 = Orden::factory()->create();
 
-        $resultado = $this->repository->obtenerConFiltros(['tipo_orden_id' => $tipoOrdenId]);
+        $resultado = $this->repository->obtenerConFiltros(['tipo_orden_id' => $orden1->tipo_orden_id]);
 
         $this->assertGreaterThanOrEqual(1, $resultado->total());
     }
@@ -68,14 +67,12 @@ class OrdenRepositoryTest extends TestCase
     #[Test]
     public function puede_obtener_ordenes_pendientes()
     {
-        $estadoEnEsperaId = 46; // Asumiendo que existe este estado
         $orden = Orden::factory()->create();
-        DetalleOrden::factory()->create([
+        $detalleOrden = DetalleOrden::factory()->create([
             'orden_id' => $orden->id,
-            'estado_orden_id' => $estadoEnEsperaId
         ]);
 
-        $resultado = $this->repository->obtenerPendientes($estadoEnEsperaId);
+        $resultado = $this->repository->obtenerPendientes($detalleOrden->estado_orden_id);
 
         $this->assertGreaterThanOrEqual(1, $resultado->total());
     }
@@ -83,14 +80,12 @@ class OrdenRepositoryTest extends TestCase
     #[Test]
     public function puede_obtener_ordenes_completadas()
     {
-        $estadoAprobadaId = 47; // Asumiendo que existe este estado
         $orden = Orden::factory()->create();
-        DetalleOrden::factory()->create([
+        $detalleOrden = DetalleOrden::factory()->create([
             'orden_id' => $orden->id,
-            'estado_orden_id' => $estadoAprobadaId
         ]);
 
-        $resultado = $this->repository->obtenerCompletadas($estadoAprobadaId);
+        $resultado = $this->repository->obtenerCompletadas($detalleOrden->estado_orden_id);
 
         $this->assertGreaterThanOrEqual(1, $resultado->total());
     }
@@ -98,14 +93,12 @@ class OrdenRepositoryTest extends TestCase
     #[Test]
     public function puede_obtener_ordenes_rechazadas()
     {
-        $estadoRechazadaId = 48; // Asumiendo que existe este estado
         $orden = Orden::factory()->create();
-        DetalleOrden::factory()->create([
+        $detalleOrden = DetalleOrden::factory()->create([
             'orden_id' => $orden->id,
-            'estado_orden_id' => $estadoRechazadaId
         ]);
 
-        $resultado = $this->repository->obtenerRechazadas($estadoRechazadaId);
+        $resultado = $this->repository->obtenerRechazadas($detalleOrden->estado_orden_id);
 
         $this->assertGreaterThanOrEqual(1, $resultado->total());
     }
@@ -136,14 +129,12 @@ class OrdenRepositoryTest extends TestCase
     #[Test]
     public function puede_obtener_detalles_pendientes()
     {
-        $estadoEnEsperaId = 46;
         $orden = Orden::factory()->create();
-        DetalleOrden::factory()->create([
+        $detalleOrden = DetalleOrden::factory()->create([
             'orden_id' => $orden->id,
-            'estado_orden_id' => $estadoEnEsperaId
         ]);
 
-        $resultado = $this->repository->obtenerDetallesPendientes($estadoEnEsperaId);
+        $resultado = $this->repository->obtenerDetallesPendientes($detalleOrden->estado_orden_id);
 
         $this->assertGreaterThanOrEqual(1, $resultado->count());
     }
@@ -151,26 +142,30 @@ class OrdenRepositoryTest extends TestCase
     #[Test]
     public function puede_crear_orden()
     {
+        $orden = Orden::factory()->create();
         $datos = [
-            'tipo_orden_id' => 44,
+            'descripcion_orden' => 'ORDEN TEST',
+            'tipo_orden_id' => $orden->tipo_orden_id,
             'user_create_id' => 1,
+            'user_update_id' => 1,
         ];
 
         $resultado = $this->repository->crear($datos);
 
         $this->assertInstanceOf(Orden::class, $resultado);
-        $this->assertEquals(44, $resultado->tipo_orden_id);
+        $this->assertEquals($orden->tipo_orden_id, $resultado->tipo_orden_id);
     }
 
     #[Test]
     public function puede_actualizar_orden()
     {
         $orden = Orden::factory()->create();
+        $nuevaOrden = Orden::factory()->create();
 
-        $resultado = $this->repository->actualizar($orden, ['tipo_orden_id' => 45]);
+        $resultado = $this->repository->actualizar($orden, ['tipo_orden_id' => $nuevaOrden->tipo_orden_id]);
 
         $this->assertTrue($resultado);
-        $this->assertEquals(45, $orden->fresh()->tipo_orden_id);
+        $this->assertEquals($nuevaOrden->tipo_orden_id, $orden->fresh()->tipo_orden_id);
     }
 
     #[Test]

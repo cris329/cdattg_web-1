@@ -16,6 +16,32 @@ class MarcaControllerTest extends TestCase
 {
     use RefreshDatabase, WithFaker;
 
+    // Constantes para permisos
+    private const PERMISSION_VER_MARCA = 'VER MARCA';
+    private const PERMISSION_CREAR_MARCA = 'CREAR MARCA';
+    private const PERMISSION_EDITAR_MARCA = 'EDITAR MARCA';
+    private const PERMISSION_ELIMINAR_MARCA = 'ELIMINAR MARCA';
+
+    // Constantes para rutas
+    private const ROUTE_INDEX = 'inventario.marcas.index';
+    private const ROUTE_CREATE = 'inventario.marcas.create';
+    private const ROUTE_STORE = 'inventario.marcas.store';
+    private const ROUTE_SHOW = 'inventario.marcas.show';
+    private const ROUTE_EDIT = 'inventario.marcas.edit';
+    private const ROUTE_UPDATE = 'inventario.marcas.update';
+    private const ROUTE_DESTROY = 'inventario.marcas.destroy';
+
+    // Constantes para vistas
+    private const VIEW_INDEX = 'inventario.marcas.index';
+    private const VIEW_CREATE = 'inventario.marcas.create';
+    private const VIEW_SHOW = 'inventario.marcas.show';
+    private const VIEW_EDIT = 'inventario.marcas.edit';
+
+    // Constantes para datos
+    private const TEMA_MARCAS = 'MARCAS';
+    private const MARCA_ACTUALIZADA = 'MARCA ACTUALIZADA';
+    private const MARCA_TEST = 'MARCA TEST';
+
     protected User $user;
     protected Tema $temaMarcas;
 
@@ -27,13 +53,13 @@ class MarcaControllerTest extends TestCase
         $this->migrateDatabases();
         
         // Asegurar que los seeders se ejecuten después de RefreshDatabase
-        if (!\App\Models\Tema::where('name', 'MARCAS')->exists()) {
+        if (!\App\Models\Tema::where('name', self::TEMA_MARCAS)->exists()) {
             $this->artisan('db:seed', ['--force' => true]);
         }
 
         // Crear tema MARCAS
         $this->temaMarcas = Tema::firstOrCreate(
-            ['name' => 'MARCAS'],
+            ['name' => self::TEMA_MARCAS],
             [
                 'status' => true,
                 'user_create_id' => 1,
@@ -42,14 +68,14 @@ class MarcaControllerTest extends TestCase
         );
 
         // Crear permisos necesarios
-        Permission::firstOrCreate(['name' => 'VER MARCA']);
-        Permission::firstOrCreate(['name' => 'CREAR MARCA']);
-        Permission::firstOrCreate(['name' => 'EDITAR MARCA']);
-        Permission::firstOrCreate(['name' => 'ELIMINAR MARCA']);
+        Permission::firstOrCreate(['name' => self::PERMISSION_VER_MARCA]);
+        Permission::firstOrCreate(['name' => self::PERMISSION_CREAR_MARCA]);
+        Permission::firstOrCreate(['name' => self::PERMISSION_EDITAR_MARCA]);
+        Permission::firstOrCreate(['name' => self::PERMISSION_ELIMINAR_MARCA]);
 
         // Crear usuario con permisos
         $this->user = User::factory()->create();
-        $this->user->givePermissionTo('VER MARCA');
+        $this->user->givePermissionTo(self::PERMISSION_VER_MARCA);
     }
 
     #[Test]
@@ -77,10 +103,10 @@ class MarcaControllerTest extends TestCase
             'user_edit_id' => $this->user->id,
         ]);
 
-        $response = $this->get(route('inventario.marcas.index'));
+        $response = $this->get(route(self::ROUTE_INDEX));
 
         $response->assertStatus(200);
-        $response->assertViewIs('inventario.marcas.index');
+        $response->assertViewIs(self::VIEW_INDEX);
         $response->assertViewHas('marcas');
     }
 
@@ -99,7 +125,7 @@ class MarcaControllerTest extends TestCase
             'user_edit_id' => $this->user->id,
         ]);
 
-        $response = $this->get(route('inventario.marcas.index', ['search' => 'SAMSUNG']));
+        $response = $this->get(route(self::ROUTE_INDEX, ['search' => 'SAMSUNG']));
 
         $response->assertStatus(200);
         $response->assertSee('SAMSUNG', false);
@@ -108,26 +134,26 @@ class MarcaControllerTest extends TestCase
     #[Test]
     public function puede_ver_formulario_de_creacion()
     {
-        $this->user->givePermissionTo('CREAR MARCA');
+        $this->user->givePermissionTo(self::PERMISSION_CREAR_MARCA);
         $this->actingAs($this->user);
 
-        $response = $this->get(route('inventario.marcas.create'));
+        $response = $this->get(route(self::ROUTE_CREATE));
 
         $response->assertStatus(200);
-        $response->assertViewIs('inventario.marcas.create');
+        $response->assertViewIs(self::VIEW_CREATE);
     }
 
     #[Test]
     public function puede_crear_marca()
     {
-        $this->user->givePermissionTo('CREAR MARCA');
+        $this->user->givePermissionTo(self::PERMISSION_CREAR_MARCA);
         $this->actingAs($this->user);
 
-        $response = $this->post(route('inventario.marcas.store'), [
+        $response = $this->post(route(self::ROUTE_STORE), [
             'name' => 'NUEVA MARCA',
         ]);
 
-        $response->assertRedirect(route('inventario.marcas.index'));
+        $response->assertRedirect(route(self::ROUTE_INDEX));
         $response->assertSessionHas('success');
 
         $this->assertDatabaseHas('parametros', [
@@ -140,7 +166,7 @@ class MarcaControllerTest extends TestCase
     {
         $this->actingAs($this->user);
 
-        $response = $this->post(route('inventario.marcas.store'), [
+        $response = $this->post(route(self::ROUTE_STORE), [
             'name' => 'MARCA SIN PERMISO',
         ]);
 
@@ -152,7 +178,7 @@ class MarcaControllerTest extends TestCase
     {
         $this->actingAs($this->user);
 
-        $marca = Parametro::factory()->create(['name' => 'MARCA TEST']);
+        $marca = Parametro::factory()->create(['name' => self::MARCA_TEST]);
         
         ParametroTema::create([
             'parametro_id' => $marca->id,
@@ -162,17 +188,17 @@ class MarcaControllerTest extends TestCase
             'user_edit_id' => $this->user->id,
         ]);
 
-        $response = $this->get(route('inventario.marcas.show', $marca->id));
+        $response = $this->get(route(self::ROUTE_SHOW, $marca->id));
 
         $response->assertStatus(200);
-        $response->assertViewIs('inventario.marcas.show');
+        $response->assertViewIs(self::VIEW_SHOW);
         $response->assertViewHas('marca');
     }
 
     #[Test]
     public function puede_ver_formulario_de_edicion()
     {
-        $this->user->givePermissionTo('EDITAR MARCA');
+        $this->user->givePermissionTo(self::PERMISSION_EDITAR_MARCA);
         $this->actingAs($this->user);
 
         $marca = Parametro::factory()->create(['name' => 'MARCA EDITAR']);
@@ -185,17 +211,17 @@ class MarcaControllerTest extends TestCase
             'user_edit_id' => $this->user->id,
         ]);
 
-        $response = $this->get(route('inventario.marcas.edit', $marca->id));
+        $response = $this->get(route(self::ROUTE_EDIT, $marca->id));
 
         $response->assertStatus(200);
-        $response->assertViewIs('inventario.marcas.edit');
+        $response->assertViewIs(self::VIEW_EDIT);
         $response->assertViewHas('marca');
     }
 
     #[Test]
     public function puede_actualizar_marca()
     {
-        $this->user->givePermissionTo('EDITAR MARCA');
+        $this->user->givePermissionTo(self::PERMISSION_EDITAR_MARCA);
         $this->actingAs($this->user);
 
         $marca = Parametro::factory()->create(['name' => 'MARCA ORIGINAL']);
@@ -208,16 +234,16 @@ class MarcaControllerTest extends TestCase
             'user_edit_id' => $this->user->id,
         ]);
 
-        $response = $this->put(route('inventario.marcas.update', $marca->id), [
-            'name' => 'MARCA ACTUALIZADA',
+        $response = $this->put(route(self::ROUTE_UPDATE, $marca->id), [
+            'name' => self::MARCA_ACTUALIZADA,
         ]);
 
-        $response->assertRedirect(route('inventario.marcas.index'));
+        $response->assertRedirect(route(self::ROUTE_INDEX));
         $response->assertSessionHas('success');
 
         $this->assertDatabaseHas('parametros', [
             'id' => $marca->id,
-            'name' => 'MARCA ACTUALIZADA',
+            'name' => self::MARCA_ACTUALIZADA,
         ]);
     }
 
@@ -226,7 +252,7 @@ class MarcaControllerTest extends TestCase
     {
         $this->actingAs($this->user);
 
-        $marca = Parametro::factory()->create(['name' => 'MARCA TEST']);
+        $marca = Parametro::factory()->create(['name' => self::MARCA_TEST]);
         
         ParametroTema::create([
             'parametro_id' => $marca->id,
@@ -236,8 +262,8 @@ class MarcaControllerTest extends TestCase
             'user_edit_id' => $this->user->id,
         ]);
 
-        $response = $this->put(route('inventario.marcas.update', $marca->id), [
-            'name' => 'MARCA ACTUALIZADA',
+        $response = $this->put(route(self::ROUTE_UPDATE, $marca->id), [
+            'name' => self::MARCA_ACTUALIZADA,
         ]);
 
         $response->assertStatus(403);
@@ -246,7 +272,7 @@ class MarcaControllerTest extends TestCase
     #[Test]
     public function puede_eliminar_marca()
     {
-        $this->user->givePermissionTo('ELIMINAR MARCA');
+        $this->user->givePermissionTo(self::PERMISSION_ELIMINAR_MARCA);
         $this->actingAs($this->user);
 
         $marca = Parametro::factory()->create(['name' => 'MARCA ELIMINAR']);
@@ -259,9 +285,9 @@ class MarcaControllerTest extends TestCase
             'user_edit_id' => $this->user->id,
         ]);
 
-        $response = $this->delete(route('inventario.marcas.destroy', $marca->id));
+        $response = $this->delete(route(self::ROUTE_DESTROY, $marca->id));
 
-        $response->assertRedirect(route('inventario.marcas.index'));
+        $response->assertRedirect(route(self::ROUTE_INDEX));
         $response->assertSessionHas('success');
     }
 
@@ -270,7 +296,7 @@ class MarcaControllerTest extends TestCase
     {
         $this->actingAs($this->user);
 
-        $marca = Parametro::factory()->create(['name' => 'MARCA TEST']);
+        $marca = Parametro::factory()->create(['name' => self::MARCA_TEST]);
         
         ParametroTema::create([
             'parametro_id' => $marca->id,
@@ -280,7 +306,7 @@ class MarcaControllerTest extends TestCase
             'user_edit_id' => $this->user->id,
         ]);
 
-        $response = $this->delete(route('inventario.marcas.destroy', $marca->id));
+        $response = $this->delete(route(self::ROUTE_DESTROY, $marca->id));
 
         $response->assertStatus(403);
     }
@@ -293,7 +319,7 @@ class MarcaControllerTest extends TestCase
         // Eliminar el tema MARCAS
         $this->temaMarcas->delete();
 
-        $response = $this->get(route('inventario.marcas.index'));
+        $response = $this->get(route(self::ROUTE_INDEX));
 
         $response->assertRedirect();
         $response->assertSessionHas('error');

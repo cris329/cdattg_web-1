@@ -69,19 +69,21 @@ class OrdenServiceTest extends TestCase
     #[Test]
     public function puede_verificar_si_orden_tiene_devoluciones(): void
     {
-        $ordenMock = Mockery::mock(Orden::class);
-        $detallesMock = Mockery::mock();
-        $detallesMock->shouldReceive('whereHas')
+        $ordenMock = Mockery::mock(Orden::class)->makePartial();
+        
+        // Mock de la relación HasMany
+        $detallesRelationMock = Mockery::mock(\Illuminate\Database\Eloquent\Relations\HasMany::class);
+        $detallesRelationMock->shouldReceive('whereHas')
             ->once()
             ->with('devoluciones')
             ->andReturnSelf();
-        $detallesMock->shouldReceive('exists')
+        $detallesRelationMock->shouldReceive('exists')
             ->once()
             ->andReturn(false);
 
         $ordenMock->shouldReceive('detalles')
             ->once()
-            ->andReturn($detallesMock);
+            ->andReturn($detallesRelationMock);
 
         $resultado = $this->service->tieneDevoluciones($ordenMock);
 

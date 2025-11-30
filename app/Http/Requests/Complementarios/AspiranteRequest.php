@@ -20,7 +20,7 @@ class AspiranteRequest extends FormRequest
     public function rules(): array
     {
         return [
-            'numero_documento' => 'required|string|max:191|exists:personas,numero_documento',
+            'numero_documento' => 'required|string|max:191',
             'observaciones' => 'nullable|string|max:500',
         ];
     }

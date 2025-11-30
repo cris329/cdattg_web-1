@@ -67,6 +67,11 @@ class SofiaValidationProcessor
                     $progress
                 );
 
+                if ($progress) {
+                    $isSuccessful = isset($result['success']) && $result['success'] === true;
+                    $progress->incrementProcessed($isSuccessful);
+                }
+
                 if ($result['success']) {
                     $estado = $result['estado'];
                     if (in_array($estado, [0, 1, 2], true)) {

@@ -20,6 +20,7 @@ class SofiaValidationProgressModelTest extends TestCase
         $this->seed([
             \Database\Seeders\RolePermissionSeeder::class,
             \Database\Seeders\ParametroSeeder::class,
+            \Database\Seeders\TemaSeeder::class,
         ]);
     }
 

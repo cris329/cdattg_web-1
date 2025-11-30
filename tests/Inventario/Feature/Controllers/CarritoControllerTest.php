@@ -16,6 +16,25 @@ class CarritoControllerTest extends TestCase
 
     protected User $user;
 
+    // Constantes para permisos
+    private const PERMISSION_VER_CARRITO = 'VER CARRITO';
+    private const PERMISSION_AGREGAR_CARRITO = 'AGREGAR CARRITO';
+    private const PERMISSION_ACTUALIZAR_CARRITO = 'ACTUALIZAR CARRITO';
+    private const PERMISSION_ELIMINAR_CARRITO = 'ELIMINAR CARRITO';
+    private const PERMISSION_VACIAR_CARRITO = 'VACIAR CARRITO';
+
+    // Constantes para rutas
+    private const ROUTE_ECOMMERCE = 'inventario.carrito.ecommerce';
+    private const ROUTE_AGREGAR = 'inventario.carrito.agregar';
+    private const ROUTE_ACTUALIZAR = 'inventario.carrito.actualizar';
+    private const ROUTE_ELIMINAR = 'inventario.carrito.eliminar';
+    private const ROUTE_VACIAR = 'inventario.carrito.vaciar';
+    private const ROUTE_CONTENIDO = 'inventario.carrito.contenido';
+
+    // Constantes para vistas
+    private const VIEW_CARRITO = 'inventario.carrito.carrito';
+
+
     protected function setUp(): void
     {
         parent::setUp();
@@ -29,15 +48,15 @@ class CarritoControllerTest extends TestCase
         }
 
         // Crear permisos necesarios
-        Permission::firstOrCreate(['name' => 'VER CARRITO']);
-        Permission::firstOrCreate(['name' => 'AGREGAR CARRITO']);
-        Permission::firstOrCreate(['name' => 'ACTUALIZAR CARRITO']);
-        Permission::firstOrCreate(['name' => 'ELIMINAR CARRITO']);
-        Permission::firstOrCreate(['name' => 'VACIAR CARRITO']);
+        Permission::firstOrCreate(['name' => self::PERMISSION_VER_CARRITO]);
+        Permission::firstOrCreate(['name' => self::PERMISSION_AGREGAR_CARRITO]);
+        Permission::firstOrCreate(['name' => self::PERMISSION_ACTUALIZAR_CARRITO]);
+        Permission::firstOrCreate(['name' => self::PERMISSION_ELIMINAR_CARRITO]);
+        Permission::firstOrCreate(['name' => self::PERMISSION_VACIAR_CARRITO]);
 
         // Crear usuario con permisos
         $this->user = User::factory()->create();
-        $this->user->givePermissionTo('VER CARRITO');
+        $this->user->givePermissionTo(self::PERMISSION_VER_CARRITO);
     }
 
     #[Test]
@@ -45,19 +64,20 @@ class CarritoControllerTest extends TestCase
     {
         $this->actingAs($this->user);
 
-        $response = $this->get(route('inventario.carrito.ecommerce'));
+        $response = $this->get(route(self::ROUTE_ECOMMERCE));
 
         $response->assertStatus(200);
-        $response->assertViewIs('inventario.carrito.carrito');
+        $response->assertViewIs(self::VIEW_CARRITO);
     }
 
     #[Test]
     public function no_puede_ver_carrito_sin_permiso()
     {
+        /** @var User $userSinPermiso */
         $userSinPermiso = User::factory()->create();
         $this->actingAs($userSinPermiso);
 
-        $response = $this->get(route('inventario.carrito.ecommerce'));
+        $response = $this->get(route(self::ROUTE_ECOMMERCE));
 
         $response->assertStatus(403);
     }
@@ -65,13 +85,13 @@ class CarritoControllerTest extends TestCase
     #[Test]
     public function puede_agregar_productos_al_carrito()
     {
-        $this->user->givePermissionTo('AGREGAR CARRITO');
+        $this->user->givePermissionTo(self::PERMISSION_AGREGAR_CARRITO);
         $this->actingAs($this->user);
 
         $producto1 = Producto::factory()->create(['cantidad' => 10]);
         $producto2 = Producto::factory()->create(['cantidad' => 5]);
 
-        $response = $this->postJson(route('inventario.carrito.agregar'), [
+        $response = $this->postJson(route(self::ROUTE_AGREGAR), [
             'items' => [
                 [
                     'producto_id' => $producto1->id,
@@ -94,12 +114,12 @@ class CarritoControllerTest extends TestCase
     #[Test]
     public function no_puede_agregar_productos_sin_stock_suficiente()
     {
-        $this->user->givePermissionTo('AGREGAR CARRITO');
+        $this->user->givePermissionTo(self::PERMISSION_AGREGAR_CARRITO);
         $this->actingAs($this->user);
 
         $producto = Producto::factory()->create(['cantidad' => 2]);
 
-        $response = $this->postJson(route('inventario.carrito.agregar'), [
+        $response = $this->postJson(route(self::ROUTE_AGREGAR), [
             'items' => [
                 [
                     'producto_id' => $producto->id,
@@ -123,7 +143,7 @@ class CarritoControllerTest extends TestCase
 
         $producto = Producto::factory()->create(['cantidad' => 10]);
 
-        $response = $this->postJson(route('inventario.carrito.agregar'), [
+        $response = $this->postJson(route(self::ROUTE_AGREGAR), [
             'items' => [
                 [
                     'producto_id' => $producto->id,
@@ -138,12 +158,12 @@ class CarritoControllerTest extends TestCase
     #[Test]
     public function puede_actualizar_cantidad_en_carrito()
     {
-        $this->user->givePermissionTo('ACTUALIZAR CARRITO');
+        $this->user->givePermissionTo(self::PERMISSION_ACTUALIZAR_CARRITO);
         $this->actingAs($this->user);
 
         $producto = Producto::factory()->create(['cantidad' => 10]);
 
-        $response = $this->putJson(route('inventario.carrito.actualizar', $producto->id), [
+        $response = $this->putJson(route(self::ROUTE_ACTUALIZAR, $producto->id), [
             'cantidad' => 3,
         ]);
 
@@ -160,7 +180,7 @@ class CarritoControllerTest extends TestCase
 
         $producto = Producto::factory()->create(['cantidad' => 10]);
 
-        $response = $this->putJson(route('inventario.carrito.actualizar', $producto->id), [
+        $response = $this->putJson(route(self::ROUTE_ACTUALIZAR, $producto->id), [
             'cantidad' => 3,
         ]);
 
@@ -170,12 +190,12 @@ class CarritoControllerTest extends TestCase
     #[Test]
     public function puede_eliminar_producto_del_carrito()
     {
-        $this->user->givePermissionTo('ELIMINAR CARRITO');
+        $this->user->givePermissionTo(self::PERMISSION_ELIMINAR_CARRITO);
         $this->actingAs($this->user);
 
         $producto = Producto::factory()->create();
 
-        $response = $this->deleteJson(route('inventario.carrito.eliminar', $producto->id));
+        $response = $this->deleteJson(route(self::ROUTE_ELIMINAR, $producto->id));
 
         $response->assertStatus(200);
         $response->assertJson([
@@ -187,10 +207,10 @@ class CarritoControllerTest extends TestCase
     #[Test]
     public function retorna_error_al_eliminar_producto_inexistente()
     {
-        $this->user->givePermissionTo('ELIMINAR CARRITO');
+        $this->user->givePermissionTo(self::PERMISSION_ELIMINAR_CARRITO);
         $this->actingAs($this->user);
 
-        $response = $this->deleteJson(route('inventario.carrito.eliminar', 99999));
+        $response = $this->deleteJson(route(self::ROUTE_ELIMINAR, 99999));
 
         $response->assertStatus(404);
         $response->assertJson([
@@ -206,7 +226,7 @@ class CarritoControllerTest extends TestCase
 
         $producto = Producto::factory()->create();
 
-        $response = $this->deleteJson(route('inventario.carrito.eliminar', $producto->id));
+        $response = $this->deleteJson(route(self::ROUTE_ELIMINAR, $producto->id));
 
         $response->assertStatus(403);
     }
@@ -214,10 +234,10 @@ class CarritoControllerTest extends TestCase
     #[Test]
     public function puede_vaciar_carrito()
     {
-        $this->user->givePermissionTo('VACIAR CARRITO');
+        $this->user->givePermissionTo(self::PERMISSION_VACIAR_CARRITO);
         $this->actingAs($this->user);
 
-        $response = $this->postJson(route('inventario.carrito.vaciar'));
+        $response = $this->postJson(route(self::ROUTE_VACIAR));
 
         $response->assertStatus(200);
         $response->assertJson([
@@ -231,7 +251,7 @@ class CarritoControllerTest extends TestCase
     {
         $this->actingAs($this->user);
 
-        $response = $this->postJson(route('inventario.carrito.vaciar'));
+        $response = $this->postJson(route(self::ROUTE_VACIAR));
 
         $response->assertStatus(403);
     }
@@ -244,7 +264,7 @@ class CarritoControllerTest extends TestCase
         $producto1 = Producto::factory()->create();
         $producto2 = Producto::factory()->create();
 
-        $response = $this->getJson(route('inventario.carrito.contenido'), [
+        $response = $this->getJson(route(self::ROUTE_CONTENIDO), [
             'items' => [
                 ['producto_id' => $producto1->id, 'cantidad' => 2],
                 ['producto_id' => $producto2->id, 'cantidad' => 1],
@@ -268,7 +288,7 @@ class CarritoControllerTest extends TestCase
     {
         $this->actingAs($this->user);
 
-        $response = $this->getJson(route('inventario.carrito.contenido'), [
+        $response = $this->getJson(route(self::ROUTE_CONTENIDO), [
             'items' => [],
         ]);
 

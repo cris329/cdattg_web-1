@@ -61,6 +61,9 @@ class InscripcionComplementarioService
                     ->with('error', 'Ya existe una persona registrada con este número de documento o correo electrónico.');
             }
 
+            // Convertir parametro_id a parametros_temas.id
+            $data = $this->convertirParametrosAParametrosTemas($data);
+
             // Crear nueva persona
             $this->personaRepository->create($data);
 
@@ -194,7 +197,40 @@ class InscripcionComplementarioService
      */
     private function procesarPersona(array $data): Persona
     {
+        // Convertir parametro_id a parametros_temas.id
+        $data = $this->convertirParametrosAParametrosTemas($data);
+        
         return $this->personaRepository->createOrUpdate($data);
+    }
+
+    /**
+     * Convertir parametro_id a parametros_temas.id para tipo_documento y genero
+     */
+    private function convertirParametrosAParametrosTemas(array $data): array
+    {
+        // Convertir tipo_documento (parametro_id) a parametros_temas.id
+        if (isset($data['tipo_documento'])) {
+            $parametroTema = \App\Models\ParametroTema::where('tema_id', 2) // TIPO DE DOCUMENTO
+                ->where('parametro_id', $data['tipo_documento'])
+                ->first();
+            
+            if ($parametroTema) {
+                $data['tipo_documento'] = $parametroTema->id;
+            }
+        }
+
+        // Convertir genero (parametro_id) a parametros_temas.id
+        if (isset($data['genero'])) {
+            $parametroTema = \App\Models\ParametroTema::where('tema_id', 3) // GENERO
+                ->where('parametro_id', $data['genero'])
+                ->first();
+            
+            if ($parametroTema) {
+                $data['genero'] = $parametroTema->id;
+            }
+        }
+
+        return $data;
     }
 
     /**

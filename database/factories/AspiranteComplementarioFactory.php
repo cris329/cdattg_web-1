@@ -71,7 +71,7 @@ class AspiranteComplementarioFactory extends Factory
     public function rechazado(): static
     {
         return $this->state(fn (array $attributes) => [
-            'estado' => 4,
+            'estado' => 2,
         ]);
     }
 

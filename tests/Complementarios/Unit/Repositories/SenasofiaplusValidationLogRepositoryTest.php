@@ -2,7 +2,9 @@
 
 namespace Tests\Complementarios\Unit\Repositories;
 
+use App\Models\AspiranteComplementario;
 use App\Models\SenasofiaplusValidationLog;
+use App\Models\User;
 use App\Repositories\SenasofiaplusValidationLogRepository;
 use Carbon\Carbon;
 use Illuminate\Foundation\Testing\RefreshDatabase;
@@ -22,6 +24,10 @@ class SenasofiaplusValidationLogRepositoryTest extends TestCase
         $this->seed([
             \Database\Seeders\RolePermissionSeeder::class,
             \Database\Seeders\ParametroSeeder::class,
+            \Database\Seeders\TemaSeeder::class,
+            \Database\Seeders\PaisSeeder::class,
+            \Database\Seeders\DepartamentoSeeder::class,
+            \Database\Seeders\MunicipioSeeder::class,
         ]);
 
         $this->repository = new SenasofiaplusValidationLogRepository;
@@ -30,12 +36,15 @@ class SenasofiaplusValidationLogRepositoryTest extends TestCase
     #[Test]
     public function registra_log_validacion(): void
     {
+        $aspirante = AspiranteComplementario::factory()->create();
+        $user = User::factory()->create();
+
         $datos = [
-            'aspirante_id' => 1,
+            'aspirante_id' => $aspirante->id,
             'accion' => 'validar',
-            'resultado' => 'exito',
+            'resultado' => 'exitoso',
             'mensaje' => 'Validación exitosa',
-            'user_id' => 1,
+            'user_id' => $user->id,
             'fecha_accion' => now(),
         ];
 

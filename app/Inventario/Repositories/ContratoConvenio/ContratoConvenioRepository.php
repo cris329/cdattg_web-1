@@ -89,7 +89,7 @@ class ContratoConvenioRepository implements ContratoConvenioRepositoryInterface
      */
     public function actualizar(int $id, array $datos): bool
     {
-        return ContratoConvenio::where('id', $id)->update($datos);
+        return ContratoConvenio::where('id', $id)->update($datos) > 0;
     }
 
     /**

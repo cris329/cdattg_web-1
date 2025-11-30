@@ -6,6 +6,9 @@ use Tests\TestCase;
 use App\Repositories\ComplementarioOfertadoRepository;
 use App\Models\ComplementarioOfertado;
 use App\Models\AspiranteComplementario;
+use App\Models\ParametroTema;
+use App\Models\JornadaFormacion;
+use App\Models\Ambiente;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 
 class ComplementarioOfertadoRepositoryTest extends TestCase
@@ -17,6 +20,25 @@ class ComplementarioOfertadoRepositoryTest extends TestCase
     protected function setUp(): void
     {
         parent::setUp();
+
+        $this->seed([
+            \Database\Seeders\RolePermissionSeeder::class,
+            \Database\Seeders\ParametroSeeder::class,
+            \Database\Seeders\TemaSeeder::class,
+            \Database\Seeders\PaisSeeder::class,
+            \Database\Seeders\DepartamentoSeeder::class,
+            \Database\Seeders\MunicipioSeeder::class,
+            \Database\Seeders\PersonaSeeder::class,
+            \Database\Seeders\UsersSeeder::class,
+            \Database\Seeders\RegionalSeeder::class,
+            \Database\Seeders\CentroFormacionSeeder::class,
+            \Database\Seeders\SedeSeeder::class,
+            \Database\Seeders\BloqueSeeder::class,
+            \Database\Seeders\PisoSeeder::class,
+            \Database\Seeders\AmbienteSeeder::class,
+            \Database\Seeders\JornadaFormacionSeeder::class,
+        ]);
+
         $this->repository = new ComplementarioOfertadoRepository();
     }
 
@@ -100,6 +122,14 @@ class ComplementarioOfertadoRepositoryTest extends TestCase
     /** @test */
     public function puede_crear_programa()
     {
+        // Obtener IDs válidos de las tablas relacionadas
+        $modalidad = ParametroTema::where('tema_id', 5)
+            ->whereIn('parametro_id', [18, 19, 20])
+            ->first();
+        
+        $jornada = JornadaFormacion::first();
+        $ambiente = Ambiente::first();
+
         $data = [
             'codigo' => 'COMP0001',
             'nombre' => 'Test Programa',
@@ -108,9 +138,9 @@ class ComplementarioOfertadoRepositoryTest extends TestCase
             'duracion' => 60,
             'cupos' => 30,
             'estado' => 1,
-            'modalidad_id' => 18,
-            'jornada_id' => 1,
-            'ambiente_id' => 1,
+            'modalidad_id' => $modalidad->id ?? 1,
+            'jornada_id' => $jornada->id ?? 1,
+            'ambiente_id' => $ambiente->id ?? 1,
         ];
 
         $programa = $this->repository->create($data);

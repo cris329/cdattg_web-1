@@ -20,6 +20,23 @@ class OrdenRequestTest extends TestCase
     {
         parent::setUp();
         $this->migrateDatabases();
+
+        // Producto necesita: Ambiente → Piso → Bloque → Sede → Regional
+        $this->seed([
+            \Database\Seeders\RolePermissionSeeder::class,
+            \Database\Seeders\ParametroSeeder::class,
+            \Database\Seeders\TemaSeeder::class,
+            \Database\Seeders\PaisSeeder::class,
+            \Database\Seeders\DepartamentoSeeder::class,
+            \Database\Seeders\MunicipioSeeder::class,
+            \Database\Seeders\PersonaSeeder::class,
+            \Database\Seeders\UsersSeeder::class,
+            \Database\Seeders\RegionalSeeder::class,
+            \Database\Seeders\SedeSeeder::class,
+            \Database\Seeders\BloqueSeeder::class,
+            \Database\Seeders\PisoSeeder::class,
+            \Database\Seeders\AmbienteSeeder::class,
+        ]);
     }
 
     #[Test]
@@ -27,7 +44,11 @@ class OrdenRequestTest extends TestCase
     {
         $request = new OrdenRequest();
         $request->setRouteResolver(function () {
-            return (object) ['getName' => 'inventario.prestamos-salidas.store'];
+            return new class {
+                public function named(...$patterns) {
+                    return in_array('inventario.prestamos-salidas.store', $patterns);
+                }
+            };
         });
 
         $rules = $request->rules();
@@ -47,7 +68,11 @@ class OrdenRequestTest extends TestCase
     {
         $request = new OrdenRequest();
         $request->setRouteResolver(function () {
-            return (object) ['getName' => 'inventario.prestamos-salidas.store'];
+            return new class {
+                public function named(...$patterns) {
+                    return in_array('inventario.prestamos-salidas.store', $patterns);
+                }
+            };
         });
 
         $rules = $request->rules();
@@ -65,7 +90,11 @@ class OrdenRequestTest extends TestCase
     {
         $request = new OrdenRequest();
         $request->setRouteResolver(function () {
-            return (object) ['getName' => 'inventario.prestamos-salidas.store'];
+            return new class {
+                public function named(...$patterns) {
+                    return in_array('inventario.prestamos-salidas.store', $patterns);
+                }
+            };
         });
 
         $rules = $request->rules();
@@ -84,7 +113,11 @@ class OrdenRequestTest extends TestCase
     {
         $request = new OrdenRequest();
         $request->setRouteResolver(function () {
-            return (object) ['getName' => 'inventario.prestamos-salidas.store'];
+            return new class {
+                public function named(...$patterns) {
+                    return in_array('inventario.prestamos-salidas.store', $patterns);
+                }
+            };
         });
 
         $rules = $request->rules();
@@ -103,7 +136,11 @@ class OrdenRequestTest extends TestCase
     {
         $request = new OrdenRequest();
         $request->setRouteResolver(function () {
-            return (object) ['getName' => 'inventario.prestamos-salidas.store'];
+            return new class {
+                public function named(...$patterns) {
+                    return in_array('inventario.prestamos-salidas.store', $patterns);
+                }
+            };
         });
 
         $rules = $request->rules();
@@ -183,7 +220,6 @@ class OrdenRequestTest extends TestCase
     public function valida_cantidad_minima_en_productos(): void
     {
         $producto = Producto::factory()->create();
-        $estadoOrden = ParametroTema::factory()->create();
 
         $request = new OrdenRequest();
         $rules = $request->rules();
@@ -193,7 +229,6 @@ class OrdenRequestTest extends TestCase
                 [
                     'producto_id' => $producto->id,
                     'cantidad' => 0,
-                    'estado_orden_id' => $estadoOrden->id,
                 ],
             ],
         ], $rules);
@@ -207,7 +242,11 @@ class OrdenRequestTest extends TestCase
     {
         $request = new OrdenRequest();
         $request->setRouteResolver(function () {
-            return (object) ['getName' => 'inventario.prestamos-salidas.store'];
+            return new class {
+                public function named(...$patterns) {
+                    return in_array('inventario.prestamos-salidas.store', $patterns);
+                }
+            };
         });
 
         $rules = $request->rules();

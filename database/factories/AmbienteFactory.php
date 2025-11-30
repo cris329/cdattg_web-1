@@ -33,7 +33,7 @@ class AmbienteFactory extends Factory
             }
         }
 
-        // Obtener un piso existente o usar null si no existe
+        // Obtener un piso existente o crear uno nuevo (piso_id es NOT NULL)
         $pisoId = null;
         if (Schema::hasTable('pisos')) {
             try {
@@ -42,8 +42,21 @@ class AmbienteFactory extends Factory
                     $pisoId = $piso->id;
                 }
             } catch (\Exception $e) {
-                // Si no hay pisos, usar null
-                $pisoId = null;
+                // Ignorar error de consulta
+            }
+        }
+
+        // Si no hay piso, crear uno nuevo
+        if (!$pisoId) {
+            try {
+                $piso = \App\Models\Piso::factory()->create();
+                $pisoId = $piso->id;
+            } catch (\Exception $e) {
+                throw new \RuntimeException(
+                    'No se pudo crear un Piso para el Ambiente. Error: ' . $e->getMessage(),
+                    0,
+                    $e
+                );
             }
         }
 

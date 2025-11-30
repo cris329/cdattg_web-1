@@ -25,25 +25,29 @@ class DevolucionRepositoryTest extends TestCase
         $this->seed([
             \Database\Seeders\RolePermissionSeeder::class,
             \Database\Seeders\ParametroSeeder::class,
+            \Database\Seeders\TemaSeeder::class,
             \Database\Seeders\PaisSeeder::class,
             \Database\Seeders\DepartamentoSeeder::class,
             \Database\Seeders\MunicipioSeeder::class,
             \Database\Seeders\PersonaSeeder::class,
             \Database\Seeders\UsersSeeder::class,
+            \Database\Seeders\RegionalSeeder::class,
+            \Database\Seeders\SedeSeeder::class,
+            \Database\Seeders\BloqueSeeder::class,
+            \Database\Seeders\PisoSeeder::class,
+            \Database\Seeders\AmbienteSeeder::class,
         ]);
     }
 
     #[Test]
     public function puede_obtener_prestamos_pendientes()
     {
-        $estadoAprobadaId = 47;
         $orden = Orden::factory()->create(['fecha_devolucion' => now()->addDays(30)]);
         $detalleOrden = DetalleOrden::factory()->create([
             'orden_id' => $orden->id,
-            'estado_orden_id' => $estadoAprobadaId
         ]);
 
-        $resultado = $this->repository->obtenerPrestamosPendientes($estadoAprobadaId);
+        $resultado = $this->repository->obtenerPrestamosPendientes($detalleOrden->estado_orden_id);
 
         $this->assertGreaterThanOrEqual(1, $resultado->total());
     }
@@ -73,17 +77,15 @@ class DevolucionRepositoryTest extends TestCase
     public function puede_obtener_prestamos_activos_usuario()
     {
         $userId = 1;
-        $estadoAprobadaId = 47;
         $orden = Orden::factory()->create([
             'user_create_id' => $userId,
             'fecha_devolucion' => now()->addDays(30)
         ]);
         $detalleOrden = DetalleOrden::factory()->create([
             'orden_id' => $orden->id,
-            'estado_orden_id' => $estadoAprobadaId
         ]);
 
-        $resultado = $this->repository->obtenerPrestamosActivosUsuario($userId, $estadoAprobadaId);
+        $resultado = $this->repository->obtenerPrestamosActivosUsuario($userId, $detalleOrden->estado_orden_id);
 
         $this->assertGreaterThanOrEqual(1, $resultado->total());
     }

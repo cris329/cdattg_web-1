@@ -36,7 +36,7 @@ class AspiranteComplementarioController extends Controller
     {
         $data = $this->aspiranteManagementService->obtenerAspirantesPorPrograma($curso);
 
-        return view('complementarios.ver_aspirantes', $data);
+        return view('complementarios.aspirantes.programa', $data);
     }
 
     /**

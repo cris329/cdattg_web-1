@@ -28,6 +28,30 @@ class ValidarSofiaJob implements ShouldQueue
     }
 
     /**
+     * Get complementario ID
+     */
+    public function getComplementarioId()
+    {
+        return $this->complementarioId;
+    }
+
+    /**
+     * Get user ID
+     */
+    public function getUserId()
+    {
+        return $this->userId;
+    }
+
+    /**
+     * Get progress ID
+     */
+    public function getProgressId()
+    {
+        return $this->progressId;
+    }
+
+    /**
      * Execute the job.
      */
     public function handle(

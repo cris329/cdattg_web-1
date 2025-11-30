@@ -42,7 +42,7 @@ class StockValidatorServiceTest extends TestCase
     public function detecta_producto_bajo_umbral_minimo(): void
     {
         $umbral = config('inventario.stock.umbral_minimo', 10);
-        $productoMock = Mockery::mock(Producto::class);
+        $productoMock = Mockery::mock(Producto::class)->makePartial();
         $productoMock->cantidad = $umbral - 1;
 
         $resultado = $this->service->estaBajoUmbralMinimo($productoMock);
@@ -54,7 +54,7 @@ class StockValidatorServiceTest extends TestCase
     public function detecta_producto_no_bajo_umbral_minimo(): void
     {
         $umbral = config('inventario.stock.umbral_minimo', 10);
-        $productoMock = Mockery::mock(Producto::class);
+        $productoMock = Mockery::mock(Producto::class)->makePartial();
         $productoMock->cantidad = $umbral + 5;
 
         $resultado = $this->service->estaBajoUmbralMinimo($productoMock);
@@ -66,7 +66,7 @@ class StockValidatorServiceTest extends TestCase
     public function detecta_producto_en_nivel_critico(): void
     {
         $umbral = config('inventario.stock.umbral_critico', 5);
-        $productoMock = Mockery::mock(Producto::class);
+        $productoMock = Mockery::mock(Producto::class)->makePartial();
         $productoMock->cantidad = $umbral - 1;
 
         $resultado = $this->service->estaNivelCritico($productoMock);
@@ -77,7 +77,7 @@ class StockValidatorServiceTest extends TestCase
     #[Test]
     public function valida_hay_stock_suficiente(): void
     {
-        $productoMock = Mockery::mock(Producto::class);
+        $productoMock = Mockery::mock(Producto::class)->makePartial();
         $productoMock->cantidad = 10;
 
         $resultado = $this->service->hayStockSuficiente($productoMock, 5);
@@ -88,7 +88,7 @@ class StockValidatorServiceTest extends TestCase
     #[Test]
     public function detecta_stock_insuficiente(): void
     {
-        $productoMock = Mockery::mock(Producto::class);
+        $productoMock = Mockery::mock(Producto::class)->makePartial();
         $productoMock->cantidad = 5;
 
         $resultado = $this->service->hayStockSuficiente($productoMock, 10);
@@ -101,7 +101,7 @@ class StockValidatorServiceTest extends TestCase
     {
         $this->expectException(OrdenException::class);
 
-        $productoMock = Mockery::mock(Producto::class);
+        $productoMock = Mockery::mock(Producto::class)->makePartial();
         $productoMock->cantidad = 5;
         $productoMock->producto = 'Producto Test';
 
@@ -111,7 +111,7 @@ class StockValidatorServiceTest extends TestCase
     #[Test]
     public function no_lanza_excepcion_si_stock_suficiente(): void
     {
-        $productoMock = Mockery::mock(Producto::class);
+        $productoMock = Mockery::mock(Producto::class)->makePartial();
         $productoMock->cantidad = 10;
 
         $this->service->validarStockSuficiente($productoMock, 5);
@@ -122,7 +122,7 @@ class StockValidatorServiceTest extends TestCase
     #[Test]
     public function puede_calcular_porcentaje_stock(): void
     {
-        $productoMock = Mockery::mock(Producto::class);
+        $productoMock = Mockery::mock(Producto::class)->makePartial();
         $productoMock->cantidad = 50;
         $stockMaximo = 100;
 
@@ -134,7 +134,7 @@ class StockValidatorServiceTest extends TestCase
     #[Test]
     public function retorna_cero_si_stock_maximo_es_cero(): void
     {
-        $productoMock = Mockery::mock(Producto::class);
+        $productoMock = Mockery::mock(Producto::class)->makePartial();
         $productoMock->cantidad = 50;
         $stockMaximo = 0;
 
@@ -147,7 +147,7 @@ class StockValidatorServiceTest extends TestCase
     public function puede_obtener_nivel_stock_critico(): void
     {
         $umbral = config('inventario.stock.umbral_critico', 5);
-        $productoMock = Mockery::mock(Producto::class);
+        $productoMock = Mockery::mock(Producto::class)->makePartial();
         $productoMock->cantidad = $umbral - 1;
 
         $nivel = $this->service->obtenerNivelStock($productoMock);
@@ -160,7 +160,7 @@ class StockValidatorServiceTest extends TestCase
     {
         $umbralMinimo = config('inventario.stock.umbral_minimo', 10);
         $umbralCritico = config('inventario.stock.umbral_critico', 5);
-        $productoMock = Mockery::mock(Producto::class);
+        $productoMock = Mockery::mock(Producto::class)->makePartial();
         $productoMock->cantidad = ($umbralMinimo + $umbralCritico) / 2;
 
         $nivel = $this->service->obtenerNivelStock($productoMock);
@@ -171,7 +171,7 @@ class StockValidatorServiceTest extends TestCase
     #[Test]
     public function puede_obtener_nivel_stock_alto(): void
     {
-        $productoMock = Mockery::mock(Producto::class);
+        $productoMock = Mockery::mock(Producto::class)->makePartial();
         $productoMock->cantidad = 100;
 
         $nivel = $this->service->obtenerNivelStock($productoMock);
@@ -202,7 +202,7 @@ class StockValidatorServiceTest extends TestCase
     {
         $umbralMinimo = config('inventario.stock.umbral_minimo', 10);
         
-        $productoMock = Mockery::mock(Producto::class);
+        $productoMock = Mockery::mock(Producto::class)->makePartial();
         $productoMock->cantidad = $umbralMinimo - 1;
 
         $this->mockNotificationService->shouldReceive('notificarStockBajo')
@@ -210,5 +210,7 @@ class StockValidatorServiceTest extends TestCase
             ->with($productoMock, $umbralMinimo - 1, $umbralMinimo);
 
         $this->service->verificarYNotificarCambioStock($productoMock, $umbralMinimo + 5);
+
+        $this->assertTrue(true);
     }
 }

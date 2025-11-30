@@ -244,12 +244,57 @@ class InscripcionComplementarioServiceTest extends TestCase
     {
         $this->seed([
             \Database\Seeders\RolePermissionSeeder::class,
+            \Database\Seeders\ParametroSeeder::class,
+            \Database\Seeders\TemaSeeder::class,
+            \Database\Seeders\PaisSeeder::class,
+            \Database\Seeders\DepartamentoSeeder::class,
+            \Database\Seeders\MunicipioSeeder::class,
+            \Database\Seeders\PersonaSeeder::class,
+            \Database\Seeders\UsersSeeder::class,
+            \Database\Seeders\RegionalSeeder::class,
+            \Database\Seeders\CentroFormacionSeeder::class,
+            \Database\Seeders\SedeSeeder::class,
+            \Database\Seeders\BloqueSeeder::class,
+            \Database\Seeders\PisoSeeder::class,
+            \Database\Seeders\AmbienteSeeder::class,
+            \Database\Seeders\JornadaFormacionSeeder::class,
         ]);
 
-        $pais = Pais::create(['pais' => 'Colombia', 'status' => 1]);
-        $departamento = Departamento::create(['departamento' => 'Cundinamarca', 'pais_id' => $pais->id, 'status' => 1]);
-        $municipio = \App\Models\Municipio::create(['municipio' => 'Bogotá', 'departamento_id' => $departamento->id, 'status' => 1]);
+        // Obtener datos del seeder (ya existen por los seeders ejecutados)
+        $pais = Pais::first();
+        $departamento = Departamento::where('pais_id', $pais->id)->first();
+        $municipio = \App\Models\Municipio::where('departamento_id', $departamento->id)->first();
+        
         $programa = ComplementarioOfertado::factory()->conOferta()->create();
+
+        // Obtener parametros_temas para tipo_documento y genero (del TemaSeeder)
+        $tipoDocumentoParametroTema = \App\Models\ParametroTema::where('tema_id', 2)
+            ->where('parametro_id', 1)
+            ->first();
+        $generoParametroTema = \App\Models\ParametroTema::where('tema_id', 3)
+            ->where('parametro_id', 9)
+            ->first();
+
+        // Si no existen, crearlos
+        if (!$tipoDocumentoParametroTema) {
+            $parametro = \App\Models\Parametro::find(1) ?? \App\Models\Parametro::create(['id' => 1, 'name' => 'CÉDULA DE CIUDADANÍA', 'status' => 1]);
+            $tema = \App\Models\Tema::find(2) ?? \App\Models\Tema::create(['id' => 2, 'name' => 'TIPO DE DOCUMENTO', 'status' => 1]);
+            $tipoDocumentoParametroTema = \App\Models\ParametroTema::create([
+                'parametro_id' => $parametro->id,
+                'tema_id' => $tema->id,
+                'status' => 1,
+            ]);
+        }
+
+        if (!$generoParametroTema) {
+            $parametro = \App\Models\Parametro::find(9) ?? \App\Models\Parametro::create(['id' => 9, 'name' => 'MASCULINO', 'status' => 1]);
+            $tema = \App\Models\Tema::find(3) ?? \App\Models\Tema::create(['id' => 3, 'name' => 'GÉNERO', 'status' => 1]);
+            $generoParametroTema = \App\Models\ParametroTema::create([
+                'parametro_id' => $parametro->id,
+                'tema_id' => $tema->id,
+                'status' => 1,
+            ]);
+        }
 
         // Crear servicio real sin mocks para este test
         $userService = new \App\Services\UserService();
@@ -269,12 +314,12 @@ class InscripcionComplementarioServiceTest extends TestCase
         );
 
         $data = [
-            'tipo_documento' => 1,
+            'tipo_documento' => 1, // parametro_id
             'numero_documento' => '1234567890',
             'primer_nombre' => 'Juan',
             'primer_apellido' => 'Pérez',
             'fecha_nacimiento' => '1990-01-01',
-            'genero' => 1,
+            'genero' => 9, // parametro_id
             'celular' => '3001234567',
             'email' => 'juan@test.com',
             'pais_id' => $pais->id,

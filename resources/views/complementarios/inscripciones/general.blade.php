@@ -49,7 +49,7 @@
                                 <h3 class="card-title">Registro de datos personales y caracterización</h3>
                             </div>
 
-                            <form action="{{ route('inscripcion.procesar') }}" method="post" id="inscripcionForm">
+                            <form action="{{ route('inscripcion.general.store') }}" method="post" id="inscripcionForm">
                                 @csrf
                                 <div class="card-body">
 

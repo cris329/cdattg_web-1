@@ -59,6 +59,7 @@ Route::middleware('web')->group(function () {
                 ->name('validar-documento');
 
             Route::get('{programa}', [ProgramaComplementarioController::class, 'verPrograma'])
+                ->where('programa', '[0-9]+') // Solo acepta IDs numéricos
                 ->name('show');
         });
 

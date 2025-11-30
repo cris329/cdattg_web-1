@@ -16,11 +16,12 @@ class Orden extends Model
     protected $table = 'ordenes';
 
     protected $fillable = [
+        'descripcion_orden',
         'tipo_orden_id',
         'fecha_devolucion',
         'estado_id',
         'user_create_id',
-        'user_edit_id'
+        'user_update_id'
     ];
 
     protected $casts = [
