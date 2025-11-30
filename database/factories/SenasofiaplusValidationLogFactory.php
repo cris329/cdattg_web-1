@@ -21,7 +21,7 @@ class SenasofiaplusValidationLogFactory extends Factory
     {
         return [
             'aspirante_id' => AspiranteComplementario::factory(),
-            'accion' => $this->faker->randomElement(['validar', 'actualizar', 'consultar']),
+            'accion' => 'validar',
             'detalles' => null,
             'resultado' => $this->faker->randomElement(['exitoso', 'error', 'advertencia']),
             'mensaje' => $this->faker->sentence(),

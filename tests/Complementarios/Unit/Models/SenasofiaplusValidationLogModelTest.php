@@ -5,25 +5,25 @@ namespace Tests\Complementarios\Unit\Models;
 use App\Models\AspiranteComplementario;
 use App\Models\SenasofiaplusValidationLog;
 use App\Models\User;
-use Illuminate\Foundation\Testing\DatabaseTransactions;
+use Illuminate\Foundation\Testing\RefreshDatabase;
 use PHPUnit\Framework\Attributes\Test;
 use Tests\TestCase;
 
 class SenasofiaplusValidationLogModelTest extends TestCase
 {
-    use DatabaseTransactions;
+    use RefreshDatabase;
 
     protected function setUp(): void
     {
         parent::setUp();
 
         $this->seed([
-            \Database\Seeders\TemaSeeder::class,
+            \Database\Seeders\RolePermissionSeeder::class,
             \Database\Seeders\ParametroSeeder::class,
+            \Database\Seeders\TemaSeeder::class,
             \Database\Seeders\PaisSeeder::class,
             \Database\Seeders\DepartamentoSeeder::class,
             \Database\Seeders\MunicipioSeeder::class,
-            \Database\Seeders\RolePermissionSeeder::class,
         ]);
     }
 
