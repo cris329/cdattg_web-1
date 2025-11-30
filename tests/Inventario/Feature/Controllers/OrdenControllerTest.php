@@ -42,6 +42,12 @@ class OrdenControllerTest extends TestCase
     {
         parent::setUp();
 
+        // Desactivar CSRF para tests
+        $this->withoutMiddleware([
+            \Illuminate\Foundation\Http\Middleware\VerifyCsrfToken::class,
+            \App\Http\Middleware\VerifyCsrfToken::class,
+        ]);
+
         // Seeders base para datos realistas
         $this->seed([
             \Database\Seeders\RolePermissionSeeder::class,
@@ -95,30 +101,88 @@ class OrdenControllerTest extends TestCase
         $this->user->givePermissionTo(self::PERMISSION_CREAR_ORDEN);
         $this->actingAs($this->user);
 
+        // Crear tema TIPOS DE ORDEN si no existe
+        $temaTipoOrden = \App\Models\Tema::firstOrCreate(
+            ['name' => 'TIPOS DE ORDEN'],
+            [
+                'status' => true,
+                'user_create_id' => 1,
+                'user_edit_id' => 1,
+            ]
+        );
+
+        // Crear parámetro PRESTAMO
+        $tipoPrestamoParametro = \App\Models\Parametro::firstOrCreate(
+            ['name' => 'PRESTAMO'],
+            [
+                'status' => true,
+                'user_create_id' => 1,
+                'user_edit_id' => 1,
+            ]
+        );
+
+        // Crear ParametroTema para PRESTAMO
+        \App\Models\ParametroTema::firstOrCreate(
+            [
+                'parametro_id' => $tipoPrestamoParametro->id,
+                'tema_id' => $temaTipoOrden->id,
+            ],
+            [
+                'status' => true,
+                'user_create_id' => 1,
+                'user_edit_id' => 1,
+            ]
+        );
+
+        // Crear tema ESTADOS DE ORDEN si no existe
+        $temaEstados = \App\Models\Tema::firstOrCreate(
+            ['name' => 'ESTADOS DE ORDEN'],
+            [
+                'status' => true,
+                'user_create_id' => 1,
+                'user_edit_id' => 1,
+            ]
+        );
+
+        // Crear estado EN ESPERA
+        $estadoEnEsperaParametro = \App\Models\Parametro::firstOrCreate(
+            ['name' => 'EN ESPERA'],
+            [
+                'status' => true,
+                'user_create_id' => 1,
+                'user_edit_id' => 1,
+            ]
+        );
+
+        // Crear ParametroTema para EN ESPERA
+        \App\Models\ParametroTema::firstOrCreate(
+            [
+                'parametro_id' => $estadoEnEsperaParametro->id,
+                'tema_id' => $temaEstados->id,
+            ],
+            [
+                'status' => true,
+                'user_create_id' => 1,
+                'user_edit_id' => 1,
+            ]
+        );
+
         $producto = Producto::factory()->create(['cantidad' => 10]);
-        $tipoOrden = ParametroTema::whereHas('tema', function ($q) {
-            $q->where('name', 'TIPOS DE ORDEN');
-        })->first();
 
-        $estadoOrden = ParametroTema::whereHas('tema', function ($q) {
-            $q->where('name', 'ESTADOS DE ORDEN');
-        })->first();
-
-        if (! $tipoOrden || ! $estadoOrden) {
-            $this->markTestSkipped('Faltan parámetros necesarios');
-        }
+        $carrito = json_encode([
+            [
+                'id' => $producto->id,
+                'quantity' => 2,
+            ],
+        ]);
 
         $response = $this->post(route(self::ROUTE_STORE), [
-            'descripcion_orden' => 'Orden de Prueba',
-            'tipo_orden_id' => $tipoOrden->id,
+            'rol' => 'Instructor',
+            'programa_formacion' => 'Programa de Prueba',
+            'tipo' => 'prestamo',
             'fecha_devolucion' => now()->addDays(7)->format('Y-m-d'),
-            'productos' => [
-                [
-                    'producto_id' => $producto->id,
-                    'cantidad' => 2,
-                    'estado_orden_id' => $estadoOrden->id,
-                ],
-            ],
+            'descripcion' => 'Orden de Prueba',
+            'carrito' => $carrito,
         ]);
 
         $response->assertRedirect();
