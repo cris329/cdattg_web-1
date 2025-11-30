@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Complementarios\Controllers;
+namespace App\Http\Controllers\Complementarios;
 
 use App\Http\Controllers\Controller;
 use App\Http\Requests\Complementarios\InscripcionComplementarioRequest;
