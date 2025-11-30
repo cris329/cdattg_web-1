@@ -3,7 +3,7 @@
 namespace Tests\Complementarios\Unit\Services;
 
 use Tests\TestCase;
-use App\Services\AspiranteManagementService;
+use App\Services\Complementarios\AspiranteManagementService;
 use App\Repositories\Complementarios\AspiranteComplementarioRepository;
 use App\Repositories\Complementarios\ComplementarioOfertadoRepository;
 use App\Repositories\PersonaRepository;

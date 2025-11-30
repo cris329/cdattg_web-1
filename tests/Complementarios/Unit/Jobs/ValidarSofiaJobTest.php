@@ -9,7 +9,7 @@ use App\Services\Complementarios\Sofia\SofiaValidationProcessor;
 use App\Models\Complementarios\ComplementarioOfertado;
 use App\Models\Complementarios\AspiranteComplementario;
 use App\Models\Persona;
-use App\Models\SofiaValidationProgress;
+use App\Models\Complementarios\SofiaValidationProgress;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use PHPUnit\Framework\Attributes\Test;
 use Mockery;

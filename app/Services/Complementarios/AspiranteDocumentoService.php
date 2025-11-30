@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Services;
+namespace App\Services\Complementarios;
 
 use App\Models\Persona;
 use Illuminate\Support\Facades\Log;

@@ -6,7 +6,7 @@ use App\Models\Complementarios\AspiranteComplementario;
 use App\Models\Complementarios\ComplementarioOfertado;
 use App\Repositories\Complementarios\AspiranteComplementarioRepository;
 use App\Repositories\PersonaRepository;
-use App\Services\AspiranteDocumentoService;
+use App\Services\Complementarios\AspiranteDocumentoService;
 use Illuminate\Support\Facades\Log;
 use Symfony\Component\HttpFoundation\StreamedResponse;
 use setasign\Fpdi\Fpdi;

@@ -6,7 +6,7 @@ use Tests\TestCase;
 use App\Models\Complementarios\ComplementarioOfertado;
 use App\Models\Complementarios\AspiranteComplementario;
 use App\Models\Persona;
-use App\Models\SofiaValidationProgress;
+use App\Models\Complementarios\SofiaValidationProgress;
 use App\Models\User;
 use App\Jobs\Complementarios\ValidarSofiaJob;
 use Illuminate\Foundation\Testing\RefreshDatabase;

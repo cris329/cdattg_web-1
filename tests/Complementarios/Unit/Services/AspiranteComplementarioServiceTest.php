@@ -6,7 +6,7 @@ use App\Models\Complementarios\AspiranteComplementario;
 use App\Repositories\Complementarios\AspiranteComplementarioRepository;
 use App\Repositories\PersonaRepository;
 use App\Services\Complementarios\AspiranteComplementarioService;
-use App\Services\AspiranteDocumentoService;
+use App\Services\Complementarios\AspiranteDocumentoService;
 use Illuminate\Database\Eloquent\Collection;
 use Mockery;
 use PHPUnit\Framework\Attributes\Test;

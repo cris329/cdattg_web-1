@@ -3,7 +3,7 @@
 namespace Tests\Complementarios\Unit\Models;
 
 use App\Models\Complementarios\ComplementarioOfertado;
-use App\Models\SofiaValidationProgress;
+use App\Models\Complementarios\SofiaValidationProgress;
 use App\Models\User;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use PHPUnit\Framework\Attributes\Test;

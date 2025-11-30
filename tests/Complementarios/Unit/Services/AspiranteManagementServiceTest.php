@@ -3,14 +3,14 @@
 namespace Tests\Complementarios\Unit\Services;
 
 use Tests\TestCase;
-use App\Services\AspiranteManagementService;
+use App\Services\Complementarios\AspiranteManagementService;
 use App\Repositories\Complementarios\AspiranteComplementarioRepository;
 use App\Repositories\Complementarios\ComplementarioOfertadoRepository;
 use App\Repositories\PersonaRepository;
 use App\Models\Complementarios\ComplementarioOfertado;
 use App\Models\Persona;
 use App\Models\Complementarios\AspiranteComplementario;
-use App\Models\SofiaValidationProgress;
+use App\Models\Complementarios\SofiaValidationProgress;
 use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Database\Eloquent\Builder;
 use Mockery;

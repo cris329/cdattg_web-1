@@ -103,7 +103,7 @@ class AspiranteComplementarioControllerTest extends TestCase
         ]);
         
         // Verificar que el repositorio puede encontrarlo antes de hacer la petición HTTP
-        $repo = new \App\Repositories\ComplementarioOfertadoRepository();
+        $repo = new \App\Repositories\Complementarios\ComplementarioOfertadoRepository();
         $programaEncontrado = $repo->findByNombre('Auxiliar-de-Cocina');
         
         if (!$programaEncontrado) {
@@ -120,7 +120,7 @@ class AspiranteComplementarioControllerTest extends TestCase
         $response = $this->get(route('programas-complementarios.ver-aspirantes', 'Auxiliar-de-Cocina'));
 
         $response->assertStatus(200);
-        $response->assertViewIs('complementarios.ver_aspirantes');
+        $response->assertViewIs('complementarios.aspirantes.programa');
         $response->assertViewHas('programa');
         $response->assertViewHas('aspirantes');
     }
@@ -317,11 +317,14 @@ class AspiranteComplementarioControllerTest extends TestCase
         $this->actingAs($this->user);
         $programa = ComplementarioOfertado::factory()->create();
 
-        // Mock del servicio para simular error
         $response = $this->get(route('programas-complementarios.exportar-excel', $programa->id));
 
-        // Puede retornar Excel vacío o error, pero debe responder
-        $this->assertContains($response->status(), [200, 500]);
+        // Puede retornar Excel vacío (StreamedResponse con status 200) o error JSON (status 500)
+        // Ambos son respuestas válidas: Excel vacío significa que se generó correctamente sin datos
+        $statusCode = $response->getStatusCode();
+            
+        // Debe retornar 200 (Excel vacío) o 500 (error), ambos son válidos
+        $this->assertContains($statusCode, [200, 500]);
     }
 
     /** @test */

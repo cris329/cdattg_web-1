@@ -3,7 +3,7 @@
 namespace Database\Factories;
 
 use App\Models\Complementarios\AspiranteComplementario;
-use App\Models\ComplementarioOfertado;
+use App\Models\Complementarios\ComplementarioOfertado;
 use App\Models\Persona;
 use Illuminate\Database\Eloquent\Factories\Factory;
 
