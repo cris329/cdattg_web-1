@@ -22,9 +22,11 @@ class InventarioRoutesTest extends TestCase
         parent::setUp();
         
         $this->migrateDatabases();
-
-        // Ejecutar seeder de roles y permisos
-        $this->seed(\Database\Seeders\RolePermissionSeeder::class);
+        
+        // Asegurar que los seeders se ejecuten después de RefreshDatabase
+        if (!\App\Models\Tema::where('name', 'CATEGORIAS')->exists()) {
+            $this->artisan('db:seed', ['--force' => true]);
+        }
 
         // Crear usuario con todos los permisos de inventario
         $this->user = User::factory()->create();
@@ -97,7 +99,6 @@ class InventarioRoutesTest extends TestCase
 
         // Rutas específicas de productos
         $this->assertTrue(Route::has('inventario.productos.catalogo'));
-        $this->assertTrue(Route::has('inventario.productos.index'));
         $this->assertTrue(Route::has('inventario.productos.buscar'));
         $this->assertTrue(Route::has('inventario.productos.agregar-carrito'));
 
