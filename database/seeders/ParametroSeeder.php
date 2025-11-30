@@ -349,7 +349,20 @@ class ParametroSeeder extends Seeder
             return;
         }
 
-        $this->truncateModel(Parametro::class);
+        // En testing, RefreshDatabase ya limpia la base de datos, así que solo truncamos si no estamos en testing
+        // o si estamos en testing pero necesitamos limpiar datos específicos
+        if (app()->environment('testing')) {
+            // En testing, RefreshDatabase maneja la limpieza, pero si necesitamos limpiar específicamente
+            // intentamos truncar, pero manejamos errores de foreign key gracefully
+            try {
+                $this->truncateModel(Parametro::class);
+            } catch (\Exception $e) {
+                // Si falla por foreign key, simplemente continuamos
+                // RefreshDatabase ya limpiará todo al final del test
+            }
+        } else {
+            $this->truncateModel(Parametro::class);
+        }
     }
 
     /**

@@ -33,6 +33,7 @@ class TemaSeeder extends Seeder
             return;
         }
 
+        // truncateModel ya maneja el caso de testing
         $this->truncateModel(Tema::class);
         $this->truncateTable('parametros_temas');
     }

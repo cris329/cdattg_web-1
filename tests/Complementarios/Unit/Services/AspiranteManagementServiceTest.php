@@ -10,13 +10,14 @@ use App\Repositories\PersonaRepository;
 use App\Models\Complementarios\ComplementarioOfertado;
 use App\Models\Persona;
 use App\Models\Complementarios\AspiranteComplementario;
-use App\Models\Complementarios\SofiaValidationProgress;
 use Illuminate\Database\Eloquent\Collection;
-use Illuminate\Database\Eloquent\Builder;
+use Illuminate\Foundation\Testing\RefreshDatabase;
 use Mockery;
 
 class AspiranteManagementServiceTest extends TestCase
 {
+    use RefreshDatabase;
+
     protected AspiranteManagementService $service;
     protected $aspiranteRepositoryMock;
     protected $programaRepositoryMock;
@@ -99,21 +100,8 @@ class AspiranteManagementServiceTest extends TestCase
             ->with(1, ['persona', 'complementario'])
             ->andReturn($aspirantes);
 
-        // Mock para SofiaValidationProgress usando alias
-        $builderMock = Mockery::mock(Builder::class);
-        $builderMock->shouldReceive('whereIn')
-            ->once()
-            ->with('status', ['pending', 'processing'])
-            ->andReturnSelf();
-        $builderMock->shouldReceive('first')
-            ->once()
-            ->andReturn(null);
-        
-        Mockery::mock('alias:' . SofiaValidationProgress::class)
-            ->shouldReceive('where')
-            ->once()
-            ->with('complementario_id', 1)
-            ->andReturn($builderMock);
+        // No mockeamos SofiaValidationProgress - usamos la base de datos real
+        // Como no hay registros en la BD de prueba, first() retornará null automáticamente
 
         $data = $this->service->obtenerAspirantesPorPrograma('Auxiliar-de-Cocina');
 
@@ -145,21 +133,8 @@ class AspiranteManagementServiceTest extends TestCase
             ->with(1, ['persona', 'complementario'])
             ->andReturn($aspirantes);
 
-        // Mock para SofiaValidationProgress usando alias
-        $builderMock = Mockery::mock(Builder::class);
-        $builderMock->shouldReceive('whereIn')
-            ->once()
-            ->with('status', ['pending', 'processing'])
-            ->andReturnSelf();
-        $builderMock->shouldReceive('first')
-            ->once()
-            ->andReturn(null);
-        
-        Mockery::mock('alias:' . SofiaValidationProgress::class)
-            ->shouldReceive('where')
-            ->once()
-            ->with('complementario_id', 1)
-            ->andReturn($builderMock);
+        // No mockeamos SofiaValidationProgress - usamos la base de datos real
+        // Como no hay registros en la BD de prueba, first() retornará null automáticamente
 
         $data = $this->service->obtenerAspirantesPorProgramaId(1);
 

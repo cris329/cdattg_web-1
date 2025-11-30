@@ -66,6 +66,12 @@ class InscripcionComplementarioServiceTest extends TestCase
         // que son difíciles de mockear sin cambiar el código del servicio.
         // Mockeamos lo que es posible (repositorios y servicios inyectados)
         
+        // Ejecutar seeders necesarios para evitar conflictos de restricción única
+        $this->seed([
+            \Database\Seeders\PaisSeeder::class,
+            \Database\Seeders\DepartamentoSeeder::class,
+        ]);
+        
         $this->temaRepositoryMock->shouldReceive('obtenerCaracterizacionesComplementarias')
             ->once()
             ->andReturn(null);
@@ -77,14 +83,6 @@ class InscripcionComplementarioServiceTest extends TestCase
         $this->complementarioServiceMock->shouldReceive('getGeneros')
             ->once()
             ->andReturn(new EloquentCollection([]));
-
-        // Los modelos Pais y Departamento se obtienen directamente del modelo
-        // por lo que este test requiere BD
-        $pais = Pais::firstOrCreate(['pais' => 'Colombia'], ['status' => 1]);
-        Departamento::firstOrCreate(
-            ['departamento' => 'Cundinamarca', 'pais_id' => $pais->id],
-            ['status' => 1]
-        );
 
         $data = $this->service->prepararFormularioGeneral();
 
@@ -210,13 +208,11 @@ class InscripcionComplementarioServiceTest extends TestCase
             ->once()
             ->andReturn(false);
 
-        // Los modelos Pais y Departamento se obtienen directamente del modelo
-        // por lo que este test requiere BD para estos modelos
-        $pais = Pais::firstOrCreate(['pais' => 'Colombia'], ['status' => 1]);
-        Departamento::firstOrCreate(
-            ['departamento' => 'Cundinamarca', 'pais_id' => $pais->id],
-            ['status' => 1]
-        );
+        // Ejecutar seeders necesarios para evitar conflictos de restricción única
+        $this->seed([
+            \Database\Seeders\PaisSeeder::class,
+            \Database\Seeders\DepartamentoSeeder::class,
+        ]);
 
         $data = $this->service->prepararFormularioInscripcion(1);
 
