@@ -3,7 +3,7 @@
 namespace Tests\Complementarios\Unit\Models;
 
 use App\Models\Complementarios\AspiranteComplementario;
-use App\Models\SenasofiaplusValidationLog;
+use App\Models\Complementarios\SenasofiaplusValidationLog;
 use App\Models\User;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use PHPUnit\Framework\Attributes\Test;

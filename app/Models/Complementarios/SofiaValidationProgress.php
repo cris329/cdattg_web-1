@@ -2,6 +2,7 @@
 
 namespace App\Models\Complementarios;
 
+use App\Models\User;
 use Database\Factories\SofiaValidationProgressFactory;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;

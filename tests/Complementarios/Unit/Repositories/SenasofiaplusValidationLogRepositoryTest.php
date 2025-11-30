@@ -3,7 +3,7 @@
 namespace Tests\Complementarios\Unit\Repositories;
 
 use App\Models\Complementarios\AspiranteComplementario;
-use App\Models\SenasofiaplusValidationLog;
+use App\Models\Complementarios\SenasofiaplusValidationLog;
 use App\Models\User;
 use App\Repositories\SenasofiaplusValidationLogRepository;
 use Carbon\Carbon;

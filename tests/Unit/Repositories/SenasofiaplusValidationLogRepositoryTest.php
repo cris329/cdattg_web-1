@@ -2,7 +2,7 @@
 
 namespace Tests\Complementarios\Unit\Repositories;
 
-use App\Models\SenasofiaplusValidationLog;
+use App\Models\Complementarios\SenasofiaplusValidationLog;
 use App\Repositories\SenasofiaplusValidationLogRepository;
 use Carbon\Carbon;
 use Illuminate\Foundation\Testing\RefreshDatabase;

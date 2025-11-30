@@ -2,7 +2,7 @@
 
 namespace App\Repositories;
 
-use App\Models\SenasofiaplusValidationLog;
+use App\Models\Complementarios\SenasofiaplusValidationLog;
 
 class SenasofiaplusValidationLogRepository
 {
