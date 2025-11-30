@@ -1,7 +1,7 @@
 <?php
 
 use Illuminate\Support\Facades\Route;
-use App\Http\Controllers\Complementarios\AspiranteComplementarioController;
+use App\Complementarios\Controllers\AspiranteComplementarioController;
 
 // Mantener compatibilidad con rutas existentes - funcionalidad refactorizada
 Route::get('/gestion-aspirantes', [AspiranteComplementarioController::class, 'gestionAspirantes'])

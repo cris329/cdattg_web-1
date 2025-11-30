@@ -1,7 +1,7 @@
 <?php
 
 use Illuminate\Support\Facades\Route;
-use App\Http\Controllers\Complementarios\AspiranteComplementarioController;
+use App\Complementarios\Controllers\AspiranteComplementarioController;
 
 // Rutas RESTful para aspirantes complementarios
 Route::middleware('auth')->group(function () {
