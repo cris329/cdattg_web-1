@@ -1,11 +1,11 @@
 <?php
 
 use App\Http\Controllers\AsistenceQrController;
-use App\Complementarios\Controllers\AspiranteComplementarioController;
-use App\Complementarios\Controllers\InscripcionComplementarioController;
-use App\Complementarios\Controllers\PerfilComplementarioController;
-use App\Complementarios\Controllers\ProgramaComplementarioController;
-use App\Complementarios\Controllers\ValidacionSofiaController;
+use App\Http\Controllers\Complementarios\AspiranteComplementarioController;
+use App\Http\Controllers\Complementarios\InscripcionComplementarioController;
+use App\Http\Controllers\Complementarios\PerfilComplementarioController;
+use App\Http\Controllers\Complementarios\ProgramaComplementarioController;
+use App\Http\Controllers\Complementarios\ValidacionSofiaController;
 use App\Http\Controllers\DepartamentoController;
 use App\Http\Controllers\GoogleDriveController;
 use App\Http\Controllers\MunicipioController;
