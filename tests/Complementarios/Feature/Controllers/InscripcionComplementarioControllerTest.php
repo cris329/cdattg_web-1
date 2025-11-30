@@ -19,6 +19,18 @@ class InscripcionComplementarioControllerTest extends TestCase
     protected function setUp(): void
     {
         parent::setUp();
+        
+        // Ejecutar seeders necesarios para las pruebas
+        // Estos datos son requeridos por las claves foráneas en PersonaFactory
+        $this->seed([
+            \Database\Seeders\RolePermissionSeeder::class,
+            \Database\Seeders\ParametroSeeder::class,
+            \Database\Seeders\TemaSeeder::class,
+            \Database\Seeders\PaisSeeder::class,
+            \Database\Seeders\DepartamentoSeeder::class,
+            \Database\Seeders\MunicipioSeeder::class,
+        ]);
+        
         Storage::fake('google');
     }
 

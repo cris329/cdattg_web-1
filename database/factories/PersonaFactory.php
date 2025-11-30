@@ -36,7 +36,10 @@ class PersonaFactory extends Factory
         }
 
         // Si no hay userId, usar un valor por defecto solo para crear parametros_temas
-        $userIdForParametros = $userId ?? config('app.audit_default_user_id', 1);
+        // Asegurar que siempre sea un int válido (no null)
+        $configUserId = config('app.audit_default_user_id');
+        $userIdForParametros = $userId ?? $configUserId ?? 1;
+        $userIdForParametros = (int) $userIdForParametros;
 
         $generoParametroId = [9, 10, 11][array_rand([9, 10, 11])];
         $generoParametroTemaId = $this->obtenerOCrearParametroTema(3, $generoParametroId, $userIdForParametros); // Tema: GENERO (3)
@@ -120,7 +123,7 @@ class PersonaFactory extends Factory
 
     /**
      * Obtiene el ID de parametros_temas basado en tema_id y parametro_id
-     * 
+     *
      * IMPORTANTE: Este método debe devolver el ID de la tabla parametros_temas, NO el parametro_id
      * El seeder debe crear estos registros antes de que el factory los use
      */
