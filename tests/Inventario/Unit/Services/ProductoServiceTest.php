@@ -17,6 +17,19 @@ use PHPUnit\Framework\Attributes\Test;
 
 class ProductoServiceTest extends TestCase
 {
+
+    private const PRODUCTO_TEST = 'Producto Test';
+    private const PRODUCTO_ACTUALIZADO = 'Producto Actualizado';
+    private const CODIGO_BARRAS_TEST = '12345678901';
+    private const CODIGO_BARRAS_ACTUALIZADO = '98765432109';
+    private const CODIGO_BARRAS_INVALIDO = '123';
+    private const CODIGO_BARRAS_GENERADO = '00000000001';
+    private const IMAGEN_TEST = 'img/default.png';
+    private const IMAGEN_PRODUCTO = 'img/producto.jpg';
+    private const CANTIDAD_INICIAL = 10;
+    private const CANTIDAD_ACTUALIZADA = 20;
+    private const USER_ID = 1;
+
     protected ProductoService $service;
     protected $mockRepository;
     protected $mockImageService;
@@ -56,82 +69,91 @@ class ProductoServiceTest extends TestCase
     public function puede_crear_producto(): void
     {
         $datos = [
-            'producto' => 'Producto Test',
+            'producto' => self::PRODUCTO_TEST,
             'descripcion' => 'Descripción del producto',
-            'cantidad' => 10,
+            'cantidad' => self::CANTIDAD_INICIAL,
         ];
 
+        /** @var Producto $productoMock */
         $productoMock = Mockery::mock(Producto::class)->makePartial();
         $productoMock->id = 1;
-        $productoMock->producto = 'Producto Test';
+        $productoMock->producto = self::PRODUCTO_TEST;
 
         $this->mockBarcodeService->shouldReceive('resolverCodigoBarras')
             ->once()
             ->with(null)
-            ->andReturn('12345678901');
+            ->andReturn(self::CODIGO_BARRAS_TEST);
 
         $this->mockImageService->shouldReceive('procesarImagen')
             ->once()
             ->with(null)
-            ->andReturn('img/default.png');
+            ->andReturn(self::IMAGEN_TEST);
 
         $this->mockRepository->shouldReceive('crear')
             ->once()
             ->with(Mockery::on(function ($argument) {
-                return $argument['producto'] === 'Producto Test' &&
-                       $argument['codigo_barras'] === '12345678901' &&
-                       $argument['imagen'] === 'img/default.png' &&
+                return $argument['producto'] === self::PRODUCTO_TEST &&
+                       $argument['codigo_barras'] === self::CODIGO_BARRAS_TEST &&
+                       $argument['imagen'] === self::IMAGEN_TEST &&
                        isset($argument['user_create_id']) &&
                        isset($argument['user_update_id']);
             }))
             ->andReturn($productoMock);
 
-        $resultado = $this->service->crear($datos, 1);
+        $resultado = $this->service->crear($datos, self::USER_ID);
 
         $this->assertEquals(1, $resultado->id);
-        $this->assertEquals('Producto Test', $resultado->producto);
+        $this->assertEquals(self::PRODUCTO_TEST, $resultado->producto);
     }
 
     #[Test]
     public function puede_crear_producto_con_codigo_barras(): void
     {
         $datos = [
-            'producto' => 'Producto Test',
-            'codigo_barras' => '98765432109',
+            'producto' => self::PRODUCTO_TEST,
+            'codigo_barras' => self::CODIGO_BARRAS_ACTUALIZADO,
         ];
 
+        /** @var Producto $productoMock */
         $productoMock = Mockery::mock(Producto::class)->makePartial();
         $productoMock->id = 1;
 
         $this->mockBarcodeService->shouldReceive('resolverCodigoBarras')
             ->once()
-            ->with('98765432109')
-            ->andReturn('98765432109');
+            ->with(self::CODIGO_BARRAS_ACTUALIZADO)
+            ->andReturn(self::CODIGO_BARRAS_ACTUALIZADO);
 
         $this->mockImageService->shouldReceive('procesarImagen')
             ->once()
             ->with(null)
-            ->andReturn('img/default.png');
+            ->andReturn(self::IMAGEN_TEST);
 
         $this->mockRepository->shouldReceive('crear')
             ->once()
             ->andReturn($productoMock);
 
-        $resultado = $this->service->crear($datos, 1);
+        $resultado = $this->service->crear($datos, self::USER_ID);
 
         $this->assertInstanceOf(Producto::class, $resultado);
+    }
+
+    private function crearProductoMock(): Producto
+    {
+        /** @var Producto $productoMock */
+        $productoMock = Mockery::mock(Producto::class)->makePartial();
+        $productoMock->cantidad = self::CANTIDAD_INICIAL;
+        $productoMock->shouldReceive('refresh')->once();
+        return $productoMock;
     }
 
     #[Test]
     public function puede_actualizar_producto(): void
     {
-        $productoMock = Mockery::mock(Producto::class)->makePartial();
-        $productoMock->cantidad = 10;
-        $productoMock->shouldReceive('refresh')->once();
+        $productoMock = $this->crearProductoMock();
 
         $datos = [
-            'producto' => 'Producto Actualizado',
-            'cantidad' => 20,
+            'producto' => self::PRODUCTO_ACTUALIZADO,
+            'cantidad' => self::CANTIDAD_ACTUALIZADA,
         ];
 
         $this->mockImageService->shouldReceive('procesarImagenParaActualizacion')
@@ -143,17 +165,17 @@ class ProductoServiceTest extends TestCase
         $this->mockRepository->shouldReceive('actualizar')
             ->once()
             ->with($productoMock, Mockery::on(function ($argument) {
-                return $argument['producto'] === 'Producto Actualizado' &&
-                       $argument['cantidad'] === 20 &&
+                return $argument['producto'] === self::PRODUCTO_ACTUALIZADO &&
+                       $argument['cantidad'] === self::CANTIDAD_ACTUALIZADA &&
                        isset($argument['user_update_id']);
             }))
             ->andReturn(true);
 
         $this->mockStockValidator->shouldReceive('verificarYNotificarCambioStock')
             ->once()
-            ->with($productoMock, 10);
+            ->with($productoMock, self::CANTIDAD_INICIAL);
 
-        $resultado = $this->service->actualizar($productoMock, $datos, 1);
+        $resultado = $this->service->actualizar($productoMock, $datos, self::USER_ID);
 
         $this->assertInstanceOf(Producto::class, $resultado);
     }
@@ -161,20 +183,18 @@ class ProductoServiceTest extends TestCase
     #[Test]
     public function puede_actualizar_producto_con_nueva_imagen(): void
     {
-        $productoMock = Mockery::mock(Producto::class)->makePartial();
-        $productoMock->cantidad = 10;
-        $productoMock->shouldReceive('refresh')->once();
+        $productoMock = $this->crearProductoMock();
 
         $imagen = UploadedFile::fake()->image('producto.jpg');
         $datos = [
-            'producto' => 'Producto Actualizado',
+            'producto' => self::PRODUCTO_ACTUALIZADO,
             'imagen' => $imagen,
         ];
 
         $this->mockImageService->shouldReceive('procesarImagenParaActualizacion')
             ->once()
             ->with($imagen, $productoMock)
-            ->andReturn('img/producto.jpg');
+            ->andReturn(self::IMAGEN_PRODUCTO);
 
         $this->mockRepository->shouldReceive('actualizar')
             ->once()
@@ -183,7 +203,7 @@ class ProductoServiceTest extends TestCase
         $this->mockStockValidator->shouldReceive('verificarYNotificarCambioStock')
             ->once();
 
-        $resultado = $this->service->actualizar($productoMock, $datos, 1);
+        $resultado = $this->service->actualizar($productoMock, $datos, self::USER_ID);
 
         $this->assertInstanceOf(Producto::class, $resultado);
     }
@@ -191,30 +211,28 @@ class ProductoServiceTest extends TestCase
     #[Test]
     public function puede_actualizar_codigo_barras_normalizado(): void
     {
-        $productoMock = Mockery::mock(Producto::class)->makePartial();
-        $productoMock->cantidad = 10;
-        $productoMock->shouldReceive('refresh')->once();
+        $productoMock = $this->crearProductoMock();
 
         $datos = [
-            'codigo_barras' => '12345678901',
+            'codigo_barras' => self::CODIGO_BARRAS_TEST,
         ];
 
         $this->mockBarcodeService->shouldReceive('normalizarCodigoBarras')
             ->once()
-            ->with('12345678901')
-            ->andReturn('12345678901');
+            ->with(self::CODIGO_BARRAS_TEST)
+            ->andReturn(self::CODIGO_BARRAS_TEST);
 
         $this->mockRepository->shouldReceive('actualizar')
             ->once()
             ->with($productoMock, Mockery::on(function ($argument) {
-                return $argument['codigo_barras'] === '12345678901';
+                return $argument['codigo_barras'] === self::CODIGO_BARRAS_TEST;
             }))
             ->andReturn(true);
 
         $this->mockStockValidator->shouldReceive('verificarYNotificarCambioStock')
             ->once();
 
-        $resultado = $this->service->actualizar($productoMock, $datos, 1);
+        $resultado = $this->service->actualizar($productoMock, $datos, self::USER_ID);
 
         $this->assertInstanceOf(Producto::class, $resultado);
     }
@@ -222,34 +240,32 @@ class ProductoServiceTest extends TestCase
     #[Test]
     public function genera_nuevo_codigo_barras_si_no_se_puede_normalizar(): void
     {
-        $productoMock = Mockery::mock(Producto::class)->makePartial();
-        $productoMock->cantidad = 10;
-        $productoMock->shouldReceive('refresh')->once();
+        $productoMock = $this->crearProductoMock();
 
         $datos = [
-            'codigo_barras' => '123',
+            'codigo_barras' => self::CODIGO_BARRAS_INVALIDO,
         ];
 
         $this->mockBarcodeService->shouldReceive('normalizarCodigoBarras')
             ->once()
-            ->with('123')
+            ->with(self::CODIGO_BARRAS_INVALIDO)
             ->andReturn(null);
 
         $this->mockBarcodeService->shouldReceive('generarSiguienteCodigoBarras')
             ->once()
-            ->andReturn('00000000001');
+            ->andReturn(self::CODIGO_BARRAS_GENERADO);
 
         $this->mockRepository->shouldReceive('actualizar')
             ->once()
             ->with($productoMock, Mockery::on(function ($argument) {
-                return $argument['codigo_barras'] === '00000000001';
+                return $argument['codigo_barras'] === self::CODIGO_BARRAS_GENERADO;
             }))
             ->andReturn(true);
 
         $this->mockStockValidator->shouldReceive('verificarYNotificarCambioStock')
             ->once();
 
-        $resultado = $this->service->actualizar($productoMock, $datos, 1);
+        $resultado = $this->service->actualizar($productoMock, $datos, self::USER_ID);
 
         $this->assertInstanceOf(Producto::class, $resultado);
     }
@@ -257,6 +273,7 @@ class ProductoServiceTest extends TestCase
     #[Test]
     public function puede_eliminar_producto(): void
     {
+        /** @var Producto $productoMock */
         $productoMock = Mockery::mock(Producto::class)->makePartial();
 
         $this->mockImageService->shouldReceive('eliminarImagenSiExiste')

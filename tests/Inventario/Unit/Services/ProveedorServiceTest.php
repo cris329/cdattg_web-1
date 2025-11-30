@@ -14,6 +14,8 @@ use PHPUnit\Framework\Attributes\Test;
 
 class ProveedorServiceTest extends TestCase
 {
+    private const PROVEEDOR_TEST = 'Proveedor Test';
+    private const PROVEEDOR_ACTUALIZADO = 'Proveedor Actualizado';
     protected ProveedorService $service;
     protected $mockRepository;
 
@@ -42,19 +44,19 @@ class ProveedorServiceTest extends TestCase
     public function puede_crear_proveedor(): void
     {
         $datos = [
-            'nombre' => 'Proveedor Test',
+            'nombre' => self::PROVEEDOR_TEST,
             'nit' => '123456789',
             'telefono' => '1234567890',
         ];
 
         $proveedorMock = Mockery::mock(Proveedor::class)->makePartial();
         $proveedorMock->id = 1;
-        $proveedorMock->nombre = 'Proveedor Test';
+        $proveedorMock->nombre = self::PROVEEDOR_TEST;
 
         $this->mockRepository->shouldReceive('crear')
             ->once()
             ->with(Mockery::on(function ($argument) {
-                return $argument['nombre'] === 'Proveedor Test' &&
+                return $argument['nombre'] === self::PROVEEDOR_TEST &&
                        isset($argument['user_create_id']) &&
                        isset($argument['user_update_id']);
             }))
@@ -64,23 +66,24 @@ class ProveedorServiceTest extends TestCase
 
         $this->assertInstanceOf(Proveedor::class, $resultado);
         $this->assertEquals(1, $resultado->id);
-        $this->assertEquals('Proveedor Test', $resultado->nombre);
+        $this->assertEquals(self::PROVEEDOR_TEST, $resultado->nombre);
     }
 
     #[Test]
     public function puede_actualizar_proveedor(): void
     {
+        /** @var Proveedor $proveedorMock */
         $proveedorMock = Mockery::mock(Proveedor::class)->makePartial();
         $proveedorMock->id = 1;
 
         $datos = [
-            'nombre' => 'Proveedor Actualizado',
+            'nombre' => self::PROVEEDOR_ACTUALIZADO,
         ];
 
         $this->mockRepository->shouldReceive('actualizar')
             ->once()
             ->with(1, Mockery::on(function ($argument) {
-                return $argument['nombre'] === 'Proveedor Actualizado' &&
+                return $argument['nombre'] === self::PROVEEDOR_ACTUALIZADO &&
                        isset($argument['user_update_id']);
             }))
             ->andReturn(true);
@@ -93,6 +96,7 @@ class ProveedorServiceTest extends TestCase
     #[Test]
     public function puede_eliminar_proveedor_sin_relaciones(): void
     {
+        /** @var Proveedor $proveedorMock */
         $proveedorMock = Mockery::mock(Proveedor::class)->makePartial();
         $proveedorMock->id = 1;
 
@@ -122,6 +126,7 @@ class ProveedorServiceTest extends TestCase
         $this->expectException(ProveedorException::class);
         $this->expectExceptionMessage('No se puede eliminar el proveedor porque tiene contratos asociados.');
 
+        /** @var Proveedor $proveedorMock */
         $proveedorMock = Mockery::mock(Proveedor::class)->makePartial();
         $proveedorMock->id = 1;
 
@@ -139,6 +144,7 @@ class ProveedorServiceTest extends TestCase
         $this->expectException(ProveedorException::class);
         $this->expectExceptionMessage('No se puede eliminar el proveedor porque tiene productos asociados.');
 
+        /** @var Proveedor $proveedorMock */
         $proveedorMock = Mockery::mock(Proveedor::class)->makePartial();
         $proveedorMock->id = 1;
 

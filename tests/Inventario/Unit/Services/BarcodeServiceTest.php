@@ -83,14 +83,14 @@ class BarcodeServiceTest extends TestCase
 
         $this->mockRepository->shouldReceive('existeCodigoBarras')
             ->once()
-            ->with('0000000001')
+            ->with(self::CODIGO_BARRAS_MAX_INICIAL)
             ->andReturn(false);
 
         $codigo = $this->service->generarSiguienteCodigoBarras();
 
         $this->assertIsString($codigo);
         $this->assertEquals(self::LONGITUD_CODIGO_BARRAS, strlen($codigo));
-        $this->assertEquals('0000000001', $codigo);
+        $this->assertEquals(self::CODIGO_BARRAS_MAX_INICIAL, $codigo);
     }
 
     #[Test]
@@ -106,7 +106,7 @@ class BarcodeServiceTest extends TestCase
             ->with(self::CODIGO_BARRAS_SIGUIENTE)
             ->andReturn(true);
 
-        // Si existe, incrementa a '00000000003' (next + i + 1 = 1 + 1 + 1)
+        // Si existe, incrementa a '00000000003'
         $this->mockRepository->shouldReceive('existeCodigoBarras')
             ->once()
             ->with(self::CODIGO_BARRAS_SIGUIENTE_2)

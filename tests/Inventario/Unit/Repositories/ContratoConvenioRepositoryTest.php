@@ -14,6 +14,7 @@ class ContratoConvenioRepositoryTest extends TestCase
 {
     use RefreshDatabase;
 
+    private const CONTRATO_TEST = 'CONTRATO TEST';
     protected ContratoConvenioRepository $repository;
 
     protected function setUp(): void
@@ -47,7 +48,7 @@ class ContratoConvenioRepositoryTest extends TestCase
     #[Test]
     public function puede_obtener_contratos_con_filtros()
     {
-        ContratoConvenio::factory()->create(['name' => 'CONTRATO TEST']);
+        ContratoConvenio::factory()->create(['name' => self::CONTRATO_TEST]);
         ContratoConvenio::factory()->create(['name' => 'OTRO CONTRATO']);
 
         $resultado = $this->repository->obtenerConFiltros();
@@ -63,19 +64,18 @@ class ContratoConvenioRepositoryTest extends TestCase
 
         $resultado = $this->repository->obtenerConFiltros(['search' => 'SUMINISTRO']);
 
-        $this->assertGreaterThanOrEqual(1, $resultado->count());
+        $this->assertGreaterThanOrEqual(1, $resultado->total());
     }
 
     #[Test]
     public function puede_filtrar_contratos_por_codigo()
     {
-        $codigo = 'AB-12CD-3456';
-        ContratoConvenio::factory()->create(['codigo' => $codigo]);
+        ContratoConvenio::factory()->create(['codigo' => 'AB-12CD-3456']);
         ContratoConvenio::factory()->create(['codigo' => 'XY-99ZZ-9999']);
 
         $resultado = $this->repository->obtenerConFiltros(['search' => 'AB-12']);
 
-        $this->assertGreaterThanOrEqual(1, $resultado->count());
+        $this->assertGreaterThanOrEqual(1, $resultado->total());
     }
 
     #[Test]
@@ -97,7 +97,7 @@ class ContratoConvenioRepositoryTest extends TestCase
         $estado = \App\Models\ParametroTema::query()->inRandomOrder()->first();
         
         $datos = [
-            'name' => 'CONTRATO TEST',
+            'name' => self::CONTRATO_TEST,
             'codigo' => 'TEST-001',
             'proveedor_id' => $proveedor->id,
             'fecha_inicio' => now()->format('Y-m-d'),
@@ -110,7 +110,7 @@ class ContratoConvenioRepositoryTest extends TestCase
         $resultado = $this->repository->crear($datos);
 
         $this->assertInstanceOf(ContratoConvenio::class, $resultado);
-        $this->assertEquals('CONTRATO TEST', $resultado->name);
+        $this->assertEquals(self::CONTRATO_TEST, $resultado->name);
     }
 
     #[Test]

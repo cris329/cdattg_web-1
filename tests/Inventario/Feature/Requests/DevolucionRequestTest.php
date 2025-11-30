@@ -15,12 +15,17 @@ class DevolucionRequestTest extends TestCase
 {
     use RefreshDatabase;
 
+    private const ID_INEXISTENTE = 99999;
+    private const LONGITUD_MAX_OBSERVACIONES = 501;
+    private const CANTIDAD_DEVUELTA_VALIDA = 5;
+    private const CANTIDAD_DEVUELTA_INVALIDA = -1;
+
     protected function setUp(): void
     {
         parent::setUp();
         $this->migrateDatabases();
 
-        // DetalleOrden necesita: Orden, Producto → Ambiente → Piso → Bloque → Sede → Regional
+        // DetalleOrden necesita
         $this->seed([
             \Database\Seeders\RolePermissionSeeder::class,
             \Database\Seeders\ParametroSeeder::class,
@@ -38,121 +43,121 @@ class DevolucionRequestTest extends TestCase
         ]);
     }
 
+    private function obtenerRules(): array
+    {
+        $request = new DevolucionRequest();
+        return $request->rules();
+    }
+
+    private function validarYVerificarError(array $data, array $rules, string $campoEsperado): void
+    {
+        $validator = Validator::make($data, $rules);
+
+        $this->assertTrue($validator->fails());
+        $this->assertArrayHasKey($campoEsperado, $validator->errors()->toArray());
+    }
+
     #[Test]
     public function valida_detalle_orden_id_requerido(): void
     {
-        $request = new DevolucionRequest();
-        $rules = $request->rules();
+        $rules = $this->obtenerRules();
 
-        $validator = Validator::make([], $rules);
-
-        $this->assertTrue($validator->fails());
-        $this->assertArrayHasKey('detalle_orden_id', $validator->errors()->toArray());
+        $this->validarYVerificarError([], $rules, 'detalle_orden_id');
     }
 
     #[Test]
     public function valida_detalle_orden_id_debe_ser_integer(): void
     {
-        $request = new DevolucionRequest();
-        $rules = $request->rules();
+        $rules = $this->obtenerRules();
 
-        $validator = Validator::make([
-            'detalle_orden_id' => 'no es numero',
-        ], $rules);
-
-        $this->assertTrue($validator->fails());
-        $this->assertArrayHasKey('detalle_orden_id', $validator->errors()->toArray());
+        $this->validarYVerificarError(
+            ['detalle_orden_id' => 'no es numero'],
+            $rules,
+            'detalle_orden_id'
+        );
     }
 
     #[Test]
     public function valida_detalle_orden_id_debe_existir(): void
     {
-        $request = new DevolucionRequest();
-        $rules = $request->rules();
+        $rules = $this->obtenerRules();
 
-        $validator = Validator::make([
-            'detalle_orden_id' => 99999,
-        ], $rules);
-
-        $this->assertTrue($validator->fails());
-        $this->assertArrayHasKey('detalle_orden_id', $validator->errors()->toArray());
+        $this->validarYVerificarError(
+            ['detalle_orden_id' => self::ID_INEXISTENTE],
+            $rules,
+            'detalle_orden_id'
+        );
     }
 
     #[Test]
     public function valida_cantidad_devuelta_requerida(): void
     {
-        $request = new DevolucionRequest();
-        $rules = $request->rules();
+        $rules = $this->obtenerRules();
 
-        $validator = Validator::make([
-            'detalle_orden_id' => 1,
-        ], $rules);
-
-        $this->assertTrue($validator->fails());
-        $this->assertArrayHasKey('cantidad_devuelta', $validator->errors()->toArray());
+        $this->validarYVerificarError(
+            ['detalle_orden_id' => 1],
+            $rules,
+            'cantidad_devuelta'
+        );
     }
 
     #[Test]
     public function valida_cantidad_devuelta_debe_ser_integer(): void
     {
-        $request = new DevolucionRequest();
-        $rules = $request->rules();
+        $rules = $this->obtenerRules();
 
-        $validator = Validator::make([
-            'detalle_orden_id' => 1,
-            'cantidad_devuelta' => 'no es numero',
-        ], $rules);
-
-        $this->assertTrue($validator->fails());
-        $this->assertArrayHasKey('cantidad_devuelta', $validator->errors()->toArray());
+        $this->validarYVerificarError(
+            [
+                'detalle_orden_id' => 1,
+                'cantidad_devuelta' => 'no es numero',
+            ],
+            $rules,
+            'cantidad_devuelta'
+        );
     }
 
     #[Test]
     public function valida_cantidad_devuelta_minima(): void
     {
         $detalleOrden = DetalleOrden::factory()->create();
+        $rules = $this->obtenerRules();
 
-        $request = new DevolucionRequest();
-        $rules = $request->rules();
-
-        $validator = Validator::make([
-            'detalle_orden_id' => $detalleOrden->id,
-            'cantidad_devuelta' => -1,
-        ], $rules);
-
-        $this->assertTrue($validator->fails());
-        $this->assertArrayHasKey('cantidad_devuelta', $validator->errors()->toArray());
+        $this->validarYVerificarError(
+            [
+                'detalle_orden_id' => $detalleOrden->id,
+                'cantidad_devuelta' => self::CANTIDAD_DEVUELTA_INVALIDA,
+            ],
+            $rules,
+            'cantidad_devuelta'
+        );
     }
 
     #[Test]
     public function valida_longitud_maxima_de_observaciones(): void
     {
         $detalleOrden = DetalleOrden::factory()->create();
+        $rules = $this->obtenerRules();
 
-        $request = new DevolucionRequest();
-        $rules = $request->rules();
-
-        $validator = Validator::make([
-            'detalle_orden_id' => $detalleOrden->id,
-            'cantidad_devuelta' => 1,
-            'observaciones' => str_repeat('a', 501),
-        ], $rules);
-
-        $this->assertTrue($validator->fails());
-        $this->assertArrayHasKey('observaciones', $validator->errors()->toArray());
+        $this->validarYVerificarError(
+            [
+                'detalle_orden_id' => $detalleOrden->id,
+                'cantidad_devuelta' => 1,
+                'observaciones' => str_repeat('a', self::LONGITUD_MAX_OBSERVACIONES),
+            ],
+            $rules,
+            'observaciones'
+        );
     }
 
     #[Test]
     public function acepta_datos_validos(): void
     {
         $detalleOrden = DetalleOrden::factory()->create();
-
-        $request = new DevolucionRequest();
-        $rules = $request->rules();
+        $rules = $this->obtenerRules();
 
         $validator = Validator::make([
             'detalle_orden_id' => $detalleOrden->id,
-            'cantidad_devuelta' => 5,
+            'cantidad_devuelta' => self::CANTIDAD_DEVUELTA_VALIDA,
             'observaciones' => 'Observaciones de la devolución',
         ], $rules);
 
@@ -163,13 +168,11 @@ class DevolucionRequestTest extends TestCase
     public function acepta_observaciones_nulas(): void
     {
         $detalleOrden = DetalleOrden::factory()->create();
-
-        $request = new DevolucionRequest();
-        $rules = $request->rules();
+        $rules = $this->obtenerRules();
 
         $validator = Validator::make([
             'detalle_orden_id' => $detalleOrden->id,
-            'cantidad_devuelta' => 5,
+            'cantidad_devuelta' => self::CANTIDAD_DEVUELTA_VALIDA,
             'observaciones' => null,
         ], $rules);
 

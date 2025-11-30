@@ -17,6 +17,15 @@ class ContratoConvenioRequestTest extends TestCase
 {
     use RefreshDatabase;
 
+    private const ID_INEXISTENTE = 99999;
+    private const LONGITUD_MAX_NAME = 256;
+    private const LONGITUD_MAX_CODIGO = 101;
+    private const FECHA_INICIO = '2025-01-01';
+    private const FECHA_FIN = '2025-12-31';
+    private const FECHA_FIN_INVALIDA = '2025-01-01';
+    private const FECHA_INICIO_INVALIDA = '2025-12-31';
+    private const CONTRATO_TEST = 'CONTRATO TEST';
+
     protected function setUp(): void
     {
         parent::setUp();
@@ -39,138 +48,142 @@ class ContratoConvenioRequestTest extends TestCase
         ]);
     }
 
+    private function obtenerRules(): array
+    {
+        $request = new ContratoConvenioRequest();
+        return $request->rules();
+    }
+
+    private function validarYVerificarError(array $data, array $rules, string $campoEsperado): void
+    {
+        $validator = Validator::make($data, $rules);
+
+        $this->assertTrue($validator->fails());
+        $this->assertArrayHasKey($campoEsperado, $validator->errors()->toArray());
+    }
+
     #[Test]
     public function valida_name_requerido_en_store(): void
     {
-        $request = new ContratoConvenioRequest();
-        $rules = $request->rules();
+        $rules = $this->obtenerRules();
 
-        $validator = Validator::make([], $rules);
-
-        $this->assertTrue($validator->fails());
-        $this->assertArrayHasKey('name', $validator->errors()->toArray());
+        $this->validarYVerificarError([], $rules, 'name');
     }
 
     #[Test]
     public function valida_unicidad_de_name_en_store(): void
     {
-        $contrato = ContratoConvenio::factory()->create(['name' => 'CONTRATO TEST']);
+        ContratoConvenio::factory()->create(['name' => self::CONTRATO_TEST]);
 
-        $request = new ContratoConvenioRequest();
-        $rules = $request->rules();
+        $rules = $this->obtenerRules();
 
-        $validator = Validator::make([
-            'name' => 'CONTRATO TEST',
-        ], $rules);
-
-        $this->assertTrue($validator->fails());
-        $this->assertArrayHasKey('name', $validator->errors()->toArray());
+        $this->validarYVerificarError(
+            ['name' => self::CONTRATO_TEST],
+            $rules,
+            'name'
+        );
     }
 
     #[Test]
     public function valida_unicidad_de_codigo_en_store(): void
     {
-        $contrato = ContratoConvenio::factory()->create(['codigo' => 'COD-001']);
+        ContratoConvenio::factory()->create(['codigo' => 'COD-001']);
 
-        $request = new ContratoConvenioRequest();
-        $rules = $request->rules();
+        $rules = $this->obtenerRules();
 
-        $validator = Validator::make([
-            'name' => 'NUEVO CONTRATO',
-            'codigo' => 'COD-001',
-        ], $rules);
-
-        $this->assertTrue($validator->fails());
-        $this->assertArrayHasKey('codigo', $validator->errors()->toArray());
+        $this->validarYVerificarError(
+            [
+                'name' => 'NUEVO CONTRATO',
+                'codigo' => 'COD-001',
+            ],
+            $rules,
+            'codigo'
+        );
     }
 
     #[Test]
     public function valida_longitud_maxima_de_name(): void
     {
-        $request = new ContratoConvenioRequest();
-        $rules = $request->rules();
+        $rules = $this->obtenerRules();
 
-        $validator = Validator::make([
-            'name' => str_repeat('a', 256),
-        ], $rules);
-
-        $this->assertTrue($validator->fails());
-        $this->assertArrayHasKey('name', $validator->errors()->toArray());
+        $this->validarYVerificarError(
+            ['name' => str_repeat('a', self::LONGITUD_MAX_NAME)],
+            $rules,
+            'name'
+        );
     }
 
     #[Test]
     public function valida_longitud_maxima_de_codigo(): void
     {
-        $request = new ContratoConvenioRequest();
-        $rules = $request->rules();
+        $rules = $this->obtenerRules();
 
-        $validator = Validator::make([
-            'name' => 'CONTRATO TEST',
-            'codigo' => str_repeat('a', 101),
-        ], $rules);
-
-        $this->assertTrue($validator->fails());
-        $this->assertArrayHasKey('codigo', $validator->errors()->toArray());
+        $this->validarYVerificarError(
+            [
+                'name' => self::CONTRATO_TEST,
+                'codigo' => str_repeat('a', self::LONGITUD_MAX_CODIGO),
+            ],
+            $rules,
+            'codigo'
+        );
     }
 
     #[Test]
     public function valida_existencia_de_proveedor(): void
     {
-        $request = new ContratoConvenioRequest();
-        $rules = $request->rules();
+        $rules = $this->obtenerRules();
 
-        $validator = Validator::make([
-            'name' => 'CONTRATO TEST',
-            'proveedor_id' => 99999,
-        ], $rules);
-
-        $this->assertTrue($validator->fails());
-        $this->assertArrayHasKey('proveedor_id', $validator->errors()->toArray());
+        $this->validarYVerificarError(
+            [
+                'name' => self::CONTRATO_TEST,
+                'proveedor_id' => self::ID_INEXISTENTE,
+            ],
+            $rules,
+            'proveedor_id'
+        );
     }
 
     #[Test]
     public function valida_fecha_fin_debe_ser_posterior_o_igual_a_fecha_inicio(): void
     {
-        $request = new ContratoConvenioRequest();
-        $rules = $request->rules();
+        $rules = $this->obtenerRules();
 
-        $validator = Validator::make([
-            'name' => 'CONTRATO TEST',
-            'fecha_inicio' => '2025-12-31',
-            'fecha_fin' => '2025-01-01',
-        ], $rules);
-
-        $this->assertTrue($validator->fails());
-        $this->assertArrayHasKey('fecha_fin', $validator->errors()->toArray());
+        $this->validarYVerificarError(
+            [
+                'name' => self::CONTRATO_TEST,
+                'fecha_inicio' => self::FECHA_INICIO_INVALIDA,
+                'fecha_fin' => self::FECHA_FIN_INVALIDA,
+            ],
+            $rules,
+            'fecha_fin'
+        );
     }
 
     #[Test]
     public function valida_estado_id_requerido(): void
     {
-        $request = new ContratoConvenioRequest();
-        $rules = $request->rules();
+        $rules = $this->obtenerRules();
 
-        $validator = Validator::make([
-            'name' => 'CONTRATO TEST',
-        ], $rules);
-
-        $this->assertTrue($validator->fails());
-        $this->assertArrayHasKey('estado_id', $validator->errors()->toArray());
+        $this->validarYVerificarError(
+            ['name' => self::CONTRATO_TEST],
+            $rules,
+            'estado_id'
+        );
     }
 
     #[Test]
     public function valida_estado_id_debe_existir(): void
     {
-        $request = new ContratoConvenioRequest();
-        $rules = $request->rules();
+        $rules = $this->obtenerRules();
 
-        $validator = Validator::make([
-            'name' => 'CONTRATO TEST',
-            'estado_id' => 99999,
-        ], $rules);
-
-        $this->assertTrue($validator->fails());
-        $this->assertArrayHasKey('estado_id', $validator->errors()->toArray());
+        $this->validarYVerificarError(
+            [
+                'name' => self::CONTRATO_TEST,
+                'estado_id' => self::ID_INEXISTENTE,
+            ],
+            $rules,
+            'estado_id'
+        );
     }
 
     #[Test]
@@ -179,15 +192,14 @@ class ContratoConvenioRequestTest extends TestCase
         $proveedor = Proveedor::factory()->create();
         $estado = ParametroTema::query()->inRandomOrder()->first();
 
-        $request = new ContratoConvenioRequest();
-        $rules = $request->rules();
+        $rules = $this->obtenerRules();
 
         $validator = Validator::make([
             'name' => 'CONTRATO VALIDO',
             'codigo' => 'COD-001',
             'proveedor_id' => $proveedor->id,
-            'fecha_inicio' => '2025-01-01',
-            'fecha_fin' => '2025-12-31',
+            'fecha_inicio' => self::FECHA_INICIO,
+            'fecha_fin' => self::FECHA_FIN,
             'estado_id' => $estado->id,
         ], $rules);
 

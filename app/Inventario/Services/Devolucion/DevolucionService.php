@@ -67,7 +67,7 @@ class DevolucionService
      * @param Devolucion $devolucion
      * @return string
      */
-    private function construirMensajeDevolucion(Devolucion $devolucion): string
+    protected function construirMensajeDevolucion(Devolucion $devolucion): string
     {
         $mensaje = 'Devolución registrada exitosamente.';
 

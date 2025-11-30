@@ -24,6 +24,13 @@ class InscripcionComplementarioServiceTest extends TestCase
 {
     use RefreshDatabase;
 
+    private const TEST_NUMERO_DOCUMENTO = '1234567890';
+    private const TEST_APELLIDO = 'Pérez';
+    private const TEST_FECHA_NACIMIENTO = '1990-01-01';
+    private const TEST_CELULAR = '3001234567';
+    private const TEST_EMAIL = 'juan@test.com';
+    private const TEST_DIRECCION = 'Calle 123';
+
     protected InscripcionComplementarioService $service;
     protected $personaRepositoryMock;
     protected $aspiranteRepositoryMock;
@@ -97,27 +104,27 @@ class InscripcionComplementarioServiceTest extends TestCase
     {
         $data = [
             'tipo_documento' => 1,
-            'numero_documento' => '1234567890',
+            'numero_documento' => self::TEST_NUMERO_DOCUMENTO,
             'primer_nombre' => 'Juan',
-            'primer_apellido' => 'Pérez',
-            'fecha_nacimiento' => '1990-01-01',
+            'primer_apellido' => self::TEST_APELLIDO,
+            'fecha_nacimiento' => self::TEST_FECHA_NACIMIENTO,
             'genero' => 1,
-            'celular' => '3001234567',
-            'email' => 'juan@test.com',
+            'celular' => self::TEST_CELULAR,
+            'email' => self::TEST_EMAIL,
             'pais_id' => 1,
             'departamento_id' => 1,
             'municipio_id' => 1,
-            'direccion' => 'Calle 123',
+            'direccion' => self::TEST_DIRECCION,
         ];
 
         $persona = new Persona();
         $persona->id = 1;
-        $persona->numero_documento = '1234567890';
-        $persona->email = 'juan@test.com';
+        $persona->numero_documento = self::TEST_NUMERO_DOCUMENTO;
+        $persona->email = self::TEST_EMAIL;
 
         $this->personaRepositoryMock->shouldReceive('existsByDocumentoOrEmail')
             ->once()
-            ->with('1234567890', 'juan@test.com')
+            ->with(self::TEST_NUMERO_DOCUMENTO, self::TEST_EMAIL)
             ->andReturn(false);
 
         $this->personaRepositoryMock->shouldReceive('create')
@@ -136,22 +143,22 @@ class InscripcionComplementarioServiceTest extends TestCase
     {
         $data = [
             'tipo_documento' => 1,
-            'numero_documento' => '1234567890',
-            'email' => 'juan@test.com',
+            'numero_documento' => self::TEST_NUMERO_DOCUMENTO,
+            'email' => self::TEST_EMAIL,
             'primer_nombre' => 'Juan',
-            'primer_apellido' => 'Pérez',
-            'fecha_nacimiento' => '1990-01-01',
+            'primer_apellido' => self::TEST_APELLIDO,
+            'fecha_nacimiento' => self::TEST_FECHA_NACIMIENTO,
             'genero' => 1,
-            'celular' => '3001234567',
+            'celular' => self::TEST_CELULAR,
             'pais_id' => 1,
             'departamento_id' => 1,
             'municipio_id' => 1,
-            'direccion' => 'Calle 123',
+            'direccion' => self::TEST_DIRECCION,
         ];
 
         $this->personaRepositoryMock->shouldReceive('existsByDocumentoOrEmail')
             ->once()
-            ->with('1234567890', 'juan@test.com')
+            ->with(self::TEST_NUMERO_DOCUMENTO, self::TEST_EMAIL)
             ->andReturn(true);
 
         $response = $this->service->procesarInscripcionGeneral($data);
@@ -263,34 +270,38 @@ class InscripcionComplementarioServiceTest extends TestCase
         
         $programa = ComplementarioOfertado::factory()->conOferta()->create();
 
-        // Obtener parametros_temas para tipo_documento y genero (del TemaSeeder)
-        $tipoDocumentoParametroTema = \App\Models\ParametroTema::where('tema_id', 2)
-            ->where('parametro_id', 1)
-            ->first();
-        $generoParametroTema = \App\Models\ParametroTema::where('tema_id', 3)
-            ->where('parametro_id', 9)
-            ->first();
+        // Asegurar que existen los parametros_temas necesarios en la base de datos
+        $parametroDoc = \App\Models\Parametro::firstOrCreate(
+            ['id' => 1],
+            ['name' => 'CÉDULA DE CIUDADANÍA', 'status' => 1]
+        );
+        $temaDoc = \App\Models\Tema::firstOrCreate(
+            ['id' => 2],
+            ['name' => 'TIPO DE DOCUMENTO', 'status' => 1]
+        );
+        \App\Models\ParametroTema::firstOrCreate(
+            [
+                'parametro_id' => $parametroDoc->id,
+                'tema_id' => $temaDoc->id,
+            ],
+            ['status' => 1]
+        );
 
-        // Si no existen, crearlos
-        if (!$tipoDocumentoParametroTema) {
-            $parametro = \App\Models\Parametro::find(1) ?? \App\Models\Parametro::create(['id' => 1, 'name' => 'CÉDULA DE CIUDADANÍA', 'status' => 1]);
-            $tema = \App\Models\Tema::find(2) ?? \App\Models\Tema::create(['id' => 2, 'name' => 'TIPO DE DOCUMENTO', 'status' => 1]);
-            $tipoDocumentoParametroTema = \App\Models\ParametroTema::create([
-                'parametro_id' => $parametro->id,
-                'tema_id' => $tema->id,
-                'status' => 1,
-            ]);
-        }
-
-        if (!$generoParametroTema) {
-            $parametro = \App\Models\Parametro::find(9) ?? \App\Models\Parametro::create(['id' => 9, 'name' => 'MASCULINO', 'status' => 1]);
-            $tema = \App\Models\Tema::find(3) ?? \App\Models\Tema::create(['id' => 3, 'name' => 'GÉNERO', 'status' => 1]);
-            $generoParametroTema = \App\Models\ParametroTema::create([
-                'parametro_id' => $parametro->id,
-                'tema_id' => $tema->id,
-                'status' => 1,
-            ]);
-        }
+        $parametroGenero = \App\Models\Parametro::firstOrCreate(
+            ['id' => 9],
+            ['name' => 'MASCULINO', 'status' => 1]
+        );
+        $temaGenero = \App\Models\Tema::firstOrCreate(
+            ['id' => 3],
+            ['name' => 'GÉNERO', 'status' => 1]
+        );
+        \App\Models\ParametroTema::firstOrCreate(
+            [
+                'parametro_id' => $parametroGenero->id,
+                'tema_id' => $temaGenero->id,
+            ],
+            ['status' => 1]
+        );
 
         // Crear servicio real sin mocks para este test
         $userService = new UserService();
@@ -311,17 +322,17 @@ class InscripcionComplementarioServiceTest extends TestCase
 
         $data = [
             'tipo_documento' => 1, // parametro_id
-            'numero_documento' => '1234567890',
+            'numero_documento' => self::TEST_NUMERO_DOCUMENTO,
             'primer_nombre' => 'Juan',
-            'primer_apellido' => 'Pérez',
-            'fecha_nacimiento' => '1990-01-01',
+            'primer_apellido' => self::TEST_APELLIDO,
+            'fecha_nacimiento' => self::TEST_FECHA_NACIMIENTO,
             'genero' => 9, // parametro_id
-            'celular' => '3001234567',
-            'email' => 'juan@test.com',
+            'celular' => self::TEST_CELULAR,
+            'email' => self::TEST_EMAIL,
             'pais_id' => $pais->id,
             'departamento_id' => $departamento->id,
             'municipio_id' => $municipio->id,
-            'direccion' => 'Calle 123',
+            'direccion' => self::TEST_DIRECCION,
             'acepto_privacidad' => '1',
             'acepto_terminos' => '1',
         ];
@@ -330,8 +341,8 @@ class InscripcionComplementarioServiceTest extends TestCase
 
         // Validar que se creó la persona
         $this->assertDatabaseHas('personas', [
-            'numero_documento' => '1234567890',
-            'email' => 'juan@test.com',
+            'numero_documento' => self::TEST_NUMERO_DOCUMENTO,
+            'email' => self::TEST_EMAIL,
         ]);
 
         // Validar que se creó el aspirante
@@ -340,9 +351,9 @@ class InscripcionComplementarioServiceTest extends TestCase
         ]);
 
         // Validar que se creó el usuario
-        $persona = Persona::where('numero_documento', '1234567890')->first();
+        $persona = Persona::where('numero_documento', self::TEST_NUMERO_DOCUMENTO)->first();
         $this->assertDatabaseHas('users', [
-            'email' => 'juan@test.com',
+            'email' => self::TEST_EMAIL,
             'persona_id' => $persona->id,
         ]);
 
@@ -376,17 +387,17 @@ class InscripcionComplementarioServiceTest extends TestCase
 
         $data = [
             'tipo_documento' => 1,
-            'numero_documento' => '1234567890',
+            'numero_documento' => self::TEST_NUMERO_DOCUMENTO,
             'primer_nombre' => 'Juan',
-            'primer_apellido' => 'Pérez',
-            'fecha_nacimiento' => '1990-01-01',
+            'primer_apellido' => self::TEST_APELLIDO,
+            'fecha_nacimiento' => self::TEST_FECHA_NACIMIENTO,
             'genero' => 1,
-            'celular' => '3001234567',
-            'email' => 'juan@test.com',
+            'celular' => self::TEST_CELULAR,
+            'email' => self::TEST_EMAIL,
             'pais_id' => 1,
             'departamento_id' => 1,
             'municipio_id' => 1,
-            'direccion' => 'Calle 123',
+            'direccion' => self::TEST_DIRECCION,
         ];
 
         $response = $this->service->procesarInscripcion($data, $programaId);

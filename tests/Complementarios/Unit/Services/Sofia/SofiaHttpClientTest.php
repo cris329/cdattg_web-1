@@ -12,6 +12,8 @@ use PHPUnit\Framework\Attributes\Test;
 
 class SofiaHttpClientTest extends TestCase
 {
+    private const TEST_NUMERO_DOCUMENTO = '1234567890';
+
     private SofiaHttpClient $client;
 
     protected function setUp(): void
@@ -41,7 +43,7 @@ class SofiaHttpClientTest extends TestCase
             ], 200),
         ]);
 
-        $resultado = $this->client->validate('1234567890');
+        $resultado = $this->client->validate(self::TEST_NUMERO_DOCUMENTO);
 
         $this->assertEquals('YA_EXISTE', $resultado);
     }
@@ -57,7 +59,7 @@ class SofiaHttpClientTest extends TestCase
             ], 200),
         ]);
 
-        $resultado = $this->client->validate('1234567890');
+        $resultado = $this->client->validate(self::TEST_NUMERO_DOCUMENTO);
 
         $this->assertEquals('NO_REGISTRADO', $resultado);
     }
@@ -73,7 +75,7 @@ class SofiaHttpClientTest extends TestCase
             ], 200),
         ]);
 
-        $resultado = $this->client->validate('1234567890');
+        $resultado = $this->client->validate(self::TEST_NUMERO_DOCUMENTO);
 
         $this->assertEquals('REQUIERE_CAMBIO', $resultado);
     }
@@ -92,7 +94,7 @@ class SofiaHttpClientTest extends TestCase
         $this->expectException(\RuntimeException::class);
         $this->expectExceptionMessage('Error del servicio Playwright');
 
-        $this->client->validate('1234567890');
+        $this->client->validate(self::TEST_NUMERO_DOCUMENTO);
     }
 
     #[Test]
@@ -108,7 +110,7 @@ class SofiaHttpClientTest extends TestCase
         $this->expectException(\RuntimeException::class);
         $this->expectExceptionMessage('falta campo status');
 
-        $this->client->validate('1234567890');
+        $this->client->validate(self::TEST_NUMERO_DOCUMENTO);
     }
 
     #[Test]
@@ -124,7 +126,7 @@ class SofiaHttpClientTest extends TestCase
         $this->expectException(\RuntimeException::class);
         $this->expectExceptionMessage('sin resultado');
 
-        $this->client->validate('1234567890');
+        $this->client->validate(self::TEST_NUMERO_DOCUMENTO);
     }
 
     #[Test]
@@ -138,7 +140,7 @@ class SofiaHttpClientTest extends TestCase
         $this->expectException(\RuntimeException::class);
         $this->expectExceptionMessage('Error HTTP 500');
 
-        $this->client->validate('1234567890');
+        $this->client->validate(self::TEST_NUMERO_DOCUMENTO);
     }
 
     #[Test]
@@ -151,7 +153,7 @@ class SofiaHttpClientTest extends TestCase
         $this->expectException(\RuntimeException::class);
         $this->expectExceptionMessage('No se pudo conectar');
 
-        $this->client->validate('1234567890');
+        $this->client->validate(self::TEST_NUMERO_DOCUMENTO);
     }
 
     #[Test]
@@ -169,7 +171,7 @@ class SofiaHttpClientTest extends TestCase
         $this->expectException(\RuntimeException::class);
         $this->expectExceptionMessage('Error en la peticion');
 
-        $this->client->validate('1234567890');
+        $this->client->validate(self::TEST_NUMERO_DOCUMENTO);
     }
 
     #[Test]
@@ -183,7 +185,7 @@ class SofiaHttpClientTest extends TestCase
             ], 200),
         ]);
 
-        $resultado = $this->client->validate('1234567890');
+        $resultado = $this->client->validate(self::TEST_NUMERO_DOCUMENTO);
 
         Http::assertSent(function ($request) {
             return $request->url() === 'http://test-playwright:3000/health' &&
@@ -205,7 +207,7 @@ class SofiaHttpClientTest extends TestCase
         ]);
 
         // El health check falla pero no debería detener la validación
-        $resultado = $this->client->validate('1234567890');
+        $resultado = $this->client->validate(self::TEST_NUMERO_DOCUMENTO);
 
         $this->assertEquals('YA_EXISTE', $resultado);
     }

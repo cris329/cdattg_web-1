@@ -18,6 +18,11 @@ class ValidarSofiaJobTest extends TestCase
 {
     use \Illuminate\Foundation\Testing\RefreshDatabase;
 
+    private const TEST_FECHA_NACIMIENTO = '1990-01-01';
+    private const TEST_DIRECCION = 'Dirección test';
+    private const TEST_TELEFONO = '1234567890';
+    private const TEST_CELULAR = '0987654321';
+
     private function createTestUser(): \App\Models\User
     {
         static $userCount = 0;
@@ -50,7 +55,7 @@ class ValidarSofiaJobTest extends TestCase
             'segundo_nombre' => '',
             'primer_apellido' => 'User' . $userCount,
             'segundo_apellido' => '',
-            'fecha_nacimiento' => '1990-01-01',
+            'fecha_nacimiento' => self::TEST_FECHA_NACIMIENTO,
             'genero' => $genero->id ?? 1,
             'telefono' => '123456789' . $userCount,
             'celular' => '098765432' . $userCount,
@@ -58,7 +63,7 @@ class ValidarSofiaJobTest extends TestCase
             'pais_id' => $pais->id,
             'departamento_id' => $departamento->id,
             'municipio_id' => $municipio->id,
-            'direccion' => 'Dirección test' . $userCount,
+            'direccion' => self::TEST_DIRECCION . $userCount,
             'status' => 1,
             'estado_sofia' => 1,
         ]);
@@ -170,15 +175,15 @@ class ValidarSofiaJobTest extends TestCase
             'segundo_nombre' => '',
             'primer_apellido' => 'User',
             'segundo_apellido' => '',
-            'fecha_nacimiento' => '1990-01-01',
+            'fecha_nacimiento' => self::TEST_FECHA_NACIMIENTO,
             'genero' => $genero->id,
-            'telefono' => '1234567890',
-            'celular' => '0987654321',
+            'telefono' => self::TEST_TELEFONO,
+            'celular' => self::TEST_CELULAR,
             'email' => 'test@example.com',
             'pais_id' => $pais->id,
             'departamento_id' => $departamento->id,
             'municipio_id' => $municipio->id,
-            'direccion' => 'Dirección test',
+            'direccion' => self::TEST_DIRECCION,
             'status' => 1,
             'estado_sofia' => 0,
         ]);
@@ -317,20 +322,20 @@ class ValidarSofiaJobTest extends TestCase
         // Crear persona y aspirante para que el Job procese y mantenga el estado 'processing'
         $persona = Persona::create([
             'tipo_documento' => $tipoDocumento->id,
-            'numero_documento' => '1234567890',
+            'numero_documento' => self::TEST_TELEFONO,
             'primer_nombre' => 'Test',
             'segundo_nombre' => '',
             'primer_apellido' => 'User',
             'segundo_apellido' => '',
-            'fecha_nacimiento' => '1990-01-01',
+            'fecha_nacimiento' => self::TEST_FECHA_NACIMIENTO,
             'genero' => $genero->id,
-            'telefono' => '1234567890',
-            'celular' => '0987654321',
+            'telefono' => self::TEST_TELEFONO,
+            'celular' => self::TEST_CELULAR,
             'email' => 'testuser@example.com',
             'pais_id' => $pais->id,
             'departamento_id' => $departamento->id,
             'municipio_id' => $municipio->id,
-            'direccion' => 'Dirección test',
+            'direccion' => self::TEST_DIRECCION,
             'status' => 1,
             'estado_sofia' => 0,
         ]);
@@ -424,15 +429,15 @@ class ValidarSofiaJobTest extends TestCase
             'segundo_nombre' => '',
             'primer_apellido' => 'Persona',
             'segundo_apellido' => '',
-            'fecha_nacimiento' => '1990-01-01',
+            'fecha_nacimiento' => self::TEST_FECHA_NACIMIENTO,
             'genero' => $genero->id,
-            'telefono' => '1234567890',
-            'celular' => '0987654321',
+            'telefono' => self::TEST_TELEFONO,
+            'celular' => self::TEST_CELULAR,
             'email' => 'persona@example.com',
             'pais_id' => $pais->id,
             'departamento_id' => $departamento->id,
             'municipio_id' => $municipio->id,
-            'direccion' => 'Dirección test',
+            'direccion' => self::TEST_DIRECCION,
             'status' => 1,
             'estado_sofia' => 0,
         ]);

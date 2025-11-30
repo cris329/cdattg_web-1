@@ -73,19 +73,23 @@ class DevolucionRepositoryTest extends TestCase
         $this->assertTrue($resultado->relationLoaded('detalleOrden'));
     }
 
+    private const USER_ID_TEST = 1;
+
     #[Test]
     public function puede_obtener_prestamos_activos_usuario()
     {
-        $userId = 1;
         $orden = Orden::factory()->create([
-            'user_create_id' => $userId,
+            'user_create_id' => self::USER_ID_TEST,
             'fecha_devolucion' => now()->addDays(30)
         ]);
         $detalleOrden = DetalleOrden::factory()->create([
             'orden_id' => $orden->id,
         ]);
 
-        $resultado = $this->repository->obtenerPrestamosActivosUsuario($userId, $detalleOrden->estado_orden_id);
+        $resultado = $this->repository->obtenerPrestamosActivosUsuario(
+            self::USER_ID_TEST,
+            $detalleOrden->estado_orden_id
+        );
 
         $this->assertGreaterThanOrEqual(1, $resultado->total());
     }
@@ -93,14 +97,13 @@ class DevolucionRepositoryTest extends TestCase
     #[Test]
     public function puede_obtener_historial_prestamos_usuario()
     {
-        $userId = 1;
         $orden = Orden::factory()->create([
-            'user_create_id' => $userId,
+            'user_create_id' => self::USER_ID_TEST,
             'fecha_devolucion' => now()->addDays(30)
         ]);
         DetalleOrden::factory()->create(['orden_id' => $orden->id]);
 
-        $resultado = $this->repository->obtenerHistorialPrestamosUsuario($userId);
+        $resultado = $this->repository->obtenerHistorialPrestamosUsuario(self::USER_ID_TEST);
 
         $this->assertGreaterThanOrEqual(1, $resultado->total());
     }

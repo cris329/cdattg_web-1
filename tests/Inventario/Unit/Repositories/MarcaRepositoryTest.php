@@ -34,10 +34,38 @@ class MarcaRepositoryTest extends TestCase
         ]);
     }
 
+    private function crearTemaMarcas(): Tema
+    {
+        return Tema::create(['name' => 'MARCAS']);
+    }
+
+    private function crearParametro(string $nombre): Parametro
+    {
+        return Parametro::create(['name' => $nombre]);
+    }
+
+    private function crearMarca(string $nombre): \App\Models\Inventario\Marca
+    {
+        return \App\Models\Inventario\Marca::create(['name' => $nombre]);
+    }
+
+    private function crearMarcaConParametroTema(Tema $tema, string $nombreParametro): Parametro
+    {
+        $parametro = $this->crearParametro($nombreParametro);
+        
+        ParametroTema::create([
+            'parametro_id' => $parametro->id,
+            'tema_id' => $tema->id,
+            'status' => 1
+        ]);
+
+        return $parametro;
+    }
+
     #[Test]
     public function puede_obtener_tema_marcas()
     {
-        $tema = Tema::create(['name' => 'MARCAS']);
+        $this->crearTemaMarcas();
 
         $resultado = $this->repository->obtenerTemaMarcas();
 
@@ -56,20 +84,9 @@ class MarcaRepositoryTest extends TestCase
     #[Test]
     public function puede_obtener_marcas_con_filtros()
     {
-        $tema = Tema::create(['name' => 'MARCAS']);
-        $parametro1 = Parametro::create(['name' => 'MARCA 1']);
-        $parametro2 = Parametro::create(['name' => 'MARCA 2']);
-        
-        ParametroTema::create([
-            'parametro_id' => $parametro1->id,
-            'tema_id' => $tema->id,
-            'status' => 1
-        ]);
-        ParametroTema::create([
-            'parametro_id' => $parametro2->id,
-            'tema_id' => $tema->id,
-            'status' => 1
-        ]);
+        $tema = $this->crearTemaMarcas();
+        $this->crearMarcaConParametroTema($tema, 'MARCA 1');
+        $this->crearMarcaConParametroTema($tema, 'MARCA 2');
 
         $resultado = $this->repository->obtenerConFiltros();
 
@@ -79,20 +96,9 @@ class MarcaRepositoryTest extends TestCase
     #[Test]
     public function puede_filtrar_marcas_por_busqueda()
     {
-        $tema = Tema::create(['name' => 'MARCAS']);
-        $parametro1 = Parametro::create(['name' => 'SAMSUNG']);
-        $parametro2 = Parametro::create(['name' => 'LG']);
-        
-        ParametroTema::create([
-            'parametro_id' => $parametro1->id,
-            'tema_id' => $tema->id,
-            'status' => 1
-        ]);
-        ParametroTema::create([
-            'parametro_id' => $parametro2->id,
-            'tema_id' => $tema->id,
-            'status' => 1
-        ]);
+        $tema = $this->crearTemaMarcas();
+        $this->crearMarcaConParametroTema($tema, 'SAMSUNG');
+        $this->crearMarcaConParametroTema($tema, 'LG');
 
         $resultado = $this->repository->obtenerConFiltros(['search' => 'SAMS']);
 
@@ -103,7 +109,7 @@ class MarcaRepositoryTest extends TestCase
     #[Test]
     public function puede_encontrar_marca_por_id()
     {
-        $marca = \App\Models\Inventario\Marca::create(['name' => 'TEST MARCA ' . uniqid()]);
+        $marca = $this->crearMarca('TEST MARCA ' . uniqid());
 
         $resultado = $this->repository->encontrar($marca->id);
 
@@ -114,8 +120,8 @@ class MarcaRepositoryTest extends TestCase
     #[Test]
     public function puede_encontrar_multiples_marcas()
     {
-        $marca1 = \App\Models\Inventario\Marca::create(['name' => 'MARCA1']);
-        $marca2 = \App\Models\Inventario\Marca::create(['name' => 'MARCA2']);
+        $marca1 = $this->crearMarca('MARCA1');
+        $marca2 = $this->crearMarca('MARCA2');
 
         $resultado = $this->repository->encontrarMultiples([$marca1->id, $marca2->id]);
 
@@ -127,7 +133,7 @@ class MarcaRepositoryTest extends TestCase
     #[Test]
     public function puede_encontrar_marca_con_relaciones()
     {
-        $parametro = Parametro::create(['name' => 'MARCA TEST']);
+        $parametro = $this->crearParametro('MARCA TEST');
 
         $resultado = $this->repository->encontrarConRelaciones($parametro->id);
 
@@ -138,7 +144,7 @@ class MarcaRepositoryTest extends TestCase
     #[Test]
     public function puede_actualizar_marca()
     {
-        $parametro = Parametro::create(['name' => 'MARCA ORIGINAL']);
+        $parametro = $this->crearParametro('MARCA ORIGINAL');
 
         $resultado = $this->repository->actualizar($parametro->id, ['name' => 'MARCA ACTUALIZADA']);
 
@@ -149,8 +155,8 @@ class MarcaRepositoryTest extends TestCase
     #[Test]
     public function puede_verificar_si_marca_tiene_productos()
     {
-        $marca = \App\Models\Inventario\Marca::create(['name' => 'MARCA']);
-        $producto = Producto::factory()->create(['marca_id' => $marca->id]);
+        $marca = $this->crearMarca('MARCA');
+        Producto::factory()->create(['marca_id' => $marca->id]);
 
         $resultado = $this->repository->tieneProductos($marca->id);
 
@@ -160,7 +166,7 @@ class MarcaRepositoryTest extends TestCase
     #[Test]
     public function retorna_false_si_marca_no_tiene_productos()
     {
-        $marca = \App\Models\Inventario\Marca::create(['name' => 'MARCA']);
+        $marca = $this->crearMarca('MARCA');
 
         $resultado = $this->repository->tieneProductos($marca->id);
 

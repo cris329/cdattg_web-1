@@ -16,6 +16,12 @@ class ProgramaComplementarioControllerTest extends TestCase
 {
     use RefreshDatabase;
 
+    private const TEST_COMPETENCIA_NOMBRE = 'Competencia Test';
+    private const TEST_COMPETENCIA_DESCRIPCION = 'Descripción de prueba';
+    private const TEST_RAP_NOMBRE = 'Resultado de Aprendizaje Test';
+    private const TEST_JUSTIFICACION = 'Justificación';
+    private const TEST_JUSTIFICACION_PRUEBA = 'Justificación de prueba';
+
     protected User $user;
 
     protected function setUp(): void
@@ -150,7 +156,7 @@ class ProgramaComplementarioControllerTest extends TestCase
         $data = [
             'codigo' => 'COMP0001',
             'nombre' => 'Programa Test',
-            'justificacion' => 'Justificación de prueba',
+            'justificacion' => self::TEST_JUSTIFICACION_PRUEBA,
             'requisitos_ingreso' => 'Requisitos de prueba',
             'duracion' => 60,
             'cupos' => 30,
@@ -211,8 +217,8 @@ class ProgramaComplementarioControllerTest extends TestCase
         // Crear competencia con todos los campos requeridos
         $competencia = Competencia::create([
             'codigo' => 'COMP-' . uniqid(),
-            'nombre' => 'Competencia Test',
-            'descripcion' => 'Descripción de prueba',
+            'nombre' => self::TEST_COMPETENCIA_NOMBRE,
+            'descripcion' => self::TEST_COMPETENCIA_DESCRIPCION,
             'duracion' => 40,
             'fecha_inicio' => now()->format('Y-m-d'),
             'fecha_fin' => now()->addMonths(6)->format('Y-m-d'),
@@ -223,7 +229,7 @@ class ProgramaComplementarioControllerTest extends TestCase
         // Crear ResultadosAprendizaje con todos los campos requeridos
         $rap = ResultadosAprendizaje::create([
             'codigo' => 'RAP-' . uniqid(),
-            'nombre' => 'Resultado de Aprendizaje Test',
+            'nombre' => self::TEST_RAP_NOMBRE,
             'duracion' => 20,
             'fecha_inicio' => now()->format('Y-m-d'),
             'fecha_fin' => now()->addMonths(3)->format('Y-m-d'),
@@ -242,7 +248,7 @@ class ProgramaComplementarioControllerTest extends TestCase
         $data = [
             'codigo' => 'COMP0002',
             'nombre' => 'Programa con Estructura',
-            'justificacion' => 'Justificación de prueba',
+            'justificacion' => self::TEST_JUSTIFICACION_PRUEBA,
             'requisitos_ingreso' => 'Requisitos de prueba',
             'duracion' => 60,
             'cupos' => 30,
@@ -360,12 +366,12 @@ class ProgramaComplementarioControllerTest extends TestCase
             // Si no hay suficientes días, crear parámetros y ParametroTema
             $parametro1 = Parametro::create(['name' => uniqid('Dia1_'), 'status' => 1]);
             $parametro2 = Parametro::create(['name' => uniqid('Dia2_'), 'status' => 1]);
-            $dia1Tema = \App\Models\ParametroTema::create([
+            \App\Models\ParametroTema::create([
                 'tema_id' => 4,
                 'parametro_id' => $parametro1->id,
                 'status' => 1,
             ]);
-            $dia2Tema = \App\Models\ParametroTema::create([
+            \App\Models\ParametroTema::create([
                 'tema_id' => 4,
                 'parametro_id' => $parametro2->id,
                 'status' => 1,
@@ -420,8 +426,8 @@ class ProgramaComplementarioControllerTest extends TestCase
         // Crear competencia con todos los campos requeridos
         $competencia = Competencia::create([
             'codigo' => 'COMP-' . uniqid(),
-            'nombre' => 'Competencia Test',
-            'descripcion' => 'Descripción de prueba',
+            'nombre' => self::TEST_COMPETENCIA_NOMBRE,
+            'descripcion' => self::TEST_COMPETENCIA_DESCRIPCION,
             'duracion' => 40,
             'fecha_inicio' => now()->format('Y-m-d'),
             'fecha_fin' => now()->addMonths(6)->format('Y-m-d'),
@@ -432,7 +438,7 @@ class ProgramaComplementarioControllerTest extends TestCase
         // Crear ResultadosAprendizaje con todos los campos requeridos
         $rap = ResultadosAprendizaje::create([
             'codigo' => 'RAP-' . uniqid(),
-            'nombre' => 'Resultado de Aprendizaje Test',
+            'nombre' => self::TEST_RAP_NOMBRE,
             'duracion' => 20,
             'fecha_inicio' => now()->format('Y-m-d'),
             'fecha_fin' => now()->addMonths(3)->format('Y-m-d'),
@@ -451,7 +457,7 @@ class ProgramaComplementarioControllerTest extends TestCase
         $data = [
             'codigo' => $programa->codigo,
             'nombre' => 'Programa con Estructura Actualizada',
-            'justificacion' => 'Justificación',
+            'justificacion' => self::TEST_JUSTIFICACION,
             'requisitos_ingreso' => 'Requisitos',
             'duracion' => 60,
             'cupos' => 30,
@@ -512,8 +518,8 @@ class ProgramaComplementarioControllerTest extends TestCase
         // Crear competencia con todos los campos requeridos
         $competencia = Competencia::create([
             'codigo' => 'COMP-' . uniqid(),
-            'nombre' => 'Competencia Test',
-            'descripcion' => 'Descripción de prueba',
+            'nombre' => self::TEST_COMPETENCIA_NOMBRE,
+            'descripcion' => self::TEST_COMPETENCIA_DESCRIPCION,
             'duracion' => 40,
             'fecha_inicio' => now()->format('Y-m-d'),
             'fecha_fin' => now()->addMonths(6)->format('Y-m-d'),
@@ -524,7 +530,7 @@ class ProgramaComplementarioControllerTest extends TestCase
         // Crear ResultadosAprendizaje con todos los campos requeridos
         $rap = ResultadosAprendizaje::create([
             'codigo' => 'RAP-' . uniqid(),
-            'nombre' => 'Resultado de Aprendizaje Test',
+            'nombre' => self::TEST_RAP_NOMBRE,
             'duracion' => 20,
             'fecha_inicio' => now()->format('Y-m-d'),
             'fecha_fin' => now()->addMonths(3)->format('Y-m-d'),
@@ -552,7 +558,7 @@ class ProgramaComplementarioControllerTest extends TestCase
         $data = [
             'codigo' => 'COMP0003',
             'nombre' => 'Programa Sin Días',
-            'justificacion' => 'Justificación',
+            'justificacion' => self::TEST_JUSTIFICACION,
             'requisitos_ingreso' => 'Requisitos',
             'duracion' => 60,
             'cupos' => 30,
@@ -579,7 +585,7 @@ class ProgramaComplementarioControllerTest extends TestCase
         $data = [
             'codigo' => $programa->codigo,
             'nombre' => 'Programa Sin Estructura',
-            'justificacion' => 'Justificación',
+            'justificacion' => self::TEST_JUSTIFICACION,
             'requisitos_ingreso' => 'Requisitos',
             'duracion' => 60,
             'cupos' => 30,

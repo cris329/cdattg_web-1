@@ -15,6 +15,11 @@ class CarritoRequestTest extends TestCase
 {
     use RefreshDatabase;
 
+    private const ROUTE_ACTUALIZAR = 'inventario.carrito.actualizar';
+    private const ID_INEXISTENTE = 99999;
+    private const CANTIDAD_VALIDA = 5;
+    private const CANTIDAD_INVALIDA = 0;
+
     protected function setUp(): void
     {
         parent::setUp();
@@ -38,189 +43,162 @@ class CarritoRequestTest extends TestCase
         ]);
     }
 
-    #[Test]
-    public function valida_cantidad_requerida_para_actualizar(): void
+    private function obtenerRules(): array
     {
         $request = new CarritoRequest();
-        $request->setRouteResolver(function () {
-            return new class {
-                public function named(...$patterns) {
-                    return in_array('inventario.carrito.actualizar', $patterns);
+        return $request->rules();
+    }
+
+    private function obtenerRulesParaActualizar(): array
+    {
+        $request = new CarritoRequest();
+        $rutaActualizar = self::ROUTE_ACTUALIZAR;
+        $request->setRouteResolver(function () use ($rutaActualizar) {
+            return new class($rutaActualizar) {
+                private string $ruta;
+                
+                public function __construct(string $ruta) {
+                    $this->ruta = $ruta;
+                }
+                
+                public function named(...$patterns): bool {
+                    return in_array($this->ruta, $patterns);
                 }
             };
         });
+        return $request->rules();
+    }
 
-        $rules = $request->rules();
-
-        $validator = Validator::make([], $rules);
+    private function validarYVerificarError(array $data, array $rules, string $campoEsperado): void
+    {
+        $validator = Validator::make($data, $rules);
 
         $this->assertTrue($validator->fails());
-        $this->assertArrayHasKey('cantidad', $validator->errors()->toArray());
+        $this->assertArrayHasKey($campoEsperado, $validator->errors()->toArray());
+    }
+
+    #[Test]
+    public function valida_cantidad_requerida_para_actualizar(): void
+    {
+        $rules = $this->obtenerRulesParaActualizar();
+
+        $this->validarYVerificarError([], $rules, 'cantidad');
     }
 
     #[Test]
     public function valida_cantidad_debe_ser_integer_para_actualizar(): void
     {
-        $request = new CarritoRequest();
-        $request->setRouteResolver(function () {
-            return new class {
-                public function named(...$patterns) {
-                    return in_array('inventario.carrito.actualizar', $patterns);
-                }
-            };
-        });
+        $rules = $this->obtenerRulesParaActualizar();
 
-        $rules = $request->rules();
-
-        $validator = Validator::make([
-            'cantidad' => 'no es numero',
-        ], $rules);
-
-        $this->assertTrue($validator->fails());
-        $this->assertArrayHasKey('cantidad', $validator->errors()->toArray());
+        $this->validarYVerificarError(
+            ['cantidad' => 'no es numero'],
+            $rules,
+            'cantidad'
+        );
     }
 
     #[Test]
     public function valida_cantidad_minima_para_actualizar(): void
     {
-        $request = new CarritoRequest();
-        $request->setRouteResolver(function () {
-            return new class {
-                public function named(...$patterns) {
-                    return in_array('inventario.carrito.actualizar', $patterns);
-                }
-            };
-        });
+        $rules = $this->obtenerRulesParaActualizar();
 
-        $rules = $request->rules();
-
-        $validator = Validator::make([
-            'cantidad' => 0,
-        ], $rules);
-
-        $this->assertTrue($validator->fails());
-        $this->assertArrayHasKey('cantidad', $validator->errors()->toArray());
+        $this->validarYVerificarError(
+            ['cantidad' => self::CANTIDAD_INVALIDA],
+            $rules,
+            'cantidad'
+        );
     }
 
     #[Test]
     public function valida_items_requerido_para_agregar(): void
     {
-        $request = new CarritoRequest();
-        $rules = $request->rules();
+        $rules = $this->obtenerRules();
 
-        $validator = Validator::make([], $rules);
-
-        $this->assertTrue($validator->fails());
-        $this->assertArrayHasKey('items', $validator->errors()->toArray());
+        $this->validarYVerificarError([], $rules, 'items');
     }
 
     #[Test]
     public function valida_items_debe_ser_array(): void
     {
-        $request = new CarritoRequest();
-        $rules = $request->rules();
+        $rules = $this->obtenerRules();
 
-        $validator = Validator::make([
-            'items' => 'no es array',
-        ], $rules);
-
-        $this->assertTrue($validator->fails());
-        $this->assertArrayHasKey('items', $validator->errors()->toArray());
+        $this->validarYVerificarError(
+            ['items' => 'no es array'],
+            $rules,
+            'items'
+        );
     }
 
     #[Test]
     public function valida_items_debe_tener_producto_id(): void
     {
-        $request = new CarritoRequest();
-        $rules = $request->rules();
+        $rules = $this->obtenerRules();
 
-        $validator = Validator::make([
-            'items' => [
-                ['cantidad' => 1],
-            ],
-        ], $rules);
-
-        $this->assertTrue($validator->fails());
-        $this->assertArrayHasKey('items.0.producto_id', $validator->errors()->toArray());
+        $this->validarYVerificarError(
+            ['items' => [['cantidad' => 1]]],
+            $rules,
+            'items.0.producto_id'
+        );
     }
 
     #[Test]
     public function valida_producto_id_debe_existir(): void
     {
-        $request = new CarritoRequest();
-        $rules = $request->rules();
+        $rules = $this->obtenerRules();
 
-        $validator = Validator::make([
-            'items' => [
-                [
-                    'producto_id' => 99999,
-                    'cantidad' => 1,
+        $this->validarYVerificarError(
+            [
+                'items' => [
+                    [
+                        'producto_id' => self::ID_INEXISTENTE,
+                        'cantidad' => 1,
+                    ],
                 ],
             ],
-        ], $rules);
-
-        $this->assertTrue($validator->fails());
-        $this->assertArrayHasKey('items.0.producto_id', $validator->errors()->toArray());
+            $rules,
+            'items.0.producto_id'
+        );
     }
 
     #[Test]
     public function valida_items_debe_tener_cantidad(): void
     {
-        $request = new CarritoRequest();
-        $rules = $request->rules();
-
         $producto = Producto::factory()->create();
+        $rules = $this->obtenerRules();
 
-        $validator = Validator::make([
-            'items' => [
-                [
-                    'producto_id' => $producto->id,
-                ],
-            ],
-        ], $rules);
-
-        $this->assertTrue($validator->fails());
-        $this->assertArrayHasKey('items.0.cantidad', $validator->errors()->toArray());
+        $this->validarYVerificarError(
+            ['items' => [['producto_id' => $producto->id]]],
+            $rules,
+            'items.0.cantidad'
+        );
     }
 
     #[Test]
     public function valida_cantidad_minima_en_items(): void
     {
-        $request = new CarritoRequest();
-        $rules = $request->rules();
-
         $producto = Producto::factory()->create();
+        $rules = $this->obtenerRules();
 
-        $validator = Validator::make([
-            'items' => [
-                [
-                    'producto_id' => $producto->id,
-                    'cantidad' => 0,
+        $this->validarYVerificarError(
+            [
+                'items' => [
+                    [
+                        'producto_id' => $producto->id,
+                        'cantidad' => self::CANTIDAD_INVALIDA,
+                    ],
                 ],
             ],
-        ], $rules);
-
-        $this->assertTrue($validator->fails());
-        $this->assertArrayHasKey('items.0.cantidad', $validator->errors()->toArray());
+            $rules,
+            'items.0.cantidad'
+        );
     }
 
     #[Test]
     public function acepta_datos_validos_para_actualizar(): void
     {
-        $request = new CarritoRequest();
-        $request->setRouteResolver(function () {
-            return new class {
-                public function named(...$patterns) {
-                    return in_array('inventario.carrito.actualizar', $patterns);
-                }
-            };
-        });
+        $rules = $this->obtenerRulesParaActualizar();
 
-        $rules = $request->rules();
-
-        $validator = Validator::make([
-            'cantidad' => 5,
-        ], $rules);
+        $validator = Validator::make(['cantidad' => self::CANTIDAD_VALIDA], $rules);
 
         $this->assertFalse($validator->fails());
     }
@@ -228,16 +206,14 @@ class CarritoRequestTest extends TestCase
     #[Test]
     public function acepta_datos_validos_para_agregar(): void
     {
-        $request = new CarritoRequest();
-        $rules = $request->rules();
-
         $producto = Producto::factory()->create();
+        $rules = $this->obtenerRules();
 
         $validator = Validator::make([
             'items' => [
                 [
                     'producto_id' => $producto->id,
-                    'cantidad' => 5,
+                    'cantidad' => self::CANTIDAD_VALIDA,
                 ],
             ],
         ], $rules);

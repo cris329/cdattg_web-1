@@ -16,7 +16,6 @@ class ImageServiceTest extends TestCase
 {
     private const RUTA_IMAGEN_DEFAULT = 'img/inventario/producto-default.png';
     private const DIRECTORIO_IMAGENES = 'imagenes_productos';
-    private const RUTA_IMAGEN_TEST = 'imagenes_productos/test.jpg';
     private const RUTA_IMAGEN_ANTERIOR = 'imagenes_productos/anterior.jpg';
     private const RUTA_IMAGEN_INEXISTENTE = 'imagenes_productos/inexistente.jpg';
 
@@ -89,6 +88,7 @@ class ImageServiceTest extends TestCase
     public function puede_procesar_imagen_para_actualizacion(): void
     {
         Storage::fake('public');
+        /** @var Producto $productoMock */
         $productoMock = Mockery::mock(Producto::class)->makePartial();
         $productoMock->imagen = self::RUTA_IMAGEN_ANTERIOR;
 
@@ -107,6 +107,7 @@ class ImageServiceTest extends TestCase
     #[Test]
     public function mantiene_imagen_anterior_si_no_hay_nueva(): void
     {
+        /** @var Producto $productoMock */
         $productoMock = Mockery::mock(Producto::class)->makePartial();
         $productoMock->imagen = self::RUTA_IMAGEN_ANTERIOR;
 
@@ -118,9 +119,7 @@ class ImageServiceTest extends TestCase
     #[Test]
     public function puede_eliminar_imagen_si_existe(): void
     {
-        // El servicio usa file_exists() y unlink() directamente con public_path(),
-        // por lo que es difícil testear sin archivos reales en unit tests.
-        // Este test verifica que el método se ejecuta sin errores.
+        /** @var Producto $productoMock */
         $productoMock = Mockery::mock(Producto::class)->makePartial();
         $productoMock->imagen = self::RUTA_IMAGEN_INEXISTENTE; // Usar ruta inexistente para evitar errores
 
@@ -134,6 +133,7 @@ class ImageServiceTest extends TestCase
     public function no_elimina_imagen_por_defecto(): void
     {
         $imagenPorDefecto = config('inventario.imagenes.default', self::RUTA_IMAGEN_DEFAULT);
+        /** @var Producto $productoMock */
         $productoMock = Mockery::mock(Producto::class)->makePartial();
         $productoMock->imagen = $imagenPorDefecto;
 
@@ -145,11 +145,15 @@ class ImageServiceTest extends TestCase
     #[Test]
     public function no_elimina_imagen_si_no_existe_archivo(): void
     {
+        /** @var Producto $productoMock */
         $productoMock = Mockery::mock(Producto::class)->makePartial();
         $productoMock->imagen = self::RUTA_IMAGEN_INEXISTENTE;
+        $imagenOriginal = $productoMock->imagen;
 
         $this->service->eliminarImagenSiExiste($productoMock);
 
-        $this->assertTrue(true);
+        // Verificar que la imagen del producto no cambió cuando el archivo no existe
+        $this->assertEquals($imagenOriginal, $productoMock->imagen);
+        $this->assertNotNull($productoMock->imagen);
     }
 }

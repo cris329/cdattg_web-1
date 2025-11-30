@@ -34,11 +34,38 @@ class CategoriaRepositoryTest extends TestCase
         ]);
     }
 
+    private function crearTemaCategorias(): Tema
+    {
+        return Tema::create(['name' => 'CATEGORIAS']);
+    }
+
+    private function crearParametro(string $nombre): Parametro
+    {
+        return Parametro::create(['name' => $nombre]);
+    }
+
+    private function crearCategoria(string $nombre): \App\Models\Inventario\Categoria
+    {
+        return \App\Models\Inventario\Categoria::create(['name' => $nombre]);
+    }
+
+    private function crearCategoriaConParametroTema(Tema $tema, string $nombreParametro): Parametro
+    {
+        $parametro = $this->crearParametro($nombreParametro);
+        
+        ParametroTema::create([
+            'parametro_id' => $parametro->id,
+            'tema_id' => $tema->id,
+            'status' => 1
+        ]);
+
+        return $parametro;
+    }
+
     #[Test]
     public function puede_obtener_tema_categorias()
     {
-        // Crear tema de categorías
-        $tema = Tema::create(['name' => 'CATEGORIAS']);
+        $this->crearTemaCategorias();
 
         $resultado = $this->repository->obtenerTemaCategorias();
 
@@ -57,21 +84,9 @@ class CategoriaRepositoryTest extends TestCase
     #[Test]
     public function puede_obtener_categorias_con_filtros()
     {
-        // Crear tema y categorías
-        $tema = Tema::create(['name' => 'CATEGORIAS']);
-        $parametro1 = Parametro::create(['name' => 'CATEGORIA 1']);
-        $parametro2 = Parametro::create(['name' => 'CATEGORIA 2']);
-        
-        ParametroTema::create([
-            'parametro_id' => $parametro1->id,
-            'tema_id' => $tema->id,
-            'status' => 1
-        ]);
-        ParametroTema::create([
-            'parametro_id' => $parametro2->id,
-            'tema_id' => $tema->id,
-            'status' => 1
-        ]);
+        $tema = $this->crearTemaCategorias();
+        $this->crearCategoriaConParametroTema($tema, 'CATEGORIA 1');
+        $this->crearCategoriaConParametroTema($tema, 'CATEGORIA 2');
 
         $resultado = $this->repository->obtenerConFiltros();
 
@@ -81,20 +96,9 @@ class CategoriaRepositoryTest extends TestCase
     #[Test]
     public function puede_filtrar_categorias_por_busqueda()
     {
-        $tema = Tema::create(['name' => 'CATEGORIAS']);
-        $parametro1 = Parametro::create(['name' => 'ELECTRONICA']);
-        $parametro2 = Parametro::create(['name' => 'MOBILIARIO']);
-        
-        ParametroTema::create([
-            'parametro_id' => $parametro1->id,
-            'tema_id' => $tema->id,
-            'status' => 1
-        ]);
-        ParametroTema::create([
-            'parametro_id' => $parametro2->id,
-            'tema_id' => $tema->id,
-            'status' => 1
-        ]);
+        $tema = $this->crearTemaCategorias();
+        $this->crearCategoriaConParametroTema($tema, 'ELECTRONICA');
+        $this->crearCategoriaConParametroTema($tema, 'MOBILIARIO');
 
         $resultado = $this->repository->obtenerConFiltros(['search' => 'ELECTRO']);
 
@@ -105,7 +109,7 @@ class CategoriaRepositoryTest extends TestCase
     #[Test]
     public function puede_encontrar_categoria_por_id()
     {
-        $categoria = \App\Models\Inventario\Categoria::create(['name' => 'TEST CATEGORIA ' . uniqid()]);
+        $categoria = $this->crearCategoria('TEST CATEGORIA ' . uniqid());
 
         $resultado = $this->repository->encontrar($categoria->id);
 
@@ -116,8 +120,8 @@ class CategoriaRepositoryTest extends TestCase
     #[Test]
     public function puede_encontrar_multiples_categorias()
     {
-        $categoria1 = \App\Models\Inventario\Categoria::create(['name' => 'CAT1']);
-        $categoria2 = \App\Models\Inventario\Categoria::create(['name' => 'CAT2']);
+        $categoria1 = $this->crearCategoria('CAT1');
+        $categoria2 = $this->crearCategoria('CAT2');
 
         $resultado = $this->repository->encontrarMultiples([$categoria1->id, $categoria2->id]);
 
@@ -129,7 +133,7 @@ class CategoriaRepositoryTest extends TestCase
     #[Test]
     public function puede_encontrar_categoria_con_relaciones()
     {
-        $parametro = Parametro::create(['name' => 'CATEGORIA TEST']);
+        $parametro = $this->crearParametro('CATEGORIA TEST');
 
         $resultado = $this->repository->encontrarConRelaciones($parametro->id);
 
@@ -140,7 +144,7 @@ class CategoriaRepositoryTest extends TestCase
     #[Test]
     public function puede_actualizar_categoria()
     {
-        $parametro = Parametro::create(['name' => 'CATEGORIA ORIGINAL']);
+        $parametro = $this->crearParametro('CATEGORIA ORIGINAL');
 
         $resultado = $this->repository->actualizar($parametro->id, ['name' => 'CATEGORIA ACTUALIZADA']);
 
@@ -151,8 +155,8 @@ class CategoriaRepositoryTest extends TestCase
     #[Test]
     public function puede_verificar_si_categoria_tiene_productos()
     {
-        $categoria = \App\Models\Inventario\Categoria::create(['name' => 'CATEGORIA']);
-        $producto = Producto::factory()->create(['categoria_id' => $categoria->id]);
+        $categoria = $this->crearCategoria('CATEGORIA');
+        Producto::factory()->create(['categoria_id' => $categoria->id]);
 
         $resultado = $this->repository->tieneProductos($categoria->id);
 
@@ -162,7 +166,7 @@ class CategoriaRepositoryTest extends TestCase
     #[Test]
     public function retorna_false_si_categoria_no_tiene_productos()
     {
-        $categoria = \App\Models\Inventario\Categoria::create(['name' => 'CATEGORIA']);
+        $categoria = $this->crearCategoria('CATEGORIA');
 
         $resultado = $this->repository->tieneProductos($categoria->id);
 

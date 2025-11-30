@@ -74,10 +74,11 @@ class TransactionServiceTest extends TestCase
     {
         try {
             $this->service->transaction(function () {
-                throw new \Exception('Error de prueba');
+                throw new \RuntimeException('Error de prueba en transacción');
             });
-        } catch (\Exception $e) {
+        } catch (\RuntimeException $e) {
             $this->assertEquals(0, DB::transactionLevel());
+            $this->assertEquals('Error de prueba en transacción', $e->getMessage());
         }
     }
 }

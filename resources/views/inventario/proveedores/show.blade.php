@@ -237,7 +237,7 @@
                                 @endcan
 
                                 @can('ELIMINAR PROVEEDOR')
-                                    <form action="{{ route('inventario.proveedores.destroy', $proveedor->id) }}" 
+                                    <form action="{{ route('inventario.proveedores.destroy', $proveedor->id) }}"
                                           method="POST" class="d-inline formulario-eliminar">
                                         @csrf
                                         @method('DELETE')

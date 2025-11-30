@@ -13,6 +13,7 @@ class ProveedorRepositoryTest extends TestCase
 {
     use RefreshDatabase;
 
+    private const PROVEEDOR_TEST = 'PROVEEDOR TEST';
     protected ProveedorRepository $repository;
 
     protected function setUp(): void
@@ -45,7 +46,7 @@ class ProveedorRepositoryTest extends TestCase
     #[Test]
     public function puede_obtener_proveedores_con_filtros()
     {
-        Proveedor::factory()->create(['proveedor' => 'PROVEEDOR TEST']);
+        Proveedor::factory()->create(['proveedor' => self::PROVEEDOR_TEST]);
         Proveedor::factory()->create(['proveedor' => 'OTRO PROVEEDOR']);
 
         $resultado = $this->repository->obtenerConFiltros();
@@ -61,19 +62,18 @@ class ProveedorRepositoryTest extends TestCase
 
         $resultado = $this->repository->obtenerConFiltros(['search' => 'TECNOLOGIA']);
 
-        $this->assertGreaterThanOrEqual(1, $resultado->count());
+        $this->assertGreaterThanOrEqual(1, $resultado->total());
     }
 
     #[Test]
     public function puede_filtrar_proveedores_por_nit()
     {
-        $nit = '123456789-0';
-        Proveedor::factory()->create(['nit' => $nit]);
+        Proveedor::factory()->create(['nit' => '123456789-0']);
         Proveedor::factory()->create(['nit' => '987654321-1']);
 
         $resultado = $this->repository->obtenerConFiltros(['search' => '123456789']);
 
-        $this->assertGreaterThanOrEqual(1, $resultado->count());
+        $this->assertGreaterThanOrEqual(1, $resultado->total());
     }
 
     #[Test]
@@ -113,7 +113,7 @@ class ProveedorRepositoryTest extends TestCase
         }
         
         $datos = [
-            'proveedor' => 'PROVEEDOR TEST',
+            'proveedor' => self::PROVEEDOR_TEST,
             'nit' => '123456789-0',
             'email' => 'test@example.com',
             'telefono' => '6012345678',
@@ -125,7 +125,7 @@ class ProveedorRepositoryTest extends TestCase
         $resultado = $this->repository->crear($datos);
 
         $this->assertInstanceOf(Proveedor::class, $resultado);
-        $this->assertEquals('PROVEEDOR TEST', $resultado->proveedor);
+        $this->assertEquals(self::PROVEEDOR_TEST, $resultado->proveedor);
     }
 
     #[Test]

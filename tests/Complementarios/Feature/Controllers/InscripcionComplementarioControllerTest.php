@@ -16,6 +16,13 @@ class InscripcionComplementarioControllerTest extends TestCase
 {
     use RefreshDatabase;
 
+    private const TEST_NOMBRE = 'Juan';
+    private const TEST_APELLIDO = 'Pérez';
+    private const TEST_FECHA_NACIMIENTO = '1990-01-01';
+    private const TEST_CELULAR = '3001234567';
+    private const TEST_DIRECCION = 'Calle 123';
+    private const TEST_EMAIL_DOMAIN = '@test.com';
+
     protected function setUp(): void
     {
         parent::setUp();
@@ -72,51 +79,55 @@ class InscripcionComplementarioControllerTest extends TestCase
         $departamento = Departamento::where('pais_id', $pais->id)->first();
         $municipio = Municipio::where('departamento_id', $departamento->id)->first();
         
-        // Obtener parametros_temas correctos del seeder
-        $tipoDocumentoParametroTema = \App\Models\ParametroTema::where('tema_id', 2)
-            ->where('parametro_id', 3)
-            ->first();
-        $generoParametroTema = \App\Models\ParametroTema::where('tema_id', 3)
-            ->where('parametro_id', 9)
-            ->first();
+        // Asegurar que existen los parametros_temas necesarios en la base de datos
+        $parametroDoc = \App\Models\Parametro::firstOrCreate(
+            ['id' => 3],
+            ['name' => 'CÉDULA DE CIUDADANÍA', 'status' => 1]
+        );
+        $temaDoc = \App\Models\Tema::firstOrCreate(
+            ['id' => 2],
+            ['name' => 'TIPO DE DOCUMENTO', 'status' => 1]
+        );
+        \App\Models\ParametroTema::firstOrCreate(
+            [
+                'parametro_id' => $parametroDoc->id,
+                'tema_id' => $temaDoc->id,
+            ],
+            ['status' => 1]
+        );
 
-        // Si no existen, crear los necesarios
-        if (!$tipoDocumentoParametroTema) {
-            $parametro = \App\Models\Parametro::find(3) ?? \App\Models\Parametro::create(['id' => 3, 'name' => 'CÉDULA DE CIUDADANÍA', 'status' => 1]);
-            $tema = \App\Models\Tema::find(2) ?? \App\Models\Tema::create(['id' => 2, 'name' => 'TIPO DE DOCUMENTO', 'status' => 1]);
-            $tipoDocumentoParametroTema = \App\Models\ParametroTema::create([
-                'parametro_id' => $parametro->id,
-                'tema_id' => $tema->id,
-                'status' => 1,
-            ]);
-        }
-
-        if (!$generoParametroTema) {
-            $parametro = \App\Models\Parametro::find(9) ?? \App\Models\Parametro::create(['id' => 9, 'name' => 'MASCULINO', 'status' => 1]);
-            $tema = \App\Models\Tema::find(3) ?? \App\Models\Tema::create(['id' => 3, 'name' => 'GÉNERO', 'status' => 1]);
-            $generoParametroTema = \App\Models\ParametroTema::create([
-                'parametro_id' => $parametro->id,
-                'tema_id' => $tema->id,
-                'status' => 1,
-            ]);
-        }
+        $parametroGenero = \App\Models\Parametro::firstOrCreate(
+            ['id' => 9],
+            ['name' => 'MASCULINO', 'status' => 1]
+        );
+        $temaGenero = \App\Models\Tema::firstOrCreate(
+            ['id' => 3],
+            ['name' => 'GÉNERO', 'status' => 1]
+        );
+        \App\Models\ParametroTema::firstOrCreate(
+            [
+                'parametro_id' => $parametroGenero->id,
+                'tema_id' => $temaGenero->id,
+            ],
+            ['status' => 1]
+        );
 
         $numeroDocumento = uniqid('doc_');
-        $email = uniqid('test_') . '@test.com';
+        $email = uniqid('test_') . self::TEST_EMAIL_DOMAIN;
 
         $data = [
             'tipo_documento' => 3, // CÉDULA DE CIUDADANÍA (parametro_id, el servicio lo convierte a parametros_temas.id)
             'numero_documento' => $numeroDocumento,
-            'primer_nombre' => 'Juan',
-            'primer_apellido' => 'Pérez',
-            'fecha_nacimiento' => '1990-01-01',
+            'primer_nombre' => self::TEST_NOMBRE,
+            'primer_apellido' => self::TEST_APELLIDO,
+            'fecha_nacimiento' => self::TEST_FECHA_NACIMIENTO,
             'genero' => 9, // MASCULINO (parametro_id, el servicio lo convierte a parametros_temas.id)
-            'celular' => '3001234567',
+            'celular' => self::TEST_CELULAR,
             'email' => $email,
             'pais_id' => $pais->id,
             'departamento_id' => $departamento->id,
             'municipio_id' => $municipio->id,
-            'direccion' => 'Calle 123',
+            'direccion' => self::TEST_DIRECCION,
         ];
 
         $response = $this->post(route('inscripcion.general.store'), $data);
@@ -138,7 +149,7 @@ class InscripcionComplementarioControllerTest extends TestCase
         $municipio = Municipio::where('departamento_id', $departamento->id)->first();
         
         $numeroDocumento = uniqid('doc_');
-        $email = uniqid('test_') . '@test.com';
+        $email = uniqid('test_') . self::TEST_EMAIL_DOMAIN;
         
         Persona::factory()->create([
             'numero_documento' => $numeroDocumento,
@@ -149,15 +160,15 @@ class InscripcionComplementarioControllerTest extends TestCase
             'tipo_documento' => 3, // CÉDULA DE CIUDADANÍA (parametro_id, el servicio lo convierte a parametros_temas.id)
             'numero_documento' => $numeroDocumento,
             'email' => $email,
-            'primer_nombre' => 'Juan',
-            'primer_apellido' => 'Pérez',
-            'fecha_nacimiento' => '1990-01-01',
+            'primer_nombre' => self::TEST_NOMBRE,
+            'primer_apellido' => self::TEST_APELLIDO,
+            'fecha_nacimiento' => self::TEST_FECHA_NACIMIENTO,
             'genero' => 9, // MASCULINO (parametro_id, el servicio lo convierte a parametros_temas.id)
-            'celular' => '3001234567',
+            'celular' => self::TEST_CELULAR,
             'pais_id' => $pais->id,
             'departamento_id' => $departamento->id,
             'municipio_id' => $municipio->id,
-            'direccion' => 'Calle 123',
+            'direccion' => self::TEST_DIRECCION,
         ];
 
         $response = $this->post(route('inscripcion.general.store'), $data);
@@ -175,51 +186,55 @@ class InscripcionComplementarioControllerTest extends TestCase
         
         $programa = ComplementarioOfertado::factory()->conOferta()->create();
 
-        // Obtener parametros_temas correctos del seeder
-        $tipoDocumentoParametroTema = \App\Models\ParametroTema::where('tema_id', 2)
-            ->where('parametro_id', 3)
-            ->first();
-        $generoParametroTema = \App\Models\ParametroTema::where('tema_id', 3)
-            ->where('parametro_id', 9)
-            ->first();
+        // Asegurar que existen los parametros_temas necesarios en la base de datos
+        $parametroDoc = \App\Models\Parametro::firstOrCreate(
+            ['id' => 3],
+            ['name' => 'CÉDULA DE CIUDADANÍA', 'status' => 1]
+        );
+        $temaDoc = \App\Models\Tema::firstOrCreate(
+            ['id' => 2],
+            ['name' => 'TIPO DE DOCUMENTO', 'status' => 1]
+        );
+        \App\Models\ParametroTema::firstOrCreate(
+            [
+                'parametro_id' => $parametroDoc->id,
+                'tema_id' => $temaDoc->id,
+            ],
+            ['status' => 1]
+        );
 
-        // Si no existen, crear los necesarios
-        if (!$tipoDocumentoParametroTema) {
-            $parametro = \App\Models\Parametro::find(3) ?? \App\Models\Parametro::create(['id' => 3, 'name' => 'CÉDULA DE CIUDADANÍA', 'status' => 1]);
-            $tema = \App\Models\Tema::find(2) ?? \App\Models\Tema::create(['id' => 2, 'name' => 'TIPO DE DOCUMENTO', 'status' => 1]);
-            $tipoDocumentoParametroTema = \App\Models\ParametroTema::create([
-                'parametro_id' => $parametro->id,
-                'tema_id' => $tema->id,
-                'status' => 1,
-            ]);
-        }
-
-        if (!$generoParametroTema) {
-            $parametro = \App\Models\Parametro::find(9) ?? \App\Models\Parametro::create(['id' => 9, 'name' => 'MASCULINO', 'status' => 1]);
-            $tema = \App\Models\Tema::find(3) ?? \App\Models\Tema::create(['id' => 3, 'name' => 'GÉNERO', 'status' => 1]);
-            $generoParametroTema = \App\Models\ParametroTema::create([
-                'parametro_id' => $parametro->id,
-                'tema_id' => $tema->id,
-                'status' => 1,
-            ]);
-        }
+        $parametroGenero = \App\Models\Parametro::firstOrCreate(
+            ['id' => 9],
+            ['name' => 'MASCULINO', 'status' => 1]
+        );
+        $temaGenero = \App\Models\Tema::firstOrCreate(
+            ['id' => 3],
+            ['name' => 'GÉNERO', 'status' => 1]
+        );
+        \App\Models\ParametroTema::firstOrCreate(
+            [
+                'parametro_id' => $parametroGenero->id,
+                'tema_id' => $temaGenero->id,
+            ],
+            ['status' => 1]
+        );
 
         $numeroDocumento = uniqid('doc_');
-        $email = uniqid('test_') . '@test.com';
+        $email = uniqid('test_') . self::TEST_EMAIL_DOMAIN;
 
         $data = [
             'tipo_documento' => 3, // CÉDULA DE CIUDADANÍA (parametro_id, el servicio lo convierte a parametros_temas.id)
             'numero_documento' => $numeroDocumento,
-            'primer_nombre' => 'Juan',
-            'primer_apellido' => 'Pérez',
-            'fecha_nacimiento' => '1990-01-01',
+            'primer_nombre' => self::TEST_NOMBRE,
+            'primer_apellido' => self::TEST_APELLIDO,
+            'fecha_nacimiento' => self::TEST_FECHA_NACIMIENTO,
             'genero' => 9, // MASCULINO (parametro_id, el servicio lo convierte a parametros_temas.id)
-            'celular' => '3001234567',
+            'celular' => self::TEST_CELULAR,
             'email' => $email,
             'pais_id' => $pais->id,
             'departamento_id' => $departamento->id,
             'municipio_id' => $municipio->id,
-            'direccion' => 'Calle 123',
+            'direccion' => self::TEST_DIRECCION,
             'documento_identidad' => UploadedFile::fake()->create('documento.pdf', 1000),
             'acepto_privacidad' => '1',
             'acepto_terminos' => '1',

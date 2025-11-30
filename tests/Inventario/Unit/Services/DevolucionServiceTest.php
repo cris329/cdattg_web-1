@@ -14,11 +14,9 @@ use PHPUnit\Framework\Attributes\Test;
 
 class DevolucionServiceTest extends TestCase
 {
-    private const METODO_CONSTRUIR_MENSAJE = 'construirMensajeDevolucion';
     private const MENSAJE_EXITO = 'Devolución registrada exitosamente';
     private const MENSAJE_SIN_STOCK = 'sin restaurar stock';
     private const MENSAJE_RETRASO = 'días de retraso';
-    private const MENSAJE_ERROR_REGISTRO = 'Error al registrar la devolución';
     private const DIAS_RETRASO_CERO = 0;
     private const DIAS_RETRASO_TRES = 3;
     private const DIAS_RETRASO_CINCO = 5;
@@ -101,20 +99,28 @@ class DevolucionServiceTest extends TestCase
         $testService->registrarDevolucionConMensaje($detalleOrdenId, $cantidadDevuelta, $observaciones);
     }
 
+    private function crearTestService(): object
+    {
+        return new class($this->mockTransactionService) extends DevolucionService {
+            public function construirMensajeDevolucionPublico(Devolucion $devolucion): string
+            {
+                return $this->construirMensajeDevolucion($devolucion);
+            }
+        };
+    }
+
     #[Test]
     public function test_construye_mensaje_devolucion_normal(): void
     {
+        /** @var Devolucion $devolucionMock */
         $devolucionMock = Mockery::mock(Devolucion::class)->makePartial();
         $devolucionMock->cierra_sin_stock = false;
         $devolucionMock->shouldReceive('getDiasRetrasoDevolucion')
             ->once()
             ->andReturn(self::DIAS_RETRASO_CERO);
 
-        $reflection = new \ReflectionClass($this->service);
-        $method = $reflection->getMethod(self::METODO_CONSTRUIR_MENSAJE);
-        $method->setAccessible(true);
-
-        $mensaje = $method->invoke($this->service, $devolucionMock);
+        $testService = $this->crearTestService();
+        $mensaje = $testService->construirMensajeDevolucionPublico($devolucionMock);
 
         $this->assertStringContainsString(self::MENSAJE_EXITO, $mensaje);
         $this->assertStringNotContainsString(self::MENSAJE_SIN_STOCK, $mensaje);
@@ -124,17 +130,15 @@ class DevolucionServiceTest extends TestCase
     #[Test]
     public function test_construye_mensaje_con_cierre_sin_stock(): void
     {
+        /** @var Devolucion $devolucionMock */
         $devolucionMock = Mockery::mock(Devolucion::class)->makePartial();
         $devolucionMock->cierra_sin_stock = true;
         $devolucionMock->shouldReceive('getDiasRetrasoDevolucion')
             ->once()
             ->andReturn(self::DIAS_RETRASO_CERO);
 
-        $reflection = new \ReflectionClass($this->service);
-        $method = $reflection->getMethod(self::METODO_CONSTRUIR_MENSAJE);
-        $method->setAccessible(true);
-
-        $mensaje = $method->invoke($this->service, $devolucionMock);
+        $testService = $this->crearTestService();
+        $mensaje = $testService->construirMensajeDevolucionPublico($devolucionMock);
 
         $this->assertStringContainsString(self::MENSAJE_SIN_STOCK, $mensaje);
     }
@@ -142,17 +146,15 @@ class DevolucionServiceTest extends TestCase
     #[Test]
     public function test_construye_mensaje_con_retraso(): void
     {
+        /** @var Devolucion $devolucionMock */
         $devolucionMock = Mockery::mock(Devolucion::class)->makePartial();
         $devolucionMock->cierra_sin_stock = false;
         $devolucionMock->shouldReceive('getDiasRetrasoDevolucion')
             ->once()
             ->andReturn(self::DIAS_RETRASO_TRES);
 
-        $reflection = new \ReflectionClass($this->service);
-        $method = $reflection->getMethod(self::METODO_CONSTRUIR_MENSAJE);
-        $method->setAccessible(true);
-
-        $mensaje = $method->invoke($this->service, $devolucionMock);
+        $testService = $this->crearTestService();
+        $mensaje = $testService->construirMensajeDevolucionPublico($devolucionMock);
 
         $this->assertStringContainsString(self::MENSAJE_RETRASO, $mensaje);
         $this->assertStringContainsString((string) self::DIAS_RETRASO_TRES, $mensaje);
@@ -161,17 +163,15 @@ class DevolucionServiceTest extends TestCase
     #[Test]
     public function test_construye_mensaje_completo_con_stock_y_retraso(): void
     {
+        /** @var Devolucion $devolucionMock */
         $devolucionMock = Mockery::mock(Devolucion::class)->makePartial();
         $devolucionMock->cierra_sin_stock = true;
         $devolucionMock->shouldReceive('getDiasRetrasoDevolucion')
             ->once()
             ->andReturn(self::DIAS_RETRASO_CINCO);
 
-        $reflection = new \ReflectionClass($this->service);
-        $method = $reflection->getMethod(self::METODO_CONSTRUIR_MENSAJE);
-        $method->setAccessible(true);
-
-        $mensaje = $method->invoke($this->service, $devolucionMock);
+        $testService = $this->crearTestService();
+        $mensaje = $testService->construirMensajeDevolucionPublico($devolucionMock);
 
         $this->assertStringContainsString(self::MENSAJE_SIN_STOCK, $mensaje);
         $this->assertStringContainsString(self::MENSAJE_RETRASO, $mensaje);

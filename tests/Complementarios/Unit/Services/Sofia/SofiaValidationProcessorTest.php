@@ -17,6 +17,9 @@ class SofiaValidationProcessorTest extends TestCase
 {
     use RefreshDatabase;
 
+    private const TEST_NUMERO_DOCUMENTO_1 = '1111111111';
+    private const TEST_NUMERO_DOCUMENTO_2 = '2222222222';
+
     private SofiaValidationProcessor $processor;
     private $validationServiceMock;
 
@@ -57,8 +60,8 @@ class SofiaValidationProcessorTest extends TestCase
     {
         $programa = ComplementarioOfertado::factory()->create();
 
-        $persona1 = Persona::factory()->create(['numero_documento' => '1111111111']);
-        $persona2 = Persona::factory()->create(['numero_documento' => '2222222222']);
+        $persona1 = Persona::factory()->create(['numero_documento' => self::TEST_NUMERO_DOCUMENTO_1]);
+        $persona2 = Persona::factory()->create(['numero_documento' => self::TEST_NUMERO_DOCUMENTO_2]);
 
         $aspirante1 = AspiranteComplementario::factory()->create([
             'persona_id' => $persona1->id,
@@ -76,13 +79,13 @@ class SofiaValidationProcessorTest extends TestCase
             ->twice()
             ->andReturn([
                 'success' => true,
-                'cedula' => '1111111111',
+                'cedula' => self::TEST_NUMERO_DOCUMENTO_1,
                 'resultado' => 'YA_EXISTE',
                 'estado' => 1,
                 'duration' => 1.5,
             ], [
                 'success' => true,
-                'cedula' => '2222222222',
+                'cedula' => self::TEST_NUMERO_DOCUMENTO_2,
                 'resultado' => 'NO_REGISTRADO',
                 'estado' => 0,
                 'duration' => 1.5,
@@ -101,8 +104,8 @@ class SofiaValidationProcessorTest extends TestCase
     {
         $programa = ComplementarioOfertado::factory()->create();
 
-        $persona1 = Persona::factory()->create(['numero_documento' => '1111111111']);
-        $persona2 = Persona::factory()->create(['numero_documento' => '2222222222']);
+        $persona1 = Persona::factory()->create(['numero_documento' => self::TEST_NUMERO_DOCUMENTO_1]);
+        $persona2 = Persona::factory()->create(['numero_documento' => self::TEST_NUMERO_DOCUMENTO_2]);
 
         $aspirante1 = AspiranteComplementario::factory()->create([
             'persona_id' => $persona1->id,
@@ -120,13 +123,13 @@ class SofiaValidationProcessorTest extends TestCase
             ->twice()
             ->andReturn([
                 'success' => true,
-                'cedula' => '1111111111',
+                'cedula' => self::TEST_NUMERO_DOCUMENTO_1,
                 'resultado' => 'YA_EXISTE',
                 'estado' => 1,
                 'duration' => 1.5,
             ], [
                 'success' => false,
-                'cedula' => '2222222222',
+                'cedula' => self::TEST_NUMERO_DOCUMENTO_2,
                 'error' => 'Error de conexión',
             ]);
 
@@ -174,7 +177,7 @@ class SofiaValidationProcessorTest extends TestCase
     {
         $programa = ComplementarioOfertado::factory()->create();
 
-        $persona = Persona::factory()->create(['numero_documento' => '1111111111']);
+        $persona = Persona::factory()->create(['numero_documento' => self::TEST_NUMERO_DOCUMENTO_1]);
         $aspirante = AspiranteComplementario::factory()->create([
             'persona_id' => $persona->id,
             'complementario_id' => $programa->id,
@@ -191,7 +194,7 @@ class SofiaValidationProcessorTest extends TestCase
             ->with($aspirante, $programa->id, $progress)
             ->andReturn([
                 'success' => true,
-                'cedula' => '1111111111',
+                'cedula' => self::TEST_NUMERO_DOCUMENTO_1,
                 'resultado' => 'YA_EXISTE',
                 'estado' => 1,
                 'duration' => 1.5,
@@ -208,8 +211,8 @@ class SofiaValidationProcessorTest extends TestCase
     {
         $programa = ComplementarioOfertado::factory()->create();
 
-        $persona1 = Persona::factory()->create(['numero_documento' => '1111111111']);
-        $persona2 = Persona::factory()->create(['numero_documento' => '2222222222']);
+        $persona1 = Persona::factory()->create(['numero_documento' => self::TEST_NUMERO_DOCUMENTO_1]);
+        $persona2 = Persona::factory()->create(['numero_documento' => self::TEST_NUMERO_DOCUMENTO_2]);
         $persona3 = Persona::factory()->create(['numero_documento' => '3333333333']);
 
         $aspirante1 = AspiranteComplementario::factory()->create([

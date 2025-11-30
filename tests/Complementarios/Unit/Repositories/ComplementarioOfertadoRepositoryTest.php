@@ -15,6 +15,8 @@ class ComplementarioOfertadoRepositoryTest extends TestCase
 {
     use RefreshDatabase;
 
+    private const TEST_PROGRAMA_NOMBRE = 'Test Programa';
+
     protected ComplementarioOfertadoRepository $repository;
 
     protected function setUp(): void
@@ -132,7 +134,7 @@ class ComplementarioOfertadoRepositoryTest extends TestCase
 
         $data = [
             'codigo' => 'COMP0001',
-            'nombre' => 'Test Programa',
+            'nombre' => self::TEST_PROGRAMA_NOMBRE,
             'justificacion' => 'Justificación de prueba',
             'requisitos_ingreso' => 'Requisitos de prueba',
             'duracion' => 60,
@@ -147,9 +149,9 @@ class ComplementarioOfertadoRepositoryTest extends TestCase
 
         $this->assertDatabaseHas('complementarios_ofertados', [
             'codigo' => 'COMP0001',
-            'nombre' => 'Test Programa',
+            'nombre' => self::TEST_PROGRAMA_NOMBRE,
         ]);
-        $this->assertEquals('Test Programa', $programa->nombre);
+        $this->assertEquals(self::TEST_PROGRAMA_NOMBRE, $programa->nombre);
     }
 
     /** @test */

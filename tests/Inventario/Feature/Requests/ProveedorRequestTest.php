@@ -17,7 +17,8 @@ use PHPUnit\Framework\Attributes\Test;
 class ProveedorRequestTest extends TestCase
 {
     use RefreshDatabase;
-
+    
+    private const PROVEEDOR_TEST = 'PROVEEDOR TEST';
     protected function setUp(): void
     {
         parent::setUp();
@@ -40,175 +41,176 @@ class ProveedorRequestTest extends TestCase
         ]);
     }
 
+    private function obtenerRules(): array
+    {
+        $request = new ProveedorRequest();
+        return $request->rules();
+    }
+
+    private function obtenerRulesParaUpdate(Proveedor $proveedor): array
+{
+    $request = new ProveedorRequest();
+    $request->setMethod('PUT');
+
+    $resolver = $this->crearRouteResolver($proveedor);
+    $request->setRouteResolver(fn() => $resolver);
+
+    return $request->rules();
+}
+
+    private function crearRouteResolver(Proveedor $proveedor): object
+    {
+        return new class($proveedor) {
+            private Proveedor $proveedor;
+            
+            public function __construct($proveedor) {
+                $this->proveedor = $proveedor;
+            }
+            
+            public function parameter(string $name): ?int
+            {
+                if ($name === 'proveedor') {
+                    return $this->proveedor->id;
+                }
+                return null;
+            }
+        };
+    }
+
+    private function validarYVerificarError(array $data, array $rules, string $campoEsperado): void
+    {
+        $validator = Validator::make($data, $rules);
+
+        $this->assertTrue($validator->fails());
+        $this->assertArrayHasKey($campoEsperado, $validator->errors()->toArray());
+    }
+
     #[Test]
     public function valida_proveedor_requerido_en_store(): void
     {
-        $request = new ProveedorRequest();
-        $rules = $request->rules();
+        $rules = $this->obtenerRules();
 
-        $validator = Validator::make([], $rules);
-
-        $this->assertTrue($validator->fails());
-        $this->assertArrayHasKey('proveedor', $validator->errors()->toArray());
+        $this->validarYVerificarError([], $rules, 'proveedor');
     }
 
     #[Test]
     public function valida_unicidad_de_proveedor_en_store(): void
     {
-        $proveedor = Proveedor::factory()->create(['proveedor' => 'PROVEEDOR TEST']);
+        Proveedor::factory()->create(['proveedor' => self::PROVEEDOR_TEST]);
 
-        $request = new ProveedorRequest();
-        $rules = $request->rules();
+        $rules = $this->obtenerRules();
 
-        $validator = Validator::make([
-            'proveedor' => 'PROVEEDOR TEST',
-        ], $rules);
-
-        $this->assertTrue($validator->fails());
-        $this->assertArrayHasKey('proveedor', $validator->errors()->toArray());
+        $this->validarYVerificarError(
+            ['proveedor' => self::PROVEEDOR_TEST],
+            $rules,
+            'proveedor'
+        );
     }
 
     #[Test]
     public function valida_unicidad_de_nit_en_update(): void
     {
-        $proveedor1 = Proveedor::factory()->create(['nit' => '123456789']);
+        Proveedor::factory()->create(['nit' => '123456789']);
         $proveedor2 = Proveedor::factory()->create();
 
-        $request = new ProveedorRequest();
-        $request->setMethod('PUT');
-        $request->setRouteResolver(function () use ($proveedor2) {
-            return new class($proveedor2) {
-                private $proveedor;
-                
-                public function __construct($proveedor) {
-                    $this->proveedor = $proveedor;
-                }
-                
-                public function parameter($name) {
-                    if ($name === 'proveedor') {
-                        return $this->proveedor->id;
-                    }
-                    return null;
-                }
-            };
-        });
+        $rules = $this->obtenerRulesParaUpdate($proveedor2);
 
-        $rules = $request->rules();
-
-        $validator = Validator::make([
-            'proveedor' => 'OTRO PROVEEDOR',
-            'nit' => '123456789',
-        ], $rules);
-
-        $this->assertTrue($validator->fails());
-        $this->assertArrayHasKey('nit', $validator->errors()->toArray());
+        $this->validarYVerificarError(
+            [
+                'proveedor' => 'OTRO PROVEEDOR',
+                'nit' => '123456789',
+            ],
+            $rules,
+            'nit'
+        );
     }
 
     #[Test]
     public function valida_unicidad_de_email_en_update(): void
     {
-        $proveedor1 = Proveedor::factory()->create(['email' => 'test1@example.com']);
+        Proveedor::factory()->create(['email' => 'test1@example.com']);
         $proveedor2 = Proveedor::factory()->create();
 
-        $request = new ProveedorRequest();
-        $request->setMethod('PUT');
-        $request->setRouteResolver(function () use ($proveedor2) {
-            return new class($proveedor2) {
-                private $proveedor;
-                
-                public function __construct($proveedor) {
-                    $this->proveedor = $proveedor;
-                }
-                
-                public function parameter($name) {
-                    if ($name === 'proveedor') {
-                        return $this->proveedor->id;
-                    }
-                    return null;
-                }
-            };
-        });
+        $rules = $this->obtenerRulesParaUpdate($proveedor2);
 
-        $rules = $request->rules();
-
-        $validator = Validator::make([
-            'proveedor' => 'OTRO PROVEEDOR',
-            'email' => 'test1@example.com',
-        ], $rules);
-
-        $this->assertTrue($validator->fails());
-        $this->assertArrayHasKey('email', $validator->errors()->toArray());
+        $this->validarYVerificarError(
+            [
+                'proveedor' => 'OTRO PROVEEDOR',
+                'email' => 'test1@example.com',
+            ],
+            $rules,
+            'email'
+        );
     }
 
     #[Test]
     public function valida_formato_de_email(): void
     {
-        $request = new ProveedorRequest();
-        $rules = $request->rules();
+        $rules = $this->obtenerRules();
 
-        $validator = Validator::make([
-            'proveedor' => 'PROVEEDOR TEST',
-            'email' => 'email-invalido',
-        ], $rules);
-
-        $this->assertTrue($validator->fails());
-        $this->assertArrayHasKey('email', $validator->errors()->toArray());
+        $this->validarYVerificarError(
+            [
+                'proveedor' => self::PROVEEDOR_TEST,
+                'email' => 'email-invalido',
+            ],
+            $rules,
+            'email'
+        );
     }
 
     #[Test]
     public function valida_longitud_maxima_de_telefono(): void
     {
-        $request = new ProveedorRequest();
-        $rules = $request->rules();
+        $rules = $this->obtenerRules();
 
-        $validator = Validator::make([
-            'proveedor' => 'PROVEEDOR TEST',
-            'telefono' => '12345678901',
-        ], $rules);
-
-        $this->assertTrue($validator->fails());
-        $this->assertArrayHasKey('telefono', $validator->errors()->toArray());
+        $this->validarYVerificarError(
+            [
+                'proveedor' => self::PROVEEDOR_TEST,
+                'telefono' => '12345678901',
+            ],
+            $rules,
+            'telefono'
+        );
     }
 
     #[Test]
     public function valida_existencia_de_departamento(): void
     {
-        $request = new ProveedorRequest();
-        $rules = $request->rules();
+        $rules = $this->obtenerRules();
 
-        $validator = Validator::make([
-            'proveedor' => 'PROVEEDOR TEST',
-            'departamento_id' => 99999,
-        ], $rules);
-
-        $this->assertTrue($validator->fails());
-        $this->assertArrayHasKey('departamento_id', $validator->errors()->toArray());
+        $this->validarYVerificarError(
+            [
+                'proveedor' => self::PROVEEDOR_TEST,
+                'departamento_id' => 99999,
+            ],
+            $rules,
+            'departamento_id'
+        );
     }
 
     #[Test]
     public function valida_existencia_de_municipio(): void
     {
-        $request = new ProveedorRequest();
-        $rules = $request->rules();
+        $rules = $this->obtenerRules();
 
-        $validator = Validator::make([
-            'proveedor' => 'PROVEEDOR TEST',
-            'municipio_id' => 99999,
-        ], $rules);
-
-        $this->assertTrue($validator->fails());
-        $this->assertArrayHasKey('municipio_id', $validator->errors()->toArray());
+        $this->validarYVerificarError(
+            [
+                'proveedor' => self::PROVEEDOR_TEST,
+                'municipio_id' => 99999,
+            ],
+            $rules,
+            'municipio_id'
+        );
     }
 
     #[Test]
     public function acepta_datos_validos_para_store(): void
     {
         $departamento = Departamento::query()->inRandomOrder()->first();
-        $municipio = Municipio::query()->where('departamento_id', $departamento->id)->inRandomOrder()->first();
+        $municipio = Municipio::query()->where('departamento_id', $departamento->id)->inRandomOrder()->firstOrFail();
         $estado = ParametroTema::query()->inRandomOrder()->first();
 
-        $request = new ProveedorRequest();
-        $rules = $request->rules();
+        $rules = $this->obtenerRules();
 
         $validator = Validator::make([
             'proveedor' => 'PROVEEDOR VALIDO',

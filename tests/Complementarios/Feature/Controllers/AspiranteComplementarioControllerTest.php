@@ -14,6 +14,8 @@ class AspiranteComplementarioControllerTest extends TestCase
 {
     use RefreshDatabase;
 
+    private const TEST_NUMERO_DOCUMENTO = '1234567890';
+
     protected User $user;
 
     protected function setUp(): void
@@ -145,10 +147,10 @@ class AspiranteComplementarioControllerTest extends TestCase
     {
         $this->actingAs($this->user);
         $programa = ComplementarioOfertado::factory()->create();
-        $persona = Persona::factory()->create(['numero_documento' => '1234567890']);
+        $persona = Persona::factory()->create(['numero_documento' => self::TEST_NUMERO_DOCUMENTO]);
 
         $response = $this->post(route('programas-complementarios.agregar-aspirante', $programa->id), [
-            'numero_documento' => '1234567890',
+            'numero_documento' => self::TEST_NUMERO_DOCUMENTO,
         ]);
 
         $response->assertStatus(200);
@@ -180,11 +182,11 @@ class AspiranteComplementarioControllerTest extends TestCase
     {
         $this->actingAs($this->user);
         $programa = ComplementarioOfertado::factory()->create();
-        $persona = Persona::factory()->create(['numero_documento' => '1234567890']);
+        $persona = Persona::factory()->create(['numero_documento' => self::TEST_NUMERO_DOCUMENTO]);
         AspiranteComplementario::factory()->paraPersona($persona)->paraPrograma($programa)->create();
 
         $response = $this->post(route('programas-complementarios.agregar-aspirante', $programa->id), [
-            'numero_documento' => '1234567890',
+            'numero_documento' => self::TEST_NUMERO_DOCUMENTO,
         ]);
 
         $response->assertStatus(200);
@@ -271,10 +273,10 @@ class AspiranteComplementarioControllerTest extends TestCase
     public function no_agrega_aspirante_si_programa_no_existe()
     {
         $this->actingAs($this->user);
-        $persona = Persona::factory()->create(['numero_documento' => '1234567890']);
+        $persona = Persona::factory()->create(['numero_documento' => self::TEST_NUMERO_DOCUMENTO]);
 
         $response = $this->post(route('programas-complementarios.agregar-aspirante', 99999), [
-            'numero_documento' => '1234567890',
+            'numero_documento' => self::TEST_NUMERO_DOCUMENTO,
         ]);
 
         $response->assertStatus(200);

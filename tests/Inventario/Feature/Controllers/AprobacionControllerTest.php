@@ -57,6 +57,57 @@ class AprobacionControllerTest extends TestCase
         $this->user->givePermissionTo(self::PERMISSION_APROBAR_ORDEN);
     }
 
+    private function obtenerEstadoEnEspera(): ?ParametroTema
+    {
+        return ParametroTema::whereHas('parametro', function ($q) {
+            $q->where('name', self::ESTADO_EN_ESPERA);
+        })->whereHas('tema', function ($q) {
+            $q->where('name', self::ESTADO_DE_ORDEN);
+        })->first();
+    }
+
+    private function obtenerEstadoAprobada(): ?ParametroTema
+    {
+        return ParametroTema::whereHas('parametro', function ($q) {
+            $q->where('name', 'APROBADA');
+        })->whereHas('tema', function ($q) {
+            $q->where('name', self::ESTADO_DE_ORDEN);
+        })->first();
+    }
+
+    private function omitirSiFaltaEstado(?ParametroTema $estado): void
+    {
+        if (! $estado) {
+            $this->markTestSkipped(self::FALTA_ESTADO);
+        }
+    }
+
+    private function omitirSiFaltanEstados(?ParametroTema $estado1, ?ParametroTema $estado2): void
+    {
+        if (! $estado1 || ! $estado2) {
+            $this->markTestSkipped(self::FALTA_ESTADO);
+        }
+    }
+
+    private function crearUsuarioSinPermiso(): User
+    {
+        return User::factory()->create();
+    }
+
+    private function crearDetalleOrdenConEstado(
+        Orden $orden,
+        Producto $producto,
+        ParametroTema $estado,
+        int $cantidad = 2
+    ): DetalleOrden {
+        return DetalleOrden::factory()->create([
+            'orden_id' => $orden->id,
+            'producto_id' => $producto->id,
+            'cantidad' => $cantidad,
+            'estado_orden_id' => $estado->id,
+        ]);
+    }
+
     #[Test]
     public function puede_ver_ordenes_pendientes(): void
     {
@@ -77,28 +128,11 @@ class AprobacionControllerTest extends TestCase
         $producto = Producto::factory()->create(['cantidad' => 10]);
         $orden = Orden::factory()->create();
 
-        $estadoEnEspera = ParametroTema::whereHas('parametro', function ($q) {
-            $q->where('name', self::ESTADO_EN_ESPERA);
-        })->whereHas('tema', function ($q) {
-            $q->where('name', self::ESTADO_DE_ORDEN);
-        })->first();
+        $estadoEnEspera = $this->obtenerEstadoEnEspera();
+        $estadoAprobada = $this->obtenerEstadoAprobada();
+        $this->omitirSiFaltanEstados($estadoEnEspera, $estadoAprobada);
 
-        $estadoAprobada = ParametroTema::whereHas('parametro', function ($q) {
-            $q->where('name', 'APROBADA');
-        })->whereHas('tema', function ($q) {
-            $q->where('name', self::ESTADO_DE_ORDEN);
-        })->first();
-
-        if (! $estadoEnEspera || ! $estadoAprobada) {
-            $this->markTestSkipped(self::FALTA_ESTADO);
-        }
-
-        $detalleOrden = DetalleOrden::factory()->create([
-            'orden_id' => $orden->id,
-            'producto_id' => $producto->id,
-            'cantidad' => 2,
-            'estado_orden_id' => $estadoEnEspera->id,
-        ]);
+        $detalleOrden = $this->crearDetalleOrdenConEstado($orden, $producto, $estadoEnEspera);
 
         $response = $this->post(route(self::ROUTE_APROBAR, $detalleOrden->id));
 
@@ -114,22 +148,10 @@ class AprobacionControllerTest extends TestCase
         $producto = Producto::factory()->create(['cantidad' => 10]);
         $orden = Orden::factory()->create();
 
-        $estadoEnEspera = ParametroTema::whereHas('parametro', function ($q) {
-            $q->where('name', self::ESTADO_EN_ESPERA);
-        })->whereHas('tema', function ($q) {
-            $q->where('name', self::ESTADO_DE_ORDEN);
-        })->first();
+        $estadoEnEspera = $this->obtenerEstadoEnEspera();
+        $this->omitirSiFaltaEstado($estadoEnEspera);
 
-        if (! $estadoEnEspera) {
-            $this->markTestSkipped(self::FALTA_ESTADO);
-        }
-
-        $detalleOrden = DetalleOrden::factory()->create([
-            'orden_id' => $orden->id,
-            'producto_id' => $producto->id,
-            'cantidad' => 2,
-            'estado_orden_id' => $estadoEnEspera->id,
-        ]);
+        $detalleOrden = $this->crearDetalleOrdenConEstado($orden, $producto, $estadoEnEspera);
 
         $response = $this->post(route(self::ROUTE_RECHAZAR, $detalleOrden->id), [
             'motivo' => 'Motivo de rechazo de prueba',
@@ -141,8 +163,7 @@ class AprobacionControllerTest extends TestCase
     #[Test]
     public function no_puede_aprobar_sin_permiso(): void
     {
-        /** @var User $userSinPermiso */
-        $userSinPermiso = User::factory()->create();
+        $userSinPermiso = $this->crearUsuarioSinPermiso();
         $this->actingAs($userSinPermiso);
 
         $response = $this->get(route(self::ROUTE_PENDIENTES));
@@ -167,29 +188,11 @@ class AprobacionControllerTest extends TestCase
         $producto2 = Producto::factory()->create(['cantidad' => 5]);
         $orden = Orden::factory()->create();
 
-        $estadoEnEspera = ParametroTema::whereHas('parametro', function ($q) {
-            $q->where('name', self::ESTADO_EN_ESPERA);
-        })->whereHas('tema', function ($q) {
-            $q->where('name', self::ESTADO_DE_ORDEN);
-        })->first();
+        $estadoEnEspera = $this->obtenerEstadoEnEspera();
+        $this->omitirSiFaltaEstado($estadoEnEspera);
 
-        if (! $estadoEnEspera) {
-            $this->markTestSkipped(self::FALTA_ESTADO);
-        }
-
-        DetalleOrden::factory()->create([
-            'orden_id' => $orden->id,
-            'producto_id' => $producto1->id,
-            'cantidad' => 2,
-            'estado_orden_id' => $estadoEnEspera->id,
-        ]);
-
-        DetalleOrden::factory()->create([
-            'orden_id' => $orden->id,
-            'producto_id' => $producto2->id,
-            'cantidad' => 1,
-            'estado_orden_id' => $estadoEnEspera->id,
-        ]);
+        $this->crearDetalleOrdenConEstado($orden, $producto1, $estadoEnEspera);
+        $this->crearDetalleOrdenConEstado($orden, $producto2, $estadoEnEspera, 1);
 
         $response = $this->post(route(self::ROUTE_APROBAR_ORDEN, $orden->id));
 
@@ -205,22 +208,10 @@ class AprobacionControllerTest extends TestCase
         $producto = Producto::factory()->create(['cantidad' => 10]);
         $orden = Orden::factory()->create();
 
-        $estadoEnEspera = ParametroTema::whereHas('parametro', function ($q) {
-            $q->where('name', self::ESTADO_EN_ESPERA);
-        })->whereHas('tema', function ($q) {
-            $q->where('name', self::ESTADO_DE_ORDEN);
-        })->first();
+        $estadoEnEspera = $this->obtenerEstadoEnEspera();
+        $this->omitirSiFaltaEstado($estadoEnEspera);
 
-        if (! $estadoEnEspera) {
-            $this->markTestSkipped(self::FALTA_ESTADO);
-        }
-
-        DetalleOrden::factory()->create([
-            'orden_id' => $orden->id,
-            'producto_id' => $producto->id,
-            'cantidad' => 2,
-            'estado_orden_id' => $estadoEnEspera->id,
-        ]);
+        $this->crearDetalleOrdenConEstado($orden, $producto, $estadoEnEspera);
 
         $response = $this->post(route(self::ROUTE_RECHAZAR_ORDEN, $orden->id), [
             'motivo_rechazo' => 'Motivo de rechazo de orden completa',
@@ -233,8 +224,7 @@ class AprobacionControllerTest extends TestCase
     #[Test]
     public function no_puede_aprobar_orden_sin_permiso(): void
     {
-        /** @var User $userSinPermiso */
-        $userSinPermiso = User::factory()->create();
+        $userSinPermiso = $this->crearUsuarioSinPermiso();
         $this->actingAs($userSinPermiso);
 
         $orden = Orden::factory()->create();
@@ -247,8 +237,7 @@ class AprobacionControllerTest extends TestCase
     #[Test]
     public function no_puede_rechazar_orden_sin_permiso(): void
     {
-        /** @var User $userSinPermiso */
-        $userSinPermiso = User::factory()->create();
+        $userSinPermiso = $this->crearUsuarioSinPermiso();
         $this->actingAs($userSinPermiso);
 
         $orden = Orden::factory()->create();

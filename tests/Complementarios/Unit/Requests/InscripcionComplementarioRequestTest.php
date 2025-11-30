@@ -15,6 +15,14 @@ class InscripcionComplementarioRequestTest extends TestCase
 {
     use RefreshDatabase;
 
+    private const TEST_MUNICIPIO = 'Bogotá';
+    private const TEST_NUMERO_DOCUMENTO = '1234567890';
+    private const TEST_APELLIDO = 'Pérez';
+    private const TEST_CELULAR = '3001234567';
+    private const TEST_EMAIL = 'juan@test.com';
+    private const TEST_DIRECCION = 'Calle 123';
+    private const TEST_FECHA_NACIMIENTO = '1990-01-01';
+
     /** @test */
     public function valida_campos_requeridos()
     {
@@ -37,21 +45,21 @@ class InscripcionComplementarioRequestTest extends TestCase
     {
         $pais = Pais::create(['pais' => 'Colombia', 'status' => 1]);
         $departamento = Departamento::create(['departamento' => 'Cundinamarca', 'pais_id' => $pais->id, 'status' => 1]);
-        $municipio = Municipio::create(['municipio' => 'Bogotá', 'departamento_id' => $departamento->id, 'status' => 1]);
+        $municipio = Municipio::create(['municipio' => self::TEST_MUNICIPIO, 'departamento_id' => $departamento->id, 'status' => 1]);
 
         $data = [
             'tipo_documento' => 1,
-            'numero_documento' => '1234567890',
+            'numero_documento' => self::TEST_NUMERO_DOCUMENTO,
             'primer_nombre' => 'Juan',
-            'primer_apellido' => 'Pérez',
+            'primer_apellido' => self::TEST_APELLIDO,
             'fecha_nacimiento' => now()->subYears(13)->format('Y-m-d'), // Menor de 14
             'genero' => 1,
-            'celular' => '3001234567',
-            'email' => 'juan@test.com',
+            'celular' => self::TEST_CELULAR,
+            'email' => self::TEST_EMAIL,
             'pais_id' => $pais->id,
             'departamento_id' => $departamento->id,
             'municipio_id' => $municipio->id,
-            'direccion' => 'Calle 123',
+            'direccion' => self::TEST_DIRECCION,
             'documento_identidad' => \Illuminate\Http\UploadedFile::fake()->create('documento.pdf', 1000),
             'acepto_privacidad' => '1',
             'acepto_terminos' => '1',
@@ -68,21 +76,21 @@ class InscripcionComplementarioRequestTest extends TestCase
     {
         $pais = Pais::create(['pais' => 'Colombia', 'status' => 1]);
         $departamento = Departamento::create(['departamento' => 'Cundinamarca', 'pais_id' => $pais->id, 'status' => 1]);
-        $municipio = Municipio::create(['municipio' => 'Bogotá', 'departamento_id' => $departamento->id, 'status' => 1]);
+        $municipio = Municipio::create(['municipio' => self::TEST_MUNICIPIO, 'departamento_id' => $departamento->id, 'status' => 1]);
 
         $data = [
             'tipo_documento' => 1,
-            'numero_documento' => '1234567890',
+            'numero_documento' => self::TEST_NUMERO_DOCUMENTO,
             'primer_nombre' => 'Juan',
-            'primer_apellido' => 'Pérez',
-            'fecha_nacimiento' => '1990-01-01',
+            'primer_apellido' => self::TEST_APELLIDO,
+            'fecha_nacimiento' => self::TEST_FECHA_NACIMIENTO,
             'genero' => 1,
-            'celular' => '3001234567',
-            'email' => 'juan@test.com',
+            'celular' => self::TEST_CELULAR,
+            'email' => self::TEST_EMAIL,
             'pais_id' => $pais->id,
             'departamento_id' => $departamento->id,
             'municipio_id' => $municipio->id,
-            'direccion' => 'Calle 123',
+            'direccion' => self::TEST_DIRECCION,
             'documento_identidad' => \Illuminate\Http\UploadedFile::fake()->create('documento.jpg', 1000), // No es PDF
             'acepto_privacidad' => '1',
             'acepto_terminos' => '1',
@@ -100,21 +108,21 @@ class InscripcionComplementarioRequestTest extends TestCase
     {
         $pais = Pais::create(['pais' => 'Colombia', 'status' => 1]);
         $departamento = Departamento::create(['departamento' => 'Cundinamarca', 'pais_id' => $pais->id, 'status' => 1]);
-        $municipio = Municipio::create(['municipio' => 'Bogotá', 'departamento_id' => $departamento->id, 'status' => 1]);
+        $municipio = Municipio::create(['municipio' => self::TEST_MUNICIPIO, 'departamento_id' => $departamento->id, 'status' => 1]);
 
         $data = [
             'tipo_documento' => 1,
-            'numero_documento' => '1234567890',
+            'numero_documento' => self::TEST_NUMERO_DOCUMENTO,
             'primer_nombre' => 'Juan',
-            'primer_apellido' => 'Pérez',
-            'fecha_nacimiento' => '1990-01-01',
+            'primer_apellido' => self::TEST_APELLIDO,
+            'fecha_nacimiento' => self::TEST_FECHA_NACIMIENTO,
             'genero' => 1,
-            'celular' => '3001234567',
-            'email' => 'juan@test.com',
+            'celular' => self::TEST_CELULAR,
+            'email' => self::TEST_EMAIL,
             'pais_id' => $pais->id,
             'departamento_id' => $departamento->id,
             'municipio_id' => $municipio->id,
-            'direccion' => 'Calle 123',
+            'direccion' => self::TEST_DIRECCION,
             'documento_identidad' => \Illuminate\Http\UploadedFile::fake()->create('documento.pdf', 6000), // Mayor a 5MB
             'acepto_privacidad' => '1',
             'acepto_terminos' => '1',
@@ -130,21 +138,21 @@ class InscripcionComplementarioRequestTest extends TestCase
     {
         $pais = Pais::create(['pais' => 'Colombia', 'status' => 1]);
         $departamento = Departamento::create(['departamento' => 'Cundinamarca', 'pais_id' => $pais->id, 'status' => 1]);
-        $municipio = Municipio::create(['municipio' => 'Bogotá', 'departamento_id' => $departamento->id, 'status' => 1]);
+        $municipio = Municipio::create(['municipio' => self::TEST_MUNICIPIO, 'departamento_id' => $departamento->id, 'status' => 1]);
 
         $data = [
             'tipo_documento' => 1,
-            'numero_documento' => '1234567890',
+            'numero_documento' => self::TEST_NUMERO_DOCUMENTO,
             'primer_nombre' => 'Juan',
-            'primer_apellido' => 'Pérez',
-            'fecha_nacimiento' => '1990-01-01',
+            'primer_apellido' => self::TEST_APELLIDO,
+            'fecha_nacimiento' => self::TEST_FECHA_NACIMIENTO,
             'genero' => 1,
-            'celular' => '3001234567',
-            'email' => 'juan@test.com',
+            'celular' => self::TEST_CELULAR,
+            'email' => self::TEST_EMAIL,
             'pais_id' => $pais->id,
             'departamento_id' => $departamento->id,
             'municipio_id' => $municipio->id,
-            'direccion' => 'Calle 123',
+            'direccion' => self::TEST_DIRECCION,
             'documento_identidad' => \Illuminate\Http\UploadedFile::fake()->create('documento.pdf', 1000),
             // Sin aceptar términos
         ];

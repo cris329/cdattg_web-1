@@ -47,8 +47,7 @@ class ProductoRequestTest extends TestCase
     #[Test]
     public function valida_campos_requeridos_para_store(): void
     {
-        $request = new ProductoRequest();
-        $rules = $request->rules();
+        $rules = $this->obtenerRules();
 
         $validator = Validator::make([], $rules);
 
@@ -70,127 +69,148 @@ class ProductoRequestTest extends TestCase
     #[Test]
     public function valida_unicidad_de_producto_en_store(): void
     {
-        $producto = Producto::factory()->create(['producto' => 'PRODUCTO TEST']);
+        Producto::factory()->create(['producto' => 'PRODUCTO TEST']);
 
+        $rules = $this->obtenerRules();
+
+        $this->validarYVerificarError(
+            ['producto' => 'PRODUCTO TEST'],
+            $rules,
+            'producto'
+        );
+    }
+
+    private const ROUTE_AGREGAR_CARRITO = 'inventario.productos.agregar-carrito';
+    private const ID_INEXISTENTE = 99999;
+    private const CANTIDAD_INVALIDA = 0;
+    private const CANTIDAD_VALIDA = 1;
+    private const PESO_INVALIDO = -1;
+    private const PESO_VALIDO = 10.5;
+    private const PRODUCTO_NUEVO = 'PRODUCTO NUEVO';
+
+    private function obtenerRules(): array
+    {
         $request = new ProductoRequest();
-        $rules = $request->rules();
+        return $request->rules();
+    }
 
-        $validator = Validator::make([
-            'producto' => 'PRODUCTO TEST',
-        ], $rules);
+    private function obtenerRulesParaAgregarCarrito(): array
+    {
+        $request = new ProductoRequest();
+        $rutaAgregarCarrito = self::ROUTE_AGREGAR_CARRITO;
+        $request->setRouteResolver(function () use ($rutaAgregarCarrito) {
+            return new class($rutaAgregarCarrito) {
+                private string $ruta;
+                
+                public function __construct(string $ruta) {
+                    $this->ruta = $ruta;
+                }
+                
+                public function named(...$patterns): bool {
+                    return in_array($this->ruta, $patterns);
+                }
+            };
+        });
+        return $request->rules();
+    }
+
+    private function validarYVerificarError(array $data, array $rules, string $campoEsperado): void
+    {
+        $validator = Validator::make($data, $rules);
 
         $this->assertTrue($validator->fails());
-        $this->assertArrayHasKey('producto', $validator->errors()->toArray());
+        $this->assertArrayHasKey($campoEsperado, $validator->errors()->toArray());
     }
 
     #[Test]
     public function valida_que_producto_exista_en_agregar_carrito(): void
     {
-        $request = new ProductoRequest();
-        
-        // Simular ruta de agregar carrito
-        $request->setRouteResolver(function () {
-            return new class {
-                public function named(...$patterns) {
-                    return in_array('inventario.productos.agregar-carrito', $patterns);
-                }
-            };
-        });
+        $rules = $this->obtenerRulesParaAgregarCarrito();
 
-        $rules = $request->rules();
-
-        $validator = Validator::make([
-            'producto_id' => 99999,
-            'cantidad' => 1,
-        ], $rules);
-
-        $this->assertTrue($validator->fails());
-        $this->assertArrayHasKey('producto_id', $validator->errors()->toArray());
+        $this->validarYVerificarError(
+            [
+                'producto_id' => self::ID_INEXISTENTE,
+                'cantidad' => self::CANTIDAD_VALIDA,
+            ],
+            $rules,
+            'producto_id'
+        );
     }
 
     #[Test]
     public function valida_cantidad_minima_en_agregar_carrito(): void
     {
         $producto = Producto::factory()->create();
+        $rules = $this->obtenerRulesParaAgregarCarrito();
 
-        $request = new ProductoRequest();
-        $request->setRouteResolver(function () {
-            return new class {
-                public function named(...$patterns) {
-                    return in_array('inventario.productos.agregar-carrito', $patterns);
-                }
-            };
-        });
-
-        $rules = $request->rules();
-
-        $validator = Validator::make([
-            'producto_id' => $producto->id,
-            'cantidad' => 0,
-        ], $rules);
-
-        $this->assertTrue($validator->fails());
-        $this->assertArrayHasKey('cantidad', $validator->errors()->toArray());
+        $this->validarYVerificarError(
+            [
+                'producto_id' => $producto->id,
+                'cantidad' => self::CANTIDAD_INVALIDA,
+            ],
+            $rules,
+            'cantidad'
+        );
     }
 
     #[Test]
     public function valida_existencia_de_tipo_producto(): void
     {
-        $request = new ProductoRequest();
-        $rules = $request->rules();
+        $rules = $this->obtenerRules();
 
-        $validator = Validator::make([
-            'producto' => 'NUEVO PRODUCTO',
-            'tipo_producto_id' => 99999,
-        ], $rules);
-
-        $this->assertTrue($validator->fails());
-        $this->assertArrayHasKey('tipo_producto_id', $validator->errors()->toArray());
+        $this->validarYVerificarError(
+            [
+                'producto' => self::PRODUCTO_NUEVO,
+                'tipo_producto_id' => self::ID_INEXISTENTE,
+            ],
+            $rules,
+            'tipo_producto_id'
+        );
     }
 
     #[Test]
     public function valida_peso_minimo(): void
     {
-        $request = new ProductoRequest();
-        $rules = $request->rules();
+        $rules = $this->obtenerRules();
 
-        $validator = Validator::make([
-            'producto' => 'NUEVO PRODUCTO',
-            'peso' => -1,
-        ], $rules);
-
-        $this->assertTrue($validator->fails());
-        $this->assertArrayHasKey('peso', $validator->errors()->toArray());
+        $this->validarYVerificarError(
+            [
+                'producto' => self::PRODUCTO_NUEVO,
+                'peso' => self::PESO_INVALIDO,
+            ],
+            $rules,
+            'peso'
+        );
     }
 
     #[Test]
     public function valida_cantidad_minima_en_store(): void
     {
-        $request = new ProductoRequest();
-        $rules = $request->rules();
+        $rules = $this->obtenerRules();
 
-        $validator = Validator::make([
-            'producto' => 'NUEVO PRODUCTO',
-            'cantidad' => 0,
-        ], $rules);
-
-        $this->assertTrue($validator->fails());
-        $this->assertArrayHasKey('cantidad', $validator->errors()->toArray());
+        $this->validarYVerificarError(
+            [
+                'producto' => self::PRODUCTO_NUEVO,
+                'cantidad' => self::CANTIDAD_INVALIDA,
+            ],
+            $rules,
+            'cantidad'
+        );
     }
 
     #[Test]
     public function valida_imagen_formato_y_tamaño(): void
     {
-        $request = new ProductoRequest();
-        $rules = $request->rules();
+        $rules = $this->obtenerRules();
 
-        $validator = Validator::make([
-            'producto' => 'NUEVO PRODUCTO',
-            'imagen' => 'archivo.pdf',
-        ], $rules);
-
-        $this->assertTrue($validator->fails());
-        $this->assertArrayHasKey('imagen', $validator->errors()->toArray());
+        $this->validarYVerificarError(
+            [
+                'producto' => self::PRODUCTO_NUEVO,
+                'imagen' => 'archivo.pdf',
+            ],
+            $rules,
+            'imagen'
+        );
     }
 
     #[Test]
@@ -200,67 +220,52 @@ class ProductoRequestTest extends TestCase
         $unidadMedida = ParametroTema::query()->inRandomOrder()->first();
         $estadoProducto = ParametroTema::query()->inRandomOrder()->first();
         
-        // Crear categoría y marca (extienden de Parametro)
-        $temaCategorias = \App\Models\Tema::where('name', 'CATEGORIAS')->first();
-        $temaMarcas = \App\Models\Tema::where('name', 'MARCAS')->first();
-        
-        $categoriaParametro = \App\Models\Parametro::create([
-            'name' => 'CATEGORIA TEST',
-            'status' => 1,
-            'user_create_id' => User::query()->inRandomOrder()->value('id'),
-            'user_edit_id' => User::query()->inRandomOrder()->value('id'),
-        ]);
-        
-        if ($temaCategorias) {
-            \App\Models\ParametroTema::create([
-                'parametro_id' => $categoriaParametro->id,
-                'tema_id' => $temaCategorias->id,
-                'status' => 1,
-                'user_create_id' => User::query()->inRandomOrder()->value('id'),
-                'user_edit_id' => User::query()->inRandomOrder()->value('id'),
-            ]);
-        }
-        
-        $marcaParametro = \App\Models\Parametro::create([
-            'name' => 'MARCA TEST',
-            'status' => 1,
-            'user_create_id' => User::query()->inRandomOrder()->value('id'),
-            'user_edit_id' => User::query()->inRandomOrder()->value('id'),
-        ]);
-        
-        if ($temaMarcas) {
-            \App\Models\ParametroTema::create([
-                'parametro_id' => $marcaParametro->id,
-                'tema_id' => $temaMarcas->id,
-                'status' => 1,
-                'user_create_id' => User::query()->inRandomOrder()->value('id'),
-                'user_edit_id' => User::query()->inRandomOrder()->value('id'),
-            ]);
-        }
-        
-        $contratoConvenio = ContratoConvenio::factory()->create();
-        $proveedor = Proveedor::factory()->create();
-        $ambiente = Ambiente::factory()->create();
+        $categoriaParametro = $this->crearParametroConTema('CATEGORIA TEST', 'CATEGORIAS');
+        $marcaParametro = $this->crearParametroConTema('MARCA TEST', 'MARCAS');
 
-        $request = new ProductoRequest();
-        $rules = $request->rules();
+        $rules = $this->obtenerRules();
 
         $validator = Validator::make([
-            'producto' => 'NUEVO PRODUCTO',
+            'producto' => self::PRODUCTO_NUEVO,
             'tipo_producto_id' => $tipoProducto->id,
             'descripcion' => 'Descripción del producto',
-            'peso' => 10.5,
+            'peso' => self::PESO_VALIDO,
             'unidad_medida_id' => $unidadMedida->id,
             'cantidad' => 5,
             'estado_producto_id' => $estadoProducto->id,
             'categoria_id' => $categoriaParametro->id,
             'marca_id' => $marcaParametro->id,
-            'contrato_convenio_id' => $contratoConvenio->id,
-            'ambiente_id' => $ambiente->id,
-            'proveedor_id' => $proveedor->id,
+            'contrato_convenio_id' => ContratoConvenio::factory()->create()->id,
+            'ambiente_id' => Ambiente::factory()->create()->id,
+            'proveedor_id' => Proveedor::factory()->create()->id,
         ], $rules);
 
         $this->assertFalse($validator->fails());
+    }
+
+    private function crearParametroConTema(string $nombreParametro, string $nombreTema): \App\Models\Parametro
+    {
+        $tema = \App\Models\Tema::where('name', $nombreTema)->first();
+        $userId = User::query()->inRandomOrder()->value('id');
+        
+        $parametro = \App\Models\Parametro::create([
+            'name' => $nombreParametro,
+            'status' => 1,
+            'user_create_id' => $userId,
+            'user_edit_id' => $userId,
+        ]);
+        
+        if ($tema) {
+            \App\Models\ParametroTema::create([
+                'parametro_id' => $parametro->id,
+                'tema_id' => $tema->id,
+                'status' => 1,
+                'user_create_id' => $userId,
+                'user_edit_id' => $userId,
+            ]);
+        }
+        
+        return $parametro;
     }
 }
 

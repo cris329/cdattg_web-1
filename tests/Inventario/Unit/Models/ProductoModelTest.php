@@ -12,6 +12,7 @@ class ProductoModelTest extends TestCase
     use RefreshDatabase;
 
     protected Producto $producto;
+    private const PRODUCTO_ACTUALIZADO = 'PRODUCTO ACTUALIZADO';
 
     protected function setUp(): void
     {
@@ -40,11 +41,11 @@ class ProductoModelTest extends TestCase
     {
         $this->producto->update(['producto' => 'Producto Actualizado']);
 
-        // El modelo convierte automáticamente a mayúsculas
-        $this->assertEquals('PRODUCTO ACTUALIZADO', $this->producto->producto);
+        // El modelo convierte autZADOomáticamente a mayúsculas
+        $this->assertEquals(self::PRODUCTO_ACTUALIZADO, $this->producto->producto);
         $this->assertDatabaseHas('productos', [
             'id' => $this->producto->id,
-            'producto' => 'PRODUCTO ACTUALIZADO',
+            'producto' => self::PRODUCTO_ACTUALIZADO,
         ]);
     }
 }

@@ -12,6 +12,7 @@ use Spatie\Permission\Models\Role;
 class UserRepositoryTest extends TestCase
 {
     use RefreshDatabase;
+    private const ROL_SUPER_ADMINISTRADOR = 'SUPER ADMINISTRADOR';
 
     protected UserRepository $repository;
 
@@ -36,27 +37,27 @@ class UserRepositoryTest extends TestCase
     public function puede_obtener_super_administradores()
     {
         // Crear rol si no existe
-        $role = Role::firstOrCreate(['name' => 'SUPER ADMINISTRADOR']);
+        Role::firstOrCreate(['name' => self::ROL_SUPER_ADMINISTRADOR]);
         
         // Crear usuario con rol
         $user = User::first();
-        if (!$user->hasRole('SUPER ADMINISTRADOR')) {
-            $user->assignRole('SUPER ADMINISTRADOR');
+        if (!$user->hasRole(self::ROL_SUPER_ADMINISTRADOR)) {
+            $user->assignRole(self::ROL_SUPER_ADMINISTRADOR);
         }
 
         $resultado = $this->repository->obtenerSuperAdministradores();
 
         $this->assertGreaterThanOrEqual(1, $resultado->count());
-        $this->assertTrue($resultado->first()->hasRole('SUPER ADMINISTRADOR'));
+        $this->assertTrue($resultado->first()->hasRole(self::ROL_SUPER_ADMINISTRADOR));
     }
 
     #[Test]
     public function retorna_coleccion_vacia_si_no_hay_super_administradores()
     {
         // Asegurarse de que no hay usuarios con el rol
-        $users = User::role('SUPER ADMINISTRADOR')->get();
+        $users = User::role(self::ROL_SUPER_ADMINISTRADOR)->get();
         foreach ($users as $user) {
-            $user->removeRole('SUPER ADMINISTRADOR');
+            $user->removeRole(self::ROL_SUPER_ADMINISTRADOR);
         }
 
         $resultado = $this->repository->obtenerSuperAdministradores();

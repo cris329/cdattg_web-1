@@ -18,6 +18,10 @@ use Mockery;
 
 class ComplementarioServiceTest extends TestCase
 {
+    private const TEST_OBSERVACIONES = 'Observaciones test';
+    private const TEST_HORA_INICIO = '08:00:00';
+    private const TEST_HORA_FIN = '12:00:00';
+
     protected ComplementarioService $service;
     protected $temaRepositoryMock;
     protected $programaRepositoryMock;
@@ -197,7 +201,7 @@ class ComplementarioServiceTest extends TestCase
             'id' => 1,
             'persona_id' => 1,
             'complementario_id' => 1,
-            'observaciones' => 'Observaciones test',
+            'observaciones' => self::TEST_OBSERVACIONES,
             'estado' => 1,
         ]);
 
@@ -206,12 +210,12 @@ class ComplementarioServiceTest extends TestCase
             ->with(Mockery::on(function ($data) {
                 return $data['persona_id'] === 1 &&
                        $data['complementario_id'] === 1 &&
-                       $data['observaciones'] === 'Observaciones test' &&
+                       $data['observaciones'] === self::TEST_OBSERVACIONES &&
                        $data['estado'] === 1;
             }))
             ->andReturn($aspirante);
 
-        $resultado = $this->service->crearAspirante(1, 1, 'Observaciones test');
+        $resultado = $this->service->crearAspirante(1, 1, self::TEST_OBSERVACIONES);
 
         $this->assertEquals($aspirante, $resultado);
     }
@@ -309,8 +313,8 @@ class ComplementarioServiceTest extends TestCase
         $dias = [
             [
                 'dia_id' => $dia1->id,
-                'hora_inicio' => '08:00:00',
-                'hora_fin' => '12:00:00',
+                'hora_inicio' => self::TEST_HORA_INICIO,
+                'hora_fin' => self::TEST_HORA_FIN,
             ],
             [
                 'dia_id' => $dia2->id,
@@ -327,8 +331,8 @@ class ComplementarioServiceTest extends TestCase
         $this->assertTrue($programa->diasFormacion->contains($dia2->id));
 
         $dia1Pivot = $programa->diasFormacion->firstWhere('id', $dia1->id)->pivot;
-        $this->assertEquals('08:00:00', $dia1Pivot->hora_inicio);
-        $this->assertEquals('12:00:00', $dia1Pivot->hora_fin);
+        $this->assertEquals(self::TEST_HORA_INICIO, $dia1Pivot->hora_inicio);
+        $this->assertEquals(self::TEST_HORA_FIN, $dia1Pivot->hora_fin);
     }
 
     /** @test */
@@ -358,8 +362,8 @@ class ComplementarioServiceTest extends TestCase
         $dia = Parametro::create(['name' => 'MIERCOLES_TEST_' . uniqid(), 'status' => 1]);
 
         $programa->diasFormacion()->attach($dia->id, [
-            'hora_inicio' => '08:00:00',
-            'hora_fin' => '12:00:00',
+            'hora_inicio' => self::TEST_HORA_INICIO,
+            'hora_fin' => self::TEST_HORA_FIN,
         ]);
 
         $this->service->sincronizarDiasFormacion($programa, null);
