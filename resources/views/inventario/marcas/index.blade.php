@@ -107,7 +107,7 @@
 @endpush
 
 @push('scripts')
-    @vite(['resources/js/pages/formularios-generico.js'])
+    {{-- @vite(['resources/js/pages/formularios-generico.js']) --}}
 @endpush
 
 
