@@ -3,7 +3,7 @@
 namespace Tests\Complementarios\Unit\Requests;
 
 use App\Http\Requests\Complementarios\UpdateProgramaComplementarioRequest;
-use App\Models\ComplementarioOfertado;
+use App\Models\Complementarios\ComplementarioOfertado;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Support\Facades\Validator;
 use PHPUnit\Framework\Attributes\Test;

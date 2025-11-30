@@ -3,7 +3,7 @@
 namespace Tests\Complementarios\Feature\Controllers;
 
 use Tests\TestCase;
-use App\Models\ComplementarioOfertado;
+use App\Models\Complementarios\ComplementarioOfertado;
 use App\Models\User;
 use App\Models\Parametro;
 use App\Models\Competencia;

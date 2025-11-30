@@ -2,7 +2,7 @@
 
 namespace Tests\Complementarios\Unit\Commands;
 
-use App\Console\Commands\ValidarSofiaCommand;
+use App\Console\Commands\Complementarios\ValidarSofiaCommand;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use PHPUnit\Framework\Attributes\Test;
 use Tests\TestCase;

@@ -3,9 +3,9 @@
 namespace Tests\Complementarios\Unit\Services\Sofia;
 
 use Tests\TestCase;
-use App\Services\Sofia\SofiaValidationProcessor;
-use App\Services\Sofia\SofiaValidationService;
-use App\Models\AspiranteComplementario;
+use App\Services\Complementarios\Sofia\SofiaValidationProcessor;
+use App\Services\Complementarios\Sofia\SofiaValidationService;
+use App\Models\Complementarios\AspiranteComplementario;
 use App\Models\Persona;
 use App\Models\SofiaValidationProgress;
 use Illuminate\Foundation\Testing\RefreshDatabase;

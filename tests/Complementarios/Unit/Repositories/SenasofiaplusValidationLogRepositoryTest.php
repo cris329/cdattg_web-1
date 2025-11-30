@@ -2,7 +2,7 @@
 
 namespace Tests\Complementarios\Unit\Repositories;
 
-use App\Models\AspiranteComplementario;
+use App\Models\Complementarios\AspiranteComplementario;
 use App\Models\SenasofiaplusValidationLog;
 use App\Models\User;
 use App\Repositories\SenasofiaplusValidationLogRepository;

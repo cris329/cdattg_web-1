@@ -3,9 +3,9 @@
 namespace Tests\Complementarios\Unit\Repositories;
 
 use Tests\TestCase;
-use App\Repositories\ComplementarioOfertadoRepository;
-use App\Models\ComplementarioOfertado;
-use App\Models\AspiranteComplementario;
+use App\Repositories\Complementarios\ComplementarioOfertadoRepository;
+use App\Models\Complementarios\ComplementarioOfertado;
+use App\Models\Complementarios\AspiranteComplementario;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 
 class ComplementarioOfertadoRepositoryTest extends TestCase

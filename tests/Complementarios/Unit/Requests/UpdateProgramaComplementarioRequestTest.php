@@ -4,7 +4,7 @@ namespace Tests\Complementarios\Unit\Requests;
 
 use App\Http\Requests\Complementarios\UpdateProgramaComplementarioRequest;
 use App\Models\Ambiente;
-use App\Models\ComplementarioOfertado;
+use App\Models\Complementarios\ComplementarioOfertado;
 use App\Models\JornadaFormacion;
 use App\Models\ParametroTema;
 use Illuminate\Foundation\Testing\RefreshDatabase;

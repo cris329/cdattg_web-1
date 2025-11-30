@@ -3,12 +3,12 @@
 namespace Tests\Complementarios\Feature\Controllers;
 
 use Tests\TestCase;
-use App\Models\ComplementarioOfertado;
-use App\Models\AspiranteComplementario;
+use App\Models\Complementarios\ComplementarioOfertado;
+use App\Models\Complementarios\AspiranteComplementario;
 use App\Models\Persona;
-use App\Models\SofiaValidationProgress;
+use App\Models\Complementarios\SofiaValidationProgress;
 use App\Models\User;
-use App\Jobs\ValidarSofiaJob;
+use App\Jobs\Complementarios\ValidarSofiaJob;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Support\Facades\Queue;
 use PHPUnit\Framework\Attributes\Test;

@@ -3,13 +3,13 @@
 namespace Tests\Complementarios\Unit\Services\Sofia;
 
 use Tests\TestCase;
-use App\Services\Sofia\SofiaValidationService;
-use App\Services\Sofia\SofiaHttpClient;
-use App\Services\Sofia\SofiaStateMapper;
+use App\Services\Complementarios\Sofia\SofiaValidationService;
+use App\Services\Complementarios\Sofia\SofiaHttpClient;
+use App\Services\Complementarios\Sofia\SofiaStateMapper;
 use App\Services\AuditoriaService;
-use App\Models\AspiranteComplementario;
+use App\Models\Complementarios\AspiranteComplementario;
 use App\Models\Persona;
-use App\Models\SofiaValidationProgress;
+use App\Models\Complementarios\SofiaValidationProgress;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use PHPUnit\Framework\Attributes\Test;
 use Mockery;
