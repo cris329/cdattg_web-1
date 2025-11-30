@@ -56,7 +56,7 @@ class ValidacionSofiaControllerTest extends TestCase
             'complementario_id' => $programa->id,
         ]);
 
-        $response = $this->post(route('validar-sofia', $programa->id));
+        $response = $this->post(route('programas-complementarios.validar-sofia', $programa->id));
 
         $response->assertStatus(200);
         $response->assertJson([
@@ -69,9 +69,7 @@ class ValidacionSofiaControllerTest extends TestCase
             'progress_id',
         ]);
 
-        Queue::assertPushed(ValidarSofiaJob::class, function ($job) use ($programa) {
-            return $job->complementarioId === $programa->id;
-        });
+        Queue::assertPushed(ValidarSofiaJob::class);
 
         $this->assertDatabaseHas('sofia_validation_progress', [
             'complementario_id' => $programa->id,
@@ -94,7 +92,7 @@ class ValidacionSofiaControllerTest extends TestCase
             'complementario_id' => $programa->id,
         ]);
 
-        $response = $this->post(route('validar-sofia', $programa->id));
+        $response = $this->post(route('programas-complementarios.validar-sofia', $programa->id));
 
         $response->assertStatus(200);
         $response->assertJson([
@@ -124,7 +122,7 @@ class ValidacionSofiaControllerTest extends TestCase
             'status' => 'processing',
         ]);
 
-        $response = $this->post(route('validar-sofia', $programa->id));
+        $response = $this->post(route('programas-complementarios.validar-sofia', $programa->id));
 
         $response->assertStatus(200);
         $response->assertJson([
@@ -140,7 +138,7 @@ class ValidacionSofiaControllerTest extends TestCase
     {
         $this->actingAs($this->user);
 
-        $response = $this->post(route('validar-sofia', 99999));
+        $response = $this->post(route('programas-complementarios.validar-sofia', 99999));
 
         $response->assertStatus(404);
         $response->assertJson([
@@ -233,7 +231,7 @@ class ValidacionSofiaControllerTest extends TestCase
             'complementario_id' => $programa->id,
         ]);
 
-        $response = $this->post(route('validar-sofia', $programa->id));
+        $response = $this->post(route('programas-complementarios.validar-sofia', $programa->id));
 
         $response->assertStatus(200);
 
@@ -261,12 +259,12 @@ class ValidacionSofiaControllerTest extends TestCase
             'complementario_id' => $programa->id,
         ]);
 
-        $this->post(route('validar-sofia', $programa->id));
+        $this->post(route('programas-complementarios.validar-sofia', $programa->id));
 
         Queue::assertPushed(ValidarSofiaJob::class, function ($job) use ($programa) {
-            return $job->complementarioId === $programa->id &&
-                   $job->userId === $this->user->id &&
-                   $job->progressId !== null;
+            return $job->getComplementarioId() === $programa->id &&
+                   $job->getUserId() === $this->user->id &&
+                   $job->getProgressId() !== null;
         });
     }
 }
