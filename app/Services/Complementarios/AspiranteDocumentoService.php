@@ -2,6 +2,7 @@
 
 namespace App\Services\Complementarios;
 
+use App\Exceptions\Complementarios\GoogleDriveException;
 use App\Models\Persona;
 use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Storage;
@@ -30,62 +31,130 @@ class AspiranteDocumentoService
      */
     public function buscarDocumentoEnGoogleDrive(array $files, string $patron): bool
     {
-        // Crear variantes del patrón para manejar diferentes formatos
-        $patrones = [$patron];
-
-        // Si el patrón tiene guiones bajos, crear versión con espacios
-        if (strpos($patron, '_') !== false) {
-            $patronConEspacios = str_replace('_', ' ', $patron);
-            $patrones[] = $patronConEspacios;
-        }
-
-        // Si el patrón tiene espacios, crear versión con guiones bajos
-        if (strpos($patron, ' ') !== false) {
-            $patronConGuiones = str_replace(' ', '_', $patron);
-            $patrones[] = $patronConGuiones;
-        }
-
-        // Crear patrón alternativo sin nombres (solo tipo_documento + numero_documento)
-        // Esto para manejar archivos subidos desde procesar-documentos
-        $patronSinNombres = $this->crearPatronSinNombres($patron);
-        if ($patronSinNombres) {
-            $patrones[] = $patronSinNombres;
-
-            // También crear versión con espacios
-            $patronSinNombresConEspacios = str_replace('_', ' ', $patronSinNombres);
-            $patrones[] = $patronSinNombresConEspacios;
-        }
+        $patrones = $this->generarVariantesPatron($patron);
 
         foreach ($files as $file) {
-            $fileName = basename($file);
-
-            // Buscar archivos que contengan cualquiera de los patrones
-            foreach ($patrones as $patronActual) {
-                if (strpos($fileName, $patronActual) !== false) {
-                    try {
-                        if (Storage::disk('google')->exists($file)) {
-                            Log::info("Documento encontrado en Google Drive", [
-                                'archivo' => $fileName,
-                                'patron_usado' => $patronActual,
-                                'patron_original' => $patron
-                            ]);
-                            return true;
-                        }
-                    } catch (\Exception $e) {
-                        Log::warning("Error verificando existencia de archivo: {$fileName}", [
-                            'error' => $e->getMessage()
-                        ]);
-                    }
-                }
+            if ($this->buscarCoincidenciaEnArchivo($file, $patrones, $patron)) {
+                return true;
             }
         }
 
+        $this->logDocumentoNoEncontrado($patron, $patrones, count($files));
+        return false;
+    }
+
+    /**
+     * Generar variantes del patrón de búsqueda
+     */
+    private function generarVariantesPatron(string $patron): array
+    {
+        $patrones = [$patron];
+
+        $patrones = array_merge($patrones, $this->crearVarianteConEspacios($patron));
+        $patrones = array_merge($patrones, $this->crearVarianteConGuiones($patron));
+        $patrones = array_merge($patrones, $this->crearPatronSinNombresVariantes($patron));
+
+        return array_unique($patrones);
+    }
+
+    /**
+     * Crear variante del patrón con espacios si tiene guiones bajos
+     */
+    private function crearVarianteConEspacios(string $patron): array
+    {
+        if (strpos($patron, '_') === false) {
+            return [];
+        }
+        return [str_replace('_', ' ', $patron)];
+    }
+
+    /**
+     * Crear variante del patrón con guiones bajos si tiene espacios
+     */
+    private function crearVarianteConGuiones(string $patron): array
+    {
+        if (strpos($patron, ' ') === false) {
+            return [];
+        }
+        return [str_replace(' ', '_', $patron)];
+    }
+
+    /**
+     * Crear variantes del patrón sin nombres
+     */
+    private function crearPatronSinNombresVariantes(string $patron): array
+    {
+        $patronSinNombres = $this->crearPatronSinNombres($patron);
+        if ($patronSinNombres === null) {
+            return [];
+        }
+
+        return [
+            $patronSinNombres,
+            str_replace('_', ' ', $patronSinNombres)
+        ];
+    }
+
+    /**
+     * Buscar coincidencia de patrones en un archivo específico
+     */
+    private function buscarCoincidenciaEnArchivo(string $file, array $patrones, string $patronOriginal): bool
+    {
+        $fileName = basename($file);
+
+        foreach ($patrones as $patronActual) {
+            if (!$this->coincidePatronEnNombre($fileName, $patronActual)) {
+                continue;
+            }
+
+            if ($this->verificarArchivoExiste($file, $fileName, $patronActual, $patronOriginal)) {
+                return true;
+            }
+        }
+
+        return false;
+    }
+
+    /**
+     * Verificar si el patrón coincide en el nombre del archivo
+     */
+    private function coincidePatronEnNombre(string $fileName, string $patron): bool
+    {
+        return strpos($fileName, $patron) !== false;
+    }
+
+    /**
+     * Verificar existencia del archivo en Google Drive
+     */
+    private function verificarArchivoExiste(string $file, string $fileName, string $patronActual, string $patronOriginal): bool
+    {
+        try {
+            if (Storage::disk('google')->exists($file)) {
+                Log::info("Documento encontrado en Google Drive", [
+                    'archivo' => $fileName,
+                    'patron_usado' => $patronActual,
+                    'patron_original' => $patronOriginal
+                ]);
+                return true;
+            }
+        } catch (\Exception $e) {
+            Log::warning("Error verificando existencia de archivo: {$fileName}", [
+                'error' => $e->getMessage()
+            ]);
+        }
+        return false;
+    }
+
+    /**
+     * Registrar que el documento no fue encontrado
+     */
+    private function logDocumentoNoEncontrado(string $patron, array $patrones, int $totalArchivos): void
+    {
         Log::warning("Documento no encontrado en Google Drive", [
             'patron' => $patron,
             'patrones_buscados' => $patrones,
-            'total_archivos' => count($files)
+            'total_archivos' => $totalArchivos
         ]);
-        return false;
     }
 
     /**
@@ -144,7 +213,7 @@ class AspiranteDocumentoService
             return $files;
         } catch (\Exception $e) {
             Log::error("Error al listar archivos en Google Drive: " . $e->getMessage());
-            throw new \RuntimeException('Error al acceder a Google Drive: ' . $e->getMessage());
+            throw new GoogleDriveException('Error al acceder a Google Drive: ' . $e->getMessage(), 0, $e);
         }
     }
 

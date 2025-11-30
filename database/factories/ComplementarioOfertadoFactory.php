@@ -86,7 +86,7 @@ class ComplementarioOfertadoFactory extends Factory
                     $modalidadId = ParametroTema::where('tema_id', 5)->value('id');
                 }
             } catch (\Exception $e) {
-                // Si todo falla, usar null (permitir que sea nullable si la migración lo permite)
+                
                 $modalidadId = null;
             }
         }

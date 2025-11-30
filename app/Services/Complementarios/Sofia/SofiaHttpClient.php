@@ -6,6 +6,12 @@ use Illuminate\Support\Facades\Http;
 use Illuminate\Support\Facades\Log;
 use Illuminate\Http\Client\ConnectionException;
 use Illuminate\Http\Client\RequestException;
+use App\Exceptions\Complementarios\SofiaConnectionException;
+use App\Exceptions\Complementarios\SofiaRequestException;
+use App\Exceptions\Complementarios\SofiaHttpErrorException;
+use App\Exceptions\Complementarios\SofiaInvalidResponseException;
+use App\Exceptions\Complementarios\SofiaServiceErrorException;
+use App\Exceptions\Complementarios\SofiaUnexpectedStatusException;
 
 class SofiaHttpClient
 {
@@ -63,14 +69,14 @@ class SofiaHttpClient
 
         } catch (ConnectionException $e) {
             $this->logConnectionError($e, $validateUrl, $cedula);
-            throw new \RuntimeException(
+            throw new SofiaConnectionException(
                 "No se pudo conectar al servicio Playwright en {$validateUrl}: " . $e->getMessage(),
                 0,
                 $e
             );
         } catch (RequestException $e) {
             $this->logRequestError($e, $validateUrl, $cedula);
-            throw new \RuntimeException(
+            throw new SofiaRequestException(
                 "Error en la peticion al servicio Playwright: " . $e->getMessage(),
                 0,
                 $e
@@ -131,7 +137,7 @@ class SofiaHttpClient
                 'response' => $responseData,
                 'raw_body' => $response->body()
             ]);
-            throw new \RuntimeException('Respuesta sin resultado del servicio Playwright');
+            throw new SofiaInvalidResponseException('Respuesta sin resultado del servicio Playwright');
         }
 
         Log::info('Servicio Playwright completado exitosamente', [
@@ -158,7 +164,7 @@ class SofiaHttpClient
             'duration' => $duration
         ]);
 
-        throw new \RuntimeException("Error HTTP {$statusCode} del servicio Playwright: {$errorBody}");
+        throw new SofiaHttpErrorException("Error HTTP {$statusCode} del servicio Playwright: {$errorBody}");
     }
 
     /**
@@ -172,7 +178,7 @@ class SofiaHttpClient
                 'response' => $responseData,
                 'raw_body' => $response->body()
             ]);
-            throw new \RuntimeException('Respuesta invalida del servicio Playwright: falta campo status');
+            throw new SofiaInvalidResponseException('Respuesta invalida del servicio Playwright: falta campo status');
         }
     }
 
@@ -189,7 +195,7 @@ class SofiaHttpClient
                 'detail' => $responseData[self::RESPONSE_FIELD_DETAIL] ?? null,
                 'duration' => $duration
             ]);
-            throw new \RuntimeException("Error del servicio Playwright: {$errorMessage}");
+            throw new SofiaServiceErrorException("Error del servicio Playwright: {$errorMessage}");
         }
 
         if ($responseData[self::RESPONSE_FIELD_STATUS] !== self::STATUS_OK) {
@@ -198,7 +204,7 @@ class SofiaHttpClient
                 'status' => $responseData[self::RESPONSE_FIELD_STATUS],
                 'response' => $responseData
             ]);
-            throw new \RuntimeException(
+            throw new SofiaUnexpectedStatusException(
                 "Status inesperado del servicio Playwright: {$responseData[self::RESPONSE_FIELD_STATUS]}"
             );
         }

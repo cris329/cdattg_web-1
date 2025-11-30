@@ -37,70 +37,137 @@ class SofiaValidationProcessor
         $totalAspirantes = $aspirantes->count();
         Log::info('Iniciando validacion de aspirantes', ['total' => $totalAspirantes]);
 
-        $exitosos = 0;
-        $errores = 0;
-        $errores_detalle = [];
-        $procesados = 0;
+        $stats = [
+            'exitosos' => 0,
+            'errores' => 0,
+            'errores_detalle' => [],
+            'procesados' => 0
+        ];
 
         $batches = $aspirantes->chunk($this->batchSize);
         $totalBatches = $batches->count();
 
         foreach ($batches as $batchIndex => $batch) {
-            $batchNumber = $batchIndex + 1;
-            Log::info('Procesando lote', [
-                'lote' => $batchNumber,
-                'total_lotes' => $totalBatches,
-                'aspirantes_lote' => $batch->count()
-            ]);
-
-            foreach ($batch as $aspirante) {
-                $procesados++;
-                $cedula = $aspirante->persona->numero_documento;
-                Log::info('Validando cedula', [
-                    'cedula' => $cedula,
-                    'progreso' => "{$procesados}/{$totalAspirantes}"
-                ]);
-
-                $result = $this->validationService->validateAspirante(
-                    $aspirante,
-                    $complementarioId,
-                    $progress
-                );
-
-                if ($progress) {
-                    $isSuccessful = isset($result['success']) && $result['success'] === true;
-                    $progress->incrementProcessed($isSuccessful);
-                }
-
-                if ($result['success']) {
-                    $estado = $result['estado'];
-                    if (in_array($estado, [0, 1, 2], true)) {
-                        $exitosos++;
-                    }
-                } else {
-                    $errores++;
-                    $errores_detalle[] = $result['error'];
-                }
-
-                $delay = $this->calculateDelay($procesados, $totalAspirantes);
-                if ($delay > 0) {
-                    Log::debug('Esperando antes de siguiente validacion', ['delay_ms' => $delay]);
-                    usleep($delay * 1000);
-                }
-            }
-
-            if ($totalBatches > 1 && $batchIndex < $totalBatches - 1) {
-                Log::info('Cambio de lote - esperando', ['segundos' => $this->batchDelay]);
-                sleep($this->batchDelay);
-            }
+            $this->logBatchStart($batchIndex, $totalBatches, $batch->count());
+            $this->processBatchItems($batch, $complementarioId, $progress, $totalAspirantes, $stats);
+            $this->waitBetweenBatches($batchIndex, $totalBatches);
         }
 
         return [
             'total' => $totalAspirantes,
-            'exitosos' => $exitosos,
-            'errores' => $errores,
-            'errores_detalle' => $errores_detalle
+            'exitosos' => $stats['exitosos'],
+            'errores' => $stats['errores'],
+            'errores_detalle' => $stats['errores_detalle']
         ];
+    }
+
+    /**
+     * Procesar items de un lote
+     */
+    private function processBatchItems(
+        $batch,
+        int $complementarioId,
+        ?SofiaValidationProgress $progress,
+        int $totalAspirantes,
+        array &$stats
+    ): void {
+        foreach ($batch as $aspirante) {
+            $stats['procesados']++;
+            $this->logAspiranteValidation($aspirante, $stats['procesados'], $totalAspirantes);
+
+            $result = $this->validationService->validateAspirante(
+                $aspirante,
+                $complementarioId,
+                $progress
+            );
+
+            $this->updateProgress($progress, $result);
+            $this->updateStats($result, $stats);
+            $this->applyDelayIfNeeded($stats['procesados'], $totalAspirantes);
+        }
+    }
+
+    /**
+     * Registrar inicio de procesamiento de lote
+     */
+    private function logBatchStart(int $batchIndex, int $totalBatches, int $batchSize): void
+    {
+        $batchNumber = $batchIndex + 1;
+        Log::info('Procesando lote', [
+            'lote' => $batchNumber,
+            'total_lotes' => $totalBatches,
+            'aspirantes_lote' => $batchSize
+        ]);
+    }
+
+    /**
+     * Registrar validación de aspirante
+     */
+    private function logAspiranteValidation($aspirante, int $procesados, int $totalAspirantes): void
+    {
+        $cedula = $aspirante->persona->numero_documento;
+        Log::info('Validando cedula', [
+            'cedula' => $cedula,
+            'progreso' => "{$procesados}/{$totalAspirantes}"
+        ]);
+    }
+
+    /**
+     * Actualizar progreso si existe
+     */
+    private function updateProgress(?SofiaValidationProgress $progress, array $result): void
+    {
+        if ($progress) {
+            $isSuccessful = isset($result['success']) && $result['success'] === true;
+            $progress->incrementProcessed($isSuccessful);
+        }
+    }
+
+    /**
+     * Actualizar estadísticas de procesamiento
+     */
+    private function updateStats(array $result, array &$stats): void
+    {
+        if ($result['success']) {
+            $estado = $result['estado'] ?? null;
+            if ($this->isValidState($estado)) {
+                $stats['exitosos']++;
+            }
+        } else {
+            $stats['errores']++;
+            $stats['errores_detalle'][] = $result['error'] ?? 'Error desconocido';
+        }
+    }
+
+    /**
+     * Verificar si el estado es válido
+     */
+    private function isValidState(?int $estado): bool
+    {
+        return $estado !== null && in_array($estado, [0, 1, 2], true);
+    }
+
+    /**
+     * Aplicar delay si es necesario
+     */
+    private function applyDelayIfNeeded(int $procesados, int $totalAspirantes): void
+    {
+        $delay = $this->calculateDelay($procesados, $totalAspirantes);
+        if ($delay > 0) {
+            Log::debug('Esperando antes de siguiente validacion', ['delay_ms' => $delay]);
+            usleep($delay * 1000);
+        }
+    }
+
+    /**
+     * Esperar entre lotes si es necesario
+     */
+    private function waitBetweenBatches(int $batchIndex, int $totalBatches): void
+    {
+        if ($totalBatches > 1 && $batchIndex < $totalBatches - 1) {
+            Log::info('Cambio de lote - esperando', ['segundos' => $this->batchDelay]);
+            sleep($this->batchDelay);
+        }
     }
 
     /**
@@ -108,21 +175,23 @@ class SofiaValidationProcessor
      */
     private function calculateDelay(int $procesados, int $total): int
     {
+        $delay = 0;
+
         if ($total === 0) {
-            return 0;
+            return $delay;
         }
 
         $progress = $procesados / $total;
 
         if ($progress < self::PROGRESS_THRESHOLD_LOW) {
-            return self::DELAY_INITIAL_MS;
+            $delay = self::DELAY_INITIAL_MS;
+        } elseif ($progress < self::PROGRESS_THRESHOLD_MID) {
+            $delay = self::DELAY_MID_MS;
+        } else {
+            $delay = self::DELAY_FINAL_MS;
         }
 
-        if ($progress < self::PROGRESS_THRESHOLD_MID) {
-            return self::DELAY_MID_MS;
-        }
-
-        return self::DELAY_FINAL_MS;
+        return $delay;
     }
 }
 

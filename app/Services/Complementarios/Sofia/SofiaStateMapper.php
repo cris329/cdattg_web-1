@@ -43,30 +43,26 @@ class SofiaStateMapper
     public function mapToState(string $resultado): int
     {
         $resultadoLower = strtolower($resultado);
+        $estado = null;
 
         if ($this->isError($resultado, $resultadoLower)) {
-            return self::ESTADO_NO_REGISTRADO;
+            $estado = self::ESTADO_NO_REGISTRADO;
+        } elseif (($directState = $this->getDirectState($resultado)) !== null) {
+            $estado = $directState;
+        } elseif ($this->requiresChange($resultadoLower)) {
+            $estado = self::ESTADO_REQUIERE_CAMBIO;
+        } elseif ($this->isRegistered($resultadoLower)) {
+            $estado = self::ESTADO_REGISTRADO;
+        } elseif ($this->isNotRegistered($resultadoLower, $resultado)) {
+            $estado = self::ESTADO_NO_REGISTRADO;
         }
 
-        $directState = $this->getDirectState($resultado);
-        if ($directState !== null) {
-            return $directState;
+        if ($estado === null) {
+            Log::warning('Respuesta no reconocida de SenaSofiaPlus', ['resultado' => $resultado]);
+            $estado = self::ESTADO_NO_REGISTRADO;
         }
 
-        if ($this->requiresChange($resultadoLower)) {
-            return self::ESTADO_REQUIERE_CAMBIO;
-        }
-
-        if ($this->isRegistered($resultadoLower)) {
-            return self::ESTADO_REGISTRADO;
-        }
-
-        if ($this->isNotRegistered($resultadoLower, $resultado)) {
-            return self::ESTADO_NO_REGISTRADO;
-        }
-
-        Log::warning('Respuesta no reconocida de SenaSofiaPlus', ['resultado' => $resultado]);
-        return self::ESTADO_NO_REGISTRADO;
+        return $estado;
     }
 
     /**

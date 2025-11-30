@@ -45,9 +45,7 @@ class AspiranteComplementarioController extends Controller
      */
     public function gestionAspirantes(): View
     {
-        $programas = $this->aspiranteManagementService->obtenerProgramasParaGestion();
-
-        return view('complementarios.aspirantes.index', compact('programas'));
+        return $this->index();
     }
 
     /**
@@ -203,7 +201,7 @@ class AspiranteComplementarioController extends Controller
         $tiposDocumento = $this->complementarioService->getTiposDocumento();
         $documentos = (object) [
             'tema' => $temaTipoDocumento,
-            'parametros' => $temaTipoDocumento && $temaTipoDocumento->parametros->count() > 0 
+            'parametros' => $temaTipoDocumento && $temaTipoDocumento->parametros->count() > 0
                 ? $temaTipoDocumento->parametros()->where('parametros_temas.status', 1)->orderBy('parametros.name')->get(['parametros.id', 'parametros.name'])
                 : $tiposDocumento
         ];
