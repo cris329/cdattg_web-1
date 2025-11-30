@@ -260,7 +260,7 @@
 @include('inventario._components.common-footer')
 
 @push('css')
-    @vite(['resources/css/inventario/orden.css'])
+    {{-- @vite(['resources/css/inventario/orden.css']) --}}
 @endpush
 
 @push('scripts')
