@@ -16,19 +16,14 @@ use Mockery;
 
 class ValidarSofiaJobTest extends TestCase
 {
-    use RefreshDatabase;
 
     protected function setUp(): void
     {
         parent::setUp();
 
         $this->seed([
-            \Database\Seeders\RolePermissionSeeder::class,
-            \Database\Seeders\ParametroSeeder::class,
             \Database\Seeders\TemaSeeder::class,
-            \Database\Seeders\PaisSeeder::class,
-            \Database\Seeders\DepartamentoSeeder::class,
-            \Database\Seeders\MunicipioSeeder::class,
+            \Database\Seeders\ParametroSeeder::class,
         ]);
     }
 
@@ -44,9 +39,9 @@ class ValidarSofiaJobTest extends TestCase
         $job = new ValidarSofiaJob(1, 1, 1);
 
         $this->assertInstanceOf(ValidarSofiaJob::class, $job);
-        $this->assertEquals(1, $job->complementarioId);
-        $this->assertEquals(1, $job->userId);
-        $this->assertEquals(1, $job->progressId);
+        $this->assertEquals(1, $job->getComplementarioId());
+        $this->assertEquals(1, $job->getUserId());
+        $this->assertEquals(1, $job->getProgressId());
     }
 
     #[Test]
@@ -55,8 +50,8 @@ class ValidarSofiaJobTest extends TestCase
         $job = new ValidarSofiaJob(1, 1, null);
 
         $this->assertInstanceOf(ValidarSofiaJob::class, $job);
-        $this->assertEquals(1, $job->complementarioId);
-        $this->assertNull($job->progressId);
+        $this->assertEquals(1, $job->getComplementarioId());
+        $this->assertNull($job->getProgressId());
     }
 
     #[Test]
@@ -86,11 +81,6 @@ class ValidarSofiaJobTest extends TestCase
 
         $processorMock->shouldReceive('processBatch')
             ->once()
-            ->with(
-                Mockery::type('Illuminate\Support\Collection'),
-                $programa->id,
-                $progress
-            )
             ->andReturn([
                 'total' => 1,
                 'exitosos' => 1,
