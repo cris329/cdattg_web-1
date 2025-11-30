@@ -2,11 +2,14 @@
 
 namespace App\Models\Inventario;
 
+use Database\Factories\Inventario\NotificacionFactory;
+use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Notifications\DatabaseNotification;
 use Illuminate\Support\Carbon;
 
 class Notificacion extends DatabaseNotification
 {
+    use HasFactory;
     protected $table = 'notificaciones';
 
     public $timestamps = true;

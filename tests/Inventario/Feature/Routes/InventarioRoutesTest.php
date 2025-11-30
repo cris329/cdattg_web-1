@@ -22,90 +22,58 @@ class InventarioRoutesTest extends TestCase
         parent::setUp();
         
         $this->migrateDatabases();
-        
-        if (!\App\Models\Tema::where('name', 'CATEGORIAS')->exists()) {
-            $this->artisan('db:seed', ['--force' => true]);
-        }
 
-        // Crear permisos necesarios
-        $this->createInventarioPermissions();
+        // Ejecutar seeder de roles y permisos
+        $this->seed(\Database\Seeders\RolePermissionSeeder::class);
 
-        // Crear usuario con permisos
+        // Crear usuario con todos los permisos de inventario
         $this->user = User::factory()->create();
-        $this->assignAllPermissions($this->user);
+        $this->assignAllInventarioPermissions($this->user);
     }
 
-    protected function createInventarioPermissions(): void
+    protected function assignAllInventarioPermissions(User $user): void
     {
-        $permissions = [
-            'VER DASHBOARD INVENTARIO',
-            'VER PRODUCTOS',
-            'CREAR PRODUCTOS',
-            'EDITAR PRODUCTOS',
-            'ELIMINAR PRODUCTOS',
-            'VER ORDENES',
-            'CREAR ORDENES',
-            'EDITAR ORDENES',
-            'ELIMINAR ORDENES',
-            'APROBAR ORDEN',
-            'VER PROVEEDORES',
-            'CREAR PROVEEDORES',
-            'EDITAR PROVEEDORES',
-            'ELIMINAR PROVEEDORES',
-            'VER CATEGORIAS',
-            'CREAR CATEGORIAS',
-            'EDITAR CATEGORIAS',
-            'ELIMINAR CATEGORIAS',
-            'VER MARCAS',
-            'CREAR MARCAS',
-            'EDITAR MARCAS',
-            'ELIMINAR MARCAS',
-            'VER DEVOLUCIONES',
-            'CREAR DEVOLUCIONES',
-            'VER NOTIFICACIONES',
-            'VER CONTRATOS CONVENIOS',
-            'CREAR CONTRATOS CONVENIOS',
-            'EDITAR CONTRATOS CONVENIOS',
-            'ELIMINAR CONTRATOS CONVENIOS',
-        ];
-
-        foreach ($permissions as $permission) {
-            Permission::firstOrCreate(['name' => $permission]);
-        }
-    }
-
-    protected function assignAllPermissions(User $user): void
-    {
+        // Obtener todos los permisos de inventario del seeder
         $permissions = Permission::whereIn('name', [
             'VER DASHBOARD INVENTARIO',
+            'VER PRODUCTO',
             'VER PRODUCTOS',
-            'CREAR PRODUCTOS',
-            'EDITAR PRODUCTOS',
-            'ELIMINAR PRODUCTOS',
-            'VER ORDENES',
-            'CREAR ORDENES',
-            'EDITAR ORDENES',
-            'ELIMINAR ORDENES',
+            'CREAR PRODUCTO',
+            'EDITAR PRODUCTO',
+            'ELIMINAR PRODUCTO',
+            'BUSCAR PRODUCTO',
+            'VER CATALOGO PRODUCTO',
+            'VER ORDEN',
+            'CREAR ORDEN',
+            'EDITAR ORDEN',
+            'ELIMINAR ORDEN',
             'APROBAR ORDEN',
-            'VER PROVEEDORES',
-            'CREAR PROVEEDORES',
-            'EDITAR PROVEEDORES',
-            'ELIMINAR PROVEEDORES',
-            'VER CATEGORIAS',
-            'CREAR CATEGORIAS',
-            'EDITAR CATEGORIAS',
-            'ELIMINAR CATEGORIAS',
-            'VER MARCAS',
-            'CREAR MARCAS',
-            'EDITAR MARCAS',
-            'ELIMINAR MARCAS',
-            'VER DEVOLUCIONES',
-            'CREAR DEVOLUCIONES',
-            'VER NOTIFICACIONES',
-            'VER CONTRATOS CONVENIOS',
-            'CREAR CONTRATOS CONVENIOS',
-            'EDITAR CONTRATOS CONVENIOS',
-            'ELIMINAR CONTRATOS CONVENIOS',
+            'COMPLETAR ORDEN',
+            'VER PROVEEDOR',
+            'CREAR PROVEEDOR',
+            'EDITAR PROVEEDOR',
+            'ELIMINAR PROVEEDOR',
+            'VER CATEGORIA',
+            'CREAR CATEGORIA',
+            'EDITAR CATEGORIA',
+            'ELIMINAR CATEGORIA',
+            'VER MARCA',
+            'CREAR MARCA',
+            'EDITAR MARCA',
+            'ELIMINAR MARCA',
+            'VER DEVOLUCION',
+            'CREAR DEVOLUCION',
+            'PROCESAR DEVOLUCION',
+            'VER NOTIFICACION',
+            'VER CONTRATO',
+            'CREAR CONTRATO',
+            'EDITAR CONTRATO',
+            'ELIMINAR CONTRATO',
+            'VER CARRITO',
+            'AGREGAR CARRITO',
+            'ACTUALIZAR CARRITO',
+            'ELIMINAR CARRITO',
+            'VACIAR CARRITO',
         ])->get();
 
         $user->givePermissionTo($permissions);
