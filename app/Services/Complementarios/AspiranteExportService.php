@@ -18,6 +18,8 @@ use setasign\Fpdi\Fpdi;
 
 class AspiranteExportService
 {
+    private const COLOR_NEGRO_RGB = '000000';
+
     public function __construct(
         private readonly AspiranteComplementarioRepository $aspiranteRepository,
         private readonly ComplementarioOfertadoRepository $programaRepository,
@@ -128,7 +130,7 @@ class AspiranteExportService
             'font' => [
                 'bold' => false,
                 'size' => 14,
-                'color' => ['rgb' => '000000'],
+                'color' => ['rgb' => self::COLOR_NEGRO_RGB],
                 'name' => 'Calibri',
             ],
             'fill' => [
@@ -141,7 +143,7 @@ class AspiranteExportService
             'borders' => [
                 'allBorders' => [
                     'borderStyle' => \PhpOffice\PhpSpreadsheet\Style\Border::BORDER_THICK,
-                    'color' => ['rgb' => '000000'],
+                    'color' => ['rgb' => self::COLOR_NEGRO_RGB],
                 ],
             ],
         ];
@@ -157,7 +159,6 @@ class AspiranteExportService
         $sheet->getRowDimension(1)->setRowHeight(15);
         $sheet->getRowDimension(2)->setRowHeight(45);
 
-        // Aplicar estilo Calibri a todo el documento
         $calibriStyle = [
             'font' => [
                 'name' => 'Calibri',
@@ -206,7 +207,7 @@ class AspiranteExportService
         $headerStyle = [
             'font' => [
                 'bold' => false,
-                'color' => ['rgb' => '000000'],
+                'color' => ['rgb' => self::COLOR_NEGRO_RGB],
                 'name' => 'Calibri',
                 'size' => 8,
             ],
@@ -218,7 +219,7 @@ class AspiranteExportService
             'borders' => [
                 'allBorders' => [
                     'borderStyle' => \PhpOffice\PhpSpreadsheet\Style\Border::BORDER_THICK,
-                    'color' => ['rgb' => '000000'],
+                    'color' => ['rgb' => self::COLOR_NEGRO_RGB],
                 ],
             ],
         ];
