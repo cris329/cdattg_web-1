@@ -3,13 +3,13 @@
 namespace Tests\Complementarios\Unit\Commands;
 
 use App\Console\Commands\Complementarios\ValidarSofiaCommand;
-use Illuminate\Foundation\Testing\RefreshDatabase;
+use Illuminate\Foundation\Testing\DatabaseTransactions;
 use PHPUnit\Framework\Attributes\Test;
 use Tests\TestCase;
 
 class ValidarSofiaCommandTest extends TestCase
 {
-    use RefreshDatabase;
+    use DatabaseTransactions;
 
     #[Test]
     public function command_existe(): void

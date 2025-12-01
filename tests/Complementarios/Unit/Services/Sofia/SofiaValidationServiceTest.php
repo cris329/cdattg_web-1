@@ -14,12 +14,16 @@ use App\Models\Complementarios\SofiaValidationProgress;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use PHPUnit\Framework\Attributes\Test;
 use Mockery;
+use Tests\Complementarios\Concerns\SeedsComplementariosDatabase;
 
 class SofiaValidationServiceTest extends TestCase
 {
     use RefreshDatabase;
+    use SeedsComplementariosDatabase;
 
     private const TEST_NUMERO_DOCUMENTO = '1234567890';
+    private const TEST_ESTADO_NO_REGISTRADO = 'No registrado';
+    private const TEST_ERROR_CONEXION = 'Error de conexión';
 
     private SofiaValidationService $service;
     private $httpClientMock;
@@ -30,14 +34,7 @@ class SofiaValidationServiceTest extends TestCase
     {
         parent::setUp();
 
-        $this->seed([
-            \Database\Seeders\RolePermissionSeeder::class,
-            \Database\Seeders\ParametroSeeder::class,
-            \Database\Seeders\TemaSeeder::class,
-            \Database\Seeders\PaisSeeder::class,
-            \Database\Seeders\DepartamentoSeeder::class,
-            \Database\Seeders\MunicipioSeeder::class,
-        ]);
+        $this->seedComplementariosDatabaseIfNeeded();
 
         $this->httpClientMock = Mockery::mock(SofiaHttpClient::class);
         $this->stateMapperMock = Mockery::mock(SofiaStateMapper::class);
@@ -123,7 +120,7 @@ class SofiaValidationServiceTest extends TestCase
             ->andReturn(0);
 
         $this->stateMapperMock->shouldReceive('getStateLabel')
-            ->andReturn('No registrado');
+            ->andReturn(self::TEST_ESTADO_NO_REGISTRADO);
 
         $this->auditoriaServiceMock->shouldReceive('registrarValidacionSenasofiaplus');
 
@@ -147,7 +144,7 @@ class SofiaValidationServiceTest extends TestCase
 
         $this->httpClientMock->shouldReceive('validate')
             ->once()
-            ->andThrow(new \RuntimeException('Error de conexión'));
+            ->andThrow(new \RuntimeException(self::TEST_ERROR_CONEXION));
 
         $this->auditoriaServiceMock->shouldReceive('registrarValidacionSenasofiaplus')
             ->once()
@@ -292,7 +289,7 @@ class SofiaValidationServiceTest extends TestCase
         ]);
 
         $this->httpClientMock->shouldReceive('validate')
-            ->andThrow(new \RuntimeException('Error de conexión'));
+            ->andThrow(new \RuntimeException(self::TEST_ERROR_CONEXION));
 
         $this->auditoriaServiceMock->shouldReceive('registrarValidacionSenasofiaplus');
 
@@ -322,7 +319,7 @@ class SofiaValidationServiceTest extends TestCase
             ->andReturn(0);
 
         $this->stateMapperMock->shouldReceive('getStateLabel')
-            ->andReturn('No registrado');
+            ->andReturn(self::TEST_ESTADO_NO_REGISTRADO);
 
         $this->auditoriaServiceMock->shouldReceive('registrarValidacionSenasofiaplus')
             ->once()
@@ -396,7 +393,7 @@ class SofiaValidationServiceTest extends TestCase
             ->andReturn(0);
 
         $this->stateMapperMock->shouldReceive('getStateLabel')
-            ->andReturn('No registrado');
+            ->andReturn(self::TEST_ESTADO_NO_REGISTRADO);
 
         $this->auditoriaServiceMock->shouldReceive('registrarValidacionSenasofiaplus');
 
@@ -516,7 +513,7 @@ class SofiaValidationServiceTest extends TestCase
             'persona_id' => $persona->id,
         ]);
 
-        $exception = new \RuntimeException('Error de conexión');
+        $exception = new \RuntimeException(self::TEST_ERROR_CONEXION);
 
         $this->httpClientMock->shouldReceive('validate')
             ->once()

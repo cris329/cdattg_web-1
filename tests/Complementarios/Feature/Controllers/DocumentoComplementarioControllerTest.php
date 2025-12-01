@@ -17,10 +17,12 @@ use Illuminate\Http\UploadedFile;
 use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Facades\Log;
 use PHPUnit\Framework\Attributes\Test;
+use Tests\Complementarios\Concerns\SeedsComplementariosDatabase;
 
 class DocumentoComplementarioControllerTest extends TestCase
 {
     use RefreshDatabase, WithFaker;
+    use SeedsComplementariosDatabase;
 
     private const MIME_TYPE_PDF = 'application/pdf';
     private const MIME_TYPE_JPEG = 'image/jpeg';
@@ -49,24 +51,7 @@ class DocumentoComplementarioControllerTest extends TestCase
     {
         parent::setUp();
 
-        // Ejecutar seeders necesarios para las pruebas
-        $this->seed([
-            \Database\Seeders\RolePermissionSeeder::class,
-            \Database\Seeders\ParametroSeeder::class,
-            \Database\Seeders\TemaSeeder::class,
-            \Database\Seeders\PaisSeeder::class,
-            \Database\Seeders\DepartamentoSeeder::class,
-            \Database\Seeders\MunicipioSeeder::class,
-            \Database\Seeders\PersonaSeeder::class,
-            \Database\Seeders\UsersSeeder::class,
-            \Database\Seeders\RegionalSeeder::class,
-            \Database\Seeders\CentroFormacionSeeder::class,
-            \Database\Seeders\SedeSeeder::class,
-            \Database\Seeders\BloqueSeeder::class,
-            \Database\Seeders\PisoSeeder::class,
-            \Database\Seeders\AmbienteSeeder::class,
-            \Database\Seeders\JornadaFormacionSeeder::class,
-        ]);
+        $this->seedComplementariosDatabaseIfNeeded();
 
         // Mock Storage disk for Google Drive
         Storage::fake('google');
@@ -407,13 +392,19 @@ class DocumentoComplementarioControllerTest extends TestCase
 
         $file = UploadedFile::fake()->create('documento.pdf', self::FILE_SIZE_KB, self::MIME_TYPE_PDF);
 
+        // Use non-existent tipo documento ID
+        $nonExistentId = 99999;
+        $this->assertNull(Parametro::find($nonExistentId));
+
         $response = $this->post(route('procesar-documentos.submit'), [
-            'tipo_documento' => 99999,
+            'tipo_documento' => $nonExistentId,
             'numero_documento' => self::NUMERO_DOCUMENTO_TEST_2,
             'documento_identidad' => $file,
         ]);
 
         $response->assertSessionHasErrors(['tipo_documento']);
+        $response->assertStatus(302);
+        $this->assertFalse($response->isRedirect(route('procesar-documentos')));
     }
 
     #[Test]
@@ -446,6 +437,8 @@ class DocumentoComplementarioControllerTest extends TestCase
         ]);
 
         $response->assertSessionHasErrors(['documento_identidad']);
+        $response->assertStatus(302);
+        $this->assertFalse($response->isRedirect(route('procesar-documentos')));
     }
 
     #[Test]
@@ -500,37 +493,6 @@ class DocumentoComplementarioControllerTest extends TestCase
         $response->assertRedirect(route('procesar-documentos'));
     }
 
-    #[Test]
-    public function procesar_documento_submit_retorna_error_si_no_hay_archivo()
-    {
-        $this->actingAs($this->user);
-
-        $tipoDocumento = Parametro::factory()->create();
-
-        $response = $this->post(route('procesar-documentos.submit'), [
-            'tipo_documento' => $tipoDocumento->id,
-            'numero_documento' => self::NUMERO_DOCUMENTO_TEST_2,
-        ]);
-
-        $response->assertSessionHasErrors(['documento_identidad']);
-    }
-
-    #[Test]
-    public function procesar_documento_submit_retorna_error_si_tipo_documento_no_existe()
-    {
-        $this->actingAs($this->user);
-
-        $file = UploadedFile::fake()->create('documento.pdf', self::FILE_SIZE_KB, self::MIME_TYPE_PDF);
-
-        // Use non-existent tipo documento
-        $response = $this->post(route('procesar-documentos.submit'), [
-            'tipo_documento' => 99999,
-            'numero_documento' => self::NUMERO_DOCUMENTO_TEST_2,
-            'documento_identidad' => $file,
-        ]);
-
-        $response->assertSessionHasErrors(['tipo_documento']);
-    }
 
     #[Test]
     public function subir_documento_actualiza_estado_aspirante()

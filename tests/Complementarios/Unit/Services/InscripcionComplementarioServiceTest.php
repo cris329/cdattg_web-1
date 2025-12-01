@@ -20,10 +20,12 @@ use Illuminate\Support\Facades\Auth;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Mockery;
 use PHPUnit\Framework\Attributes\Test;
+use Tests\Complementarios\Concerns\SeedsComplementariosDatabase;
 
 class InscripcionComplementarioServiceTest extends TestCase
 {
     use RefreshDatabase;
+    use SeedsComplementariosDatabase;
 
     private const TEST_NUMERO_DOCUMENTO = '1234567890';
     private const TEST_APELLIDO = 'Pérez';
@@ -43,6 +45,8 @@ class InscripcionComplementarioServiceTest extends TestCase
     protected function setUp(): void
     {
         parent::setUp();
+        
+        $this->seedComplementariosDatabaseIfNeeded();
         
         $this->personaRepositoryMock = Mockery::mock(PersonaRepository::class);
         $this->aspiranteRepositoryMock = Mockery::mock(AspiranteComplementarioRepository::class);
@@ -136,7 +140,9 @@ class InscripcionComplementarioServiceTest extends TestCase
         $response = $this->service->procesarInscripcionGeneral($data);
 
         $this->assertTrue($response->isRedirect());
-        $this->assertTrue($response->getSession()->has('success'));
+        // Verificar que el mensaje de éxito está en la sesión flash
+        $session = $response->getSession();
+        $this->assertNotNull($session->get('success'), 'El mensaje de éxito debe estar en la sesión');
     }
 
     #[Test]
@@ -216,12 +222,7 @@ class InscripcionComplementarioServiceTest extends TestCase
             ->once()
             ->andReturn(false);
 
-        // Ejecutar seeders necesarios para evitar conflictos de restricción única
-        $this->seed([
-            \Database\Seeders\PaisSeeder::class,
-            \Database\Seeders\DepartamentoSeeder::class,
-        ]);
-
+        // Los seeders ya se ejecutaron en setUp() a través de SeedsComplementariosDatabase
         $data = $this->service->prepararFormularioInscripcion(1);
 
         $this->assertArrayHasKey('programa', $data);
@@ -246,24 +247,7 @@ class InscripcionComplementarioServiceTest extends TestCase
     #[Test]
     public function puede_procesar_inscripcion_a_programa()
     {
-        $this->seed([
-            \Database\Seeders\RolePermissionSeeder::class,
-            \Database\Seeders\ParametroSeeder::class,
-            \Database\Seeders\TemaSeeder::class,
-            \Database\Seeders\PaisSeeder::class,
-            \Database\Seeders\DepartamentoSeeder::class,
-            \Database\Seeders\MunicipioSeeder::class,
-            \Database\Seeders\PersonaSeeder::class,
-            \Database\Seeders\UsersSeeder::class,
-            \Database\Seeders\RegionalSeeder::class,
-            \Database\Seeders\CentroFormacionSeeder::class,
-            \Database\Seeders\SedeSeeder::class,
-            \Database\Seeders\BloqueSeeder::class,
-            \Database\Seeders\PisoSeeder::class,
-            \Database\Seeders\AmbienteSeeder::class,
-            \Database\Seeders\JornadaFormacionSeeder::class,
-        ]);
-
+        // Los seeders ya se ejecutaron en setUp() a través de SeedsComplementariosDatabase
         // Obtener datos del seeder (ya existen por los seeders ejecutados)
         $pais = Pais::first();
         $departamento = Departamento::where('pais_id', $pais->id)->first();

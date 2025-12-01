@@ -42,7 +42,8 @@ async function findModalBySelectors(page) {
         }
       }
     } catch (error) {
-      // Ignorar errores de selector
+      // Selector no válido o elemento no encontrado - continuar con siguiente selector
+      console.error(`Selector ${selector} no válido o elemento no encontrado:`, error.message);
       continue;
     }
   }
@@ -53,7 +54,14 @@ async function findModalBySelectors(page) {
  * Buscar indicadores de error en el texto de la página
  */
 async function findErrorInPageText(page) {
-  const pageText = await page.innerText().catch(() => '');
+  let pageText = '';
+  try {
+    pageText = await page.innerText();
+  } catch (error) {
+    // Error al obtener texto de la página - usar string vacío
+    console.error('Error obteniendo texto de la página:', error.message);
+    pageText = '';
+  }
   console.error(`📄 Texto completo de la página:\n${pageText}`);
 
   for (const indicator of config.ERROR_INDICATORS) {

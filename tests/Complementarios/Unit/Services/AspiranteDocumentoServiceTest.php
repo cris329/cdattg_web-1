@@ -7,10 +7,15 @@ use App\Services\Complementarios\AspiranteDocumentoService;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use PHPUnit\Framework\Attributes\Test;
 use Tests\TestCase;
+use Tests\Complementarios\Concerns\SeedsComplementariosDatabase;
 
 class AspiranteDocumentoServiceTest extends TestCase
 {
     use RefreshDatabase;
+    use SeedsComplementariosDatabase;
+
+    private const TEST_APELLIDO = 'Pérez';
+    private const TEST_NUMERO_DOCUMENTO = '1234567890';
 
     private AspiranteDocumentoService $service;
 
@@ -18,14 +23,7 @@ class AspiranteDocumentoServiceTest extends TestCase
     {
         parent::setUp();
 
-        $this->seed([
-            \Database\Seeders\RolePermissionSeeder::class,
-            \Database\Seeders\ParametroSeeder::class,
-            \Database\Seeders\TemaSeeder::class,
-            \Database\Seeders\PaisSeeder::class,
-            \Database\Seeders\DepartamentoSeeder::class,
-            \Database\Seeders\MunicipioSeeder::class,
-        ]);
+        $this->seedComplementariosDatabaseIfNeeded();
 
         $this->service = new AspiranteDocumentoService;
     }
@@ -35,7 +33,7 @@ class AspiranteDocumentoServiceTest extends TestCase
     {
         $persona = Persona::factory()->create([
             'primer_nombre' => 'Juan',
-            'primer_apellido' => 'Pérez',
+            'primer_apellido' => self::TEST_APELLIDO,
         ]);
 
         $patron = $this->service->construirPatronBusqueda($persona);
@@ -48,7 +46,7 @@ class AspiranteDocumentoServiceTest extends TestCase
     public function busca_documento_en_google_drive(): void
     {
         $files = ['documento1.pdf', 'documento2.pdf'];
-        $patron = 'CC_1234567890_Juan_Perez_';
+        $patron = 'CC_' . self::TEST_NUMERO_DOCUMENTO . '_Juan_Perez_';
 
         $resultado = $this->service->buscarDocumentoEnGoogleDrive($files, $patron);
 
@@ -69,8 +67,8 @@ class AspiranteDocumentoServiceTest extends TestCase
     {
         $persona = Persona::factory()->create([
             'primer_nombre' => 'Juan',
-            'primer_apellido' => 'Pérez',
-            'numero_documento' => '1234567890',
+            'primer_apellido' => self::TEST_APELLIDO,
+            'numero_documento' => self::TEST_NUMERO_DOCUMENTO,
         ]);
         $persona->setRelation('tipoDocumento', null);
 
@@ -86,8 +84,8 @@ class AspiranteDocumentoServiceTest extends TestCase
     {
         $persona = Persona::factory()->create([
             'primer_nombre' => 'Juan Carlos',
-            'primer_apellido' => 'Pérez García',
-            'numero_documento' => '1234567890',
+            'primer_apellido' => self::TEST_APELLIDO . ' García',
+            'numero_documento' => self::TEST_NUMERO_DOCUMENTO,
         ]);
 
         $patron = $this->service->construirPatronBusqueda($persona);
@@ -100,17 +98,17 @@ class AspiranteDocumentoServiceTest extends TestCase
     public function busca_documento_en_google_drive_encontrado(): void
     {
         $files = [
-            'CC_1234567890_Juan_Perez_.pdf',
+            'CC_' . self::TEST_NUMERO_DOCUMENTO . '_Juan_Perez_.pdf',
             'documento2.pdf',
         ];
-        $patron = 'CC_1234567890_Juan_Perez_';
+        $patron = 'CC_' . self::TEST_NUMERO_DOCUMENTO . '_Juan_Perez_';
 
         // Mock de Storage
         \Illuminate\Support\Facades\Storage::shouldReceive('disk')
             ->with('google')
             ->andReturnSelf();
         \Illuminate\Support\Facades\Storage::shouldReceive('exists')
-            ->with('CC_1234567890_Juan_Perez_.pdf')
+            ->with('CC_' . self::TEST_NUMERO_DOCUMENTO . '_Juan_Perez_.pdf')
             ->andReturn(true);
 
         $resultado = $this->service->buscarDocumentoEnGoogleDrive($files, $patron);
@@ -122,7 +120,7 @@ class AspiranteDocumentoServiceTest extends TestCase
     public function busca_documento_en_google_drive_no_encontrado(): void
     {
         $files = ['documento1.pdf', 'documento2.pdf'];
-        $patron = 'CC_1234567890_Juan_Perez_';
+        $patron = 'CC_' . self::TEST_NUMERO_DOCUMENTO . '_Juan_Perez_';
 
         \Illuminate\Support\Facades\Storage::shouldReceive('disk')
             ->with('google')
@@ -138,8 +136,8 @@ class AspiranteDocumentoServiceTest extends TestCase
     #[Test]
     public function busca_documento_con_variantes_patron(): void
     {
-        $files = ['CC 1234567890 Juan Perez .pdf'];
-        $patron = 'CC_1234567890_Juan_Perez_';
+        $files = ['CC ' . self::TEST_NUMERO_DOCUMENTO . ' Juan Perez .pdf'];
+        $patron = 'CC_' . self::TEST_NUMERO_DOCUMENTO . '_Juan_Perez_';
 
         \Illuminate\Support\Facades\Storage::shouldReceive('disk')
             ->with('google')
@@ -155,19 +153,19 @@ class AspiranteDocumentoServiceTest extends TestCase
     #[Test]
     public function encuentra_archivo_en_google_drive(): void
     {
-        $patron = 'CC_1234567890_Juan_Perez_';
+        $patron = 'CC_' . self::TEST_NUMERO_DOCUMENTO . '_Juan_Perez_';
 
         \Illuminate\Support\Facades\Storage::shouldReceive('disk')
             ->with('google')
             ->andReturnSelf();
         \Illuminate\Support\Facades\Storage::shouldReceive('files')
             ->with('documentos_aspirantes')
-            ->andReturn(['CC_1234567890_Juan_Perez_.pdf']);
+            ->andReturn(['CC_' . self::TEST_NUMERO_DOCUMENTO . '_Juan_Perez_.pdf']);
 
         $resultado = $this->service->encontrarArchivoEnGoogleDrive($patron);
 
         $this->assertIsString($resultado);
-        $this->assertEquals('CC_1234567890_Juan_Perez_.pdf', $resultado);
+        $this->assertEquals('CC_' . self::TEST_NUMERO_DOCUMENTO . '_Juan_Perez_.pdf', $resultado);
     }
 
     #[Test]
@@ -180,7 +178,7 @@ class AspiranteDocumentoServiceTest extends TestCase
             ->andReturnSelf();
         \Illuminate\Support\Facades\Storage::shouldReceive('files')
             ->with('documentos_aspirantes')
-            ->andReturn(['CC_1234567890_Juan_Perez_.pdf']);
+            ->andReturn(['CC_' . self::TEST_NUMERO_DOCUMENTO . '_Juan_Perez_.pdf']);
 
         $resultado = $this->service->encontrarArchivoEnGoogleDrive($patron);
 
@@ -190,14 +188,14 @@ class AspiranteDocumentoServiceTest extends TestCase
     #[Test]
     public function encuentra_archivo_con_patron_sin_nombres(): void
     {
-        $patron = 'CC_1234567890_Juan_Perez_';
+        $patron = 'CC_' . self::TEST_NUMERO_DOCUMENTO . '_Juan_Perez_';
 
         \Illuminate\Support\Facades\Storage::shouldReceive('disk')
             ->with('google')
             ->andReturnSelf();
         \Illuminate\Support\Facades\Storage::shouldReceive('files')
             ->with('documentos_aspirantes')
-            ->andReturn(['CC_1234567890_.pdf']);
+            ->andReturn(['CC_' . self::TEST_NUMERO_DOCUMENTO . '_.pdf']);
 
         $resultado = $this->service->encontrarArchivoEnGoogleDrive($patron);
 
@@ -302,8 +300,8 @@ class AspiranteDocumentoServiceTest extends TestCase
     #[Test]
     public function busca_documento_con_error_en_verificacion(): void
     {
-        $files = ['CC_1234567890_Juan_Perez_.pdf'];
-        $patron = 'CC_1234567890_Juan_Perez_';
+        $files = ['CC_' . self::TEST_NUMERO_DOCUMENTO . '_Juan_Perez_.pdf'];
+        $patron = 'CC_' . self::TEST_NUMERO_DOCUMENTO . '_Juan_Perez_';
 
         \Illuminate\Support\Facades\Storage::shouldReceive('disk')
             ->with('google')
@@ -320,14 +318,14 @@ class AspiranteDocumentoServiceTest extends TestCase
     #[Test]
     public function encuentra_archivo_con_patron_con_espacios(): void
     {
-        $patron = 'CC 1234567890 Juan Perez ';
+        $patron = 'CC ' . self::TEST_NUMERO_DOCUMENTO . ' Juan Perez ';
 
         \Illuminate\Support\Facades\Storage::shouldReceive('disk')
             ->with('google')
             ->andReturnSelf();
         \Illuminate\Support\Facades\Storage::shouldReceive('files')
             ->with('documentos_aspirantes')
-            ->andReturn(['CC_1234567890_Juan_Perez_.pdf']);
+            ->andReturn(['CC_' . self::TEST_NUMERO_DOCUMENTO . '_Juan_Perez_.pdf']);
 
         $resultado = $this->service->encontrarArchivoEnGoogleDrive($patron);
 
@@ -337,14 +335,14 @@ class AspiranteDocumentoServiceTest extends TestCase
     #[Test]
     public function encuentra_archivo_con_patron_sin_nombres_con_espacios(): void
     {
-        $patron = 'CC_1234567890_Juan_Perez_';
+        $patron = 'CC_' . self::TEST_NUMERO_DOCUMENTO . '_Juan_Perez_';
 
         \Illuminate\Support\Facades\Storage::shouldReceive('disk')
             ->with('google')
             ->andReturnSelf();
         \Illuminate\Support\Facades\Storage::shouldReceive('files')
             ->with('documentos_aspirantes')
-            ->andReturn(['CC 1234567890 .pdf']);
+            ->andReturn(['CC ' . self::TEST_NUMERO_DOCUMENTO . ' .pdf']);
 
         $resultado = $this->service->encontrarArchivoEnGoogleDrive($patron);
 
@@ -380,8 +378,8 @@ class AspiranteDocumentoServiceTest extends TestCase
 
         $persona = Persona::factory()->create([
             'primer_nombre' => 'Juan',
-            'primer_apellido' => 'Pérez',
-            'numero_documento' => '1234567890',
+            'primer_apellido' => self::TEST_APELLIDO,
+            'numero_documento' => self::TEST_NUMERO_DOCUMENTO,
         ]);
         $persona->setRelation('tipoDocumento', $tipoDocumento);
 
@@ -395,14 +393,14 @@ class AspiranteDocumentoServiceTest extends TestCase
     #[Test]
     public function busca_documento_con_ruta_completa(): void
     {
-        $files = ['documentos_aspirantes/CC_1234567890_Juan_Perez_.pdf'];
-        $patron = 'CC_1234567890_Juan_Perez_';
+        $files = ['documentos_aspirantes/CC_' . self::TEST_NUMERO_DOCUMENTO . '_Juan_Perez_.pdf'];
+        $patron = 'CC_' . self::TEST_NUMERO_DOCUMENTO . '_Juan_Perez_';
 
         \Illuminate\Support\Facades\Storage::shouldReceive('disk')
             ->with('google')
             ->andReturnSelf();
         \Illuminate\Support\Facades\Storage::shouldReceive('exists')
-            ->with('documentos_aspirantes/CC_1234567890_Juan_Perez_.pdf')
+            ->with('documentos_aspirantes/CC_' . self::TEST_NUMERO_DOCUMENTO . '_Juan_Perez_.pdf')
             ->andReturn(true);
 
         $resultado = $this->service->buscarDocumentoEnGoogleDrive($files, $patron);
@@ -428,7 +426,7 @@ class AspiranteDocumentoServiceTest extends TestCase
     public function busca_documento_con_array_vacio(): void
     {
         $files = [];
-        $patron = 'CC_1234567890_Juan_Perez_';
+        $patron = 'CC_' . self::TEST_NUMERO_DOCUMENTO . '_Juan_Perez_';
 
         $resultado = $this->service->buscarDocumentoEnGoogleDrive($files, $patron);
 
@@ -467,10 +465,10 @@ class AspiranteDocumentoServiceTest extends TestCase
     public function busca_documento_con_multiples_variantes_patron(): void
     {
         $files = [
-            'CC 1234567890 Juan Perez .pdf', // Con espacios
-            'CC-1234567890-Juan-Perez-.pdf', // Con guiones
+            'CC ' . self::TEST_NUMERO_DOCUMENTO . ' Juan Perez .pdf', // Con espacios
+            'CC-' . self::TEST_NUMERO_DOCUMENTO . '-Juan-Perez-.pdf', // Con guiones
         ];
-        $patron = 'CC_1234567890_Juan_Perez_';
+        $patron = 'CC_' . self::TEST_NUMERO_DOCUMENTO . '_Juan_Perez_';
 
         \Illuminate\Support\Facades\Storage::shouldReceive('disk')
             ->with('google')

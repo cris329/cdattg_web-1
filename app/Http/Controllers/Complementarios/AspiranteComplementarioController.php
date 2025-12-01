@@ -208,27 +208,27 @@ class AspiranteComplementarioController extends Controller
         
         $temaGenero = $this->temaRepository->obtenerGeneros();
         $generosFallback = $this->complementarioService->getGeneros();
-        $generos = $temaGenero && $temaGenero->parametros->count() > 0
-            ? $temaGenero->parametros()->where('parametros_temas.status', 1)->orderBy('parametros.name')->get(['parametros.id', 'parametros.name'])
-            : $generosFallback;
+        $generos = ($temaGenero && isset($temaGenero->parametros) && $temaGenero->parametros->count() > 0)
+            ? $temaGenero
+            : (object) ['parametros' => $generosFallback];
         
         $temaCaracterizacion = $this->temaRepository->obtenerCaracterizacionesComplementarias();
-        $caracterizaciones = $temaCaracterizacion && $temaCaracterizacion->parametros->count() > 0
-            ? $temaCaracterizacion->parametros()->where('parametros_temas.status', 1)->orderBy('parametros.name')->get(['parametros.id', 'parametros.name'])
-            : collect();
+        $caracterizaciones = ($temaCaracterizacion && isset($temaCaracterizacion->parametros) && $temaCaracterizacion->parametros->count() > 0)
+            ? $temaCaracterizacion
+            : (object) ['parametros' => collect()];
         
         $temaVia = $this->temaRepository->obtenerVias();
-        $vias = $temaVia && $temaVia->parametros && $temaVia->parametros->count() > 0
+        $vias = ($temaVia && isset($temaVia->parametros) && $temaVia->parametros->count() > 0)
             ? $temaVia
             : (object) ['parametros' => collect()];
         
         $temaLetra = $this->temaRepository->obtenerLetras();
-        $letras = $temaLetra && $temaLetra->parametros && $temaLetra->parametros->count() > 0
+        $letras = ($temaLetra && isset($temaLetra->parametros) && $temaLetra->parametros->count() > 0)
             ? $temaLetra
             : (object) ['parametros' => collect()];
         
         $temaCardinal = $this->temaRepository->obtenerCardinales();
-        $cardinales = $temaCardinal && $temaCardinal->parametros && $temaCardinal->parametros->count() > 0
+        $cardinales = ($temaCardinal && isset($temaCardinal->parametros) && $temaCardinal->parametros->count() > 0)
             ? $temaCardinal
             : (object) ['parametros' => collect()];
         

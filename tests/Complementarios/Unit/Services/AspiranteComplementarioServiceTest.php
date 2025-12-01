@@ -14,6 +14,15 @@ use Tests\TestCase;
 
 class AspiranteComplementarioServiceTest extends TestCase
 {
+    private const TEST_NUMERO_DOCUMENTO = '1234567890';
+    private const TEST_NUMERO_DOCUMENTO_ALT = '1111111111';
+    private const TEST_PATRON_BUSQUEDA = 'CC_1234567890_Test_User_';
+    private const TEST_PATRON_BUSQUEDA_ALT = 'CC_1111111111_Test_User_';
+    private const TEST_RUTA_DOCUMENTO = 'documentos_aspirantes/CC_1234567890_Test_User_.pdf';
+    private const TEST_RUTA_DOCUMENTO_ALT = 'documentos_aspirantes/CC_1111111111_Test_User_.pdf';
+    private const TEST_CONTENIDO_PDF = 'PDF content';
+    private const TEST_ERROR_CONEXION = 'Error de conexión';
+
     protected AspiranteComplementarioService $service;
     protected $documentoServiceMock;
     protected $aspiranteRepositoryMock;
@@ -114,7 +123,7 @@ class AspiranteComplementarioServiceTest extends TestCase
     #[Test]
     public function procesa_validacion_documentos(): void
     {
-        $persona = new \App\Models\Persona(['id' => 1, 'numero_documento' => '1234567890']);
+        $persona = new \App\Models\Persona(['id' => 1, 'numero_documento' => self::TEST_NUMERO_DOCUMENTO]);
         $aspirante = new AspiranteComplementario(['id' => 1, 'persona_id' => 1]);
         $aspirante->setRelation('persona', $persona);
         
@@ -124,11 +133,11 @@ class AspiranteComplementarioServiceTest extends TestCase
         $this->documentoServiceMock->shouldReceive('construirPatronBusqueda')
             ->once()
             ->with($persona)
-            ->andReturn('CC_1234567890_Test_User_');
+            ->andReturn(self::TEST_PATRON_BUSQUEDA);
 
         $this->documentoServiceMock->shouldReceive('buscarDocumentoEnGoogleDrive')
             ->once()
-            ->with($files, 'CC_1234567890_Test_User_')
+            ->with($files, self::TEST_PATRON_BUSQUEDA)
             ->andReturn(true);
 
         $this->personaRepositoryMock->shouldReceive('updateDocumentoStatus')
@@ -147,7 +156,7 @@ class AspiranteComplementarioServiceTest extends TestCase
     #[Test]
     public function procesa_validacion_documentos_sin_documento(): void
     {
-        $persona = new \App\Models\Persona(['id' => 1, 'numero_documento' => '1234567890']);
+        $persona = new \App\Models\Persona(['id' => 1, 'numero_documento' => self::TEST_NUMERO_DOCUMENTO]);
         $aspirante = new AspiranteComplementario(['id' => 1, 'persona_id' => 1]);
         $aspirante->setRelation('persona', $persona);
         
@@ -157,11 +166,11 @@ class AspiranteComplementarioServiceTest extends TestCase
         $this->documentoServiceMock->shouldReceive('construirPatronBusqueda')
             ->once()
             ->with($persona)
-            ->andReturn('CC_1234567890_Test_User_');
+            ->andReturn(self::TEST_PATRON_BUSQUEDA);
 
         $this->documentoServiceMock->shouldReceive('buscarDocumentoEnGoogleDrive')
             ->once()
-            ->with($files, 'CC_1234567890_Test_User_')
+            ->with($files, self::TEST_PATRON_BUSQUEDA)
             ->andReturn(false);
 
         $this->personaRepositoryMock->shouldReceive('updateDocumentoStatus')
@@ -180,7 +189,7 @@ class AspiranteComplementarioServiceTest extends TestCase
     #[Test]
     public function procesa_validacion_documentos_con_error(): void
     {
-        $persona = new \App\Models\Persona(['id' => 1, 'numero_documento' => '1234567890']);
+        $persona = new \App\Models\Persona(['id' => 1, 'numero_documento' => self::TEST_NUMERO_DOCUMENTO]);
         $aspirante = new AspiranteComplementario(['id' => 1, 'persona_id' => 1]);
         $aspirante->setRelation('persona', $persona);
         
@@ -190,7 +199,7 @@ class AspiranteComplementarioServiceTest extends TestCase
         $this->documentoServiceMock->shouldReceive('construirPatronBusqueda')
             ->once()
             ->with($persona)
-            ->andThrow(new \Exception('Error de conexión'));
+            ->andThrow(new \Exception(self::TEST_ERROR_CONEXION));
 
         $resultado = $this->service->procesarValidacionDocumentos($aspirantes, $files);
 
@@ -203,7 +212,7 @@ class AspiranteComplementarioServiceTest extends TestCase
     #[Test]
     public function procesa_validacion_documentos_multiple(): void
     {
-        $persona1 = new \App\Models\Persona(['id' => 1, 'numero_documento' => '1111111111']);
+        $persona1 = new \App\Models\Persona(['id' => 1, 'numero_documento' => self::TEST_NUMERO_DOCUMENTO_ALT]);
         $persona2 = new \App\Models\Persona(['id' => 2, 'numero_documento' => '2222222222']);
         
         $aspirante1 = new AspiranteComplementario(['id' => 1, 'persona_id' => 1]);
@@ -217,7 +226,7 @@ class AspiranteComplementarioServiceTest extends TestCase
 
         $this->documentoServiceMock->shouldReceive('construirPatronBusqueda')
             ->twice()
-            ->andReturn('CC_1111111111_Test_User_', 'CC_2222222222_Test_User_');
+            ->andReturn(self::TEST_PATRON_BUSQUEDA_ALT, 'CC_2222222222_Test_User_');
 
         $this->documentoServiceMock->shouldReceive('buscarDocumentoEnGoogleDrive')
             ->twice()
@@ -238,7 +247,7 @@ class AspiranteComplementarioServiceTest extends TestCase
     #[Test]
     public function procesa_descarga_documentos_exitoso(): void
     {
-        $persona = new \App\Models\Persona(['id' => 1, 'numero_documento' => '1234567890']);
+        $persona = new \App\Models\Persona(['id' => 1, 'numero_documento' => self::TEST_NUMERO_DOCUMENTO]);
         $aspirante = new AspiranteComplementario(['id' => 1, 'persona_id' => 1]);
         $aspirante->setRelation('persona', $persona);
         
@@ -250,22 +259,22 @@ class AspiranteComplementarioServiceTest extends TestCase
         $this->documentoServiceMock->shouldReceive('construirPatronBusqueda')
             ->once()
             ->with($persona)
-            ->andReturn('CC_1234567890_Test_User_');
+            ->andReturn(self::TEST_PATRON_BUSQUEDA);
 
         $this->documentoServiceMock->shouldReceive('encontrarArchivoEnGoogleDrive')
             ->once()
-            ->with('CC_1234567890_Test_User_')
-            ->andReturn('documentos_aspirantes/CC_1234567890_Test_User_.pdf');
+            ->with(self::TEST_PATRON_BUSQUEDA)
+            ->andReturn(self::TEST_RUTA_DOCUMENTO);
 
         \Illuminate\Support\Facades\Storage::shouldReceive('disk')
             ->with('google')
             ->andReturnSelf();
         \Illuminate\Support\Facades\Storage::shouldReceive('exists')
-            ->with('documentos_aspirantes/CC_1234567890_Test_User_.pdf')
+            ->with(self::TEST_RUTA_DOCUMENTO)
             ->andReturn(true);
         \Illuminate\Support\Facades\Storage::shouldReceive('get')
-            ->with('documentos_aspirantes/CC_1234567890_Test_User_.pdf')
-            ->andReturn('PDF content');
+            ->with(self::TEST_RUTA_DOCUMENTO)
+            ->andReturn(self::TEST_CONTENIDO_PDF);
 
         $this->documentoServiceMock->shouldReceive('agregarPaginasAPDF')
             ->once()
@@ -275,13 +284,13 @@ class AspiranteComplementarioServiceTest extends TestCase
 
         $this->assertEquals(1, $resultado['archivos_agregados']);
         $this->assertCount(1, $resultado['archivos_temporales']);
-        $this->assertStringContainsString('temp_0_1234567890.pdf', $resultado['archivos_temporales'][0]);
+        $this->assertStringContainsString('temp_0_' . self::TEST_NUMERO_DOCUMENTO . '.pdf', $resultado['archivos_temporales'][0]);
     }
 
     #[Test]
     public function procesa_descarga_documentos_archivo_no_encontrado(): void
     {
-        $persona = new \App\Models\Persona(['id' => 1, 'numero_documento' => '1234567890']);
+        $persona = new \App\Models\Persona(['id' => 1, 'numero_documento' => self::TEST_NUMERO_DOCUMENTO]);
         $aspirante = new AspiranteComplementario(['id' => 1, 'persona_id' => 1]);
         $aspirante->setRelation('persona', $persona);
         
@@ -293,11 +302,11 @@ class AspiranteComplementarioServiceTest extends TestCase
         $this->documentoServiceMock->shouldReceive('construirPatronBusqueda')
             ->once()
             ->with($persona)
-            ->andReturn('CC_1234567890_Test_User_');
+            ->andReturn(self::TEST_PATRON_BUSQUEDA);
 
         $this->documentoServiceMock->shouldReceive('encontrarArchivoEnGoogleDrive')
             ->once()
-            ->with('CC_1234567890_Test_User_')
+            ->with(self::TEST_PATRON_BUSQUEDA)
             ->andReturn(null);
 
         $resultado = $this->service->procesarDescargaDocumentos($aspirantes, $pdf, $tempDir);
@@ -309,7 +318,7 @@ class AspiranteComplementarioServiceTest extends TestCase
     #[Test]
     public function procesa_descarga_documentos_archivo_no_existe_en_storage(): void
     {
-        $persona = new \App\Models\Persona(['id' => 1, 'numero_documento' => '1234567890']);
+        $persona = new \App\Models\Persona(['id' => 1, 'numero_documento' => self::TEST_NUMERO_DOCUMENTO]);
         $aspirante = new AspiranteComplementario(['id' => 1, 'persona_id' => 1]);
         $aspirante->setRelation('persona', $persona);
         
@@ -321,18 +330,18 @@ class AspiranteComplementarioServiceTest extends TestCase
         $this->documentoServiceMock->shouldReceive('construirPatronBusqueda')
             ->once()
             ->with($persona)
-            ->andReturn('CC_1234567890_Test_User_');
+            ->andReturn(self::TEST_PATRON_BUSQUEDA);
 
         $this->documentoServiceMock->shouldReceive('encontrarArchivoEnGoogleDrive')
             ->once()
-            ->with('CC_1234567890_Test_User_')
-            ->andReturn('documentos_aspirantes/CC_1234567890_Test_User_.pdf');
+            ->with(self::TEST_PATRON_BUSQUEDA)
+            ->andReturn(self::TEST_RUTA_DOCUMENTO);
 
         \Illuminate\Support\Facades\Storage::shouldReceive('disk')
             ->with('google')
             ->andReturnSelf();
         \Illuminate\Support\Facades\Storage::shouldReceive('exists')
-            ->with('documentos_aspirantes/CC_1234567890_Test_User_.pdf')
+            ->with(self::TEST_RUTA_DOCUMENTO)
             ->andReturn(false);
 
         $resultado = $this->service->procesarDescargaDocumentos($aspirantes, $pdf, $tempDir);
@@ -344,7 +353,7 @@ class AspiranteComplementarioServiceTest extends TestCase
     #[Test]
     public function procesa_descarga_documentos_con_error(): void
     {
-        $persona = new \App\Models\Persona(['id' => 1, 'numero_documento' => '1234567890']);
+        $persona = new \App\Models\Persona(['id' => 1, 'numero_documento' => self::TEST_NUMERO_DOCUMENTO]);
         $aspirante = new AspiranteComplementario(['id' => 1, 'persona_id' => 1]);
         $aspirante->setRelation('persona', $persona);
         
@@ -356,7 +365,7 @@ class AspiranteComplementarioServiceTest extends TestCase
         $this->documentoServiceMock->shouldReceive('construirPatronBusqueda')
             ->once()
             ->with($persona)
-            ->andThrow(new \Exception('Error de conexión'));
+            ->andThrow(new \Exception(self::TEST_ERROR_CONEXION));
 
         $resultado = $this->service->procesarDescargaDocumentos($aspirantes, $pdf, $tempDir);
 
@@ -367,7 +376,7 @@ class AspiranteComplementarioServiceTest extends TestCase
     #[Test]
     public function procesa_descarga_documentos_multiple_aspirantes(): void
     {
-        $persona1 = new \App\Models\Persona(['id' => 1, 'numero_documento' => '1111111111']);
+        $persona1 = new \App\Models\Persona(['id' => 1, 'numero_documento' => self::TEST_NUMERO_DOCUMENTO_ALT]);
         $persona2 = new \App\Models\Persona(['id' => 2, 'numero_documento' => '2222222222']);
         
         $aspirante1 = new AspiranteComplementario(['id' => 1, 'persona_id' => 1]);
@@ -383,21 +392,21 @@ class AspiranteComplementarioServiceTest extends TestCase
 
         $this->documentoServiceMock->shouldReceive('construirPatronBusqueda')
             ->twice()
-            ->andReturn('CC_1111111111_Test_User_', 'CC_2222222222_Test_User_');
+            ->andReturn(self::TEST_PATRON_BUSQUEDA_ALT, 'CC_2222222222_Test_User_');
 
         $this->documentoServiceMock->shouldReceive('encontrarArchivoEnGoogleDrive')
             ->twice()
-            ->andReturn('documentos_aspirantes/CC_1111111111_Test_User_.pdf', null);
+            ->andReturn(self::TEST_RUTA_DOCUMENTO_ALT, null);
 
         \Illuminate\Support\Facades\Storage::shouldReceive('disk')
             ->with('google')
             ->andReturnSelf();
         \Illuminate\Support\Facades\Storage::shouldReceive('exists')
-            ->with('documentos_aspirantes/CC_1111111111_Test_User_.pdf')
+            ->with(self::TEST_RUTA_DOCUMENTO_ALT)
             ->andReturn(true);
         \Illuminate\Support\Facades\Storage::shouldReceive('get')
-            ->with('documentos_aspirantes/CC_1111111111_Test_User_.pdf')
-            ->andReturn('PDF content');
+            ->with(self::TEST_RUTA_DOCUMENTO_ALT)
+            ->andReturn(self::TEST_CONTENIDO_PDF);
 
         $this->documentoServiceMock->shouldReceive('agregarPaginasAPDF')
             ->once()
@@ -429,7 +438,7 @@ class AspiranteComplementarioServiceTest extends TestCase
             ->once()
             ->with('F', Mockery::on(function ($path) use ($tempDir) {
                 // Crear el archivo dummy para que response()->download() funcione
-                file_put_contents($path, 'PDF content');
+                file_put_contents($path, self::TEST_CONTENIDO_PDF);
                 return str_starts_with($path, $tempDir);
             }));
 
@@ -468,7 +477,7 @@ class AspiranteComplementarioServiceTest extends TestCase
             ->once()
             ->with('F', Mockery::on(function ($path) use ($tempDir) {
                 // Crear el archivo dummy para que response()->download() funcione
-                file_put_contents($path, 'PDF content');
+                file_put_contents($path, self::TEST_CONTENIDO_PDF);
                 return str_contains($path, 'cedulas_Programa_Con_Espacios_') && str_starts_with($path, $tempDir);
             }));
 
@@ -518,7 +527,7 @@ class AspiranteComplementarioServiceTest extends TestCase
     #[Test]
     public function procesa_validacion_documentos_con_persona_id_null(): void
     {
-        $persona = new \App\Models\Persona(['id' => 1, 'numero_documento' => '1234567890']);
+        $persona = new \App\Models\Persona(['id' => 1, 'numero_documento' => self::TEST_NUMERO_DOCUMENTO]);
         $aspirante = new AspiranteComplementario(['id' => 1, 'persona_id' => null]);
         $aspirante->setRelation('persona', $persona);
         
@@ -528,7 +537,7 @@ class AspiranteComplementarioServiceTest extends TestCase
         $this->documentoServiceMock->shouldReceive('construirPatronBusqueda')
             ->once()
             ->with($persona)
-            ->andThrow(new \Exception('Error de conexión'));
+            ->andThrow(new \Exception(self::TEST_ERROR_CONEXION));
 
         $resultado = $this->service->procesarValidacionDocumentos($aspirantes, $files);
 

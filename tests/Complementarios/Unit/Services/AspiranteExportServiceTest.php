@@ -13,14 +13,17 @@ use App\Services\Complementarios\AspiranteComplementarioService;
 use App\Services\Complementarios\AspiranteExportService;
 use App\Services\Complementarios\AspiranteDocumentoService;
 use Illuminate\Database\Eloquent\Collection;
-use Illuminate\Foundation\Testing\RefreshDatabase;
+use Illuminate\Foundation\Testing\DatabaseTransactions;
 use Mockery;
 use PHPUnit\Framework\Attributes\Test;
 use Tests\TestCase;
 
 class AspiranteExportServiceTest extends TestCase
 {
-    use RefreshDatabase;
+    use DatabaseTransactions;
+
+    private const TEST_NOMBRE_PROGRAMA = 'Programa Test';
+    private const TEST_NUMERO_DOCUMENTO = '1234567890';
 
     protected AspiranteExportService $service;
     protected $aspiranteRepositoryMock;
@@ -63,13 +66,13 @@ class AspiranteExportServiceTest extends TestCase
         $complementarioId = 1;
         $programa = new ComplementarioOfertado([
             'id' => $complementarioId,
-            'nombre' => 'Programa Test',
+            'nombre' => self::TEST_NOMBRE_PROGRAMA,
         ]);
 
         // Crear personas con relaciones
         $persona1 = new \App\Models\Persona([
             'id' => 1,
-            'numero_documento' => '1234567890',
+            'numero_documento' => self::TEST_NUMERO_DOCUMENTO,
         ]);
         $persona1->setRelation('tipoDocumento', null);
         $persona1->setRelation('caracterizacion', null);
@@ -155,7 +158,7 @@ class AspiranteExportServiceTest extends TestCase
         $complementarioId = 1;
         $programa = new ComplementarioOfertado([
             'id' => $complementarioId,
-            'nombre' => 'Programa Test',
+            'nombre' => self::TEST_NOMBRE_PROGRAMA,
         ]);
 
         $aspirantes = new Collection([
@@ -223,7 +226,7 @@ class AspiranteExportServiceTest extends TestCase
         $complementarioId = 1;
         $programa = new ComplementarioOfertado([
             'id' => $complementarioId,
-            'nombre' => 'Programa Test',
+            'nombre' => self::TEST_NOMBRE_PROGRAMA,
         ]);
 
         $aspirantes = new Collection([]);
@@ -249,7 +252,7 @@ class AspiranteExportServiceTest extends TestCase
         $complementarioId = 1;
         $programa = new ComplementarioOfertado([
             'id' => $complementarioId,
-            'nombre' => 'Programa Test',
+            'nombre' => self::TEST_NOMBRE_PROGRAMA,
         ]);
 
         $aspirantes = new Collection([
@@ -295,7 +298,7 @@ class AspiranteExportServiceTest extends TestCase
         $complementarioId = 1;
         $programa = new ComplementarioOfertado([
             'id' => $complementarioId,
-            'nombre' => 'Programa Test',
+            'nombre' => self::TEST_NOMBRE_PROGRAMA,
         ]);
 
         $aspirantes = new Collection([]);
@@ -337,7 +340,7 @@ class AspiranteExportServiceTest extends TestCase
         $complementarioId = 1;
         $programa = new ComplementarioOfertado([
             'id' => $complementarioId,
-            'nombre' => 'Programa Test',
+            'nombre' => self::TEST_NOMBRE_PROGRAMA,
         ]);
 
         $aspirantes = new Collection([
@@ -376,7 +379,7 @@ class AspiranteExportServiceTest extends TestCase
         $complementarioId = 1;
         $programa = new ComplementarioOfertado([
             'id' => $complementarioId,
-            'nombre' => 'Programa Test',
+            'nombre' => self::TEST_NOMBRE_PROGRAMA,
         ]);
 
         $this->programaRepositoryMock->shouldReceive('findWithRelations')
@@ -401,7 +404,7 @@ class AspiranteExportServiceTest extends TestCase
         $complementarioId = 1;
         $programa = new ComplementarioOfertado([
             'id' => $complementarioId,
-            'nombre' => 'Programa Test',
+            'nombre' => self::TEST_NOMBRE_PROGRAMA,
         ]);
 
         // Crear persona con relaciones
@@ -409,7 +412,7 @@ class AspiranteExportServiceTest extends TestCase
         $caracterizacion = new \App\Models\Parametro(['id' => 2, 'nombre' => 'Técnico']);
         $persona = new \App\Models\Persona([
             'id' => 1,
-            'numero_documento' => '1234567890',
+            'numero_documento' => self::TEST_NUMERO_DOCUMENTO,
         ]);
         $persona->setRelation('tipoDocumento', $tipoDocumento);
         $persona->setRelation('caracterizacion', $caracterizacion);
@@ -440,12 +443,12 @@ class AspiranteExportServiceTest extends TestCase
         $complementarioId = 1;
         $programa = new ComplementarioOfertado([
             'id' => $complementarioId,
-            'nombre' => 'Programa Test',
+            'nombre' => self::TEST_NOMBRE_PROGRAMA,
         ]);
 
         $persona = new \App\Models\Persona([
             'id' => 1,
-            'numero_documento' => '1234567890',
+            'numero_documento' => self::TEST_NUMERO_DOCUMENTO,
         ]);
         $persona->setRelation('tipoDocumento', null);
         $persona->setRelation('caracterizacion', null);

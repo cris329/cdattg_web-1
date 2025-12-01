@@ -8,13 +8,13 @@ use App\Models\Persona;
 use App\Models\Pais;
 use App\Models\Departamento;
 use App\Models\Municipio;
-use Illuminate\Foundation\Testing\RefreshDatabase;
+use Illuminate\Foundation\Testing\DatabaseTransactions;
 use Illuminate\Support\Facades\Validator;
 use PHPUnit\Framework\Attributes\Test;
 
 class InscripcionComplementarioRequestTest extends TestCase
 {
-    use RefreshDatabase;
+    use DatabaseTransactions;
 
     private const TEST_MUNICIPIO = 'Bogotá';
     private const TEST_NUMERO_DOCUMENTO = '1234567890';

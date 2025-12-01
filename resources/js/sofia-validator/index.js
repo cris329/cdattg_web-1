@@ -64,6 +64,8 @@ async function main() {
     const resultado = await validarCedula(cedula);
     process.stdout.write(resultado + '\n');
   } catch (error) {
+    // Error crítico durante la validación - registrar y salir con código de error
+    console.error('Error crítico en validación:', error.message);
     process.stdout.write('ERROR\n');
     process.exit(1);
   }
@@ -71,7 +73,11 @@ async function main() {
 
 // Ejecutar si se llama directamente
 if (require.main === module) {
-  main();
+  main().catch((error) => {
+    console.error('Error no manejado en main:', error.message);
+    process.stdout.write('ERROR\n');
+    process.exit(1);
+  });
 }
 
 module.exports = { validarCedula };

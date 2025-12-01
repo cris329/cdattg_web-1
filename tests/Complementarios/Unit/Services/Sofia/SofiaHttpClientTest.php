@@ -21,7 +21,7 @@ class SofiaHttpClientTest extends TestCase
         parent::setUp();
         
         // Configurar URL base para tests
-        config(['services.playwright.url' => 'http://test-playwright:3000']);
+        config(['services.playwright.url' => 'https://test-playwright:3000']);
         
         $this->client = new SofiaHttpClient();
     }
@@ -188,7 +188,7 @@ class SofiaHttpClientTest extends TestCase
         $resultado = $this->client->validate(self::TEST_NUMERO_DOCUMENTO);
 
         Http::assertSent(function ($request) {
-            return $request->url() === 'http://test-playwright:3000/health' &&
+            return $request->url() === 'https://test-playwright:3000/health' &&
                    $request->method() === 'GET';
         });
 

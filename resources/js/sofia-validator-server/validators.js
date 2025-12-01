@@ -22,7 +22,9 @@ function extractCedulaFromBody(body) {
   try {
     const parsed = JSON.parse(body || '{}');
     return parsed.cedula ?? parsed.documento ?? parsed.identificacion;
-  } catch (e) {
+  } catch (error) {
+    // JSON inválido o body vacío - retornar null para indicar que no se pudo extraer
+    console.error('Error parsing JSON body:', error.message);
     return null;
   }
 }

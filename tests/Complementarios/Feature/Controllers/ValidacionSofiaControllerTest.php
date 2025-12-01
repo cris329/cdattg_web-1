@@ -12,10 +12,12 @@ use App\Jobs\Complementarios\ValidarSofiaJob;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Support\Facades\Queue;
 use PHPUnit\Framework\Attributes\Test;
+use Tests\Complementarios\Concerns\SeedsComplementariosDatabase;
 
 class ValidacionSofiaControllerTest extends TestCase
 {
     use RefreshDatabase;
+    use SeedsComplementariosDatabase;
 
     protected User $user;
 
@@ -23,14 +25,7 @@ class ValidacionSofiaControllerTest extends TestCase
     {
         parent::setUp();
 
-        $this->seed([
-            \Database\Seeders\RolePermissionSeeder::class,
-            \Database\Seeders\ParametroSeeder::class,
-            \Database\Seeders\TemaSeeder::class,
-            \Database\Seeders\PaisSeeder::class,
-            \Database\Seeders\DepartamentoSeeder::class,
-            \Database\Seeders\MunicipioSeeder::class,
-        ]);
+        $this->seedComplementariosDatabaseIfNeeded();
 
         $this->user = User::factory()->create();
         Queue::fake();
