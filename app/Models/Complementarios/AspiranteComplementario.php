@@ -36,6 +36,8 @@ class AspiranteComplementario extends Model
         'complementario_id',
         'observaciones',
         'estado',
+        'documento_identidad_path',
+        'documento_identidad_nombre',
     ];
 
     /**

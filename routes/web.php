@@ -61,6 +61,15 @@ Route::middleware('web')->group(function () {
             Route::get('{programa}', [ProgramaComplementarioController::class, 'verPrograma'])
                 ->where('programa', '[0-9]+') // Solo acepta IDs numéricos
                 ->name('show');
+
+            // Rutas para documentos
+            Route::get('{id}/formulario-documentos', [\App\Http\Controllers\Complementarios\DocumentoComplementarioController::class, 'formularioDocumentos'])
+                ->where('id', '[0-9]+')
+                ->name('formulario-documentos');
+
+            Route::post('{id}/subir-documentos', [\App\Http\Controllers\Complementarios\DocumentoComplementarioController::class, 'subirDocumento'])
+                ->where('id', '[0-9]+')
+                ->name('subir-documentos');
         });
 
     Route::prefix('inscripcion')
