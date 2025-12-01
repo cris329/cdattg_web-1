@@ -1,7 +1,10 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Database\Factories;
 
+use App\Exceptions\AmbienteFactoryException;
 use App\Models\User;
 use Illuminate\Database\Eloquent\Factories\Factory;
 use Illuminate\Support\Facades\Schema;
@@ -52,7 +55,7 @@ class AmbienteFactory extends Factory
                 $piso = \App\Models\Piso::factory()->create();
                 $pisoId = $piso->id;
             } catch (\Exception $e) {
-                throw new \RuntimeException(
+                throw new AmbienteFactoryException(
                     'No se pudo crear un Piso para el Ambiente. Error: ' . $e->getMessage(),
                     0,
                     $e
