@@ -6,6 +6,12 @@
  * Enviar respuesta JSON
  */
 function sendJson(res, statusCode, data) {
+  // Verificar si los headers ya fueron enviados
+  if (res.headersSent) {
+    console.error('Intento de enviar respuesta después de que los headers ya fueron enviados');
+    return;
+  }
+  
   const payload = JSON.stringify(data);
   res.writeHead(statusCode, {
     'Content-Type': 'application/json; charset=utf-8',

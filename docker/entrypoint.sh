@@ -18,11 +18,13 @@ ensure_permissions() {
     local path="$1"
     if [ -d "$path" ]; then
         echo "🔧 Ajustando permisos en $path"
-        chown -R www-data:www-data "$path"
-        chmod -R 775 "$path"
-        # Asegurar permisos en subdirectorios específicos de Laravel
+        chown -R www-data:www-data "$path" 2>/dev/null || true
+        # Asegurar permisos en directorios
         find "$path" -type d -exec chmod 775 {} \; 2>/dev/null || true
+        # Asegurar permisos en archivos
         find "$path" -type f -exec chmod 664 {} \; 2>/dev/null || true
+        # Asegurar que el directorio base tenga permisos correctos
+        chmod 775 "$path" 2>/dev/null || true
     fi
 }
 

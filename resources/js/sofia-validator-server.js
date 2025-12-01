@@ -66,30 +66,48 @@ router.register('POST', '/validate', async (req, res) => {
     const cedula = extractCedulaFromBody(body);
     
     if (!cedula) {
-      sendError(res, 400, 'El cuerpo de la solicitud debe ser JSON válido.');
+      if (!res.headersSent) {
+        sendError(res, 400, 'El cuerpo de la solicitud debe ser JSON válido.');
+      }
       return;
     }
 
     const { statusCode, payload } = await handleValidation(cedula);
-    if (statusCode === 200) {
-      sendSuccess(res, payload);
-    } else {
-      sendError(res, statusCode, payload.message, payload.detail);
+    if (!res.headersSent) {
+      if (statusCode === 200) {
+        sendSuccess(res, payload);
+      } else {
+        sendError(res, statusCode, payload.message, payload.detail);
+      }
     }
   } catch (error) {
-    sendError(res, 400, error.message);
+    if (!res.headersSent) {
+      sendError(res, 400, error.message);
+    } else {
+      console.error('Error después de enviar respuesta en POST /validate:', error.message);
+    }
   }
 });
 
 // Ruta GET /validate
 router.register('GET', '/validate', async (req, res, url) => {
-  const cedula = extractCedulaFromQuery(url);
-  const { statusCode, payload } = await handleValidation(cedula);
-  
-  if (statusCode === 200) {
-    sendSuccess(res, payload);
-  } else {
-    sendError(res, statusCode, payload.message, payload.detail);
+  try {
+    const cedula = extractCedulaFromQuery(url);
+    const { statusCode, payload } = await handleValidation(cedula);
+    
+    if (!res.headersSent) {
+      if (statusCode === 200) {
+        sendSuccess(res, payload);
+      } else {
+        sendError(res, statusCode, payload.message, payload.detail);
+      }
+    }
+  } catch (error) {
+    if (!res.headersSent) {
+      sendError(res, 500, 'Error al procesar la validación.', error.message);
+    } else {
+      console.error('Error después de enviar respuesta en GET /validate:', error.message);
+    }
   }
 });
 
@@ -103,10 +121,19 @@ const server = http.createServer(async (req, res) => {
   try {
     const handled = await router.handle(req, res);
     if (!handled) {
-      sendError(res, 404, 'Ruta no encontrada.');
+      // Solo enviar 404 si la respuesta no fue enviada ya
+      if (!res.headersSent) {
+        sendError(res, 404, 'Ruta no encontrada.');
+      }
     }
   } catch (error) {
-    sendError(res, 500, 'Error inesperado en el servidor.', error.message);
+    // Solo enviar error si la respuesta no fue enviada ya
+    if (!res.headersSent) {
+      sendError(res, 500, 'Error inesperado en el servidor.', error.message);
+    } else {
+      // Si la respuesta ya fue enviada, solo loguear el error
+      console.error('Error después de enviar respuesta:', error.message);
+    }
   }
 });
 

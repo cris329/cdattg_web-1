@@ -38,7 +38,7 @@ return [
     ],
 
     'playwright' => [
-        'url' => env('PLAYWRIGHT_SERVICE_URL', 'https://playwright:3000'),
+        'url' => env('PLAYWRIGHT_SERVICE_URL', 'http://playwright:3000'),
     ],
 
 ];
