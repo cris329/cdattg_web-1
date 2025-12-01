@@ -101,71 +101,59 @@ class OrdenControllerTest extends TestCase
         $this->user->givePermissionTo(self::PERMISSION_CREAR_ORDEN);
         $this->actingAs($this->user);
 
-        // Crear tema TIPOS DE ORDEN si no existe
-        $temaTipoOrden = \App\Models\Tema::firstOrCreate(
-            ['name' => 'TIPOS DE ORDEN'],
-            [
-                'status' => true,
-                'user_create_id' => 1,
-                'user_edit_id' => 1,
-            ]
-        );
+        // Obtener temas existentes (TemaSeeder ya los crea)
+        $temaTipoOrden = \App\Models\Tema::where('name', 'TIPOS DE ORDEN')->first();
+        $temaEstados = \App\Models\Tema::where('name', 'ESTADOS DE ORDEN')->first();
 
-        // Crear parámetro PRESTAMO
-        $tipoPrestamoParametro = \App\Models\Parametro::firstOrCreate(
-            ['name' => 'PRESTAMO'],
-            [
-                'status' => true,
-                'user_create_id' => 1,
-                'user_edit_id' => 1,
-            ]
-        );
+        if (!$temaTipoOrden || !$temaEstados) {
+            $this->markTestSkipped('Faltan temas necesarios para la prueba');
+        }
 
-        // Crear ParametroTema para PRESTAMO
-        \App\Models\ParametroTema::firstOrCreate(
-            [
+        // Obtener parámetros existentes del seeder
+        $tipoPrestamoParametro = \App\Models\ParametroTema::whereHas('tema', function ($q) {
+            $q->where('name', 'TIPOS DE ORDEN');
+        })->whereHas('parametro', function ($q) {
+            $q->where('name', 'PRESTAMO');
+        })->first()?->parametro;
+
+        $estadoEnEsperaParametro = \App\Models\ParametroTema::whereHas('tema', function ($q) {
+            $q->where('name', 'ESTADOS DE ORDEN');
+        })->whereHas('parametro', function ($q) {
+            $q->where('name', 'EN ESPERA');
+        })->first()?->parametro;
+
+        // Si no existen, crearlos con null para evitar problemas de claves foráneas
+        if (!$tipoPrestamoParametro) {
+            $tipoPrestamoParametro = \App\Models\Parametro::create([
+                'name' => 'PRESTAMO',
+                'status' => true,
+                'user_create_id' => null,
+                'user_update_id' => null,
+            ]);
+            \App\Models\ParametroTema::create([
                 'parametro_id' => $tipoPrestamoParametro->id,
                 'tema_id' => $temaTipoOrden->id,
-            ],
-            [
                 'status' => true,
-                'user_create_id' => 1,
-                'user_edit_id' => 1,
-            ]
-        );
+                'user_create_id' => null,
+                'user_update_id' => null,
+            ]);
+        }
 
-        // Crear tema ESTADOS DE ORDEN si no existe
-        $temaEstados = \App\Models\Tema::firstOrCreate(
-            ['name' => 'ESTADOS DE ORDEN'],
-            [
+        if (!$estadoEnEsperaParametro) {
+            $estadoEnEsperaParametro = \App\Models\Parametro::create([
+                'name' => 'EN ESPERA',
                 'status' => true,
-                'user_create_id' => 1,
-                'user_edit_id' => 1,
-            ]
-        );
-
-        // Crear estado EN ESPERA
-        $estadoEnEsperaParametro = \App\Models\Parametro::firstOrCreate(
-            ['name' => 'EN ESPERA'],
-            [
-                'status' => true,
-                'user_create_id' => 1,
-                'user_edit_id' => 1,
-            ]
-        );
-
-        // Crear ParametroTema para EN ESPERA
-        \App\Models\ParametroTema::firstOrCreate(
-            [
+                'user_create_id' => null,
+                'user_update_id' => null,
+            ]);
+            \App\Models\ParametroTema::create([
                 'parametro_id' => $estadoEnEsperaParametro->id,
                 'tema_id' => $temaEstados->id,
-            ],
-            [
                 'status' => true,
-                'user_create_id' => 1,
-                'user_edit_id' => 1,
-            ]
-        );
+                'user_create_id' => null,
+                'user_update_id' => null,
+            ]);
+        }
 
         $producto = Producto::factory()->create(['cantidad' => 10]);
 

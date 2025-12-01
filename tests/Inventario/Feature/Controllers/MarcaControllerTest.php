@@ -55,23 +55,25 @@ class MarcaControllerTest extends TestCase
             \App\Http\Middleware\VerifyCsrfToken::class,
         ]);
         
-        // Ejecutar migraciones y seeders de todos los módulos
-        $this->migrateDatabases();
-        
-        // Asegurar que los seeders se ejecuten después de RefreshDatabase
-        if (!\App\Models\Tema::where('name', self::TEMA_MARCAS)->exists()) {
-            $this->artisan('db:seed', ['--force' => true]);
-        }
+        // Ejecutar solo los seeders necesarios para marcas
+        // RefreshDatabase ya ejecuta las migraciones automáticamente
+        $this->seed([
+            \Database\Seeders\RolePermissionSeeder::class,
+            \Database\Seeders\ParametroSeeder::class,
+            \Database\Seeders\TemaSeeder::class,
+        ]);
 
-        // Crear tema MARCAS
-        $this->temaMarcas = Tema::firstOrCreate(
-            ['name' => self::TEMA_MARCAS],
-            [
+        // Obtener tema MARCAS (TemaSeeder ya lo crea)
+        $this->temaMarcas = Tema::where('name', self::TEMA_MARCAS)->first();
+        
+        if (!$this->temaMarcas) {
+            $this->temaMarcas = Tema::create([
+                'name' => self::TEMA_MARCAS,
                 'status' => true,
-                'user_create_id' => 1,
-                'user_edit_id' => 1,
-            ]
-        );
+                'user_create_id' => null,
+                'user_edit_id' => null,
+            ]);
+        }
 
         // Crear permisos necesarios
         Permission::firstOrCreate(['name' => self::PERMISSION_VER_MARCA]);

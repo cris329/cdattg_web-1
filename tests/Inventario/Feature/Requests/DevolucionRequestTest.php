@@ -60,75 +60,41 @@ class DevolucionRequestTest extends TestCase
     #[Test]
     public function valida_detalle_orden_id_requerido(): void
     {
-        $rules = $this->obtenerRules();
-
-        $this->validarYVerificarError([], $rules, 'detalle_orden_id');
+        $this->validarCampoRequerido('detalle_orden_id');
     }
 
     #[Test]
     public function valida_detalle_orden_id_debe_ser_integer(): void
     {
-        $rules = $this->obtenerRules();
-
-        $this->validarYVerificarError(
-            ['detalle_orden_id' => 'no es numero'],
-            $rules,
-            'detalle_orden_id'
-        );
+        $this->validarTipoCampo('detalle_orden_id', 'no es numero');
     }
 
     #[Test]
     public function valida_detalle_orden_id_debe_existir(): void
     {
-        $rules = $this->obtenerRules();
-
-        $this->validarYVerificarError(
-            ['detalle_orden_id' => self::ID_INEXISTENTE],
-            $rules,
-            'detalle_orden_id'
-        );
+        $this->validarExistenciaRelacion('detalle_orden_id', self::ID_INEXISTENTE);
     }
 
     #[Test]
     public function valida_cantidad_devuelta_requerida(): void
     {
-        $rules = $this->obtenerRules();
-
-        $this->validarYVerificarError(
-            ['detalle_orden_id' => 1],
-            $rules,
-            'cantidad_devuelta'
-        );
+        $this->validarCampoRequeridoConDatosBase('cantidad_devuelta', ['detalle_orden_id' => 1]);
     }
 
     #[Test]
     public function valida_cantidad_devuelta_debe_ser_integer(): void
     {
-        $rules = $this->obtenerRules();
-
-        $this->validarYVerificarError(
-            [
-                'detalle_orden_id' => 1,
-                'cantidad_devuelta' => 'no es numero',
-            ],
-            $rules,
-            'cantidad_devuelta'
-        );
+        $this->validarTipoCampoConDatosBase('cantidad_devuelta', 'no es numero');
     }
 
     #[Test]
     public function valida_cantidad_devuelta_minima(): void
     {
         $detalleOrden = DetalleOrden::factory()->create();
-        $rules = $this->obtenerRules();
-
-        $this->validarYVerificarError(
-            [
-                'detalle_orden_id' => $detalleOrden->id,
-                'cantidad_devuelta' => self::CANTIDAD_DEVUELTA_INVALIDA,
-            ],
-            $rules,
-            'cantidad_devuelta'
+        $this->validarCampoConDatosCompletos(
+            'cantidad_devuelta',
+            self::CANTIDAD_DEVUELTA_INVALIDA,
+            $detalleOrden->id
         );
     }
 
@@ -136,16 +102,10 @@ class DevolucionRequestTest extends TestCase
     public function valida_longitud_maxima_de_observaciones(): void
     {
         $detalleOrden = DetalleOrden::factory()->create();
-        $rules = $this->obtenerRules();
-
-        $this->validarYVerificarError(
-            [
-                'detalle_orden_id' => $detalleOrden->id,
-                'cantidad_devuelta' => 1,
-                'observaciones' => str_repeat('a', self::LONGITUD_MAX_OBSERVACIONES),
-            ],
-            $rules,
-            'observaciones'
+        $this->validarLongitudMaxima(
+            'observaciones',
+            self::LONGITUD_MAX_OBSERVACIONES,
+            $detalleOrden->id
         );
     }
 
@@ -153,29 +113,111 @@ class DevolucionRequestTest extends TestCase
     public function acepta_datos_validos(): void
     {
         $detalleOrden = DetalleOrden::factory()->create();
-        $rules = $this->obtenerRules();
-
-        $validator = Validator::make([
+        $datos = [
             'detalle_orden_id' => $detalleOrden->id,
             'cantidad_devuelta' => self::CANTIDAD_DEVUELTA_VALIDA,
             'observaciones' => 'Observaciones de la devolución',
-        ], $rules);
+        ];
 
-        $this->assertFalse($validator->fails());
+        $this->assertValidacionExitosa($datos);
     }
 
     #[Test]
     public function acepta_observaciones_nulas(): void
     {
         $detalleOrden = DetalleOrden::factory()->create();
-        $rules = $this->obtenerRules();
-
-        $validator = Validator::make([
+        $datos = [
             'detalle_orden_id' => $detalleOrden->id,
             'cantidad_devuelta' => self::CANTIDAD_DEVUELTA_VALIDA,
             'observaciones' => null,
-        ], $rules);
+        ];
 
+        $this->assertValidacionExitosa($datos);
+    }
+
+    /**
+     * Validate that a field is required.
+     */
+    private function validarCampoRequerido(string $campo): void
+    {
+        $rules = $this->obtenerRules();
+        $this->validarYVerificarError([], $rules, $campo);
+    }
+
+    /**
+     * Validate field type.
+     */
+    private function validarTipoCampo(string $campo, mixed $valorInvalido): void
+    {
+        $rules = $this->obtenerRules();
+        $this->validarYVerificarError([$campo => $valorInvalido], $rules, $campo);
+    }
+
+    /**
+     * Validate existence of a related entity.
+     */
+    private function validarExistenciaRelacion(string $campo, int $idInexistente): void
+    {
+        $rules = $this->obtenerRules();
+        $this->validarYVerificarError([$campo => $idInexistente], $rules, $campo);
+    }
+
+    /**
+     * Validate required field with base data.
+     */
+    private function validarCampoRequeridoConDatosBase(string $campo, array $datosBase): void
+    {
+        $rules = $this->obtenerRules();
+        $this->validarYVerificarError($datosBase, $rules, $campo);
+    }
+
+    /**
+     * Validate field type with base data.
+     */
+    private function validarTipoCampoConDatosBase(string $campo, mixed $valorInvalido): void
+    {
+        $rules = $this->obtenerRules();
+        $datos = [
+            'detalle_orden_id' => 1,
+            $campo => $valorInvalido,
+        ];
+        $this->validarYVerificarError($datos, $rules, $campo);
+    }
+
+    /**
+     * Validate field with complete base data (detalle_orden_id + cantidad_devuelta).
+     */
+    private function validarCampoConDatosCompletos(string $campo, mixed $valorInvalido, int $detalleOrdenId): void
+    {
+        $rules = $this->obtenerRules();
+        $datos = [
+            'detalle_orden_id' => $detalleOrdenId,
+            $campo => $valorInvalido,
+        ];
+        $this->validarYVerificarError($datos, $rules, $campo);
+    }
+
+    /**
+     * Validate maximum length of a field with complete base data.
+     */
+    private function validarLongitudMaxima(string $campo, int $longitudMaxima, int $detalleOrdenId): void
+    {
+        $rules = $this->obtenerRules();
+        $datos = [
+            'detalle_orden_id' => $detalleOrdenId,
+            'cantidad_devuelta' => 1,
+            $campo => str_repeat('a', $longitudMaxima),
+        ];
+        $this->validarYVerificarError($datos, $rules, $campo);
+    }
+
+    /**
+     * Assert that validation passes with given data.
+     */
+    private function assertValidacionExitosa(array $datos): void
+    {
+        $rules = $this->obtenerRules();
+        $validator = Validator::make($datos, $rules);
         $this->assertFalse($validator->fails());
     }
 }

@@ -67,7 +67,7 @@ class DetalleOrdenRepositoryTest extends TestCase
 
         $resultado = $this->repository->actualizar($detalleOrden, ['cantidad' => 10]);
 
-        $this->assertTrue($resultado);
+        $this->assertOperacionExitosa($resultado);
         $this->assertEquals(10, $detalleOrden->fresh()->cantidad);
     }
 
@@ -78,7 +78,7 @@ class DetalleOrdenRepositoryTest extends TestCase
 
         $resultado = $this->repository->eliminar($detalleOrden);
 
-        $this->assertTrue($resultado);
+        $this->assertOperacionExitosa($resultado);
         $this->assertNull(DetalleOrden::find($detalleOrden->id));
     }
 
@@ -90,7 +90,7 @@ class DetalleOrdenRepositoryTest extends TestCase
 
         $resultado = $this->repository->eliminarPorOrden($orden->id);
 
-        $this->assertTrue($resultado);
+        $this->assertOperacionExitosa($resultado);
         $this->assertCount(0, DetalleOrden::where('orden_id', $orden->id)->get());
     }
 
@@ -101,8 +101,7 @@ class DetalleOrdenRepositoryTest extends TestCase
 
         $resultado = $this->repository->encontrar($detalleOrden->id);
 
-        $this->assertNotNull($resultado);
-        $this->assertEquals($detalleOrden->id, $resultado->id);
+        $this->assertDetalleOrdenEncontrado($resultado, $detalleOrden->id);
     }
 
     #[Test]
@@ -116,6 +115,23 @@ class DetalleOrdenRepositoryTest extends TestCase
         $this->assertTrue($resultado->relationLoaded('orden'));
         $this->assertTrue($resultado->relationLoaded('producto'));
         $this->assertTrue($resultado->relationLoaded('estadoOrden'));
+    }
+
+    /**
+     * Assert that a detalle orden was found and matches the expected ID.
+     */
+    private function assertDetalleOrdenEncontrado(?DetalleOrden $resultado, int $detalleOrdenId): void
+    {
+        $this->assertNotNull($resultado);
+        $this->assertEquals($detalleOrdenId, $resultado->id);
+    }
+
+    /**
+     * Assert that an operation (update, delete) was successful.
+     */
+    private function assertOperacionExitosa(bool $resultado): void
+    {
+        $this->assertTrue($resultado);
     }
 }
 

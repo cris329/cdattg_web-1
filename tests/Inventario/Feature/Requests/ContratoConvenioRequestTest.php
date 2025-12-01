@@ -73,117 +73,56 @@ class ContratoConvenioRequestTest extends TestCase
     #[Test]
     public function valida_unicidad_de_name_en_store(): void
     {
-        ContratoConvenio::factory()->create(['name' => self::CONTRATO_TEST]);
-
-        $rules = $this->obtenerRules();
-
-        $this->validarYVerificarError(
-            ['name' => self::CONTRATO_TEST],
-            $rules,
-            'name'
-        );
+        $this->validarUnicidadEnStore('name', self::CONTRATO_TEST);
     }
 
     #[Test]
     public function valida_unicidad_de_codigo_en_store(): void
     {
-        ContratoConvenio::factory()->create(['codigo' => 'COD-001']);
-
-        $rules = $this->obtenerRules();
-
-        $this->validarYVerificarError(
-            [
-                'name' => 'NUEVO CONTRATO',
-                'codigo' => 'COD-001',
-            ],
-            $rules,
-            'codigo'
-        );
+        $this->validarUnicidadEnStore('codigo', 'COD-001', ['name' => 'NUEVO CONTRATO']);
     }
 
     #[Test]
     public function valida_longitud_maxima_de_name(): void
     {
-        $rules = $this->obtenerRules();
-
-        $this->validarYVerificarError(
-            ['name' => str_repeat('a', self::LONGITUD_MAX_NAME)],
-            $rules,
-            'name'
-        );
+        $this->validarLongitudMaxima('name', self::LONGITUD_MAX_NAME);
     }
 
     #[Test]
     public function valida_longitud_maxima_de_codigo(): void
     {
-        $rules = $this->obtenerRules();
-
-        $this->validarYVerificarError(
-            [
-                'name' => self::CONTRATO_TEST,
-                'codigo' => str_repeat('a', self::LONGITUD_MAX_CODIGO),
-            ],
-            $rules,
-            'codigo'
-        );
+        $this->validarLongitudMaxima('codigo', self::LONGITUD_MAX_CODIGO, ['name' => self::CONTRATO_TEST]);
     }
 
     #[Test]
     public function valida_existencia_de_proveedor(): void
     {
-        $rules = $this->obtenerRules();
-
-        $this->validarYVerificarError(
-            [
-                'name' => self::CONTRATO_TEST,
-                'proveedor_id' => self::ID_INEXISTENTE,
-            ],
-            $rules,
-            'proveedor_id'
-        );
+        $this->validarExistenciaRelacion('proveedor_id', self::ID_INEXISTENTE);
     }
 
     #[Test]
     public function valida_fecha_fin_debe_ser_posterior_o_igual_a_fecha_inicio(): void
     {
         $rules = $this->obtenerRules();
+        $datos = [
+            'name' => self::CONTRATO_TEST,
+            'fecha_inicio' => self::FECHA_INICIO_INVALIDA,
+            'fecha_fin' => self::FECHA_FIN_INVALIDA,
+        ];
 
-        $this->validarYVerificarError(
-            [
-                'name' => self::CONTRATO_TEST,
-                'fecha_inicio' => self::FECHA_INICIO_INVALIDA,
-                'fecha_fin' => self::FECHA_FIN_INVALIDA,
-            ],
-            $rules,
-            'fecha_fin'
-        );
+        $this->validarYVerificarError($datos, $rules, 'fecha_fin');
     }
 
     #[Test]
     public function valida_estado_id_requerido(): void
     {
-        $rules = $this->obtenerRules();
-
-        $this->validarYVerificarError(
-            ['name' => self::CONTRATO_TEST],
-            $rules,
-            'estado_id'
-        );
+        $this->validarCampoRequerido('estado_id', ['name' => self::CONTRATO_TEST]);
     }
 
     #[Test]
     public function valida_estado_id_debe_existir(): void
     {
-        $rules = $this->obtenerRules();
-
-        $this->validarYVerificarError(
-            [
-                'name' => self::CONTRATO_TEST,
-                'estado_id' => self::ID_INEXISTENTE,
-            ],
-            $rules,
-            'estado_id'
-        );
+        $this->validarExistenciaRelacion('estado_id', self::ID_INEXISTENTE);
     }
 
     #[Test]
@@ -204,6 +143,55 @@ class ContratoConvenioRequestTest extends TestCase
         ], $rules);
 
         $this->assertFalse($validator->fails());
+    }
+
+    /**
+     * Validate uniqueness in store scenario.
+     */
+    private function validarUnicidadEnStore(string $campo, string $valor, array $datosAdicionales = []): void
+    {
+        ContratoConvenio::factory()->create([$campo => $valor]);
+        $rules = $this->obtenerRules();
+        $datos = array_merge([$campo => $valor], $datosAdicionales);
+
+        $this->validarYVerificarError($datos, $rules, $campo);
+    }
+
+    /**
+     * Validate maximum length of a field.
+     */
+    private function validarLongitudMaxima(string $campo, int $longitudMaxima, array $datosAdicionales = []): void
+    {
+        $rules = $this->obtenerRules();
+        $datos = array_merge(
+            [$campo => str_repeat('a', $longitudMaxima)],
+            $datosAdicionales
+        );
+
+        $this->validarYVerificarError($datos, $rules, $campo);
+    }
+
+    /**
+     * Validate existence of a related entity.
+     */
+    private function validarExistenciaRelacion(string $campo, int $idInexistente): void
+    {
+        $rules = $this->obtenerRules();
+        $datos = [
+            'name' => self::CONTRATO_TEST,
+            $campo => $idInexistente,
+        ];
+
+        $this->validarYVerificarError($datos, $rules, $campo);
+    }
+
+    /**
+     * Validate that a field is required.
+     */
+    private function validarCampoRequerido(string $campo, array $datosBase): void
+    {
+        $rules = $this->obtenerRules();
+        $this->validarYVerificarError($datosBase, $rules, $campo);
     }
 }
 

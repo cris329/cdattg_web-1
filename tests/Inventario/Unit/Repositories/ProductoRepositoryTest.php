@@ -6,6 +6,7 @@ use Tests\TestCase;
 use App\Inventario\Repositories\Producto\ProductoRepository;
 use App\Models\Inventario\Producto;
 use Illuminate\Foundation\Testing\RefreshDatabase;
+use Illuminate\Contracts\Pagination\LengthAwarePaginator;
 use PHPUnit\Framework\Attributes\Test;
 
 class ProductoRepositoryTest extends TestCase
@@ -80,9 +81,7 @@ class ProductoRepositoryTest extends TestCase
 
         $resultado = $this->repository->obtenerConFiltros(['solo_con_stock' => true]);
 
-        foreach ($resultado as $producto) {
-            $this->assertGreaterThan(0, $producto->cantidad);
-        }
+        $this->assertTodosTienenStock($resultado);
     }
 
     #[Test]
@@ -104,8 +103,7 @@ class ProductoRepositoryTest extends TestCase
 
         $resultado = $this->repository->buscarPorCodigoBarras(self::CODIGO_BARRAS_TEST);
 
-        $this->assertNotNull($resultado);
-        $this->assertEquals($producto->id, $resultado->id);
+        $this->assertProductoEncontrado($resultado, $producto->id);
     }
 
     #[Test]
@@ -116,9 +114,7 @@ class ProductoRepositoryTest extends TestCase
 
         $resultado = $this->repository->obtenerParaCatalogo();
 
-        foreach ($resultado as $producto) {
-            $this->assertGreaterThan(0, $producto->cantidad);
-        }
+        $this->assertTodosTienenStock($resultado);
     }
 
     #[Test]
@@ -138,8 +134,7 @@ class ProductoRepositoryTest extends TestCase
 
         $resultado = $this->repository->encontrar($producto->id);
 
-        $this->assertNotNull($resultado);
-        $this->assertEquals($producto->id, $resultado->id);
+        $this->assertProductoEncontrado($resultado, $producto->id);
     }
 
     #[Test]
@@ -226,6 +221,25 @@ class ProductoRepositoryTest extends TestCase
         $resultado = $this->repository->existeCodigoBarras('9999999999999');
 
         $this->assertFalse($resultado);
+    }
+
+    /**
+     * Assert that all products in a collection have stock (cantidad > 0).
+     */
+    private function assertTodosTienenStock(LengthAwarePaginator $productos): void
+    {
+        foreach ($productos as $producto) {
+            $this->assertGreaterThan(0, $producto->cantidad);
+        }
+    }
+
+    /**
+     * Assert that a producto was found and matches the expected ID.
+     */
+    private function assertProductoEncontrado(?Producto $resultado, int $productoId): void
+    {
+        $this->assertNotNull($resultado);
+        $this->assertEquals($productoId, $resultado->id);
     }
 }
 

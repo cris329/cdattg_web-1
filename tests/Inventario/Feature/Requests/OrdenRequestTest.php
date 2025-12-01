@@ -7,9 +7,9 @@ namespace Tests\Inventario\Feature\Request;
 use Tests\TestCase;
 use App\Http\Requests\Inventario\OrdenRequest;
 use App\Models\Inventario\Producto;
-use App\Models\ParametroTema;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Support\Facades\Validator;
+use Illuminate\Validation\Validator as ValidationValidator;
 use PHPUnit\Framework\Attributes\Test;
 
 class OrdenRequestTest extends TestCase
@@ -42,215 +42,141 @@ class OrdenRequestTest extends TestCase
     #[Test]
     public function valida_campos_requeridos_para_prestamos_salidas(): void
     {
-        $request = new OrdenRequest();
-        $request->setRouteResolver(function () {
-            return new class {
-                public function named(...$patterns) {
-                    return in_array('inventario.prestamos-salidas.store', $patterns);
-                }
-            };
-        });
-
+        $request = $this->crearRequestParaPrestamosSalidas();
         $rules = $request->rules();
-
         $validator = Validator::make([], $rules);
 
-        $this->assertTrue($validator->fails());
-        $this->assertArrayHasKey('rol', $validator->errors()->toArray());
-        $this->assertArrayHasKey('programa_formacion', $validator->errors()->toArray());
-        $this->assertArrayHasKey('tipo', $validator->errors()->toArray());
-        $this->assertArrayHasKey('descripcion', $validator->errors()->toArray());
-        $this->assertArrayHasKey('carrito', $validator->errors()->toArray());
+        $this->assertValidacionFalla($validator);
+        $this->assertValidacionTieneError($validator, 'rol');
+        $this->assertValidacionTieneError($validator, 'programa_formacion');
+        $this->assertValidacionTieneError($validator, 'tipo');
+        $this->assertValidacionTieneError($validator, 'descripcion');
+        $this->assertValidacionTieneError($validator, 'carrito');
     }
 
     #[Test]
     public function valida_tipo_debe_ser_prestamo_o_salida(): void
     {
-        $request = new OrdenRequest();
-        $request->setRouteResolver(function () {
-            return new class {
-                public function named(...$patterns) {
-                    return in_array('inventario.prestamos-salidas.store', $patterns);
-                }
-            };
-        });
-
+        $request = $this->crearRequestParaPrestamosSalidas();
         $rules = $request->rules();
+        $validator = Validator::make(['tipo' => 'invalido'], $rules);
 
-        $validator = Validator::make([
-            'tipo' => 'invalido',
-        ], $rules);
-
-        $this->assertTrue($validator->fails());
-        $this->assertArrayHasKey('tipo', $validator->errors()->toArray());
+        $this->assertValidacionFalla($validator);
+        $this->assertValidacionTieneError($validator, 'tipo');
     }
 
     #[Test]
     public function valida_fecha_devolucion_requerida_para_prestamo(): void
     {
-        $request = new OrdenRequest();
-        $request->setRouteResolver(function () {
-            return new class {
-                public function named(...$patterns) {
-                    return in_array('inventario.prestamos-salidas.store', $patterns);
-                }
-            };
-        });
-
+        $request = $this->crearRequestParaPrestamosSalidas();
         $rules = $request->rules();
-
         $validator = Validator::make([
             'tipo' => 'prestamo',
             'fecha_devolucion' => null,
         ], $rules);
 
-        $this->assertTrue($validator->fails());
-        $this->assertArrayHasKey('fecha_devolucion', $validator->errors()->toArray());
+        $this->assertValidacionFalla($validator);
+        $this->assertValidacionTieneError($validator, 'fecha_devolucion');
     }
 
     #[Test]
     public function valida_fecha_devolucion_debe_ser_posterior_a_hoy(): void
     {
-        $request = new OrdenRequest();
-        $request->setRouteResolver(function () {
-            return new class {
-                public function named(...$patterns) {
-                    return in_array('inventario.prestamos-salidas.store', $patterns);
-                }
-            };
-        });
-
+        $request = $this->crearRequestParaPrestamosSalidas();
         $rules = $request->rules();
-
         $validator = Validator::make([
             'tipo' => 'prestamo',
             'fecha_devolucion' => '2020-01-01',
         ], $rules);
 
-        $this->assertTrue($validator->fails());
-        $this->assertArrayHasKey('fecha_devolucion', $validator->errors()->toArray());
+        $this->assertValidacionFalla($validator);
+        $this->assertValidacionTieneError($validator, 'fecha_devolucion');
     }
 
     #[Test]
     public function valida_carrito_debe_ser_json(): void
     {
-        $request = new OrdenRequest();
-        $request->setRouteResolver(function () {
-            return new class {
-                public function named(...$patterns) {
-                    return in_array('inventario.prestamos-salidas.store', $patterns);
-                }
-            };
-        });
-
+        $request = $this->crearRequestParaPrestamosSalidas();
         $rules = $request->rules();
+        $validator = Validator::make(['carrito' => 'no es json'], $rules);
 
-        $validator = Validator::make([
-            'carrito' => 'no es json',
-        ], $rules);
-
-        $this->assertTrue($validator->fails());
-        $this->assertArrayHasKey('carrito', $validator->errors()->toArray());
+        $this->assertValidacionFalla($validator);
+        $this->assertValidacionTieneError($validator, 'carrito');
     }
 
     #[Test]
     public function valida_campos_requeridos_para_orden_normal(): void
     {
-        $request = new OrdenRequest();
+        $request = $this->crearRequestParaOrdenNormal();
         $rules = $request->rules();
-
         $validator = Validator::make([], $rules);
 
-        $this->assertTrue($validator->fails());
-        $this->assertArrayHasKey('descripcion_orden', $validator->errors()->toArray());
-        $this->assertArrayHasKey('tipo_orden_id', $validator->errors()->toArray());
-        $this->assertArrayHasKey('productos', $validator->errors()->toArray());
+        $this->assertValidacionFalla($validator);
+        $this->assertValidacionTieneError($validator, 'descripcion_orden');
+        $this->assertValidacionTieneError($validator, 'tipo_orden_id');
+        $this->assertValidacionTieneError($validator, 'productos');
     }
 
     #[Test]
     public function valida_productos_debe_ser_array_no_vacio(): void
     {
-        $request = new OrdenRequest();
+        $request = $this->crearRequestParaOrdenNormal();
         $rules = $request->rules();
+        $validator = Validator::make(['productos' => []], $rules);
 
-        $validator = Validator::make([
-            'productos' => [],
-        ], $rules);
-
-        $this->assertTrue($validator->fails());
-        $this->assertArrayHasKey('productos', $validator->errors()->toArray());
+        $this->assertValidacionFalla($validator);
+        $this->assertValidacionTieneError($validator, 'productos');
     }
 
     #[Test]
     public function valida_productos_debe_tener_producto_id_y_cantidad(): void
     {
-        $request = new OrdenRequest();
+        $request = $this->crearRequestParaOrdenNormal();
         $rules = $request->rules();
-
         $validator = Validator::make([
-            'productos' => [
-                ['cantidad' => 1],
-            ],
+            'productos' => [['cantidad' => 1]],
         ], $rules);
 
-        $this->assertTrue($validator->fails());
-        $this->assertArrayHasKey('productos.0.producto_id', $validator->errors()->toArray());
+        $this->assertValidacionFalla($validator);
+        $this->assertValidacionTieneError($validator, 'productos.0.producto_id');
     }
 
     #[Test]
     public function valida_producto_id_debe_existir(): void
     {
-        $request = new OrdenRequest();
+        $request = $this->crearRequestParaOrdenNormal();
         $rules = $request->rules();
-
         $validator = Validator::make([
             'productos' => [
-                [
-                    'producto_id' => 99999,
-                    'cantidad' => 1,
-                ],
+                ['producto_id' => 99999, 'cantidad' => 1],
             ],
         ], $rules);
 
-        $this->assertTrue($validator->fails());
-        $this->assertArrayHasKey('productos.0.producto_id', $validator->errors()->toArray());
+        $this->assertValidacionFalla($validator);
+        $this->assertValidacionTieneError($validator, 'productos.0.producto_id');
     }
 
     #[Test]
     public function valida_cantidad_minima_en_productos(): void
     {
         $producto = Producto::factory()->create();
-
-        $request = new OrdenRequest();
+        $request = $this->crearRequestParaOrdenNormal();
         $rules = $request->rules();
-
         $validator = Validator::make([
             'productos' => [
-                [
-                    'producto_id' => $producto->id,
-                    'cantidad' => 0,
-                ],
+                ['producto_id' => $producto->id, 'cantidad' => 0],
             ],
         ], $rules);
 
-        $this->assertTrue($validator->fails());
-        $this->assertArrayHasKey('productos.0.cantidad', $validator->errors()->toArray());
+        $this->assertValidacionFalla($validator);
+        $this->assertValidacionTieneError($validator, 'productos.0.cantidad');
     }
 
     #[Test]
     public function acepta_datos_validos_para_prestamo(): void
     {
-        $request = new OrdenRequest();
-        $request->setRouteResolver(function () {
-            return new class {
-                public function named(...$patterns) {
-                    return in_array('inventario.prestamos-salidas.store', $patterns);
-                }
-            };
-        });
-
+        $request = $this->crearRequestParaPrestamosSalidas();
         $rules = $request->rules();
-
         $validator = Validator::make([
             'rol' => 'Instructor',
             'programa_formacion' => 'Programa de Prueba',
@@ -261,6 +187,46 @@ class OrdenRequestTest extends TestCase
         ], $rules);
 
         $this->assertFalse($validator->fails());
+    }
+
+    /**
+     * Create OrdenRequest configured for préstamos/salidas route.
+     */
+    private function crearRequestParaPrestamosSalidas(): OrdenRequest
+    {
+        $request = new OrdenRequest();
+        $request->setRouteResolver(function () {
+            return new class {
+                public function named(...$patterns): bool {
+                    return in_array('inventario.prestamos-salidas.store', $patterns);
+                }
+            };
+        });
+        return $request;
+    }
+
+    /**
+     * Create OrdenRequest for normal order route.
+     */
+    private function crearRequestParaOrdenNormal(): OrdenRequest
+    {
+        return new OrdenRequest();
+    }
+
+    /**
+     * Assert that validation fails.
+     */
+    private function assertValidacionFalla(ValidationValidator $validator): void
+    {
+        $this->assertTrue($validator->fails());
+    }
+
+    /**
+     * Assert that validation has a specific error field.
+     */
+    private function assertValidacionTieneError(ValidationValidator $validator, string $campo): void
+    {
+        $this->assertArrayHasKey($campo, $validator->errors()->toArray());
     }
 }
 

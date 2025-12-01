@@ -51,37 +51,41 @@ class ContratoConvenioControllerTest extends TestCase
     {
         parent::setUp();
         
-        // Ejecutar migraciones y seeders de todos los módulos
-        $this->migrateDatabases();
-        
         // Desactivar CSRF para tests
         $this->withoutMiddleware([
             \Illuminate\Foundation\Http\Middleware\VerifyCsrfToken::class,
             \App\Http\Middleware\VerifyCsrfToken::class,
         ]);
         
-        // Asegurar que los seeders se ejecuten después de RefreshDatabase
-        if (!\App\Models\Pais::where('pais', self::PAIS_COLOMBIA)->exists()) {
-            $this->artisan('db:seed', ['--force' => true]);
-        }
+        // Ejecutar solo los seeders necesarios para contratos (necesita proveedores)
+        $this->seed([
+            \Database\Seeders\RolePermissionSeeder::class,
+            \Database\Seeders\ParametroSeeder::class,
+            \Database\Seeders\TemaSeeder::class,
+            \Database\Seeders\PaisSeeder::class,
+            \Database\Seeders\DepartamentoSeeder::class,
+            \Database\Seeders\MunicipioSeeder::class,
+        ]);
 
-        // Crear tema ESTADOS si no existe
-        $temaEstados = Tema::firstOrCreate(
-            ['name' => self::TEMA_ESTADOS],
-            [
+        // Obtener tema ESTADOS (TemaSeeder ya lo crea)
+        $temaEstados = Tema::where('name', self::TEMA_ESTADOS)->first();
+        
+        if (!$temaEstados) {
+            $temaEstados = Tema::create([
+                'name' => self::TEMA_ESTADOS,
                 'status' => true,
-                'user_create_id' => 1,
-                'user_edit_id' => 1,
-            ]
-        );
+                'user_create_id' => null,
+                'user_edit_id' => null,
+            ]);
+        }
 
         // Crear estado para contratos
         $estadoParametro = Parametro::firstOrCreate(
             ['name' => self::ESTADO_ACTIVO],
             [
                 'status' => true,
-                'user_create_id' => 1,
-                'user_edit_id' => 1,
+                'user_create_id' => null,
+                'user_edit_id' => null,
             ]
         );
 
@@ -92,8 +96,8 @@ class ContratoConvenioControllerTest extends TestCase
             ],
             [
                 'status' => true,
-                'user_create_id' => 1,
-                'user_edit_id' => 1,
+                'user_create_id' => null,
+                'user_edit_id' => null,
             ]
         );
 
