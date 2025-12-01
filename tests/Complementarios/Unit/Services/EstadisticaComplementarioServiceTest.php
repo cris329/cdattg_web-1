@@ -17,10 +17,17 @@ use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Mockery;
 use PHPUnit\Framework\Attributes\Test;
+use Tests\Complementarios\Concerns\SeedsComplementariosDatabase;
 
 class EstadisticaComplementarioServiceTest extends TestCase
 {
     use RefreshDatabase;
+    use SeedsComplementariosDatabase;
+
+    private const TEST_FECHA_CREACION = '2024-06-15 10:00:00';
+    private const TEST_FECHA_INICIO = '2024-01-01';
+    private const TEST_FECHA_FIN = '2024-12-31';
+    private const TEST_NOMBRE_PROGRAMA_1 = 'Programa 1';
 
     protected EstadisticaComplementarioService $service;
     protected $aspiranteRepositoryMock;
@@ -31,15 +38,7 @@ class EstadisticaComplementarioServiceTest extends TestCase
     {
         parent::setUp();
         
-        // Seeders necesarios para los tests que usan BD real
-        $this->seed([
-            \Database\Seeders\RolePermissionSeeder::class,
-            \Database\Seeders\ParametroSeeder::class,
-            \Database\Seeders\TemaSeeder::class,
-            \Database\Seeders\PaisSeeder::class,
-            \Database\Seeders\DepartamentoSeeder::class,
-            \Database\Seeders\MunicipioSeeder::class,
-        ]);
+        $this->seedComplementariosDatabaseIfNeeded();
         
         $this->aspiranteRepositoryMock = Mockery::mock(AspiranteComplementarioRepository::class);
         $this->programaRepositoryMock = Mockery::mock(ComplementarioOfertadoRepository::class);
@@ -191,12 +190,12 @@ class EstadisticaComplementarioServiceTest extends TestCase
             'persona_id' => $persona->id,
             'complementario_id' => $programa->id,
             'estado' => 3,
-            'created_at' => '2024-06-15 10:00:00',
+            'created_at' => self::TEST_FECHA_CREACION,
         ]);
 
         $filtros = [
-            'fecha_inicio' => '2024-01-01',
-            'fecha_fin' => '2024-12-31',
+            'fecha_inicio' => self::TEST_FECHA_INICIO,
+            'fecha_fin' => self::TEST_FECHA_FIN,
         ];
 
         $resultado = $service->obtenerEstadisticasFiltradas($filtros);
@@ -416,12 +415,12 @@ class EstadisticaComplementarioServiceTest extends TestCase
             'persona_id' => $persona->id,
             'complementario_id' => $programa->id,
             'estado' => 3,
-            'created_at' => '2024-06-15 10:00:00',
+            'created_at' => self::TEST_FECHA_CREACION,
         ]);
 
         $filtros = [
-            'fecha_inicio' => '2024-01-01',
-            'fecha_fin' => '2024-12-31',
+            'fecha_inicio' => self::TEST_FECHA_INICIO,
+            'fecha_fin' => self::TEST_FECHA_FIN,
             'departamento_id' => 1,
             'programa_id' => $programa->id,
         ];
@@ -442,7 +441,7 @@ class EstadisticaComplementarioServiceTest extends TestCase
         );
 
         $filtros = [
-            'fecha_inicio' => '2024-01-01',
+            'fecha_inicio' => self::TEST_FECHA_INICIO,
         ];
 
         $resultado = $service->obtenerEstadisticasFiltradas($filtros);
@@ -497,7 +496,7 @@ class EstadisticaComplementarioServiceTest extends TestCase
         $this->aspiranteRepositoryMock->shouldReceive('getDistribucionPorProgramas')->andReturn(new EloquentCollection([]));
 
         $programa1 = new \stdClass();
-        $programa1->nombre = 'Programa 1';
+        $programa1->nombre = self::TEST_NOMBRE_PROGRAMA_1;
         $programa1->total_aspirantes = 20;
         $programa1->aceptados = 10;
         $programa1->pendientes = 10;
@@ -573,12 +572,12 @@ class EstadisticaComplementarioServiceTest extends TestCase
             'persona_id' => $persona->id,
             'complementario_id' => $programa->id,
             'estado' => 1,
-            'created_at' => '2024-06-15 10:00:00',
+            'created_at' => self::TEST_FECHA_CREACION,
         ]);
 
         $filtros = [
-            'fecha_inicio' => '2024-01-01',
-            'fecha_fin' => '2024-12-31',
+            'fecha_inicio' => self::TEST_FECHA_INICIO,
+            'fecha_fin' => self::TEST_FECHA_FIN,
             'municipio_id' => 1,
         ];
 
@@ -705,7 +704,7 @@ class EstadisticaComplementarioServiceTest extends TestCase
         $this->aspiranteRepositoryMock->shouldReceive('getDistribucionPorProgramas')->andReturn(new EloquentCollection([]));
 
         $programa1 = new \stdClass();
-        $programa1->nombre = 'Programa 1';
+        $programa1->nombre = self::TEST_NOMBRE_PROGRAMA_1;
         $programa1->total_aspirantes = 20;
         $programa1->aceptados = 10;
         $programa1->pendientes = 10;
@@ -725,7 +724,7 @@ class EstadisticaComplementarioServiceTest extends TestCase
         $estadisticas = $this->service->obtenerEstadisticasReales();
 
         $this->assertCount(2, $estadisticas['programas_demanda']);
-        $this->assertEquals('Programa 1', $estadisticas['programas_demanda'][0]['programa']);
+        $this->assertEquals(self::TEST_NOMBRE_PROGRAMA_1, $estadisticas['programas_demanda'][0]['programa']);
         $this->assertEquals(20, $estadisticas['programas_demanda'][0]['total_aspirantes']);
     }
 

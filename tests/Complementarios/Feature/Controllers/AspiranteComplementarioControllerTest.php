@@ -10,12 +10,15 @@ use App\Models\User;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Spatie\Permission\Models\Permission;
 use PHPUnit\Framework\Attributes\Test;
+use Tests\Complementarios\Concerns\SeedsComplementariosDatabase;
 
 class AspiranteComplementarioControllerTest extends TestCase
 {
     use RefreshDatabase;
+    use SeedsComplementariosDatabase;
 
     private const TEST_NUMERO_DOCUMENTO = '1234567890';
+    private const NUMERO_DOCUMENTO_NO_EXISTE = '9999999999';
 
     protected User $user;
 
@@ -23,24 +26,7 @@ class AspiranteComplementarioControllerTest extends TestCase
     {
         parent::setUp();
         
-        // Ejecutar seeders necesarios para las pruebas
-        $this->seed([
-            \Database\Seeders\RolePermissionSeeder::class,
-            \Database\Seeders\ParametroSeeder::class,
-            \Database\Seeders\TemaSeeder::class,
-            \Database\Seeders\PaisSeeder::class,
-            \Database\Seeders\DepartamentoSeeder::class,
-            \Database\Seeders\MunicipioSeeder::class,
-            \Database\Seeders\PersonaSeeder::class,
-            \Database\Seeders\UsersSeeder::class,
-            \Database\Seeders\RegionalSeeder::class,
-            \Database\Seeders\CentroFormacionSeeder::class,
-            \Database\Seeders\SedeSeeder::class,
-            \Database\Seeders\BloqueSeeder::class,
-            \Database\Seeders\PisoSeeder::class,
-            \Database\Seeders\AmbienteSeeder::class,
-            \Database\Seeders\JornadaFormacionSeeder::class,
-        ]);
+        $this->seedComplementariosDatabaseIfNeeded();
         
         $this->user = User::factory()->create();
         
@@ -170,12 +156,12 @@ class AspiranteComplementarioControllerTest extends TestCase
 
         // El servicio valida si existe la persona y devuelve JSON con success: false
         $response = $this->post(route('programas-complementarios.agregar-aspirante', $programa->id), [
-            'numero_documento' => '9999999999',
+            'numero_documento' => self::NUMERO_DOCUMENTO_NO_EXISTE,
         ]);
 
         $response->assertStatus(200);
         $response->assertJson(['success' => false]);
-        $response->assertJsonFragment(['message' => 'No se encontró ninguna persona registrada con el número de documento "9999999999".']);
+        $response->assertJsonFragment(['message' => 'No se encontró ninguna persona registrada con el número de documento "' . self::NUMERO_DOCUMENTO_NO_EXISTE . '".']);
     }
 
     #[Test]
@@ -274,7 +260,7 @@ class AspiranteComplementarioControllerTest extends TestCase
     public function no_agrega_aspirante_si_programa_no_existe()
     {
         $this->actingAs($this->user);
-        $persona = Persona::factory()->create(['numero_documento' => self::TEST_NUMERO_DOCUMENTO]);
+        Persona::factory()->create(['numero_documento' => self::TEST_NUMERO_DOCUMENTO]);
 
         $response = $this->post(route('programas-complementarios.agregar-aspirante', 99999), [
             'numero_documento' => self::TEST_NUMERO_DOCUMENTO,
@@ -406,7 +392,7 @@ class AspiranteComplementarioControllerTest extends TestCase
     {
         $this->actingAs($this->user);
         
-        $persona = Persona::factory()->create([
+        Persona::factory()->create([
             'numero_documento' => self::TEST_NUMERO_DOCUMENTO,
         ]);
 
@@ -437,7 +423,7 @@ class AspiranteComplementarioControllerTest extends TestCase
         $this->actingAs($this->user);
 
         $response = $this->post(route('aspirantes.buscar-persona'), [
-            'numero_documento' => '9999999999',
+            'numero_documento' => self::NUMERO_DOCUMENTO_NO_EXISTE,
         ]);
 
         $response->assertStatus(200);
@@ -466,11 +452,11 @@ class AspiranteComplementarioControllerTest extends TestCase
         // Crear temas necesarios con parámetros para evitar errores en el controlador
         $temaTipoDoc = \App\Models\Tema::firstOrCreate(['id' => 2], ['name' => 'TIPO DE DOCUMENTO']);
         $temaGenero = \App\Models\Tema::firstOrCreate(['id' => 3], ['name' => 'GENERO']);
-        $temaCaracterizacion = \App\Models\Tema::firstOrCreate(['id' => 16], ['name' => 'CARACTERIZACION COMPLEMENTARIA']);
+        \App\Models\Tema::firstOrCreate(['id' => 16], ['name' => 'CARACTERIZACION COMPLEMENTARIA']);
         
         // Crear parámetros básicos si no existen
         $parametro1 = \App\Models\Parametro::firstOrCreate(['id' => 1], ['name' => 'CEDULA']);
-        $parametro2 = \App\Models\Parametro::firstOrCreate(['id' => 2], ['name' => 'TARJETA IDENTIDAD']);
+        \App\Models\Parametro::firstOrCreate(['id' => 2], ['name' => 'TARJETA IDENTIDAD']);
         $parametro3 = \App\Models\Parametro::firstOrCreate(['id' => 3], ['name' => 'MASCULINO']);
         
         // Asociar parámetros a temas si no están asociados
@@ -480,6 +466,10 @@ class AspiranteComplementarioControllerTest extends TestCase
         if (!$temaGenero->parametros()->where('parametros.id', $parametro3->id)->exists()) {
             $temaGenero->parametros()->attach($parametro3->id, ['status' => 1]);
         }
+        
+        // Recargar relaciones para que estén disponibles
+        $temaTipoDoc->load('parametros');
+        $temaGenero->load('parametros');
         
         $programa = ComplementarioOfertado::factory()->create();
 
@@ -524,7 +514,8 @@ class AspiranteComplementarioControllerTest extends TestCase
 
         $response = $this->post(route('aspirantes.store', $programa->id), []);
 
-        $response->assertStatus(422);
+        $response->assertStatus(302);
+        $response->assertSessionHasErrors(['numero_documento']);
     }
 
     #[Test]
@@ -535,7 +526,7 @@ class AspiranteComplementarioControllerTest extends TestCase
         $programa = ComplementarioOfertado::factory()->create();
 
         $response = $this->post(route('aspirantes.store', $programa->id), [
-            'numero_documento' => '9999999999',
+            'numero_documento' => self::NUMERO_DOCUMENTO_NO_EXISTE,
         ]);
 
         $response->assertStatus(200);
@@ -555,10 +546,11 @@ class AspiranteComplementarioControllerTest extends TestCase
 
         $response->assertStatus(200);
         $response->assertJsonStructure([
-            'total_aspirantes',
-            'excluidos',
+            'total',
             'rechazados',
             'sin_documento',
+            'no_registrados_sofia',
+            'validos',
         ]);
     }
 
@@ -574,8 +566,9 @@ class AspiranteComplementarioControllerTest extends TestCase
         $response->assertStatus(200);
         $data = $response->json();
         
-        $this->assertArrayHasKey('total_aspirantes', $data);
-        $this->assertArrayHasKey('excluidos', $data);
+        $this->assertArrayHasKey('total', $data);
+        $this->assertArrayHasKey('rechazados', $data);
+        $this->assertArrayHasKey('sin_documento', $data);
     }
 
     #[Test]
@@ -583,7 +576,7 @@ class AspiranteComplementarioControllerTest extends TestCase
     {
         $this->actingAs($this->user);
         
-        $persona = Persona::factory()->create([
+        Persona::factory()->create([
             'numero_documento' => self::TEST_NUMERO_DOCUMENTO,
         ]);
 
@@ -608,9 +601,9 @@ class AspiranteComplementarioControllerTest extends TestCase
         $this->actingAs($this->user);
         
         // Crear todos los temas necesarios con parámetros para evitar errores
-        $temaTipoDoc = \App\Models\Tema::firstOrCreate(['id' => 2], ['name' => 'TIPO DE DOCUMENTO']);
-        $temaGenero = \App\Models\Tema::firstOrCreate(['id' => 3], ['name' => 'GENERO']);
-        $temaCaracterizacion = \App\Models\Tema::firstOrCreate(['id' => 16], ['name' => 'CARACTERIZACION COMPLEMENTARIA']);
+        \App\Models\Tema::firstOrCreate(['id' => 2], ['name' => 'TIPO DE DOCUMENTO']);
+        \App\Models\Tema::firstOrCreate(['id' => 3], ['name' => 'GENERO']);
+        \App\Models\Tema::firstOrCreate(['id' => 16], ['name' => 'CARACTERIZACION COMPLEMENTARIA']);
         $temaVia = \App\Models\Tema::firstOrCreate(['id' => 17], ['name' => 'VIA']);
         $temaLetra = \App\Models\Tema::firstOrCreate(['id' => 18], ['name' => 'LETRA']);
         

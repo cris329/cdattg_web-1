@@ -12,10 +12,12 @@ use App\Models\ResultadosAprendizaje;
 use App\Models\GuiasAprendizaje;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use PHPUnit\Framework\Attributes\Test;
+use Tests\Complementarios\Concerns\SeedsComplementariosDatabase;
 
 class ComplementariosViewsTest extends TestCase
 {
     use RefreshDatabase;
+    use SeedsComplementariosDatabase;
 
     protected User $user;
 
@@ -23,24 +25,7 @@ class ComplementariosViewsTest extends TestCase
     {
         parent::setUp();
         
-        // Ejecutar seeders necesarios para las pruebas
-        $this->seed([
-            \Database\Seeders\RolePermissionSeeder::class,
-            \Database\Seeders\ParametroSeeder::class,
-            \Database\Seeders\TemaSeeder::class,
-            \Database\Seeders\PaisSeeder::class,
-            \Database\Seeders\DepartamentoSeeder::class,
-            \Database\Seeders\MunicipioSeeder::class,
-            \Database\Seeders\PersonaSeeder::class,
-            \Database\Seeders\UsersSeeder::class,
-            \Database\Seeders\RegionalSeeder::class,
-            \Database\Seeders\CentroFormacionSeeder::class,
-            \Database\Seeders\SedeSeeder::class,
-            \Database\Seeders\BloqueSeeder::class,
-            \Database\Seeders\PisoSeeder::class,
-            \Database\Seeders\AmbienteSeeder::class,
-            \Database\Seeders\JornadaFormacionSeeder::class,
-        ]);
+        $this->seedComplementariosDatabaseIfNeeded();
         
         $this->user = User::factory()->create();
     }
@@ -63,10 +48,10 @@ class ComplementariosViewsTest extends TestCase
     #[Test]
     public function vista_publica_index_muestra_solo_programas_con_oferta()
     {
-        $programaConOferta = ComplementarioOfertado::factory()->conOferta()->create([
+        ComplementarioOfertado::factory()->conOferta()->create([
             'nombre' => 'Programa con Oferta',
         ]);
-        $programaSinOferta = ComplementarioOfertado::factory()->sinOferta()->create([
+        ComplementarioOfertado::factory()->sinOferta()->create([
             'nombre' => 'Programa sin Oferta',
         ]);
 
@@ -80,7 +65,7 @@ class ComplementariosViewsTest extends TestCase
     #[Test]
     public function vista_publica_index_muestra_informacion_de_programas()
     {
-        $programa = ComplementarioOfertado::factory()->conOferta()->create([
+        ComplementarioOfertado::factory()->conOferta()->create([
             'nombre' => 'Auxiliar de Cocina',
             'duracion' => 60,
             'cupos' => 30,

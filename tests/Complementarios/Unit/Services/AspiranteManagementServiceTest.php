@@ -19,6 +19,8 @@ class AspiranteManagementServiceTest extends TestCase
 {
     private const TEST_PROGRAMA_NOMBRE = 'Programa Test';
     private const TEST_NUMERO_DOCUMENTO = '1234567890';
+    private const TEST_ERROR_INTERNO_SERVIDOR = 'Error interno del servidor';
+    private const TEST_PROGRAMA_NO_ENCONTRADO = 'Programa no encontrado';
 
     protected AspiranteManagementService $service;
     protected $aspiranteRepositoryMock;
@@ -318,7 +320,7 @@ class AspiranteManagementServiceTest extends TestCase
         $resultado = $this->service->agregarAspirante(999, self::TEST_NUMERO_DOCUMENTO);
 
         $this->assertFalse($resultado['success']);
-        $this->assertStringContainsString('Programa no encontrado', $resultado['message']);
+        $this->assertStringContainsString(self::TEST_PROGRAMA_NO_ENCONTRADO, $resultado['message']);
     }
 
     #[Test]
@@ -340,7 +342,7 @@ class AspiranteManagementServiceTest extends TestCase
         $resultado = $this->service->agregarAspirante(1, self::TEST_NUMERO_DOCUMENTO);
 
         $this->assertFalse($resultado['success']);
-        $this->assertStringContainsString('Error interno del servidor', $resultado['message']);
+        $this->assertStringContainsString(self::TEST_ERROR_INTERNO_SERVIDOR, $resultado['message']);
     }
 
     #[Test]
@@ -363,6 +365,8 @@ class AspiranteManagementServiceTest extends TestCase
         \Illuminate\Support\Facades\Auth::shouldReceive('user')
             ->andReturn(new class {
                 public function can($permission) {
+                    // Parameter required by Laravel's Authorizable interface signature
+                    unset($permission);
                     return true;
                 }
             });
@@ -395,6 +399,8 @@ class AspiranteManagementServiceTest extends TestCase
         \Illuminate\Support\Facades\Auth::shouldReceive('user')
             ->andReturn(new class {
                 public function can($permission) {
+                    // Parameter required by Laravel's Authorizable interface signature
+                    unset($permission);
                     return false;
                 }
             });
@@ -412,6 +418,8 @@ class AspiranteManagementServiceTest extends TestCase
         \Illuminate\Support\Facades\Auth::shouldReceive('user')
             ->andReturn(new class {
                 public function can($permission) {
+                    // Parameter required by Laravel's Authorizable interface signature
+                    unset($permission);
                     return true;
                 }
             });
@@ -424,7 +432,7 @@ class AspiranteManagementServiceTest extends TestCase
         $resultado = $this->service->rechazarAspirante(999, 1);
 
         $this->assertFalse($resultado['success']);
-        $this->assertStringContainsString('Programa no encontrado', $resultado['message']);
+        $this->assertStringContainsString(self::TEST_PROGRAMA_NO_ENCONTRADO, $resultado['message']);
     }
 
     #[Test]
@@ -436,6 +444,8 @@ class AspiranteManagementServiceTest extends TestCase
         \Illuminate\Support\Facades\Auth::shouldReceive('user')
             ->andReturn(new class {
                 public function can($permission) {
+                    // Parameter required by Laravel's Authorizable interface signature
+                    unset($permission);
                     return true;
                 }
             });
@@ -462,6 +472,8 @@ class AspiranteManagementServiceTest extends TestCase
         \Illuminate\Support\Facades\Auth::shouldReceive('user')
             ->andReturn(new class {
                 public function can($permission) {
+                    // Parameter required by Laravel's Authorizable interface signature
+                    unset($permission);
                     return true;
                 }
             });
@@ -475,7 +487,7 @@ class AspiranteManagementServiceTest extends TestCase
 
         $this->assertFalse($resultado['success']);
         $this->assertEquals(500, $resultado['status_code']);
-        $this->assertStringContainsString('Error interno del servidor', $resultado['message']);
+        $this->assertStringContainsString(self::TEST_ERROR_INTERNO_SERVIDOR, $resultado['message']);
     }
 
     #[Test]
@@ -545,7 +557,7 @@ class AspiranteManagementServiceTest extends TestCase
         $resultado = $this->service->validarDocumentos(999, $documentoServiceMock);
 
         $this->assertFalse($resultado['success']);
-        $this->assertStringContainsString('Programa no encontrado', $resultado['message']);
+        $this->assertStringContainsString(self::TEST_PROGRAMA_NO_ENCONTRADO, $resultado['message']);
     }
 
     #[Test]
@@ -589,7 +601,7 @@ class AspiranteManagementServiceTest extends TestCase
 
         $this->assertFalse($resultado['success']);
         $this->assertEquals(500, $resultado['status_code']);
-        $this->assertStringContainsString('Error interno del servidor', $resultado['message']);
+        $this->assertStringContainsString(self::TEST_ERROR_INTERNO_SERVIDOR, $resultado['message']);
     }
 
     #[Test]

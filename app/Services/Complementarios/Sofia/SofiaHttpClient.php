@@ -29,7 +29,7 @@ class SofiaHttpClient
 
     public function __construct()
     {
-        $this->baseUrl = rtrim(config('services.playwright.url', 'http://playwright:3000'), '/');
+        $this->baseUrl = rtrim(config('services.playwright.url', 'https://playwright:3000'), '/');
         $this->timeout = self::DEFAULT_TIMEOUT;
     }
 

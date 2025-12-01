@@ -9,10 +9,12 @@ use App\Models\Complementarios\ComplementarioOfertado;
 use App\Models\Persona;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use PHPUnit\Framework\Attributes\Test;
+use Tests\Complementarios\Concerns\SeedsComplementariosDatabase;
 
 class AspiranteComplementarioRepositoryTest extends TestCase
 {
     use RefreshDatabase;
+    use SeedsComplementariosDatabase;
 
     protected AspiranteComplementarioRepository $repository;
 
@@ -20,25 +22,7 @@ class AspiranteComplementarioRepositoryTest extends TestCase
     {
         parent::setUp();
         
-        // Ejecutar seeders necesarios para las pruebas
-        // Estos datos son requeridos por las claves foráneas en PersonaFactory y ComplementarioOfertado
-        $this->seed([
-            \Database\Seeders\RolePermissionSeeder::class,
-            \Database\Seeders\ParametroSeeder::class,
-            \Database\Seeders\TemaSeeder::class,
-            \Database\Seeders\PaisSeeder::class,
-            \Database\Seeders\DepartamentoSeeder::class,
-            \Database\Seeders\MunicipioSeeder::class,
-            \Database\Seeders\PersonaSeeder::class,
-            \Database\Seeders\UsersSeeder::class,
-            \Database\Seeders\RegionalSeeder::class,
-            \Database\Seeders\CentroFormacionSeeder::class,
-            \Database\Seeders\SedeSeeder::class,
-            \Database\Seeders\BloqueSeeder::class,
-            \Database\Seeders\PisoSeeder::class,
-            \Database\Seeders\AmbienteSeeder::class,
-            \Database\Seeders\JornadaFormacionSeeder::class,
-        ]);
+        $this->seedComplementariosDatabaseIfNeeded();
         
         $this->repository = new AspiranteComplementarioRepository();
     }
@@ -360,9 +344,10 @@ class AspiranteComplementarioRepositoryTest extends TestCase
 
         $this->assertGreaterThan(0, $tendencia->count());
         $tendencia->each(function ($item) {
-            $this->assertObjectHasProperty('year', $item);
-            $this->assertObjectHasProperty('month', $item);
-            $this->assertObjectHasProperty('total', $item);
+            $this->assertIsObject($item);
+            $this->assertTrue(isset($item->year) || property_exists($item, 'year'));
+            $this->assertTrue(isset($item->month) || property_exists($item, 'month'));
+            $this->assertTrue(isset($item->total) || property_exists($item, 'total'));
         });
     }
 
@@ -379,8 +364,9 @@ class AspiranteComplementarioRepositoryTest extends TestCase
 
         $this->assertGreaterThanOrEqual(2, $distribucion->count());
         $distribucion->each(function ($item) {
-            $this->assertObjectHasProperty('programa', $item);
-            $this->assertObjectHasProperty('total', $item);
+            $this->assertIsObject($item);
+            $this->assertTrue(isset($item->programa) || property_exists($item, 'programa'));
+            $this->assertTrue(isset($item->total) || property_exists($item, 'total'));
         });
     }
 

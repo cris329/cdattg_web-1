@@ -20,6 +20,10 @@ use Illuminate\Support\Facades\Route;
 |
 */
 
+if (!defined('ROUTE_PATTERN_NUMERIC')) {
+    define('ROUTE_PATTERN_NUMERIC', '[0-9]+');
+}
+
 $loadRouteFolders = static function (array $folders, array $middleware = ['web']): void {
     foreach ($folders as $folder) {
         foreach (glob(routes_path($folder) . '/*.php') as $routeFile) {
@@ -59,16 +63,16 @@ Route::middleware('web')->group(function () {
                 ->name('validar-documento');
 
             Route::get('{programa}', [ProgramaComplementarioController::class, 'verPrograma'])
-                ->where('programa', '[0-9]+') // Solo acepta IDs numéricos
+                ->where('programa', ROUTE_PATTERN_NUMERIC) // Solo acepta IDs numéricos
                 ->name('show');
 
             // Rutas para documentos
             Route::get('{id}/formulario-documentos', [\App\Http\Controllers\Complementarios\DocumentoComplementarioController::class, 'formularioDocumentos'])
-                ->where('id', '[0-9]+')
+                ->where('id', ROUTE_PATTERN_NUMERIC)
                 ->name('formulario-documentos');
 
             Route::post('{id}/subir-documentos', [\App\Http\Controllers\Complementarios\DocumentoComplementarioController::class, 'subirDocumento'])
-                ->where('id', '[0-9]+')
+                ->where('id', ROUTE_PATTERN_NUMERIC)
                 ->name('subir-documentos');
         });
 
