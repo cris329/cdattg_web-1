@@ -302,5 +302,249 @@ class SofiaValidationServiceTest extends TestCase
         $this->assertEquals(1, $progress->processed_aspirantes);
         $this->assertEquals(0, $progress->successful_validations);
     }
+
+    #[Test]
+    public function registra_auditoria_como_advertencia_para_estado_no_registrado(): void
+    {
+        $persona = Persona::factory()->create([
+            'numero_documento' => self::TEST_NUMERO_DOCUMENTO,
+            'estado_sofia' => 1,
+        ]);
+
+        $aspirante = AspiranteComplementario::factory()->create([
+            'persona_id' => $persona->id,
+        ]);
+
+        $this->httpClientMock->shouldReceive('validate')
+            ->andReturn('NO_REGISTRADO');
+
+        $this->stateMapperMock->shouldReceive('mapToState')
+            ->andReturn(0);
+
+        $this->stateMapperMock->shouldReceive('getStateLabel')
+            ->andReturn('No registrado');
+
+        $this->auditoriaServiceMock->shouldReceive('registrarValidacionSenasofiaplus')
+            ->once()
+            ->with(
+                $aspirante->id,
+                'advertencia',
+                Mockery::type('string'),
+                Mockery::type('array')
+            );
+
+        $this->service->validateAspirante($aspirante, 1);
+    }
+
+    #[Test]
+    public function registra_auditoria_como_exitoso_para_estado_requiere_cambio(): void
+    {
+        $persona = Persona::factory()->create([
+            'numero_documento' => self::TEST_NUMERO_DOCUMENTO,
+            'estado_sofia' => 0,
+        ]);
+
+        $aspirante = AspiranteComplementario::factory()->create([
+            'persona_id' => $persona->id,
+        ]);
+
+        $this->httpClientMock->shouldReceive('validate')
+            ->andReturn('REQUIERE_CAMBIO');
+
+        $this->stateMapperMock->shouldReceive('mapToState')
+            ->andReturn(2);
+
+        $this->stateMapperMock->shouldReceive('getStateLabel')
+            ->andReturn('Requiere cambio');
+
+        $this->auditoriaServiceMock->shouldReceive('registrarValidacionSenasofiaplus')
+            ->once()
+            ->with(
+                $aspirante->id,
+                'exitoso',
+                Mockery::type('string'),
+                Mockery::type('array')
+            );
+
+        $resultado = $this->service->validateAspirante($aspirante, 1);
+
+        $this->assertTrue($resultado['success']);
+        $this->assertEquals(2, $resultado['estado']);
+    }
+
+    #[Test]
+    public function actualiza_progreso_con_estado_no_registrado(): void
+    {
+        $persona = Persona::factory()->create([
+            'numero_documento' => self::TEST_NUMERO_DOCUMENTO,
+            'estado_sofia' => 1,
+        ]);
+
+        $aspirante = AspiranteComplementario::factory()->create([
+            'persona_id' => $persona->id,
+        ]);
+
+        $progress = SofiaValidationProgress::factory()->create([
+            'processed_aspirantes' => 0,
+            'successful_validations' => 0,
+        ]);
+
+        $this->httpClientMock->shouldReceive('validate')
+            ->andReturn('NO_REGISTRADO');
+
+        $this->stateMapperMock->shouldReceive('mapToState')
+            ->andReturn(0);
+
+        $this->stateMapperMock->shouldReceive('getStateLabel')
+            ->andReturn('No registrado');
+
+        $this->auditoriaServiceMock->shouldReceive('registrarValidacionSenasofiaplus');
+
+        $this->service->validateAspirante($aspirante, 1, $progress);
+
+        $progress->refresh();
+        $this->assertEquals(1, $progress->processed_aspirantes);
+        $this->assertEquals(1, $progress->successful_validations);
+    }
+
+    #[Test]
+    public function actualiza_progreso_con_estado_requiere_cambio(): void
+    {
+        $persona = Persona::factory()->create([
+            'numero_documento' => self::TEST_NUMERO_DOCUMENTO,
+            'estado_sofia' => 0,
+        ]);
+
+        $aspirante = AspiranteComplementario::factory()->create([
+            'persona_id' => $persona->id,
+        ]);
+
+        $progress = SofiaValidationProgress::factory()->create([
+            'processed_aspirantes' => 0,
+            'successful_validations' => 0,
+        ]);
+
+        $this->httpClientMock->shouldReceive('validate')
+            ->andReturn('REQUIERE_CAMBIO');
+
+        $this->stateMapperMock->shouldReceive('mapToState')
+            ->andReturn(2);
+
+        $this->stateMapperMock->shouldReceive('getStateLabel')
+            ->andReturn('Requiere cambio');
+
+        $this->auditoriaServiceMock->shouldReceive('registrarValidacionSenasofiaplus');
+
+        $this->service->validateAspirante($aspirante, 1, $progress);
+
+        $progress->refresh();
+        $this->assertEquals(1, $progress->processed_aspirantes);
+        $this->assertEquals(1, $progress->successful_validations);
+    }
+
+    #[Test]
+    public function no_actualiza_progreso_si_no_se_proporciona(): void
+    {
+        $persona = Persona::factory()->create([
+            'numero_documento' => self::TEST_NUMERO_DOCUMENTO,
+            'estado_sofia' => 0,
+        ]);
+
+        $aspirante = AspiranteComplementario::factory()->create([
+            'persona_id' => $persona->id,
+        ]);
+
+        $this->httpClientMock->shouldReceive('validate')
+            ->andReturn('YA_EXISTE');
+
+        $this->stateMapperMock->shouldReceive('mapToState')
+            ->andReturn(1);
+
+        $this->stateMapperMock->shouldReceive('getStateLabel')
+            ->andReturn('Registrado');
+
+        $this->auditoriaServiceMock->shouldReceive('registrarValidacionSenasofiaplus');
+
+        // No debería lanzar excepción aunque no haya progress
+        $resultado = $this->service->validateAspirante($aspirante, 1, null);
+
+        $this->assertTrue($resultado['success']);
+    }
+
+    #[Test]
+    public function retorna_datos_completos_en_respuesta_exitosa(): void
+    {
+        $persona = Persona::factory()->create([
+            'numero_documento' => self::TEST_NUMERO_DOCUMENTO,
+            'estado_sofia' => 0,
+        ]);
+
+        $aspirante = AspiranteComplementario::factory()->create([
+            'persona_id' => $persona->id,
+        ]);
+
+        $this->httpClientMock->shouldReceive('validate')
+            ->andReturn('YA_EXISTE');
+
+        $this->stateMapperMock->shouldReceive('mapToState')
+            ->andReturn(1);
+
+        $this->stateMapperMock->shouldReceive('getStateLabel')
+            ->andReturn('Registrado');
+
+        $this->auditoriaServiceMock->shouldReceive('registrarValidacionSenasofiaplus');
+
+        $resultado = $this->service->validateAspirante($aspirante, 1);
+
+        $this->assertTrue($resultado['success']);
+        $this->assertEquals(self::TEST_NUMERO_DOCUMENTO, $resultado['cedula']);
+        $this->assertEquals('YA_EXISTE', $resultado['resultado']);
+        $this->assertEquals(1, $resultado['estado']);
+        $this->assertArrayHasKey('duration', $resultado);
+        $this->assertIsFloat($resultado['duration']);
+    }
+
+    #[Test]
+    public function maneja_error_con_datos_completos_en_respuesta(): void
+    {
+        $persona = Persona::factory()->create([
+            'numero_documento' => self::TEST_NUMERO_DOCUMENTO,
+            'estado_sofia' => 0,
+        ]);
+
+        $aspirante = AspiranteComplementario::factory()->create([
+            'persona_id' => $persona->id,
+        ]);
+
+        $exception = new \RuntimeException('Error de conexión');
+
+        $this->httpClientMock->shouldReceive('validate')
+            ->once()
+            ->andThrow($exception);
+
+        $this->auditoriaServiceMock->shouldReceive('registrarValidacionSenasofiaplus')
+            ->once()
+            ->with(
+                $aspirante->id,
+                'error',
+                Mockery::on(function ($message) {
+                    return str_contains($message, 'Error con cedula');
+                }),
+                Mockery::on(function ($data) {
+                    return isset($data['cedula']) &&
+                           isset($data['complementario_id']) &&
+                           isset($data['exception_message']) &&
+                           isset($data['exception_type']) &&
+                           $data['cedula'] === self::TEST_NUMERO_DOCUMENTO;
+                })
+            );
+
+        $resultado = $this->service->validateAspirante($aspirante, 1);
+
+        $this->assertFalse($resultado['success']);
+        $this->assertEquals(self::TEST_NUMERO_DOCUMENTO, $resultado['cedula']);
+        $this->assertArrayHasKey('error', $resultado);
+        $this->assertStringContainsString('Error con cedula', $resultado['error']);
+    }
 }
 

@@ -218,19 +218,19 @@ class AspiranteComplementarioController extends Controller
             : collect();
         
         $temaVia = $this->temaRepository->obtenerVias();
-        $vias = $temaVia && $temaVia->parametros->count() > 0
-            ? $temaVia->parametros()->where('parametros_temas.status', 1)->orderBy('parametros.name')->get(['parametros.id', 'parametros.name'])
-            : collect();
+        $vias = $temaVia && $temaVia->parametros && $temaVia->parametros->count() > 0
+            ? $temaVia
+            : (object) ['parametros' => collect()];
         
         $temaLetra = $this->temaRepository->obtenerLetras();
-        $letras = $temaLetra && $temaLetra->parametros->count() > 0
-            ? $temaLetra->parametros()->where('parametros_temas.status', 1)->orderBy('parametros.name')->get(['parametros.id', 'parametros.name'])
-            : collect();
+        $letras = $temaLetra && $temaLetra->parametros && $temaLetra->parametros->count() > 0
+            ? $temaLetra
+            : (object) ['parametros' => collect()];
         
         $temaCardinal = $this->temaRepository->obtenerCardinales();
-        $cardinales = $temaCardinal && $temaCardinal->parametros->count() > 0
-            ? $temaCardinal->parametros()->where('parametros_temas.status', 1)->orderBy('parametros.name')->get(['parametros.id', 'parametros.name'])
-            : collect();
+        $cardinales = $temaCardinal && $temaCardinal->parametros && $temaCardinal->parametros->count() > 0
+            ? $temaCardinal
+            : (object) ['parametros' => collect()];
         
         $paises = Pais::all();
         $departamentos = Departamento::all();
