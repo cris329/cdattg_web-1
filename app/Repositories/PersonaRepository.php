@@ -48,13 +48,23 @@ class PersonaRepository
      */
     public function create(array $data): Persona
     {
+        // Extraer caracterizaciones si existen
+        $caracterizacionesIds = $this->extraerCaracterizacionIds($data);
+
         // Agregar datos de auditoría por defecto
         $data = array_merge($data, [
             'user_create_id' => auth()->id() ?? 1,
             'user_edit_id' => auth()->id() ?? 1,
         ]);
 
-        return Persona::create($data);
+        $persona = Persona::create($data);
+        
+        // Sincronizar caracterizaciones si existen
+        if (!empty($caracterizacionesIds)) {
+            $this->syncCaracterizaciones($persona, $caracterizacionesIds);
+        }
+
+        return $persona;
     }
 
     /**
@@ -62,10 +72,20 @@ class PersonaRepository
      */
     public function update(Persona $persona, array $data): bool
     {
+        // Extraer caracterizaciones si existen
+        $caracterizacionesIds = $this->extraerCaracterizacionIds($data);
+
         // Agregar datos de auditoría
         $data['user_edit_id'] = auth()->id() ?? 1;
 
-        return $persona->update($data);
+        $updated = $persona->update($data);
+
+        // Sincronizar caracterizaciones si existen
+        if (!empty($caracterizacionesIds)) {
+            $this->syncCaracterizaciones($persona, $caracterizacionesIds);
+        }
+
+        return $updated;
     }
 
     /**
@@ -78,12 +98,52 @@ class PersonaRepository
             $data['email']
         );
 
+        // Extraer caracterizaciones si existen
+        $caracterizacionesIds = $this->extraerCaracterizacionIds($data);
+
         if ($persona) {
             $this->update($persona, $data);
-            return $persona->fresh();
+            $this->syncCaracterizaciones($persona, $caracterizacionesIds);
+            return $persona->fresh(['caracterizacionesComplementarias', 'caracterizacion']);
         }
 
-        return $this->create($data);
+        $persona = $this->create($data);
+        $this->syncCaracterizaciones($persona, $caracterizacionesIds);
+        return $persona->fresh(['caracterizacionesComplementarias', 'caracterizacion']);
+    }
+
+    /**
+     * Extraer IDs de caracterización del array de datos
+     */
+    private function extraerCaracterizacionIds(array &$data): array
+    {
+        $ids = collect($data['caracterizacion_ids'] ?? [])
+            ->filter()
+            ->map(fn($id) => (int) $id)
+            ->unique()
+            ->values()
+            ->all();
+
+        unset($data['caracterizacion_ids']);
+
+        return $ids;
+    }
+
+    /**
+     * Sincronizar caracterizaciones de persona
+     */
+    private function syncCaracterizaciones(Persona $persona, array $caracterizacionesIds): void
+    {
+        // Guardar caracterizaciones múltiples en la tabla pivote
+        $persona->caracterizacionesComplementarias()->sync($caracterizacionesIds);
+        
+        // Guardar la primera caracterización como caracterización principal en parametro_id
+        if (!empty($caracterizacionesIds)) {
+            $persona->update(['parametro_id' => $caracterizacionesIds[0]]);
+        } else {
+            // Si no hay caracterizaciones, limpiar el campo parametro_id
+            $persona->update(['parametro_id' => null]);
+        }
     }
 
     /**
