@@ -47,6 +47,12 @@ class ProductoControllerTest extends TestCase
     {
         parent::setUp();
         
+        // Desactivar CSRF para tests
+        $this->withoutMiddleware([
+            \Illuminate\Foundation\Http\Middleware\VerifyCsrfToken::class,
+            \App\Http\Middleware\VerifyCsrfToken::class,
+        ]);
+        
         // Ejecutar migraciones y seeders de todos los módulos
         $this->migrateDatabases();
         

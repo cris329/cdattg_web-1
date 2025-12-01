@@ -7,29 +7,18 @@ use App\Http\Controllers\Inventario\ProductoController;
 Route::prefix('inventario')
     ->name('inventario.')
     ->group(function () {
-        // Rutas e-commerce (estilo moderno) - DEBEN IR ANTES del resource
+        // Rutas específicas ANTES del resource (sin parámetros dinámicos que puedan entrar en conflicto)
         Route::get('productos/catalogo', [ProductoController::class, 'catalogo'])
             ->name('productos.catalogo');
         
-        // Ruta para detalles del producto (en modal)
-        Route::get('productos/detalles/{id}', [ProductoController::class, 'detalles'])
-            ->name('productos.detalles');
+        Route::get('productos/buscar', [ProductoController::class, 'buscar'])
+            ->name('productos.buscar');
         
         // Rutas AJAX para funcionalidades e-commerce
         Route::post('productos/agregar-carrito', [ProductoController::class, 'agregarAlCarrito'])
             ->name('productos.agregar-carrito');
         
-        Route::get('productos/buscar', [ProductoController::class, 'buscar'])
-            ->name('productos.buscar');
-        
-        // Ruta para búsqueda por código de barras
-        Route::get('/productos/buscar/{codigo}', [ProductoController::class, 'buscarPorCodigo']);
-        
-        // Ruta para imprimir etiqueta de código de barras
-        Route::get('productos/{id}/etiqueta', [ProductoController::class, 'etiqueta'])
-            ->name('productos.etiqueta');
-            
-        // Rutas administrativas - resource al final
+        // Rutas administrativas - resource (debe ir antes de rutas con parámetros dinámicos)
         Route::resource('productos', ProductoController::class)->names([
             'index' => 'productos.index',
             'create' => 'productos.create',
@@ -39,4 +28,14 @@ Route::prefix('inventario')
             'update' => 'productos.update',
             'destroy' => 'productos.destroy',
         ]);
+        
+        // Rutas con parámetros dinámicos DESPUÉS del resource
+        Route::get('productos/detalles/{id}', [ProductoController::class, 'detalles'])
+            ->name('productos.detalles');
+        
+        Route::get('productos/buscar/{codigo}', [ProductoController::class, 'buscarPorCodigo'])
+            ->name('productos.buscar-codigo');
+        
+        Route::get('productos/{id}/etiqueta', [ProductoController::class, 'etiqueta'])
+            ->name('productos.etiqueta');
     });

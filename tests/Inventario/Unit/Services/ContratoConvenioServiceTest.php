@@ -57,7 +57,7 @@ class ContratoConvenioServiceTest extends TestCase
             ->with(Mockery::on(function ($argument) {
                 return $argument['numero_contrato'] === 'CONT-001' &&
                        isset($argument['user_create_id']) &&
-                       isset($argument['user_edit_id']);
+                       isset($argument['user_update_id']);
             }))
             ->andReturn($contratoMock);
 
@@ -82,7 +82,7 @@ class ContratoConvenioServiceTest extends TestCase
             ->once()
             ->with(1, Mockery::on(function ($argument) {
                 return $argument['numero_contrato'] === 'CONT-002' &&
-                       isset($argument['user_edit_id']);
+                       isset($argument['user_update_id']);
             }))
             ->andReturn(true);
 

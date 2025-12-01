@@ -17,6 +17,7 @@ use App\Models\Inventario\DetalleOrden;
 use App\Models\Inventario\Orden;
 use App\Models\Inventario\Producto;
 use App\Models\Parametro;
+use App\Models\ParametroTema;
 use App\Exceptions\AprobacionException;
 use Mockery;
 use PHPUnit\Framework\Attributes\Test;
@@ -80,7 +81,7 @@ class AprobacionServiceTest extends TestCase
     #[Test]
     public function puede_obtener_estado_en_espera(): void
     {
-        $estadoMock = Mockery::mock(Parametro::class)->makePartial();
+        $estadoMock = Mockery::mock(ParametroTema::class)->makePartial();
         $estadoMock->id = self::ID_ESTADO_EN_ESPERA;
         $estadoMock->shouldAllowMockingProtectedMethods();
 
@@ -91,14 +92,14 @@ class AprobacionServiceTest extends TestCase
 
         $resultado = $this->service->obtenerEstadoEnEspera();
 
-        $this->assertInstanceOf(Parametro::class, $resultado);
+        $this->assertInstanceOf(ParametroTema::class, $resultado);
         $this->assertEquals(self::ID_ESTADO_EN_ESPERA, $resultado->id);
     }
 
     #[Test]
     public function puede_obtener_estado_aprobada(): void
     {
-        $estadoMock = Mockery::mock(Parametro::class)->makePartial();
+        $estadoMock = Mockery::mock(ParametroTema::class)->makePartial();
         $estadoMock->id = self::ID_ESTADO_APROBADA;
 
         $this->mockFormOptionsService->shouldReceive('obtenerEstadoOrdenPorNombre')
@@ -108,7 +109,7 @@ class AprobacionServiceTest extends TestCase
 
         $resultado = $this->service->obtenerEstadoAprobada();
 
-        $this->assertInstanceOf(Parametro::class, $resultado);
+        $this->assertInstanceOf(ParametroTema::class, $resultado);
     }
 
     #[Test]
@@ -127,7 +128,7 @@ class AprobacionServiceTest extends TestCase
     #[Test]
     public function puede_obtener_estado_rechazada(): void
     {
-        $estadoMock = Mockery::mock(Parametro::class)->makePartial();
+        $estadoMock = Mockery::mock(ParametroTema::class)->makePartial();
         $estadoMock->id = self::ID_ESTADO_RECHAZADA;
 
         $this->mockFormOptionsService->shouldReceive('obtenerEstadoOrdenPorNombre')
@@ -137,13 +138,13 @@ class AprobacionServiceTest extends TestCase
 
         $resultado = $this->service->obtenerEstadoRechazada();
 
-        $this->assertInstanceOf(Parametro::class, $resultado);
+        $this->assertInstanceOf(ParametroTema::class, $resultado);
     }
 
     #[Test]
     public function puede_obtener_detalles_pendientes(): void
     {
-        $estadoMock = Mockery::mock(Parametro::class)->makePartial();
+        $estadoMock = Mockery::mock(ParametroTema::class)->makePartial();
         $estadoMock->id = self::ID_ESTADO_EN_ESPERA;
 
         $detallesMock = new \Illuminate\Database\Eloquent\Collection([]);

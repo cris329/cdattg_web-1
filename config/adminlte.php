@@ -863,7 +863,7 @@ return [
                     'submenu' => [
                         [
                             'text' => 'Lista de Productos',
-                            'url'  => 'inventario/productos/index',
+                            'url'  => 'inventario/productos',
                             'icon' => $iconoLista,
                             'can'  => $permisoVerProducto,
                         ],
