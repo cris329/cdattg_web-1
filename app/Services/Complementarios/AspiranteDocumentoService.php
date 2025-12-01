@@ -277,7 +277,7 @@ class AspiranteDocumentoService
     /**
      * Agregar páginas al PDF
      */
-    public function agregarPaginasAPDF(Fpdi $pdf, string $tempFilePath): void
+    public function agregarPaginasAPDF($pdf, string $tempFilePath): void
     {
         $pageCount = $pdf->setSourceFile($tempFilePath);
 

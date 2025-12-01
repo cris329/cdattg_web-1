@@ -54,7 +54,7 @@ class AspiranteComplementarioService
     /**
      * Procesar descarga de documentos
      */
-    public function procesarDescargaDocumentos($aspirantes, Fpdi $pdf, $tempDir)
+    public function procesarDescargaDocumentos($aspirantes, $pdf, $tempDir)
     {
         $archivosAgregados = 0;
         $archivosTemporales = [];
@@ -81,7 +81,7 @@ class AspiranteComplementarioService
     /**
      * Procesar documento individual
      */
-    private function procesarDocumentoIndividual($aspirante, Fpdi $pdf, $tempDir, $indice)
+    private function procesarDocumentoIndividual($aspirante, $pdf, $tempDir, $indice)
     {
         $persona = $aspirante->persona;
         $patron = $this->documentoService->construirPatronBusqueda($persona);
@@ -108,7 +108,7 @@ class AspiranteComplementarioService
     /**
      * Generar archivo PDF final
      */
-    public function generarArchivoPDF($programa, Fpdi $pdf, $tempDir, $archivosTemporales)
+    public function generarArchivoPDF($programa, $pdf, $tempDir, $archivosTemporales)
     {
         $pdfFileName = 'cedulas_' . str_replace(' ', '_', $programa->nombre) . '_' .
             now()->format('Y-m-d_H-i-s') . '.pdf';
