@@ -270,8 +270,18 @@ class AspiranteComplementarioController extends Controller
      */
     public function getEstadisticasExclusion(int $complementarioId): JsonResponse
     {
-        $estadisticas = $this->aspiranteRepository->getEstadisticasExclusion($complementarioId);
+        try {
+            $estadisticas = $this->aspiranteRepository->getEstadisticasExclusion($complementarioId);
 
-        return response()->json($estadisticas);
+            return response()->json([
+                'success' => true,
+                'estadisticas' => $estadisticas
+            ]);
+        } catch (\Exception $e) {
+            return response()->json([
+                'success' => false,
+                'message' => 'Error al obtener estadísticas de exclusión: ' . $e->getMessage()
+            ], 500);
+        }
     }
 }
