@@ -46,7 +46,7 @@ class OrdenRepositoryTest extends TestCase
     #[Test]
     public function puede_filtrar_ordenes_por_busqueda()
     {
-        $orden = Orden::factory()->create(['descripcion_orden' => 'ORDEN TEST']);
+        Orden::factory()->create(['descripcion_orden' => 'ORDEN TEST']);
 
         $resultado = $this->repository->obtenerConFiltros(['search' => 'TEST']);
 
@@ -57,7 +57,7 @@ class OrdenRepositoryTest extends TestCase
     public function puede_filtrar_ordenes_por_tipo()
     {
         $orden1 = Orden::factory()->create();
-        $orden2 = Orden::factory()->create();
+        Orden::factory()->create();
 
         $resultado = $this->repository->obtenerConFiltros(['tipo_orden_id' => $orden1->tipo_orden_id]);
 

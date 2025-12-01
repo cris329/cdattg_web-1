@@ -1,7 +1,9 @@
 <?php
 
+
 namespace Database\Factories;
 
+use App\Exceptions\UserFactoryException;
 use App\Models\Persona;
 use App\Models\User;
 use Illuminate\Database\Eloquent\Factories\Factory;
@@ -33,7 +35,7 @@ class UserFactory extends Factory
         
         try {
             $personaId = Persona::query()->inRandomOrder()->value('id');
-        } catch (\Exception $e) {
+        } catch (\Throwable $e) {
             // Ignorar error de consulta, se creará una nueva persona
         }
         
@@ -41,9 +43,9 @@ class UserFactory extends Factory
             try {
                 $persona = Persona::factory()->create();
                 $personaId = $persona->id;
-            } catch (\Exception $e) {
+            } catch (\Throwable $e) {
                 // Si falla la creación del factory, lanzar excepción en lugar de establecer null
-                throw new \RuntimeException(
+                throw new UserFactoryException(
                     'No se pudo crear una Persona para el User. Error: ' . $e->getMessage(),
                     0,
                     $e
@@ -53,7 +55,7 @@ class UserFactory extends Factory
         
         // Validación final: asegurar que persona_id no sea null
         if (!$personaId) {
-            throw new \RuntimeException('persona_id no puede ser null. La tabla users requiere persona_id NOT NULL.');
+            throw new UserFactoryException('persona_id no puede ser null. La tabla users requiere persona_id NOT NULL.');
         }
         
         return [

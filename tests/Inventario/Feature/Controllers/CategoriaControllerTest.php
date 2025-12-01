@@ -49,30 +49,37 @@ class CategoriaControllerTest extends TestCase
     {
         parent::setUp();
         
-        // Ejecutar migraciones y seeders de todos los módulos
-        $this->migrateDatabases();
-        
         // Desactivar CSRF para tests
         $this->withoutMiddleware([
             \Illuminate\Foundation\Http\Middleware\VerifyCsrfToken::class,
             \App\Http\Middleware\VerifyCsrfToken::class,
         ]);
         
-        // Asegurar que los seeders se ejecuten después de RefreshDatabase
-        // RefreshDatabase se ejecuta automáticamente, pero necesitamos los seeders
-        if (!\App\Models\Tema::where('name', self::TEMA_CATEGORIAS)->exists()) {
-            $this->artisan('db:seed', ['--force' => true]);
-        }
+        // Ejecutar solo los seeders necesarios para categorías
+        // RefreshDatabase ya ejecuta las migraciones automáticamente
+        $this->seed([
+            \Database\Seeders\RolePermissionSeeder::class,
+            \Database\Seeders\ParametroSeeder::class,
+            \Database\Seeders\TemaSeeder::class,
+        ]);
 
-        // Crear tema CATEGORIAS
-        $this->temaCategorias = Tema::firstOrCreate(
-            ['name' => self::TEMA_CATEGORIAS],
-            [
+        // Obtener tema CATEGORIAS (el repositorio busca 'CATEGORIAS' sin tilde)
+        $this->temaCategorias = Tema::where('name', 'CATEGORIAS')
+            ->orWhere('name', 'CATEGORÍAS')
+            ->first();
+        
+        if (!$this->temaCategorias) {
+            // Si no existe, crear con el nombre que el repositorio espera
+            $this->temaCategorias = Tema::create([
+                'name' => 'CATEGORIAS',
                 'status' => true,
-                'user_create_id' => 1,
-                'user_edit_id' => 1,
-            ]
-        );
+                'user_create_id' => null,
+                'user_edit_id' => null,
+            ]);
+        } elseif ($this->temaCategorias->name === 'CATEGORÍAS') {
+            // Si existe con tilde, actualizar el nombre para que coincida con lo que busca el repositorio
+            $this->temaCategorias->update(['name' => 'CATEGORIAS']);
+        }
 
         // Crear permisos necesarios
         Permission::firstOrCreate(['name' => self::PERMISSION_VER_CATEGORIA]);

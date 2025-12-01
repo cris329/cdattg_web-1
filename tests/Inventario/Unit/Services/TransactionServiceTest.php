@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace Tests\Inventario\Unit\Services;
 
 use Tests\TestCase;
+use App\Exceptions\TransactionException;
 use App\Inventario\Services\Transaction\TransactionService;
 use Illuminate\Support\Facades\DB;
 use PHPUnit\Framework\Attributes\Test;
@@ -74,9 +75,9 @@ class TransactionServiceTest extends TestCase
     {
         try {
             $this->service->transaction(function () {
-                throw new \RuntimeException('Error de prueba en transacción');
+                throw new TransactionException('Error de prueba en transacción');
             });
-        } catch (\RuntimeException $e) {
+        } catch (TransactionException $e) {
             $this->assertEquals(0, DB::transactionLevel());
             $this->assertEquals('Error de prueba en transacción', $e->getMessage());
         }

@@ -42,18 +42,37 @@ class AprobacionRepositoryTest extends TestCase
     public function puede_crear_aprobacion()
     {
         $detalleOrden = DetalleOrden::factory()->create();
-        $datos = [
-            'detalle_orden_id' => $detalleOrden->id,
-            'estado_aprobacion_id' => 49,
-            'user_create_id' => 1,
-            'user_update_id' => 1,
-        ];
+        $datos = $this->crearDatosAprobacion($detalleOrden->id);
 
         $resultado = $this->repository->crear($datos);
 
+        $this->assertAprobacionCreada($resultado, $detalleOrden->id, 49);
+    }
+
+    /**
+     * Create test data for aprobacion.
+     */
+    private function crearDatosAprobacion(int $detalleOrdenId, int $estadoAprobacionId = 49): array
+    {
+        return [
+            'detalle_orden_id' => $detalleOrdenId,
+            'estado_aprobacion_id' => $estadoAprobacionId,
+            'user_create_id' => 1,
+            'user_update_id' => 1,
+        ];
+    }
+
+    /**
+     * Assert that aprobacion was created correctly.
+     */
+    private function assertAprobacionCreada(
+        Aprobacion $resultado,
+        int $detalleOrdenIdEsperado,
+        int $estadoAprobacionIdEsperado
+    ): void {
         $this->assertInstanceOf(Aprobacion::class, $resultado);
-        $this->assertEquals($detalleOrden->id, $resultado->detalle_orden_id);
-        $this->assertEquals(49, $resultado->estado_aprobacion_id);
+        $this->assertEquals($detalleOrdenIdEsperado, $resultado->detalle_orden_id);
+        $this->assertEquals($estadoAprobacionIdEsperado, $resultado->estado_aprobacion_id);
     }
 }
 

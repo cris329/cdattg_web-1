@@ -41,13 +41,14 @@ class NotificacionControllerTest extends TestCase
             \App\Http\Middleware\VerifyCsrfToken::class,
         ]);
         
-        // Ejecutar migraciones y seeders de todos los módulos
-        $this->migrateDatabases();
-        
-        // Asegurar que los seeders se ejecuten después de RefreshDatabase
-        if (!\App\Models\Tema::where('name', 'CATEGORIAS')->exists()) {
-            $this->artisan('db:seed', ['--force' => true]);
-        }
+        // Ejecutar seeders necesarios para notificaciones
+        // UserFactory necesita ParametroSeeder y TemaSeeder para crear Personas
+        // RefreshDatabase ya ejecuta las migraciones automáticamente
+        $this->seed([
+            \Database\Seeders\RolePermissionSeeder::class,
+            \Database\Seeders\ParametroSeeder::class,
+            \Database\Seeders\TemaSeeder::class,
+        ]);
 
         // Crear permisos necesarios
         Permission::firstOrCreate(['name' => self::PERMISSION_VER_NOTIFICACION]);

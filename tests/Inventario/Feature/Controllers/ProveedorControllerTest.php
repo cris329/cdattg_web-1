@@ -52,13 +52,16 @@ class ProveedorControllerTest extends TestCase
     {
         parent::setUp();
         
-        // Ejecutar migraciones y seeders de todos los módulos
-        $this->migrateDatabases();
-        
-        // Asegurar que los seeders se ejecuten después de RefreshDatabase
-        if (!\App\Models\Pais::where('pais', 'COLOMBIA')->exists()) {
-            $this->artisan('db:seed', ['--force' => true]);
-        }
+        // Ejecutar solo los seeders necesarios para proveedores
+        // RefreshDatabase ya ejecuta las migraciones automáticamente
+        $this->seed([
+            \Database\Seeders\RolePermissionSeeder::class,
+            \Database\Seeders\ParametroSeeder::class,
+            \Database\Seeders\TemaSeeder::class,
+            \Database\Seeders\PaisSeeder::class,
+            \Database\Seeders\DepartamentoSeeder::class,
+            \Database\Seeders\MunicipioSeeder::class,
+        ]);
 
         // Crear país si no existe
         $pais = Pais::firstOrCreate(
@@ -83,22 +86,24 @@ class ProveedorControllerTest extends TestCase
             ['status' => true]
         );
 
-        // Crear estado para proveedores (necesario para el factory)
-        $temaEstados = \App\Models\Tema::firstOrCreate(
-            ['name' => 'ESTADOS'],
-            [
+        // Obtener tema ESTADOS (TemaSeeder ya lo crea)
+        $temaEstados = \App\Models\Tema::where('name', 'ESTADOS')->first();
+        
+        if (!$temaEstados) {
+            $temaEstados = \App\Models\Tema::create([
+                'name' => 'ESTADOS',
                 'status' => true,
-                'user_create_id' => 1,
-                'user_edit_id' => 1,
-            ]
-        );
+                'user_create_id' => null,
+                'user_edit_id' => null,
+            ]);
+        }
 
         $estado = \App\Models\Parametro::firstOrCreate(
             ['name' => 'ACTIVO'],
             [
                 'status' => true,
-                'user_create_id' => 1,
-                'user_edit_id' => 1,
+                'user_create_id' => null,
+                'user_edit_id' => null,
             ]
         );
 
@@ -109,8 +114,8 @@ class ProveedorControllerTest extends TestCase
             ],
             [
                 'status' => true,
-                'user_create_id' => 1,
-                'user_edit_id' => 1,
+                'user_create_id' => null,
+                'user_edit_id' => null,
             ]
         );
 

@@ -42,35 +42,28 @@ class DevolucionRepositoryTest extends TestCase
     #[Test]
     public function puede_obtener_prestamos_pendientes()
     {
-        $orden = Orden::factory()->create(['fecha_devolucion' => now()->addDays(30)]);
-        $detalleOrden = DetalleOrden::factory()->create([
-            'orden_id' => $orden->id,
-        ]);
+        $ordenConDetalle = $this->crearOrdenConDetalle();
+        $resultado = $this->repository->obtenerPrestamosPendientes($ordenConDetalle['detalle']->estado_orden_id);
 
-        $resultado = $this->repository->obtenerPrestamosPendientes($detalleOrden->estado_orden_id);
-
-        $this->assertGreaterThanOrEqual(1, $resultado->total());
+        $this->assertResultadoPaginadoMinimo($resultado, 1);
     }
 
     #[Test]
     public function puede_obtener_historial_devoluciones()
     {
         Devolucion::factory()->count(3)->create();
-
         $resultado = $this->repository->obtenerHistorial();
 
-        $this->assertGreaterThanOrEqual(3, $resultado->total());
+        $this->assertResultadoPaginadoMinimo($resultado, 3);
     }
 
     #[Test]
     public function puede_encontrar_devolucion_con_relaciones()
     {
         $devolucion = Devolucion::factory()->create();
-
         $resultado = $this->repository->encontrarConRelaciones($devolucion->id);
 
-        $this->assertNotNull($resultado);
-        $this->assertTrue($resultado->relationLoaded('detalleOrden'));
+        $this->assertDevolucionEncontradaConRelaciones($resultado, 'detalleOrden');
     }
 
     private const USER_ID_TEST = 1;
@@ -78,34 +71,58 @@ class DevolucionRepositoryTest extends TestCase
     #[Test]
     public function puede_obtener_prestamos_activos_usuario()
     {
-        $orden = Orden::factory()->create([
+        $ordenConDetalle = $this->crearOrdenConDetalle([
             'user_create_id' => self::USER_ID_TEST,
-            'fecha_devolucion' => now()->addDays(30)
         ]);
-        $detalleOrden = DetalleOrden::factory()->create([
-            'orden_id' => $orden->id,
-        ]);
-
         $resultado = $this->repository->obtenerPrestamosActivosUsuario(
             self::USER_ID_TEST,
-            $detalleOrden->estado_orden_id
+            $ordenConDetalle['detalle']->estado_orden_id
         );
 
-        $this->assertGreaterThanOrEqual(1, $resultado->total());
+        $this->assertResultadoPaginadoMinimo($resultado, 1);
     }
 
     #[Test]
     public function puede_obtener_historial_prestamos_usuario()
     {
-        $orden = Orden::factory()->create([
+        $this->crearOrdenConDetalle([
             'user_create_id' => self::USER_ID_TEST,
-            'fecha_devolucion' => now()->addDays(30)
         ]);
-        DetalleOrden::factory()->create(['orden_id' => $orden->id]);
-
         $resultado = $this->repository->obtenerHistorialPrestamosUsuario(self::USER_ID_TEST);
 
-        $this->assertGreaterThanOrEqual(1, $resultado->total());
+        $this->assertResultadoPaginadoMinimo($resultado, 1);
+    }
+
+    /**
+     * Create orden with detalleOrden for testing.
+     */
+    private function crearOrdenConDetalle(array $datosOrden = []): array
+    {
+        $datosOrdenDefault = ['fecha_devolucion' => now()->addDays(30)];
+        $orden = Orden::factory()->create(array_merge($datosOrdenDefault, $datosOrden));
+        $detalleOrden = DetalleOrden::factory()->create(['orden_id' => $orden->id]);
+
+        return [
+            'orden' => $orden,
+            'detalle' => $detalleOrden,
+        ];
+    }
+
+    /**
+     * Assert that paginated result has at least minimum count.
+     */
+    private function assertResultadoPaginadoMinimo($resultado, int $minimo): void
+    {
+        $this->assertGreaterThanOrEqual($minimo, $resultado->total());
+    }
+
+    /**
+     * Assert that devolucion was found with relations loaded.
+     */
+    private function assertDevolucionEncontradaConRelaciones(?Devolucion $resultado, string $relacion): void
+    {
+        $this->assertNotNull($resultado);
+        $this->assertTrue($resultado->relationLoaded($relacion));
     }
 }
 

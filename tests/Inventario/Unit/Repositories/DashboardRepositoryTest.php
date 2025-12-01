@@ -55,20 +55,7 @@ class DashboardRepositoryTest extends TestCase
     #[Test]
     public function puede_obtener_productos_consumibles()
     {
-        // Crear tipo de producto CONSUMIBLE (el método busca por nombre exacto "CONSUMIBLE")
-        $tema = Tema::firstOrCreate(['name' => 'TIPOS DE PRODUCTO'], ['status' => 1]);
-        $parametroConsumible = Parametro::firstOrCreate(
-            ['name' => 'CONSUMIBLE'],
-            ['status' => 1, 'user_create_id' => null, 'user_edit_id' => null]
-        );
-        $parametroTema = ParametroTema::firstOrCreate(
-            [
-                'parametro_id' => $parametroConsumible->id,
-                'tema_id' => $tema->id,
-            ],
-            ['status' => 1, 'user_create_id' => null, 'user_edit_id' => null]
-        );
-
+        $parametroTema = $this->crearTipoProducto('CONSUMIBLE');
         Producto::factory()->create(['tipo_producto_id' => $parametroTema->id]);
 
         $resultado = $this->repository->obtenerProductosConsumibles();
@@ -79,20 +66,7 @@ class DashboardRepositoryTest extends TestCase
     #[Test]
     public function puede_obtener_productos_no_consumibles()
     {
-        // Crear tipo de producto NO CONSUMIBLE (el método busca por nombre exacto "NO CONSUMIBLE")
-        $tema = Tema::firstOrCreate(['name' => 'TIPOS DE PRODUCTO'], ['status' => 1]);
-        $parametroNoConsumible = Parametro::firstOrCreate(
-            ['name' => 'NO CONSUMIBLE'],
-            ['status' => 1, 'user_create_id' => null, 'user_edit_id' => null]
-        );
-        $parametroTema = ParametroTema::firstOrCreate(
-            [
-                'parametro_id' => $parametroNoConsumible->id,
-                'tema_id' => $tema->id,
-            ],
-            ['status' => 1, 'user_create_id' => null, 'user_edit_id' => null]
-        );
-
+        $parametroTema = $this->crearTipoProducto('NO CONSUMIBLE');
         Producto::factory()->create(['tipo_producto_id' => $parametroTema->id]);
 
         $resultado = $this->repository->obtenerProductosNoConsumibles();
@@ -125,20 +99,8 @@ class DashboardRepositoryTest extends TestCase
     #[Test]
     public function puede_obtener_total_categorias()
     {
-        $tema = Tema::create(['name' => 'CATEGORIAS']);
-        $parametro1 = Parametro::create(['name' => 'CATEGORIA 1']);
-        $parametro2 = Parametro::create(['name' => 'CATEGORIA 2']);
-        
-        ParametroTema::create([
-            'parametro_id' => $parametro1->id,
-            'tema_id' => $tema->id,
-            'status' => 1
-        ]);
-        ParametroTema::create([
-            'parametro_id' => $parametro2->id,
-            'tema_id' => $tema->id,
-            'status' => 1
-        ]);
+        $this->crearCategoria('CATEGORIA 1');
+        $this->crearCategoria('CATEGORIA 2');
 
         $resultado = $this->repository->obtenerTotalCategorias();
 
@@ -163,7 +125,7 @@ class DashboardRepositoryTest extends TestCase
     #[Test]
     public function puede_obtener_productos_por_categoria()
     {
-        $categoria = Parametro::create(['name' => 'CATEGORIA TEST']);
+        $categoria = $this->crearCategoria('CATEGORIA TEST');
         Producto::factory()->count(3)->create(['categoria_id' => $categoria->id]);
 
         $resultado = $this->repository->obtenerProductosPorCategoria();
@@ -180,6 +142,49 @@ class DashboardRepositoryTest extends TestCase
 
         $this->assertIsArray($resultado);
         $this->assertLessThanOrEqual(5, count($resultado));
+    }
+
+    /**
+     * Create a tipo de producto (Tema + Parametro + ParametroTema).
+     */
+    private function crearTipoProducto(string $nombreParametro): ParametroTema
+    {
+        $tema = Tema::firstOrCreate(['name' => 'TIPOS DE PRODUCTO'], ['status' => 1]);
+        $parametro = Parametro::firstOrCreate(
+            ['name' => $nombreParametro],
+            ['status' => 1, 'user_create_id' => null, 'user_edit_id' => null]
+        );
+        
+        return ParametroTema::firstOrCreate(
+            [
+                'parametro_id' => $parametro->id,
+                'tema_id' => $tema->id,
+            ],
+            ['status' => 1, 'user_create_id' => null, 'user_edit_id' => null]
+        );
+    }
+
+    /**
+     * Create a categoria (Tema + Parametro + ParametroTema).
+     * Returns the Parametro instance as that's what Producto uses.
+     */
+    private function crearCategoria(string $nombreCategoria): Parametro
+    {
+        $tema = Tema::firstOrCreate(['name' => 'CATEGORIAS'], ['status' => 1]);
+        $parametro = Parametro::firstOrCreate(
+            ['name' => $nombreCategoria],
+            ['status' => 1]
+        );
+        
+        ParametroTema::firstOrCreate(
+            [
+                'parametro_id' => $parametro->id,
+                'tema_id' => $tema->id,
+            ],
+            ['status' => 1]
+        );
+        
+        return $parametro;
     }
 }
 

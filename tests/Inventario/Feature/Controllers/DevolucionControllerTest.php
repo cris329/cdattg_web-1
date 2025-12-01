@@ -40,37 +40,58 @@ class DevolucionControllerTest extends TestCase
     {
         parent::setUp();
         
-        // Ejecutar migraciones y seeders de todos los módulos
-        $this->migrateDatabases();
-        
         // Desactivar CSRF para tests
         $this->withoutMiddleware([
             \Illuminate\Foundation\Http\Middleware\VerifyCsrfToken::class,
             \App\Http\Middleware\VerifyCsrfToken::class,
         ]);
         
-        // Asegurar que los seeders se ejecuten después de RefreshDatabase
-        if (!\App\Models\Pais::where('pais', 'COLOMBIA')->exists()) {
-            $this->artisan('db:seed', ['--force' => true]);
-        }
+        // Ejecutar solo los seeders necesarios para devoluciones (necesita órdenes y productos)
+        $this->seed([
+            \Database\Seeders\RolePermissionSeeder::class,
+            \Database\Seeders\ParametroSeeder::class,
+            \Database\Seeders\TemaSeeder::class,
+            \Database\Seeders\PaisSeeder::class,
+            \Database\Seeders\DepartamentoSeeder::class,
+            \Database\Seeders\MunicipioSeeder::class,
+            \Database\Seeders\PersonaSeeder::class,
+            \Database\Seeders\UsersSeeder::class,
+            \Database\Seeders\RegionalSeeder::class,
+            \Database\Seeders\SedeSeeder::class,
+            \Database\Seeders\BloqueSeeder::class,
+            \Database\Seeders\PisoSeeder::class,
+            \Database\Seeders\AmbienteSeeder::class,
+        ]);
 
-        // Crear tema ESTADOS DE ORDEN si no existe
-        $temaEstados = Tema::firstOrCreate(
-            ['name' => 'ESTADOS DE ORDEN'],
-            [
+        // Obtener temas existentes (TemaSeeder ya los crea)
+        $temaEstados = Tema::where('name', 'ESTADOS DE ORDEN')->first();
+        $temaTipoOrden = Tema::where('name', 'TIPOS DE ORDEN')->first();
+        
+        if (!$temaEstados) {
+            $temaEstados = Tema::create([
+                'name' => 'ESTADOS DE ORDEN',
                 'status' => true,
-                'user_create_id' => 1,
-                'user_edit_id' => 1,
-            ]
-        );
+                'user_create_id' => null,
+                'user_edit_id' => null,
+            ]);
+        }
+        
+        if (!$temaTipoOrden) {
+            $temaTipoOrden = Tema::create([
+                'name' => 'TIPOS DE ORDEN',
+                'status' => true,
+                'user_create_id' => null,
+                'user_edit_id' => null,
+            ]);
+        }
 
         // Crear estado APROBADA para órdenes
         $estadoParametro = Parametro::firstOrCreate(
             ['name' => 'APROBADA'],
             [
                 'status' => true,
-                'user_create_id' => 1,
-                'user_edit_id' => 1,
+                'user_create_id' => null,
+                'user_edit_id' => null,
             ]
         );
 
@@ -81,27 +102,18 @@ class DevolucionControllerTest extends TestCase
             ],
             [
                 'status' => true,
-                'user_create_id' => 1,
-                'user_edit_id' => 1,
+                'user_create_id' => null,
+                'user_edit_id' => null,
             ]
         );
 
         // Crear tipo de orden PRESTAMO
-        $temaTipoOrden = Tema::firstOrCreate(
-            ['name' => 'TIPOS DE ORDEN'],
-            [
-                'status' => true,
-                'user_create_id' => 1,
-                'user_edit_id' => 1,
-            ]
-        );
-
         $tipoPrestamoParametro = Parametro::firstOrCreate(
             ['name' => 'PRESTAMO'],
             [
                 'status' => true,
-                'user_create_id' => 1,
-                'user_edit_id' => 1,
+                'user_create_id' => null,
+                'user_edit_id' => null,
             ]
         );
 
@@ -112,8 +124,8 @@ class DevolucionControllerTest extends TestCase
             ],
             [
                 'status' => true,
-                'user_create_id' => 1,
-                'user_edit_id' => 1,
+                'user_create_id' => null,
+                'user_edit_id' => null,
             ]
         );
 
@@ -123,22 +135,24 @@ class DevolucionControllerTest extends TestCase
             'fecha_devolucion' => now(),
         ]);
 
-        // Crear tipo de producto CONSUMIBLE para permitir devoluciones con cantidad 0
-        $temaTiposProducto = Tema::firstOrCreate(
-            ['name' => 'TIPOS DE PRODUCTO'],
-            [
+        // Obtener tipo de producto CONSUMIBLE (TemaSeeder ya crea el tema)
+        $temaTiposProducto = Tema::where('name', 'TIPOS DE PRODUCTO')->first();
+        
+        if (!$temaTiposProducto) {
+            $temaTiposProducto = Tema::create([
+                'name' => 'TIPOS DE PRODUCTO',
                 'status' => true,
-                'user_create_id' => 1,
-                'user_edit_id' => 1,
-            ]
-        );
+                'user_create_id' => null,
+                'user_edit_id' => null,
+            ]);
+        }
 
         $tipoConsumibleParametro = Parametro::firstOrCreate(
             ['name' => 'CONSUMIBLE'],
             [
                 'status' => true,
-                'user_create_id' => 1,
-                'user_edit_id' => 1,
+                'user_create_id' => null,
+                'user_edit_id' => null,
             ]
         );
 
@@ -149,8 +163,8 @@ class DevolucionControllerTest extends TestCase
             ],
             [
                 'status' => true,
-                'user_create_id' => 1,
-                'user_edit_id' => 1,
+                'user_create_id' => null,
+                'user_edit_id' => null,
             ]
         );
 

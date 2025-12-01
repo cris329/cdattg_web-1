@@ -15,6 +15,7 @@ use App\Models\Ambiente;
 use App\Models\User;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Support\Facades\Validator;
+use Illuminate\Validation\Validator as ValidationValidator;
 use PHPUnit\Framework\Attributes\Test;
 
 class ProductoRequestTest extends TestCase
@@ -48,22 +49,16 @@ class ProductoRequestTest extends TestCase
     public function valida_campos_requeridos_para_store(): void
     {
         $rules = $this->obtenerRules();
-
         $validator = Validator::make([], $rules);
 
         $this->assertTrue($validator->fails());
-        $this->assertArrayHasKey('producto', $validator->errors()->toArray());
-        $this->assertArrayHasKey('tipo_producto_id', $validator->errors()->toArray());
-        $this->assertArrayHasKey('descripcion', $validator->errors()->toArray());
-        $this->assertArrayHasKey('peso', $validator->errors()->toArray());
-        $this->assertArrayHasKey('unidad_medida_id', $validator->errors()->toArray());
-        $this->assertArrayHasKey('cantidad', $validator->errors()->toArray());
-        $this->assertArrayHasKey('estado_producto_id', $validator->errors()->toArray());
-        $this->assertArrayHasKey('categoria_id', $validator->errors()->toArray());
-        $this->assertArrayHasKey('marca_id', $validator->errors()->toArray());
-        $this->assertArrayHasKey('contrato_convenio_id', $validator->errors()->toArray());
-        $this->assertArrayHasKey('ambiente_id', $validator->errors()->toArray());
-        $this->assertArrayHasKey('proveedor_id', $validator->errors()->toArray());
+        $camposRequeridos = [
+            'producto', 'tipo_producto_id', 'descripcion', 'peso',
+            'unidad_medida_id', 'cantidad', 'estado_producto_id',
+            'categoria_id', 'marca_id', 'contrato_convenio_id',
+            'ambiente_id', 'proveedor_id'
+        ];
+        $this->assertCamposTienenError($validator, $camposRequeridos);
     }
 
     #[Test]
@@ -125,92 +120,38 @@ class ProductoRequestTest extends TestCase
     #[Test]
     public function valida_que_producto_exista_en_agregar_carrito(): void
     {
-        $rules = $this->obtenerRulesParaAgregarCarrito();
-
-        $this->validarYVerificarError(
-            [
-                'producto_id' => self::ID_INEXISTENTE,
-                'cantidad' => self::CANTIDAD_VALIDA,
-            ],
-            $rules,
-            'producto_id'
-        );
+        $this->validarCampoEnAgregarCarrito('producto_id', self::ID_INEXISTENTE, self::CANTIDAD_VALIDA);
     }
 
     #[Test]
     public function valida_cantidad_minima_en_agregar_carrito(): void
     {
         $producto = Producto::factory()->create();
-        $rules = $this->obtenerRulesParaAgregarCarrito();
-
-        $this->validarYVerificarError(
-            [
-                'producto_id' => $producto->id,
-                'cantidad' => self::CANTIDAD_INVALIDA,
-            ],
-            $rules,
-            'cantidad'
-        );
+        $this->validarCampoEnAgregarCarrito('cantidad', self::CANTIDAD_INVALIDA, $producto->id, 'producto_id');
     }
 
     #[Test]
     public function valida_existencia_de_tipo_producto(): void
     {
-        $rules = $this->obtenerRules();
-
-        $this->validarYVerificarError(
-            [
-                'producto' => self::PRODUCTO_NUEVO,
-                'tipo_producto_id' => self::ID_INEXISTENTE,
-            ],
-            $rules,
-            'tipo_producto_id'
-        );
+        $this->validarCampoConDatosBaseProducto('tipo_producto_id', self::ID_INEXISTENTE);
     }
 
     #[Test]
     public function valida_peso_minimo(): void
     {
-        $rules = $this->obtenerRules();
-
-        $this->validarYVerificarError(
-            [
-                'producto' => self::PRODUCTO_NUEVO,
-                'peso' => self::PESO_INVALIDO,
-            ],
-            $rules,
-            'peso'
-        );
+        $this->validarCampoConDatosBaseProducto('peso', self::PESO_INVALIDO);
     }
 
     #[Test]
     public function valida_cantidad_minima_en_store(): void
     {
-        $rules = $this->obtenerRules();
-
-        $this->validarYVerificarError(
-            [
-                'producto' => self::PRODUCTO_NUEVO,
-                'cantidad' => self::CANTIDAD_INVALIDA,
-            ],
-            $rules,
-            'cantidad'
-        );
+        $this->validarCampoConDatosBaseProducto('cantidad', self::CANTIDAD_INVALIDA);
     }
 
     #[Test]
     public function valida_imagen_formato_y_tamaño(): void
     {
-        $rules = $this->obtenerRules();
-
-        $this->validarYVerificarError(
-            [
-                'producto' => self::PRODUCTO_NUEVO,
-                'imagen' => 'archivo.pdf',
-            ],
-            $rules,
-            'imagen'
-        );
+        $this->validarCampoConDatosBaseProducto('imagen', 'archivo.pdf');
     }
 
     #[Test]
@@ -266,6 +207,47 @@ class ProductoRequestTest extends TestCase
         }
         
         return $parametro;
+    }
+
+    /**
+     * Validate field with base producto data.
+     */
+    private function validarCampoConDatosBaseProducto(string $campo, mixed $valorInvalido): void
+    {
+        $rules = $this->obtenerRules();
+        $datos = [
+            'producto' => self::PRODUCTO_NUEVO,
+            $campo => $valorInvalido,
+        ];
+        $this->validarYVerificarError($datos, $rules, $campo);
+    }
+
+    /**
+     * Validate field in agregar carrito context.
+     */
+    private function validarCampoEnAgregarCarrito(
+        string $campo,
+        mixed $valorInvalido,
+        mixed $valorValido,
+        string $campoValido = 'cantidad'
+    ): void {
+        $rules = $this->obtenerRulesParaAgregarCarrito();
+        $datos = [
+            $campoValido => $valorValido,
+            $campo => $valorInvalido,
+        ];
+        $this->validarYVerificarError($datos, $rules, $campo);
+    }
+
+    /**
+     * Assert that multiple fields have errors.
+     */
+    private function assertCamposTienenError(ValidationValidator $validator, array $campos): void
+    {
+        $errores = $validator->errors()->toArray();
+        foreach ($campos as $campo) {
+            $this->assertArrayHasKey($campo, $errores);
+        }
     }
 }
 

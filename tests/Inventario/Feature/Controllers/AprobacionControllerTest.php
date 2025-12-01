@@ -41,20 +41,19 @@ class AprobacionControllerTest extends TestCase
     protected function setUp(): void
     {
         parent::setUp();
-
-        // Ejecutar migraciones y seeders de todos los módulos
-        $this->migrateDatabases();
         
-        // Desactivar CSRF para tests (después de migrateDatabases)
+        // Desactivar CSRF para tests
         $this->withoutMiddleware([
             \Illuminate\Foundation\Http\Middleware\VerifyCsrfToken::class,
             \App\Http\Middleware\VerifyCsrfToken::class,
         ]);
         
-        // Asegurar que los seeders se ejecuten después de RefreshDatabase
-        if (!\App\Models\Tema::where('name', self::ESTADO_DE_ORDEN)->exists()) {
-            $this->artisan('db:seed', ['--force' => true]);
-        }
+        // Ejecutar solo los seeders necesarios para aprobaciones
+        $this->seed([
+            \Database\Seeders\RolePermissionSeeder::class,
+            \Database\Seeders\ParametroSeeder::class,
+            \Database\Seeders\TemaSeeder::class,
+        ]);
 
         // Crear tema ESTADOS DE ORDEN si no existe
         $temaEstados = \App\Models\Tema::firstOrCreate(
@@ -62,7 +61,7 @@ class AprobacionControllerTest extends TestCase
             [
                 'status' => true,
                 'user_create_id' => null,
-                'user_edit_id' => null,
+                'user_update_id' => null,
             ]
         );
 
@@ -74,7 +73,7 @@ class AprobacionControllerTest extends TestCase
                 [
                     'status' => true,
                     'user_create_id' => null,
-                    'user_edit_id' => null,
+                    'user_update_id' => null,
                 ]
             );
             
@@ -86,7 +85,7 @@ class AprobacionControllerTest extends TestCase
                 [
                     'status' => true,
                     'user_create_id' => null,
-                    'user_edit_id' => null,
+                    'user_update_id' => null,
                 ]
             );
         }

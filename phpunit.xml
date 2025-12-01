@@ -4,18 +4,34 @@
          bootstrap="vendor/autoload.php"
          colors="true"
          stopOnFailure="false"
-         stopOnError="false"
-> 
-<testsuites>
-    <testsuite name="Unit">
-        <directory>tests/Unit</directory>
-    </testsuite>
-    <testsuite name="Feature">
-        <directory>tests/Feature</directory>
-    </testsuite>
-</testsuites>
+         stopOnError="false">
+
+    <!-- TEST SUITES POR MÓDULO -->
+    <testsuites>
+
+        <!-- Módulo Inventario -->
+        <testsuite name="Inventario">
+            <directory>tests/Inventario</directory>
+        </testsuite>
+
+        <!-- Módulo Complementarios -->
+        <testsuite name="Complementarios">
+            <directory>tests/Complementarios</directory>
+        </testsuite>
+
+    </testsuites>
+
+    <!-- COVERAGE AUTOMÁTICO -->
     <source>
         <include>
+            <!-- Inventario -->
+            <directory>app/Inventario</directory>
+            <directory>app/Models/Inventario</directory>
+            <directory>app/Http/Controllers/Inventario</directory>
+            <directory>app/Http/Requests/Inventario</directory>
+            <directory>app/Livewire/Inventario</directory>
+
+            <!-- Complementarios -->
             <directory>app/Http/Controllers/Complementarios</directory>
             <directory>app/Models/Complementarios</directory>
             <directory>app/Http/Requests/Complementarios</directory>
@@ -28,6 +44,14 @@
 
     <coverage processUncoveredFiles="true">
         <include>
+            <!-- Inventario -->
+            <directory suffix=".php">app/Inventario</directory>
+            <directory suffix=".php">app/Models/Inventario</directory>
+            <directory suffix=".php">app/Http/Controllers/Inventario</directory>
+            <directory suffix=".php">app/Http/Requests/Inventario</directory>
+            <directory suffix=".php">app/Livewire/Inventario</directory>
+
+            <!-- Complementarios -->
             <directory suffix=".php">app/Http/Controllers/Complementarios</directory>
             <directory suffix=".php">app/Models/Complementarios</directory>
             <directory suffix=".php">app/Http/Requests/Complementarios</directory>
@@ -36,6 +60,7 @@
             <directory suffix=".php">app/Jobs/Complementarios</directory>
             <directory suffix=".php">app/Exceptions/Complementarios</directory>
         </include>
+
         <report>
             <text outputFile="php://stdout" />
             <html outputDirectory="storage/coverage" />

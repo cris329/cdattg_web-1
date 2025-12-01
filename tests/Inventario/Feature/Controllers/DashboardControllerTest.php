@@ -31,13 +31,23 @@ class DashboardControllerTest extends TestCase
     {
         parent::setUp();
         
-        // Ejecutar migraciones y seeders de todos los módulos
-        $this->migrateDatabases();
-        
-        // Asegurar que los seeders se ejecuten después de RefreshDatabase
-        if (!\App\Models\Tema::where('name', 'CATEGORIAS')->exists()) {
-            $this->artisan('db:seed', ['--force' => true]);
-        }
+        // Ejecutar solo los seeders necesarios para dashboard (maneja productos, órdenes, etc.)
+        // RefreshDatabase ya ejecuta las migraciones automáticamente
+        $this->seed([
+            \Database\Seeders\RolePermissionSeeder::class,
+            \Database\Seeders\ParametroSeeder::class,
+            \Database\Seeders\TemaSeeder::class,
+            \Database\Seeders\PaisSeeder::class,
+            \Database\Seeders\DepartamentoSeeder::class,
+            \Database\Seeders\MunicipioSeeder::class,
+            \Database\Seeders\PersonaSeeder::class,
+            \Database\Seeders\UsersSeeder::class,
+            \Database\Seeders\RegionalSeeder::class,
+            \Database\Seeders\SedeSeeder::class,
+            \Database\Seeders\BloqueSeeder::class,
+            \Database\Seeders\PisoSeeder::class,
+            \Database\Seeders\AmbienteSeeder::class,
+        ]);
 
         // Crear permisos necesarios
         Permission::firstOrCreate(['name' => self::PERMISSION_VER_DASHBOARD]);

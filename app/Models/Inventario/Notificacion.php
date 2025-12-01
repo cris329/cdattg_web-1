@@ -63,18 +63,13 @@ class Notificacion extends DatabaseNotification
             return [];
         }
 
-        // Si ya es un array, devolverlo
         if (is_array($datos)) {
             return $datos;
         }
 
         // Si es JSON string, decodificarlo
-        if (is_string($datos)) {
-            $decoded = json_decode($datos, true);
-            return is_array($decoded) ? $decoded : [];
-        }
-
-        return [];
+        $decoded = is_string($datos) ? json_decode($datos, true) : null;
+        return is_array($decoded) ? $decoded : [];
     }
 
     /**

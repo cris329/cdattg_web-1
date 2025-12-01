@@ -19,6 +19,7 @@ class ProveedorRequestTest extends TestCase
     use RefreshDatabase;
     
     private const PROVEEDOR_TEST = 'PROVEEDOR TEST';
+    private const NIT_TEST = '123456789';
     protected function setUp(): void
     {
         parent::setUp();
@@ -48,15 +49,15 @@ class ProveedorRequestTest extends TestCase
     }
 
     private function obtenerRulesParaUpdate(Proveedor $proveedor): array
-{
-    $request = new ProveedorRequest();
-    $request->setMethod('PUT');
+    {
+        $request = new ProveedorRequest();
+        $request->setMethod('PUT');
 
-    $resolver = $this->crearRouteResolver($proveedor);
-    $request->setRouteResolver(fn() => $resolver);
+        $resolver = $this->crearRouteResolver($proveedor);
+        $request->setRouteResolver(fn() => $resolver);
 
-    return $request->rules();
-}
+        return $request->rules();
+    }
 
     private function crearRouteResolver(Proveedor $proveedor): object
     {
@@ -110,97 +111,37 @@ class ProveedorRequestTest extends TestCase
     #[Test]
     public function valida_unicidad_de_nit_en_update(): void
     {
-        Proveedor::factory()->create(['nit' => '123456789']);
-        $proveedor2 = Proveedor::factory()->create();
-
-        $rules = $this->obtenerRulesParaUpdate($proveedor2);
-
-        $this->validarYVerificarError(
-            [
-                'proveedor' => 'OTRO PROVEEDOR',
-                'nit' => '123456789',
-            ],
-            $rules,
-            'nit'
-        );
+        $this->validarUnicidadEnUpdate('nit', self::NIT_TEST, ['proveedor' => 'OTRO PROVEEDOR']);
     }
 
     #[Test]
     public function valida_unicidad_de_email_en_update(): void
     {
-        Proveedor::factory()->create(['email' => 'test1@example.com']);
-        $proveedor2 = Proveedor::factory()->create();
-
-        $rules = $this->obtenerRulesParaUpdate($proveedor2);
-
-        $this->validarYVerificarError(
-            [
-                'proveedor' => 'OTRO PROVEEDOR',
-                'email' => 'test1@example.com',
-            ],
-            $rules,
-            'email'
-        );
+        $this->validarUnicidadEnUpdate('email', 'test1@example.com', ['proveedor' => 'OTRO PROVEEDOR']);
     }
 
     #[Test]
     public function valida_formato_de_email(): void
     {
-        $rules = $this->obtenerRules();
-
-        $this->validarYVerificarError(
-            [
-                'proveedor' => self::PROVEEDOR_TEST,
-                'email' => 'email-invalido',
-            ],
-            $rules,
-            'email'
-        );
+        $this->validarCampoConDatosBase('email', 'email-invalido');
     }
 
     #[Test]
     public function valida_longitud_maxima_de_telefono(): void
     {
-        $rules = $this->obtenerRules();
-
-        $this->validarYVerificarError(
-            [
-                'proveedor' => self::PROVEEDOR_TEST,
-                'telefono' => '12345678901',
-            ],
-            $rules,
-            'telefono'
-        );
+        $this->validarCampoConDatosBase('telefono', '12345678901');
     }
 
     #[Test]
     public function valida_existencia_de_departamento(): void
     {
-        $rules = $this->obtenerRules();
-
-        $this->validarYVerificarError(
-            [
-                'proveedor' => self::PROVEEDOR_TEST,
-                'departamento_id' => 99999,
-            ],
-            $rules,
-            'departamento_id'
-        );
+        $this->validarExistenciaRelacion('departamento_id', 99999);
     }
 
     #[Test]
     public function valida_existencia_de_municipio(): void
     {
-        $rules = $this->obtenerRules();
-
-        $this->validarYVerificarError(
-            [
-                'proveedor' => self::PROVEEDOR_TEST,
-                'municipio_id' => 99999,
-            ],
-            $rules,
-            'municipio_id'
-        );
+        $this->validarExistenciaRelacion('municipio_id', 99999);
     }
 
     #[Test]
@@ -214,7 +155,7 @@ class ProveedorRequestTest extends TestCase
 
         $validator = Validator::make([
             'proveedor' => 'PROVEEDOR VALIDO',
-            'nit' => '123456789',
+            'nit' => self::NIT_TEST,
             'email' => 'proveedor@example.com',
             'telefono' => '1234567890',
             'direccion' => 'Dirección del proveedor',
@@ -225,6 +166,50 @@ class ProveedorRequestTest extends TestCase
         ], $rules);
 
         $this->assertFalse($validator->fails());
+    }
+
+    /**
+     * Validate uniqueness in update scenario.
+     * Creates two providers, the first with the conflicting value, and validates
+     * that the second cannot use the same value.
+     */
+    private function validarUnicidadEnUpdate(string $campo, string $valor, array $datosAdicionales = []): void
+    {
+        Proveedor::factory()->create([$campo => $valor]);
+        $proveedor2 = Proveedor::factory()->create();
+
+        $rules = $this->obtenerRulesParaUpdate($proveedor2);
+        $datos = array_merge([$campo => $valor], $datosAdicionales);
+
+        $this->validarYVerificarError($datos, $rules, $campo);
+    }
+
+    /**
+     * Validate existence of a related entity.
+     */
+    private function validarExistenciaRelacion(string $campo, int $idInexistente): void
+    {
+        $rules = $this->obtenerRules();
+        $datos = [
+            'proveedor' => self::PROVEEDOR_TEST,
+            $campo => $idInexistente,
+        ];
+
+        $this->validarYVerificarError($datos, $rules, $campo);
+    }
+
+    /**
+     * Validate a field with base data (proveedor required).
+     */
+    private function validarCampoConDatosBase(string $campo, mixed $valorInvalido): void
+    {
+        $rules = $this->obtenerRules();
+        $datos = [
+            'proveedor' => self::PROVEEDOR_TEST,
+            $campo => $valorInvalido,
+        ];
+
+        $this->validarYVerificarError($datos, $rules, $campo);
     }
 }
 

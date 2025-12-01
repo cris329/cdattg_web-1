@@ -80,124 +80,69 @@ class CarritoRequestTest extends TestCase
     #[Test]
     public function valida_cantidad_requerida_para_actualizar(): void
     {
-        $rules = $this->obtenerRulesParaActualizar();
-
-        $this->validarYVerificarError([], $rules, 'cantidad');
+        $this->validarCampoRequeridoEnActualizar('cantidad');
     }
 
     #[Test]
     public function valida_cantidad_debe_ser_integer_para_actualizar(): void
     {
-        $rules = $this->obtenerRulesParaActualizar();
-
-        $this->validarYVerificarError(
-            ['cantidad' => 'no es numero'],
-            $rules,
-            'cantidad'
-        );
+        $this->validarTipoCampoEnActualizar('cantidad', 'no es numero');
     }
 
     #[Test]
     public function valida_cantidad_minima_para_actualizar(): void
     {
-        $rules = $this->obtenerRulesParaActualizar();
-
-        $this->validarYVerificarError(
-            ['cantidad' => self::CANTIDAD_INVALIDA],
-            $rules,
-            'cantidad'
-        );
+        $this->validarCampoEnActualizar('cantidad', self::CANTIDAD_INVALIDA);
     }
 
     #[Test]
     public function valida_items_requerido_para_agregar(): void
     {
-        $rules = $this->obtenerRules();
-
-        $this->validarYVerificarError([], $rules, 'items');
+        $this->validarCampoRequeridoEnAgregar('items');
     }
 
     #[Test]
     public function valida_items_debe_ser_array(): void
     {
-        $rules = $this->obtenerRules();
-
-        $this->validarYVerificarError(
-            ['items' => 'no es array'],
-            $rules,
-            'items'
-        );
+        $this->validarTipoCampoEnAgregar('items', 'no es array');
     }
 
     #[Test]
     public function valida_items_debe_tener_producto_id(): void
     {
-        $rules = $this->obtenerRules();
-
-        $this->validarYVerificarError(
-            ['items' => [['cantidad' => 1]]],
-            $rules,
-            'items.0.producto_id'
-        );
+        $this->validarItemSinCampo('producto_id', ['cantidad' => 1]);
     }
 
     #[Test]
     public function valida_producto_id_debe_existir(): void
     {
-        $rules = $this->obtenerRules();
-
-        $this->validarYVerificarError(
-            [
-                'items' => [
-                    [
-                        'producto_id' => self::ID_INEXISTENTE,
-                        'cantidad' => 1,
-                    ],
-                ],
-            ],
-            $rules,
-            'items.0.producto_id'
-        );
+        $this->validarItemConDatos('items.0.producto_id', [
+            'producto_id' => self::ID_INEXISTENTE,
+            'cantidad' => 1,
+        ]);
     }
 
     #[Test]
     public function valida_items_debe_tener_cantidad(): void
     {
         $producto = Producto::factory()->create();
-        $rules = $this->obtenerRules();
-
-        $this->validarYVerificarError(
-            ['items' => [['producto_id' => $producto->id]]],
-            $rules,
-            'items.0.cantidad'
-        );
+        $this->validarItemSinCampo('cantidad', ['producto_id' => $producto->id]);
     }
 
     #[Test]
     public function valida_cantidad_minima_en_items(): void
     {
         $producto = Producto::factory()->create();
-        $rules = $this->obtenerRules();
-
-        $this->validarYVerificarError(
-            [
-                'items' => [
-                    [
-                        'producto_id' => $producto->id,
-                        'cantidad' => self::CANTIDAD_INVALIDA,
-                    ],
-                ],
-            ],
-            $rules,
-            'items.0.cantidad'
-        );
+        $this->validarItemConDatos('items.0.cantidad', [
+            'producto_id' => $producto->id,
+            'cantidad' => self::CANTIDAD_INVALIDA,
+        ]);
     }
 
     #[Test]
     public function acepta_datos_validos_para_actualizar(): void
     {
         $rules = $this->obtenerRulesParaActualizar();
-
         $validator = Validator::make(['cantidad' => self::CANTIDAD_VALIDA], $rules);
 
         $this->assertFalse($validator->fails());
@@ -208,17 +153,82 @@ class CarritoRequestTest extends TestCase
     {
         $producto = Producto::factory()->create();
         $rules = $this->obtenerRules();
-
-        $validator = Validator::make([
+        $datos = [
             'items' => [
                 [
                     'producto_id' => $producto->id,
                     'cantidad' => self::CANTIDAD_VALIDA,
                 ],
             ],
-        ], $rules);
+        ];
+        $validator = Validator::make($datos, $rules);
 
         $this->assertFalse($validator->fails());
+    }
+
+    /**
+     * Validate required field in update context.
+     */
+    private function validarCampoRequeridoEnActualizar(string $campo): void
+    {
+        $rules = $this->obtenerRulesParaActualizar();
+        $this->validarYVerificarError([], $rules, $campo);
+    }
+
+    /**
+     * Validate field type in update context.
+     */
+    private function validarTipoCampoEnActualizar(string $campo, mixed $valorInvalido): void
+    {
+        $rules = $this->obtenerRulesParaActualizar();
+        $this->validarYVerificarError([$campo => $valorInvalido], $rules, $campo);
+    }
+
+    /**
+     * Validate field in update context.
+     */
+    private function validarCampoEnActualizar(string $campo, mixed $valorInvalido): void
+    {
+        $rules = $this->obtenerRulesParaActualizar();
+        $this->validarYVerificarError([$campo => $valorInvalido], $rules, $campo);
+    }
+
+    /**
+     * Validate required field in add context.
+     */
+    private function validarCampoRequeridoEnAgregar(string $campo): void
+    {
+        $rules = $this->obtenerRules();
+        $this->validarYVerificarError([], $rules, $campo);
+    }
+
+    /**
+     * Validate field type in add context.
+     */
+    private function validarTipoCampoEnAgregar(string $campo, mixed $valorInvalido): void
+    {
+        $rules = $this->obtenerRules();
+        $this->validarYVerificarError([$campo => $valorInvalido], $rules, $campo);
+    }
+
+    /**
+     * Validate item without a specific field.
+     */
+    private function validarItemSinCampo(string $campoFaltante, array $datosItem): void
+    {
+        $rules = $this->obtenerRules();
+        $datos = ['items' => [$datosItem]];
+        $this->validarYVerificarError($datos, $rules, "items.0.{$campoFaltante}");
+    }
+
+    /**
+     * Validate item with specific data.
+     */
+    private function validarItemConDatos(string $campoEsperado, array $datosItem): void
+    {
+        $rules = $this->obtenerRules();
+        $datos = ['items' => [$datosItem]];
+        $this->validarYVerificarError($datos, $rules, $campoEsperado);
     }
 }
 

@@ -47,13 +47,23 @@ class ProductoControllerTest extends TestCase
     {
         parent::setUp();
         
-        // Ejecutar migraciones y seeders de todos los módulos
-        $this->migrateDatabases();
-        
-        // Asegurar que los seeders se ejecuten después de RefreshDatabase
-        if (!\App\Models\Tema::where('name', 'CATEGORIAS')->exists()) {
-            $this->artisan('db:seed', ['--force' => true]);
-        }
+        // Ejecutar solo los seeders necesarios para productos
+        // RefreshDatabase ya ejecuta las migraciones automáticamente
+        $this->seed([
+            \Database\Seeders\RolePermissionSeeder::class,
+            \Database\Seeders\ParametroSeeder::class,
+            \Database\Seeders\TemaSeeder::class,
+            \Database\Seeders\PaisSeeder::class,
+            \Database\Seeders\DepartamentoSeeder::class,
+            \Database\Seeders\MunicipioSeeder::class,
+            \Database\Seeders\PersonaSeeder::class,
+            \Database\Seeders\UsersSeeder::class,
+            \Database\Seeders\RegionalSeeder::class,
+            \Database\Seeders\SedeSeeder::class,
+            \Database\Seeders\BloqueSeeder::class,
+            \Database\Seeders\PisoSeeder::class,
+            \Database\Seeders\AmbienteSeeder::class,
+        ]);
 
         // Crear permisos necesarios
         Permission::firstOrCreate(['name' => self::PERMISSION_VER_PRODUCTO]);
@@ -132,9 +142,29 @@ class ProductoControllerTest extends TestCase
         })->first();
         
         if (!$categoria) {
-            $temaCategorias = \App\Models\Tema::firstOrCreate(['name' => 'CATEGORIAS'], ['status' => true, 'user_create_id' => 1, 'user_edit_id' => 1]);
-            $categoria = \App\Models\Parametro::factory()->create(['name' => 'CATEGORIA TEST', 'status' => true, 'user_create_id' => 1, 'user_edit_id' => 1]);
-            \App\Models\ParametroTema::firstOrCreate(['parametro_id' => $categoria->id, 'tema_id' => $temaCategorias->id], ['status' => true, 'user_create_id' => 1, 'user_edit_id' => 1]);
+            // TemaSeeder ya crea CATEGORÍAS, solo buscar el tema existente
+            $temaCategorias = \App\Models\Tema::where('name', 'CATEGORÍAS')->first();
+            if (!$temaCategorias) {
+                $temaCategorias = \App\Models\Tema::create([
+                    'name' => 'CATEGORÍAS',
+                    'status' => true,
+                    'user_create_id' => null,
+                    'user_edit_id' => null,
+                ]);
+            }
+            $categoria = \App\Models\Parametro::factory()->create([
+                'name' => 'CATEGORIA TEST',
+                'status' => true,
+                'user_create_id' => null,
+                'user_edit_id' => null,
+            ]);
+            \App\Models\ParametroTema::create([
+                'parametro_id' => $categoria->id,
+                'tema_id' => $temaCategorias->id,
+                'status' => true,
+                'user_create_id' => null,
+                'user_edit_id' => null,
+            ]);
         }
 
         // Obtener o crear marca
@@ -143,9 +173,29 @@ class ProductoControllerTest extends TestCase
         })->first();
         
         if (!$marca) {
-            $temaMarcas = \App\Models\Tema::firstOrCreate(['name' => 'MARCAS'], ['status' => true, 'user_create_id' => 1, 'user_edit_id' => 1]);
-            $marca = \App\Models\Parametro::factory()->create(['name' => 'MARCA TEST', 'status' => true, 'user_create_id' => 1, 'user_edit_id' => 1]);
-            \App\Models\ParametroTema::firstOrCreate(['parametro_id' => $marca->id, 'tema_id' => $temaMarcas->id], ['status' => true, 'user_create_id' => 1, 'user_edit_id' => 1]);
+            // TemaSeeder ya crea MARCAS, solo buscar el tema existente
+            $temaMarcas = \App\Models\Tema::where('name', 'MARCAS')->first();
+            if (!$temaMarcas) {
+                $temaMarcas = \App\Models\Tema::create([
+                    'name' => 'MARCAS',
+                    'status' => true,
+                    'user_create_id' => null,
+                    'user_edit_id' => null,
+                ]);
+            }
+            $marca = \App\Models\Parametro::factory()->create([
+                'name' => 'MARCA TEST',
+                'status' => true,
+                'user_create_id' => null,
+                'user_edit_id' => null,
+            ]);
+            \App\Models\ParametroTema::create([
+                'parametro_id' => $marca->id,
+                'tema_id' => $temaMarcas->id,
+                'status' => true,
+                'user_create_id' => null,
+                'user_edit_id' => null,
+            ]);
         }
 
         // Crear contrato convenio
