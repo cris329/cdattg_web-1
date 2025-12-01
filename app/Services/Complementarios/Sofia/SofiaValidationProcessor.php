@@ -37,6 +37,9 @@ class SofiaValidationProcessor
         $totalAspirantes = $aspirantes->count();
         Log::info('Iniciando validacion de aspirantes', ['total' => $totalAspirantes]);
 
+        // Verificar que el servicio esté disponible una sola vez al inicio
+        $this->checkServiceHealth();
+
         $stats = [
             'exitosos' => 0,
             'errores' => 0,
@@ -192,6 +195,22 @@ class SofiaValidationProcessor
         }
 
         return $delay;
+    }
+
+    /**
+     * Verificar que el servicio esté disponible al inicio del proceso
+     */
+    private function checkServiceHealth(): void
+    {
+        try {
+            $this->validationService->checkServiceHealth();
+            Log::info('Health check del servicio Playwright completado al inicio del proceso');
+        } catch (\Exception $e) {
+            Log::warning('No se pudo verificar health del servicio Playwright al inicio', [
+                'error' => $e->getMessage()
+            ]);
+            // No lanzamos excepción para no detener el proceso, solo registramos la advertencia
+        }
     }
 }
 

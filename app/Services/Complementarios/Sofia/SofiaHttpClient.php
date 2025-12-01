@@ -46,8 +46,6 @@ class SofiaHttpClient
         ]);
 
         try {
-            $this->checkHealth();
-
             Log::info('Iniciando validacion HTTP', ['cedula' => $cedula]);
             $startTime = microtime(true);
 
@@ -90,7 +88,7 @@ class SofiaHttpClient
     /**
      * Verificar que el servicio esté disponible
      */
-    private function checkHealth(): void
+    public function checkHealth(): void
     {
         $healthUrl = $this->baseUrl . '/health';
         try {
