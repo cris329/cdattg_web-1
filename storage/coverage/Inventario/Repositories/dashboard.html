@@ -1,0 +1,402 @@
+<!DOCTYPE html>
+<html lang="en">
+ <head>
+  <meta charset="UTF-8">
+  <title>Dashboard for /home/jhon/Documents/Sena/cdattg_web/app/Inventario/Repositories</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <link href="../../_css/bootstrap.min.css?v=11.0.11" rel="stylesheet" type="text/css">
+  <link href="../../_css/nv.d3.min.css?v=11.0.11" rel="stylesheet" type="text/css">
+  <link href="../../_css/style.css?v=11.0.11" rel="stylesheet" type="text/css">
+  <link href="../../_css/custom.css" rel="stylesheet" type="text/css">
+ </head>
+ <body>
+  <header>
+   <div class="container-fluid">
+    <div class="row">
+     <div class="col-md-12">
+      <nav aria-label="breadcrumb">
+       <ol class="breadcrumb">
+         <li class="breadcrumb-item"><a href="../../index.html">/home/jhon/Documents/Sena/cdattg_web/app</a></li>
+         <li class="breadcrumb-item"><a href="../index.html">Inventario</a></li>
+         <li class="breadcrumb-item"><a href="index.html">Repositories</a></li>
+         <li class="breadcrumb-item active">(Dashboard)</li>
+
+       </ol>
+      </nav>
+     </div>
+    </div>
+   </div>
+  </header>
+  <div class="container-fluid">
+   <div class="row">
+    <div class="col-md-12">
+     <h2>Classes</h2>
+    </div>
+   </div>
+   <div class="row">
+    <div class="col-md-6">
+     <h3>Coverage Distribution</h3>
+     <div id="classCoverageDistribution" style="height: 300px;">
+       <svg></svg>
+     </div>
+    </div>
+    <div class="col-md-6">
+     <h3>Complexity</h3>
+     <div id="classComplexity" style="height: 300px;">
+       <svg></svg>
+     </div>
+    </div>
+   </div>
+   <div class="row">
+    <div class="col-md-6">
+     <h3>Insufficient Coverage</h3>
+     <div class="scrollbox">
+      <table class="table">
+       <thead>
+        <tr>
+         <th>Class</th>
+         <th class="text-right">Coverage</th>
+        </tr>
+       </thead>
+       <tbody>
+       <tr><td><a href="Aprobacion/AprobacionRepository.php.html#10">App\Inventario\Repositories\Aprobacion\AprobacionRepository</a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="Categoria/CategoriaRepository.php.html#16">App\Inventario\Repositories\Categoria\CategoriaRepository</a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="ContratoConvenio/ContratoConvenioRepository.php.html#12">App\Inventario\Repositories\ContratoConvenio\ContratoConvenioRepository</a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="Dashboard/DashboardRepository.php.html#10">App\Inventario\Repositories\Dashboard\DashboardRepository</a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="Devolucion/DevolucionRepository.php.html#12">App\Inventario\Repositories\Devolucion\DevolucionRepository</a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="Marca/MarcaRepository.php.html#16">App\Inventario\Repositories\Marca\MarcaRepository</a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="Notification/NotificationRepository.php.html#12">App\Inventario\Repositories\Notification\NotificationRepository</a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="Orden/DetalleOrdenRepository.php.html#10">App\Inventario\Repositories\Orden\DetalleOrdenRepository</a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="Orden/OrdenRepository.php.html#13">App\Inventario\Repositories\Orden\OrdenRepository</a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="Producto/ProductoRepository.php.html#13">App\Inventario\Repositories\Producto\ProductoRepository</a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="Proveedor/ProveedorRepository.php.html#12">App\Inventario\Repositories\Proveedor\ProveedorRepository</a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="User/UserRepository.php.html#11">App\Inventario\Repositories\User\UserRepository</a></td><td class="text-right">0%</td></tr>
+
+       </tbody>
+      </table>
+     </div>
+    </div>
+    <div class="col-md-6">
+     <h3>Project Risks</h3>
+     <div class="scrollbox">
+      <table class="table">
+       <thead>
+        <tr>
+         <th>Class</th>
+         <th class="text-right"><abbr title="Change Risk Anti-Patterns (CRAP) Index">CRAP</abbr></th>
+        </tr>
+       </thead>
+       <tbody>
+       <tr><td><a href="Producto/ProductoRepository.php.html#13">App\Inventario\Repositories\Producto\ProductoRepository</a></td><td class="text-right">812</td></tr>
+       <tr><td><a href="Orden/OrdenRepository.php.html#13">App\Inventario\Repositories\Orden\OrdenRepository</a></td><td class="text-right">210</td></tr>
+       <tr><td><a href="Categoria/CategoriaRepository.php.html#16">App\Inventario\Repositories\Categoria\CategoriaRepository</a></td><td class="text-right">132</td></tr>
+       <tr><td><a href="Dashboard/DashboardRepository.php.html#10">App\Inventario\Repositories\Dashboard\DashboardRepository</a></td><td class="text-right">132</td></tr>
+       <tr><td><a href="Marca/MarcaRepository.php.html#16">App\Inventario\Repositories\Marca\MarcaRepository</a></td><td class="text-right">132</td></tr>
+       <tr><td><a href="Proveedor/ProveedorRepository.php.html#12">App\Inventario\Repositories\Proveedor\ProveedorRepository</a></td><td class="text-right">90</td></tr>
+       <tr><td><a href="ContratoConvenio/ContratoConvenioRepository.php.html#12">App\Inventario\Repositories\ContratoConvenio\ContratoConvenioRepository</a></td><td class="text-right">72</td></tr>
+       <tr><td><a href="Devolucion/DevolucionRepository.php.html#12">App\Inventario\Repositories\Devolucion\DevolucionRepository</a></td><td class="text-right">72</td></tr>
+       <tr><td><a href="Notification/NotificationRepository.php.html#12">App\Inventario\Repositories\Notification\NotificationRepository</a></td><td class="text-right">72</td></tr>
+
+       </tbody>
+      </table>
+     </div>
+    </div>
+   </div>
+   <div class="row">
+    <div class="col-md-12">
+     <h2>Methods</h2>
+    </div>
+   </div>
+   <div class="row">
+    <div class="col-md-6">
+     <h3>Coverage Distribution</h3>
+     <div id="methodCoverageDistribution" style="height: 300px;">
+       <svg></svg>
+     </div>
+    </div>
+    <div class="col-md-6">
+     <h3>Complexity</h3>
+     <div id="methodComplexity" style="height: 300px;">
+       <svg></svg>
+     </div>
+    </div>
+   </div>
+   <div class="row">
+    <div class="col-md-6">
+     <h3>Insufficient Coverage</h3>
+     <div class="scrollbox">
+      <table class="table">
+       <thead>
+        <tr>
+         <th>Method</th>
+         <th class="text-right">Coverage</th>
+        </tr>
+       </thead>
+       <tbody>
+       <tr><td><a href="Aprobacion/AprobacionRepository.php.html#18"><abbr title="App\Inventario\Repositories\Aprobacion\AprobacionRepository::crear">crear</abbr></a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="Categoria/CategoriaRepository.php.html#25"><abbr title="App\Inventario\Repositories\Categoria\CategoriaRepository::obtenerTemaCategorias">obtenerTemaCategorias</abbr></a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="Categoria/CategoriaRepository.php.html#36"><abbr title="App\Inventario\Repositories\Categoria\CategoriaRepository::obtenerConFiltros">obtenerConFiltros</abbr></a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="Categoria/CategoriaRepository.php.html#72"><abbr title="App\Inventario\Repositories\Categoria\CategoriaRepository::encontrar">encontrar</abbr></a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="Categoria/CategoriaRepository.php.html#83"><abbr title="App\Inventario\Repositories\Categoria\CategoriaRepository::encontrarMultiples">encontrarMultiples</abbr></a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="Categoria/CategoriaRepository.php.html#94"><abbr title="App\Inventario\Repositories\Categoria\CategoriaRepository::encontrarConRelaciones">encontrarConRelaciones</abbr></a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="Categoria/CategoriaRepository.php.html#106"><abbr title="App\Inventario\Repositories\Categoria\CategoriaRepository::actualizar">actualizar</abbr></a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="Categoria/CategoriaRepository.php.html#118"><abbr title="App\Inventario\Repositories\Categoria\CategoriaRepository::eliminar">eliminar</abbr></a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="Categoria/CategoriaRepository.php.html#134"><abbr title="App\Inventario\Repositories\Categoria\CategoriaRepository::tieneProductos">tieneProductos</abbr></a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="ContratoConvenio/ContratoConvenioRepository.php.html#20"><abbr title="App\Inventario\Repositories\ContratoConvenio\ContratoConvenioRepository::obtenerTodos">obtenerTodos</abbr></a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="ContratoConvenio/ContratoConvenioRepository.php.html#31"><abbr title="App\Inventario\Repositories\ContratoConvenio\ContratoConvenioRepository::obtenerConFiltros">obtenerConFiltros</abbr></a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="ContratoConvenio/ContratoConvenioRepository.php.html#61"><abbr title="App\Inventario\Repositories\ContratoConvenio\ContratoConvenioRepository::encontrarConRelaciones">encontrarConRelaciones</abbr></a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="ContratoConvenio/ContratoConvenioRepository.php.html#78"><abbr title="App\Inventario\Repositories\ContratoConvenio\ContratoConvenioRepository::crear">crear</abbr></a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="ContratoConvenio/ContratoConvenioRepository.php.html#90"><abbr title="App\Inventario\Repositories\ContratoConvenio\ContratoConvenioRepository::actualizar">actualizar</abbr></a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="ContratoConvenio/ContratoConvenioRepository.php.html#101"><abbr title="App\Inventario\Repositories\ContratoConvenio\ContratoConvenioRepository::eliminar">eliminar</abbr></a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="ContratoConvenio/ContratoConvenioRepository.php.html#112"><abbr title="App\Inventario\Repositories\ContratoConvenio\ContratoConvenioRepository::tieneProductos">tieneProductos</abbr></a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="Dashboard/DashboardRepository.php.html#17"><abbr title="App\Inventario\Repositories\Dashboard\DashboardRepository::obtenerTotalProductos">obtenerTotalProductos</abbr></a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="Dashboard/DashboardRepository.php.html#27"><abbr title="App\Inventario\Repositories\Dashboard\DashboardRepository::obtenerProductosConsumibles">obtenerProductosConsumibles</abbr></a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="Dashboard/DashboardRepository.php.html#41"><abbr title="App\Inventario\Repositories\Dashboard\DashboardRepository::obtenerProductosNoConsumibles">obtenerProductosNoConsumibles</abbr></a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="Dashboard/DashboardRepository.php.html#55"><abbr title="App\Inventario\Repositories\Dashboard\DashboardRepository::obtenerProductosPorVencer">obtenerProductosPorVencer</abbr></a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="Dashboard/DashboardRepository.php.html#72"><abbr title="App\Inventario\Repositories\Dashboard\DashboardRepository::obtenerProductosStockBajo">obtenerProductosStockBajo</abbr></a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="Dashboard/DashboardRepository.php.html#84"><abbr title="App\Inventario\Repositories\Dashboard\DashboardRepository::obtenerTotalCategorias">obtenerTotalCategorias</abbr></a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="Dashboard/DashboardRepository.php.html#99"><abbr title="App\Inventario\Repositories\Dashboard\DashboardRepository::obtenerProductosMasSolicitados">obtenerProductosMasSolicitados</abbr></a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="Dashboard/DashboardRepository.php.html#124"><abbr title="App\Inventario\Repositories\Dashboard\DashboardRepository::obtenerProductosPorCategoria">obtenerProductosPorCategoria</abbr></a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="Dashboard/DashboardRepository.php.html#146"><abbr title="App\Inventario\Repositories\Dashboard\DashboardRepository::obtenerProductosRecientes">obtenerProductosRecientes</abbr></a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="Devolucion/DevolucionRepository.php.html#20"><abbr title="App\Inventario\Repositories\Devolucion\DevolucionRepository::obtenerPrestamosPendientes">obtenerPrestamosPendientes</abbr></a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="Devolucion/DevolucionRepository.php.html#40"><abbr title="App\Inventario\Repositories\Devolucion\DevolucionRepository::obtenerHistorial">obtenerHistorial</abbr></a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="Devolucion/DevolucionRepository.php.html#53"><abbr title="App\Inventario\Repositories\Devolucion\DevolucionRepository::encontrarConRelaciones">encontrarConRelaciones</abbr></a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="Devolucion/DevolucionRepository.php.html#70"><abbr title="App\Inventario\Repositories\Devolucion\DevolucionRepository::obtenerPrestamosActivosUsuario">obtenerPrestamosActivosUsuario</abbr></a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="Devolucion/DevolucionRepository.php.html#92"><abbr title="App\Inventario\Repositories\Devolucion\DevolucionRepository::obtenerHistorialPrestamosUsuario">obtenerHistorialPrestamosUsuario</abbr></a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="Devolucion/DevolucionRepository.php.html#110"><abbr title="App\Inventario\Repositories\Devolucion\DevolucionRepository::paginacionManual">paginacionManual</abbr></a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="Marca/MarcaRepository.php.html#25"><abbr title="App\Inventario\Repositories\Marca\MarcaRepository::obtenerTemaMarcas">obtenerTemaMarcas</abbr></a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="Marca/MarcaRepository.php.html#36"><abbr title="App\Inventario\Repositories\Marca\MarcaRepository::obtenerConFiltros">obtenerConFiltros</abbr></a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="Marca/MarcaRepository.php.html#72"><abbr title="App\Inventario\Repositories\Marca\MarcaRepository::encontrar">encontrar</abbr></a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="Marca/MarcaRepository.php.html#83"><abbr title="App\Inventario\Repositories\Marca\MarcaRepository::encontrarMultiples">encontrarMultiples</abbr></a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="Marca/MarcaRepository.php.html#94"><abbr title="App\Inventario\Repositories\Marca\MarcaRepository::encontrarConRelaciones">encontrarConRelaciones</abbr></a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="Marca/MarcaRepository.php.html#106"><abbr title="App\Inventario\Repositories\Marca\MarcaRepository::actualizar">actualizar</abbr></a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="Marca/MarcaRepository.php.html#118"><abbr title="App\Inventario\Repositories\Marca\MarcaRepository::eliminar">eliminar</abbr></a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="Marca/MarcaRepository.php.html#134"><abbr title="App\Inventario\Repositories\Marca\MarcaRepository::tieneProductos">tieneProductos</abbr></a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="Notification/NotificationRepository.php.html#21"><abbr title="App\Inventario\Repositories\Notification\NotificationRepository::obtenerPorUsuarioPaginadas">obtenerPorUsuarioPaginadas</abbr></a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="Notification/NotificationRepository.php.html#34"><abbr title="App\Inventario\Repositories\Notification\NotificationRepository::obtenerNoLeidasLimitadas">obtenerNoLeidasLimitadas</abbr></a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="Notification/NotificationRepository.php.html#46"><abbr title="App\Inventario\Repositories\Notification\NotificationRepository::contarNoLeidas">contarNoLeidas</abbr></a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="Notification/NotificationRepository.php.html#59"><abbr title="App\Inventario\Repositories\Notification\NotificationRepository::marcarComoLeida">marcarComoLeida</abbr></a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="Notification/NotificationRepository.php.html#78"><abbr title="App\Inventario\Repositories\Notification\NotificationRepository::marcarTodasComoLeidas">marcarTodasComoLeidas</abbr></a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="Notification/NotificationRepository.php.html#98"><abbr title="App\Inventario\Repositories\Notification\NotificationRepository::eliminar">eliminar</abbr></a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="Orden/DetalleOrdenRepository.php.html#18"><abbr title="App\Inventario\Repositories\Orden\DetalleOrdenRepository::crear">crear</abbr></a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="Orden/DetalleOrdenRepository.php.html#30"><abbr title="App\Inventario\Repositories\Orden\DetalleOrdenRepository::actualizar">actualizar</abbr></a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="Orden/DetalleOrdenRepository.php.html#41"><abbr title="App\Inventario\Repositories\Orden\DetalleOrdenRepository::eliminar">eliminar</abbr></a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="Orden/DetalleOrdenRepository.php.html#52"><abbr title="App\Inventario\Repositories\Orden\DetalleOrdenRepository::eliminarPorOrden">eliminarPorOrden</abbr></a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="Orden/DetalleOrdenRepository.php.html#63"><abbr title="App\Inventario\Repositories\Orden\DetalleOrdenRepository::encontrar">encontrar</abbr></a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="Orden/DetalleOrdenRepository.php.html#74"><abbr title="App\Inventario\Repositories\Orden\DetalleOrdenRepository::encontrarConRelaciones">encontrarConRelaciones</abbr></a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="Orden/OrdenRepository.php.html#21"><abbr title="App\Inventario\Repositories\Orden\OrdenRepository::obtenerConFiltros">obtenerConFiltros</abbr></a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="Orden/OrdenRepository.php.html#72"><abbr title="App\Inventario\Repositories\Orden\OrdenRepository::obtenerPendientes">obtenerPendientes</abbr></a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="Orden/OrdenRepository.php.html#93"><abbr title="App\Inventario\Repositories\Orden\OrdenRepository::obtenerCompletadas">obtenerCompletadas</abbr></a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="Orden/OrdenRepository.php.html#114"><abbr title="App\Inventario\Repositories\Orden\OrdenRepository::obtenerRechazadas">obtenerRechazadas</abbr></a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="Orden/OrdenRepository.php.html#135"><abbr title="App\Inventario\Repositories\Orden\OrdenRepository::encontrarConRelaciones">encontrarConRelaciones</abbr></a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="Orden/OrdenRepository.php.html#152"><abbr title="App\Inventario\Repositories\Orden\OrdenRepository::encontrarConDetallesYDevoluciones">encontrarConDetallesYDevoluciones</abbr></a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="Orden/OrdenRepository.php.html#163"><abbr title="App\Inventario\Repositories\Orden\OrdenRepository::obtenerDetallesPendientes">obtenerDetallesPendientes</abbr></a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="Orden/OrdenRepository.php.html#183"><abbr title="App\Inventario\Repositories\Orden\OrdenRepository::crear">crear</abbr></a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="Orden/OrdenRepository.php.html#195"><abbr title="App\Inventario\Repositories\Orden\OrdenRepository::actualizar">actualizar</abbr></a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="Orden/OrdenRepository.php.html#206"><abbr title="App\Inventario\Repositories\Orden\OrdenRepository::eliminar">eliminar</abbr></a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="Producto/ProductoRepository.php.html#22"><abbr title="App\Inventario\Repositories\Producto\ProductoRepository::obtenerConFiltros">obtenerConFiltros</abbr></a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="Producto/ProductoRepository.php.html#69"><abbr title="App\Inventario\Repositories\Producto\ProductoRepository::encontrarConRelaciones">encontrarConRelaciones</abbr></a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="Producto/ProductoRepository.php.html#89"><abbr title="App\Inventario\Repositories\Producto\ProductoRepository::buscarPorCodigoBarras">buscarPorCodigoBarras</abbr></a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="Producto/ProductoRepository.php.html#100"><abbr title="App\Inventario\Repositories\Producto\ProductoRepository::obtenerParaCatalogo">obtenerParaCatalogo</abbr></a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="Producto/ProductoRepository.php.html#149"><abbr title="App\Inventario\Repositories\Producto\ProductoRepository::buscarParaAjax">buscarParaAjax</abbr></a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="Producto/ProductoRepository.php.html#181"><abbr title="App\Inventario\Repositories\Producto\ProductoRepository::obtenerTiposProductos">obtenerTiposProductos</abbr></a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="Producto/ProductoRepository.php.html#201"><abbr title="App\Inventario\Repositories\Producto\ProductoRepository::encontrar">encontrar</abbr></a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="Producto/ProductoRepository.php.html#212"><abbr title="App\Inventario\Repositories\Producto\ProductoRepository::crear">crear</abbr></a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="Producto/ProductoRepository.php.html#224"><abbr title="App\Inventario\Repositories\Producto\ProductoRepository::actualizar">actualizar</abbr></a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="Producto/ProductoRepository.php.html#235"><abbr title="App\Inventario\Repositories\Producto\ProductoRepository::eliminar">eliminar</abbr></a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="Producto/ProductoRepository.php.html#247"><abbr title="App\Inventario\Repositories\Producto\ProductoRepository::actualizarStock">actualizarStock</abbr></a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="Producto/ProductoRepository.php.html#258"><abbr title="App\Inventario\Repositories\Producto\ProductoRepository::obtenerMaxCodigoBarras">obtenerMaxCodigoBarras</abbr></a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="Producto/ProductoRepository.php.html#270"><abbr title="App\Inventario\Repositories\Producto\ProductoRepository::existeCodigoBarras">existeCodigoBarras</abbr></a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="Proveedor/ProveedorRepository.php.html#20"><abbr title="App\Inventario\Repositories\Proveedor\ProveedorRepository::obtenerTodos">obtenerTodos</abbr></a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="Proveedor/ProveedorRepository.php.html#31"><abbr title="App\Inventario\Repositories\Proveedor\ProveedorRepository::obtenerConFiltros">obtenerConFiltros</abbr></a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="Proveedor/ProveedorRepository.php.html#70"><abbr title="App\Inventario\Repositories\Proveedor\ProveedorRepository::encontrarConRelaciones">encontrarConRelaciones</abbr></a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="Proveedor/ProveedorRepository.php.html#88"><abbr title="App\Inventario\Repositories\Proveedor\ProveedorRepository::crear">crear</abbr></a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="Proveedor/ProveedorRepository.php.html#100"><abbr title="App\Inventario\Repositories\Proveedor\ProveedorRepository::actualizar">actualizar</abbr></a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="Proveedor/ProveedorRepository.php.html#111"><abbr title="App\Inventario\Repositories\Proveedor\ProveedorRepository::eliminar">eliminar</abbr></a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="Proveedor/ProveedorRepository.php.html#122"><abbr title="App\Inventario\Repositories\Proveedor\ProveedorRepository::tieneContratos">tieneContratos</abbr></a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="Proveedor/ProveedorRepository.php.html#135"><abbr title="App\Inventario\Repositories\Proveedor\ProveedorRepository::tieneProductos">tieneProductos</abbr></a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="User/UserRepository.php.html#13"><abbr title="App\Inventario\Repositories\User\UserRepository::obtenerSuperAdministradores">obtenerSuperAdministradores</abbr></a></td><td class="text-right">0%</td></tr>
+
+       </tbody>
+      </table>
+     </div>
+    </div>
+    <div class="col-md-6">
+     <h3>Project Risks</h3>
+     <div class="scrollbox">
+      <table class="table">
+       <thead>
+        <tr>
+         <th>Method</th>
+         <th class="text-right"><abbr title="Change Risk Anti-Patterns (CRAP) Index">CRAP</abbr></th>
+        </tr>
+       </thead>
+       <tbody>
+       <tr><td><a href="Producto/ProductoRepository.php.html#100"><abbr title="App\Inventario\Repositories\Producto\ProductoRepository::obtenerParaCatalogo">obtenerParaCatalogo</abbr></a></td><td class="text-right">72</td></tr>
+       <tr><td><a href="Producto/ProductoRepository.php.html#22"><abbr title="App\Inventario\Repositories\Producto\ProductoRepository::obtenerConFiltros">obtenerConFiltros</abbr></a></td><td class="text-right">42</td></tr>
+       <tr><td><a href="Orden/OrdenRepository.php.html#21"><abbr title="App\Inventario\Repositories\Orden\OrdenRepository::obtenerConFiltros">obtenerConFiltros</abbr></a></td><td class="text-right">30</td></tr>
+       <tr><td><a href="Categoria/CategoriaRepository.php.html#36"><abbr title="App\Inventario\Repositories\Categoria\CategoriaRepository::obtenerConFiltros">obtenerConFiltros</abbr></a></td><td class="text-right">20</td></tr>
+       <tr><td><a href="Marca/MarcaRepository.php.html#36"><abbr title="App\Inventario\Repositories\Marca\MarcaRepository::obtenerConFiltros">obtenerConFiltros</abbr></a></td><td class="text-right">20</td></tr>
+       <tr><td><a href="Producto/ProductoRepository.php.html#149"><abbr title="App\Inventario\Repositories\Producto\ProductoRepository::buscarParaAjax">buscarParaAjax</abbr></a></td><td class="text-right">20</td></tr>
+       <tr><td><a href="Devolucion/DevolucionRepository.php.html#110"><abbr title="App\Inventario\Repositories\Devolucion\DevolucionRepository::paginacionManual">paginacionManual</abbr></a></td><td class="text-right">12</td></tr>
+       <tr><td><a href="ContratoConvenio/ContratoConvenioRepository.php.html#31"><abbr title="App\Inventario\Repositories\ContratoConvenio\ContratoConvenioRepository::obtenerConFiltros">obtenerConFiltros</abbr></a></td><td class="text-right">6</td></tr>
+       <tr><td><a href="Dashboard/DashboardRepository.php.html#99"><abbr title="App\Inventario\Repositories\Dashboard\DashboardRepository::obtenerProductosMasSolicitados">obtenerProductosMasSolicitados</abbr></a></td><td class="text-right">6</td></tr>
+       <tr><td><a href="Dashboard/DashboardRepository.php.html#146"><abbr title="App\Inventario\Repositories\Dashboard\DashboardRepository::obtenerProductosRecientes">obtenerProductosRecientes</abbr></a></td><td class="text-right">6</td></tr>
+       <tr><td><a href="Notification/NotificationRepository.php.html#59"><abbr title="App\Inventario\Repositories\Notification\NotificationRepository::marcarComoLeida">marcarComoLeida</abbr></a></td><td class="text-right">6</td></tr>
+       <tr><td><a href="Notification/NotificationRepository.php.html#98"><abbr title="App\Inventario\Repositories\Notification\NotificationRepository::eliminar">eliminar</abbr></a></td><td class="text-right">6</td></tr>
+       <tr><td><a href="Proveedor/ProveedorRepository.php.html#31"><abbr title="App\Inventario\Repositories\Proveedor\ProveedorRepository::obtenerConFiltros">obtenerConFiltros</abbr></a></td><td class="text-right">6</td></tr>
+
+       </tbody>
+      </table>
+     </div>
+    </div>
+   </div>
+   <footer>
+    <hr/>
+    <p>
+     <small>Generated by <a href="https://github.com/sebastianbergmann/php-code-coverage" target="_top">php-code-coverage 11.0.11</a> using <a href="https://www.php.net/" target="_top">PHP 8.4.14</a> and <a href="https://phpunit.de/">PHPUnit 11.5.44</a> at Sun Nov 30 19:23:11 -05 2025.</small>
+    </p>
+   </footer>
+  </div>
+  <script src="../../_js/jquery.min.js?v=11.0.11" type="text/javascript"></script>
+  <script src="../../_js/d3.min.js?v=11.0.11" type="text/javascript"></script>
+  <script src="../../_js/nv.d3.min.js?v=11.0.11" type="text/javascript"></script>
+  <script type="text/javascript">
+$(document).ready(function() {
+  nv.addGraph(function() {
+    var chart = nv.models.multiBarChart();
+    chart.tooltips(false)
+      .showControls(false)
+      .showLegend(false)
+      .reduceXTicks(false)
+      .staggerLabels(true)
+      .yAxis.tickFormat(d3.format('d'));
+
+    d3.select('#classCoverageDistribution svg')
+      .datum(getCoverageDistributionData([12,0,0,0,0,0,0,0,0,0,0,0], "Class Coverage"))
+      .transition().duration(500).call(chart);
+
+    nv.utils.windowResize(chart.update);
+
+    return chart;
+  });
+
+  nv.addGraph(function() {
+    var chart = nv.models.multiBarChart();
+    chart.tooltips(false)
+      .showControls(false)
+      .showLegend(false)
+      .reduceXTicks(false)
+      .staggerLabels(true)
+      .yAxis.tickFormat(d3.format('d'));
+
+    d3.select('#methodCoverageDistribution svg')
+      .datum(getCoverageDistributionData([83,0,0,0,0,0,0,0,0,0,0,0], "Method Coverage"))
+      .transition().duration(500).call(chart);
+
+    nv.utils.windowResize(chart.update);
+
+    return chart;
+  });
+
+  function getCoverageDistributionData(data, label) {
+    var labels = [
+      '0%',
+      '0-10%',
+      '10-20%',
+      '20-30%',
+      '30-40%',
+      '40-50%',
+      '50-60%',
+      '60-70%',
+      '70-80%',
+      '80-90%',
+      '90-100%',
+      '100%'
+    ];
+    var values = [];
+    $.each(labels, function(key) {
+      values.push({x: labels[key], y: data[key]});
+    });
+
+    return [
+      {
+        key: label,
+        values: values,
+        color: "#4572A7"
+      }
+    ];
+  }
+  nv.addGraph(function() {
+    var chart = nv.models.scatterChart()
+      .showDistX(true)
+      .showDistY(true)
+      .showLegend(false)
+      .forceX([0, 100]);
+    chart.tooltipContent(function(graph) {
+      return '<p>' + graph.point.class + '</p>';
+    });
+
+    chart.xAxis.axisLabel('Code Coverage (in percent)');
+    chart.yAxis.axisLabel('Cyclomatic Complexity');
+
+    d3.select('#classComplexity svg')
+      .datum(getComplexityData([[0,1,"<a href=\"Aprobacion\/AprobacionRepository.php.html#10\">App\\Inventario\\Repositories\\Aprobacion\\AprobacionRepository<\/a>"],[0,11,"<a href=\"Categoria\/CategoriaRepository.php.html#16\">App\\Inventario\\Repositories\\Categoria\\CategoriaRepository<\/a>"],[0,8,"<a href=\"ContratoConvenio\/ContratoConvenioRepository.php.html#12\">App\\Inventario\\Repositories\\ContratoConvenio\\ContratoConvenioRepository<\/a>"],[0,11,"<a href=\"Dashboard\/DashboardRepository.php.html#10\">App\\Inventario\\Repositories\\Dashboard\\DashboardRepository<\/a>"],[0,8,"<a href=\"Devolucion\/DevolucionRepository.php.html#12\">App\\Inventario\\Repositories\\Devolucion\\DevolucionRepository<\/a>"],[0,11,"<a href=\"Marca\/MarcaRepository.php.html#16\">App\\Inventario\\Repositories\\Marca\\MarcaRepository<\/a>"],[0,8,"<a href=\"Notification\/NotificationRepository.php.html#12\">App\\Inventario\\Repositories\\Notification\\NotificationRepository<\/a>"],[0,6,"<a href=\"Orden\/DetalleOrdenRepository.php.html#10\">App\\Inventario\\Repositories\\Orden\\DetalleOrdenRepository<\/a>"],[0,14,"<a href=\"Orden\/OrdenRepository.php.html#13\">App\\Inventario\\Repositories\\Orden\\OrdenRepository<\/a>"],[0,28,"<a href=\"Producto\/ProductoRepository.php.html#13\">App\\Inventario\\Repositories\\Producto\\ProductoRepository<\/a>"],[0,9,"<a href=\"Proveedor\/ProveedorRepository.php.html#12\">App\\Inventario\\Repositories\\Proveedor\\ProveedorRepository<\/a>"],[0,1,"<a href=\"User\/UserRepository.php.html#11\">App\\Inventario\\Repositories\\User\\UserRepository<\/a>"]], 'Class Complexity'))
+      .transition()
+      .duration(500)
+      .call(chart);
+
+    nv.utils.windowResize(chart.update);
+
+    return chart;
+  });
+
+  nv.addGraph(function() {
+    var chart = nv.models.scatterChart()
+      .showDistX(true)
+      .showDistY(true)
+      .showLegend(false)
+      .forceX([0, 100]);
+    chart.tooltipContent(function(graph) {
+      return '<p>' + graph.point.class + '</p>';
+    });
+
+    chart.xAxis.axisLabel('Code Coverage (in percent)');
+    chart.yAxis.axisLabel('Method Complexity');
+
+    d3.select('#methodComplexity svg')
+      .datum(getComplexityData([[0,1,"<a href=\"Aprobacion\/AprobacionRepository.php.html#18\">App\\Inventario\\Repositories\\Aprobacion\\AprobacionRepository::crear<\/a>"],[0,1,"<a href=\"Categoria\/CategoriaRepository.php.html#25\">App\\Inventario\\Repositories\\Categoria\\CategoriaRepository::obtenerTemaCategorias<\/a>"],[0,4,"<a href=\"Categoria\/CategoriaRepository.php.html#36\">App\\Inventario\\Repositories\\Categoria\\CategoriaRepository::obtenerConFiltros<\/a>"],[0,1,"<a href=\"Categoria\/CategoriaRepository.php.html#72\">App\\Inventario\\Repositories\\Categoria\\CategoriaRepository::encontrar<\/a>"],[0,1,"<a href=\"Categoria\/CategoriaRepository.php.html#83\">App\\Inventario\\Repositories\\Categoria\\CategoriaRepository::encontrarMultiples<\/a>"],[0,1,"<a href=\"Categoria\/CategoriaRepository.php.html#94\">App\\Inventario\\Repositories\\Categoria\\CategoriaRepository::encontrarConRelaciones<\/a>"],[0,1,"<a href=\"Categoria\/CategoriaRepository.php.html#106\">App\\Inventario\\Repositories\\Categoria\\CategoriaRepository::actualizar<\/a>"],[0,1,"<a href=\"Categoria\/CategoriaRepository.php.html#118\">App\\Inventario\\Repositories\\Categoria\\CategoriaRepository::eliminar<\/a>"],[0,1,"<a href=\"Categoria\/CategoriaRepository.php.html#134\">App\\Inventario\\Repositories\\Categoria\\CategoriaRepository::tieneProductos<\/a>"],[0,1,"<a href=\"ContratoConvenio\/ContratoConvenioRepository.php.html#20\">App\\Inventario\\Repositories\\ContratoConvenio\\ContratoConvenioRepository::obtenerTodos<\/a>"],[0,2,"<a href=\"ContratoConvenio\/ContratoConvenioRepository.php.html#31\">App\\Inventario\\Repositories\\ContratoConvenio\\ContratoConvenioRepository::obtenerConFiltros<\/a>"],[0,1,"<a href=\"ContratoConvenio\/ContratoConvenioRepository.php.html#61\">App\\Inventario\\Repositories\\ContratoConvenio\\ContratoConvenioRepository::encontrarConRelaciones<\/a>"],[0,1,"<a href=\"ContratoConvenio\/ContratoConvenioRepository.php.html#78\">App\\Inventario\\Repositories\\ContratoConvenio\\ContratoConvenioRepository::crear<\/a>"],[0,1,"<a href=\"ContratoConvenio\/ContratoConvenioRepository.php.html#90\">App\\Inventario\\Repositories\\ContratoConvenio\\ContratoConvenioRepository::actualizar<\/a>"],[0,1,"<a href=\"ContratoConvenio\/ContratoConvenioRepository.php.html#101\">App\\Inventario\\Repositories\\ContratoConvenio\\ContratoConvenioRepository::eliminar<\/a>"],[0,1,"<a href=\"ContratoConvenio\/ContratoConvenioRepository.php.html#112\">App\\Inventario\\Repositories\\ContratoConvenio\\ContratoConvenioRepository::tieneProductos<\/a>"],[0,1,"<a href=\"Dashboard\/DashboardRepository.php.html#17\">App\\Inventario\\Repositories\\Dashboard\\DashboardRepository::obtenerTotalProductos<\/a>"],[0,1,"<a href=\"Dashboard\/DashboardRepository.php.html#27\">App\\Inventario\\Repositories\\Dashboard\\DashboardRepository::obtenerProductosConsumibles<\/a>"],[0,1,"<a href=\"Dashboard\/DashboardRepository.php.html#41\">App\\Inventario\\Repositories\\Dashboard\\DashboardRepository::obtenerProductosNoConsumibles<\/a>"],[0,1,"<a href=\"Dashboard\/DashboardRepository.php.html#55\">App\\Inventario\\Repositories\\Dashboard\\DashboardRepository::obtenerProductosPorVencer<\/a>"],[0,1,"<a href=\"Dashboard\/DashboardRepository.php.html#72\">App\\Inventario\\Repositories\\Dashboard\\DashboardRepository::obtenerProductosStockBajo<\/a>"],[0,1,"<a href=\"Dashboard\/DashboardRepository.php.html#84\">App\\Inventario\\Repositories\\Dashboard\\DashboardRepository::obtenerTotalCategorias<\/a>"],[0,2,"<a href=\"Dashboard\/DashboardRepository.php.html#99\">App\\Inventario\\Repositories\\Dashboard\\DashboardRepository::obtenerProductosMasSolicitados<\/a>"],[0,1,"<a href=\"Dashboard\/DashboardRepository.php.html#124\">App\\Inventario\\Repositories\\Dashboard\\DashboardRepository::obtenerProductosPorCategoria<\/a>"],[0,2,"<a href=\"Dashboard\/DashboardRepository.php.html#146\">App\\Inventario\\Repositories\\Dashboard\\DashboardRepository::obtenerProductosRecientes<\/a>"],[0,1,"<a href=\"Devolucion\/DevolucionRepository.php.html#20\">App\\Inventario\\Repositories\\Devolucion\\DevolucionRepository::obtenerPrestamosPendientes<\/a>"],[0,1,"<a href=\"Devolucion\/DevolucionRepository.php.html#40\">App\\Inventario\\Repositories\\Devolucion\\DevolucionRepository::obtenerHistorial<\/a>"],[0,1,"<a href=\"Devolucion\/DevolucionRepository.php.html#53\">App\\Inventario\\Repositories\\Devolucion\\DevolucionRepository::encontrarConRelaciones<\/a>"],[0,1,"<a href=\"Devolucion\/DevolucionRepository.php.html#70\">App\\Inventario\\Repositories\\Devolucion\\DevolucionRepository::obtenerPrestamosActivosUsuario<\/a>"],[0,1,"<a href=\"Devolucion\/DevolucionRepository.php.html#92\">App\\Inventario\\Repositories\\Devolucion\\DevolucionRepository::obtenerHistorialPrestamosUsuario<\/a>"],[0,3,"<a href=\"Devolucion\/DevolucionRepository.php.html#110\">App\\Inventario\\Repositories\\Devolucion\\DevolucionRepository::paginacionManual<\/a>"],[0,1,"<a href=\"Marca\/MarcaRepository.php.html#25\">App\\Inventario\\Repositories\\Marca\\MarcaRepository::obtenerTemaMarcas<\/a>"],[0,4,"<a href=\"Marca\/MarcaRepository.php.html#36\">App\\Inventario\\Repositories\\Marca\\MarcaRepository::obtenerConFiltros<\/a>"],[0,1,"<a href=\"Marca\/MarcaRepository.php.html#72\">App\\Inventario\\Repositories\\Marca\\MarcaRepository::encontrar<\/a>"],[0,1,"<a href=\"Marca\/MarcaRepository.php.html#83\">App\\Inventario\\Repositories\\Marca\\MarcaRepository::encontrarMultiples<\/a>"],[0,1,"<a href=\"Marca\/MarcaRepository.php.html#94\">App\\Inventario\\Repositories\\Marca\\MarcaRepository::encontrarConRelaciones<\/a>"],[0,1,"<a href=\"Marca\/MarcaRepository.php.html#106\">App\\Inventario\\Repositories\\Marca\\MarcaRepository::actualizar<\/a>"],[0,1,"<a href=\"Marca\/MarcaRepository.php.html#118\">App\\Inventario\\Repositories\\Marca\\MarcaRepository::eliminar<\/a>"],[0,1,"<a href=\"Marca\/MarcaRepository.php.html#134\">App\\Inventario\\Repositories\\Marca\\MarcaRepository::tieneProductos<\/a>"],[0,1,"<a href=\"Notification\/NotificationRepository.php.html#21\">App\\Inventario\\Repositories\\Notification\\NotificationRepository::obtenerPorUsuarioPaginadas<\/a>"],[0,1,"<a href=\"Notification\/NotificationRepository.php.html#34\">App\\Inventario\\Repositories\\Notification\\NotificationRepository::obtenerNoLeidasLimitadas<\/a>"],[0,1,"<a href=\"Notification\/NotificationRepository.php.html#46\">App\\Inventario\\Repositories\\Notification\\NotificationRepository::contarNoLeidas<\/a>"],[0,2,"<a href=\"Notification\/NotificationRepository.php.html#59\">App\\Inventario\\Repositories\\Notification\\NotificationRepository::marcarComoLeida<\/a>"],[0,1,"<a href=\"Notification\/NotificationRepository.php.html#78\">App\\Inventario\\Repositories\\Notification\\NotificationRepository::marcarTodasComoLeidas<\/a>"],[0,2,"<a href=\"Notification\/NotificationRepository.php.html#98\">App\\Inventario\\Repositories\\Notification\\NotificationRepository::eliminar<\/a>"],[0,1,"<a href=\"Orden\/DetalleOrdenRepository.php.html#18\">App\\Inventario\\Repositories\\Orden\\DetalleOrdenRepository::crear<\/a>"],[0,1,"<a href=\"Orden\/DetalleOrdenRepository.php.html#30\">App\\Inventario\\Repositories\\Orden\\DetalleOrdenRepository::actualizar<\/a>"],[0,1,"<a href=\"Orden\/DetalleOrdenRepository.php.html#41\">App\\Inventario\\Repositories\\Orden\\DetalleOrdenRepository::eliminar<\/a>"],[0,1,"<a href=\"Orden\/DetalleOrdenRepository.php.html#52\">App\\Inventario\\Repositories\\Orden\\DetalleOrdenRepository::eliminarPorOrden<\/a>"],[0,1,"<a href=\"Orden\/DetalleOrdenRepository.php.html#63\">App\\Inventario\\Repositories\\Orden\\DetalleOrdenRepository::encontrar<\/a>"],[0,1,"<a href=\"Orden\/DetalleOrdenRepository.php.html#74\">App\\Inventario\\Repositories\\Orden\\DetalleOrdenRepository::encontrarConRelaciones<\/a>"],[0,5,"<a href=\"Orden\/OrdenRepository.php.html#21\">App\\Inventario\\Repositories\\Orden\\OrdenRepository::obtenerConFiltros<\/a>"],[0,1,"<a href=\"Orden\/OrdenRepository.php.html#72\">App\\Inventario\\Repositories\\Orden\\OrdenRepository::obtenerPendientes<\/a>"],[0,1,"<a href=\"Orden\/OrdenRepository.php.html#93\">App\\Inventario\\Repositories\\Orden\\OrdenRepository::obtenerCompletadas<\/a>"],[0,1,"<a href=\"Orden\/OrdenRepository.php.html#114\">App\\Inventario\\Repositories\\Orden\\OrdenRepository::obtenerRechazadas<\/a>"],[0,1,"<a href=\"Orden\/OrdenRepository.php.html#135\">App\\Inventario\\Repositories\\Orden\\OrdenRepository::encontrarConRelaciones<\/a>"],[0,1,"<a href=\"Orden\/OrdenRepository.php.html#152\">App\\Inventario\\Repositories\\Orden\\OrdenRepository::encontrarConDetallesYDevoluciones<\/a>"],[0,1,"<a href=\"Orden\/OrdenRepository.php.html#163\">App\\Inventario\\Repositories\\Orden\\OrdenRepository::obtenerDetallesPendientes<\/a>"],[0,1,"<a href=\"Orden\/OrdenRepository.php.html#183\">App\\Inventario\\Repositories\\Orden\\OrdenRepository::crear<\/a>"],[0,1,"<a href=\"Orden\/OrdenRepository.php.html#195\">App\\Inventario\\Repositories\\Orden\\OrdenRepository::actualizar<\/a>"],[0,1,"<a href=\"Orden\/OrdenRepository.php.html#206\">App\\Inventario\\Repositories\\Orden\\OrdenRepository::eliminar<\/a>"],[0,6,"<a href=\"Producto\/ProductoRepository.php.html#22\">App\\Inventario\\Repositories\\Producto\\ProductoRepository::obtenerConFiltros<\/a>"],[0,1,"<a href=\"Producto\/ProductoRepository.php.html#69\">App\\Inventario\\Repositories\\Producto\\ProductoRepository::encontrarConRelaciones<\/a>"],[0,1,"<a href=\"Producto\/ProductoRepository.php.html#89\">App\\Inventario\\Repositories\\Producto\\ProductoRepository::buscarPorCodigoBarras<\/a>"],[0,8,"<a href=\"Producto\/ProductoRepository.php.html#100\">App\\Inventario\\Repositories\\Producto\\ProductoRepository::obtenerParaCatalogo<\/a>"],[0,4,"<a href=\"Producto\/ProductoRepository.php.html#149\">App\\Inventario\\Repositories\\Producto\\ProductoRepository::buscarParaAjax<\/a>"],[0,1,"<a href=\"Producto\/ProductoRepository.php.html#181\">App\\Inventario\\Repositories\\Producto\\ProductoRepository::obtenerTiposProductos<\/a>"],[0,1,"<a href=\"Producto\/ProductoRepository.php.html#201\">App\\Inventario\\Repositories\\Producto\\ProductoRepository::encontrar<\/a>"],[0,1,"<a href=\"Producto\/ProductoRepository.php.html#212\">App\\Inventario\\Repositories\\Producto\\ProductoRepository::crear<\/a>"],[0,1,"<a href=\"Producto\/ProductoRepository.php.html#224\">App\\Inventario\\Repositories\\Producto\\ProductoRepository::actualizar<\/a>"],[0,1,"<a href=\"Producto\/ProductoRepository.php.html#235\">App\\Inventario\\Repositories\\Producto\\ProductoRepository::eliminar<\/a>"],[0,1,"<a href=\"Producto\/ProductoRepository.php.html#247\">App\\Inventario\\Repositories\\Producto\\ProductoRepository::actualizarStock<\/a>"],[0,1,"<a href=\"Producto\/ProductoRepository.php.html#258\">App\\Inventario\\Repositories\\Producto\\ProductoRepository::obtenerMaxCodigoBarras<\/a>"],[0,1,"<a href=\"Producto\/ProductoRepository.php.html#270\">App\\Inventario\\Repositories\\Producto\\ProductoRepository::existeCodigoBarras<\/a>"],[0,1,"<a href=\"Proveedor\/ProveedorRepository.php.html#20\">App\\Inventario\\Repositories\\Proveedor\\ProveedorRepository::obtenerTodos<\/a>"],[0,2,"<a href=\"Proveedor\/ProveedorRepository.php.html#31\">App\\Inventario\\Repositories\\Proveedor\\ProveedorRepository::obtenerConFiltros<\/a>"],[0,1,"<a href=\"Proveedor\/ProveedorRepository.php.html#70\">App\\Inventario\\Repositories\\Proveedor\\ProveedorRepository::encontrarConRelaciones<\/a>"],[0,1,"<a href=\"Proveedor\/ProveedorRepository.php.html#88\">App\\Inventario\\Repositories\\Proveedor\\ProveedorRepository::crear<\/a>"],[0,1,"<a href=\"Proveedor\/ProveedorRepository.php.html#100\">App\\Inventario\\Repositories\\Proveedor\\ProveedorRepository::actualizar<\/a>"],[0,1,"<a href=\"Proveedor\/ProveedorRepository.php.html#111\">App\\Inventario\\Repositories\\Proveedor\\ProveedorRepository::eliminar<\/a>"],[0,1,"<a href=\"Proveedor\/ProveedorRepository.php.html#122\">App\\Inventario\\Repositories\\Proveedor\\ProveedorRepository::tieneContratos<\/a>"],[0,1,"<a href=\"Proveedor\/ProveedorRepository.php.html#135\">App\\Inventario\\Repositories\\Proveedor\\ProveedorRepository::tieneProductos<\/a>"],[0,1,"<a href=\"User\/UserRepository.php.html#13\">App\\Inventario\\Repositories\\User\\UserRepository::obtenerSuperAdministradores<\/a>"]], 'Method Complexity'))
+      .transition()
+      .duration(500)
+      .call(chart);
+
+    nv.utils.windowResize(chart.update);
+
+    return chart;
+  });
+
+  function getComplexityData(data, label) {
+    var values = [];
+    $.each(data, function(key) {
+      var value = Math.round(data[key][0]*100) / 100;
+      values.push({
+        x: value,
+        y: data[key][1],
+        class: data[key][2],
+        size: 0.05,
+        shape: 'diamond'
+      });
+    });
+
+    return [
+      {
+        key: label,
+        values: values,
+        color: "#4572A7"
+      }
+    ];
+  }
+});
+  </script>
+ </body>
+</html>
