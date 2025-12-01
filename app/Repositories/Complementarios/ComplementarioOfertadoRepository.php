@@ -125,7 +125,7 @@ class ComplementarioOfertadoRepository
                 complementarios_ofertados.updated_at,
                 COUNT(aspirantes_complementarios.id) as total_aspirantes,
                 SUM(CASE WHEN aspirantes_complementarios.estado = 3 THEN 1 ELSE 0 END) as aceptados,
-                SUM(CASE WHEN aspirantes_complementarios.estado IN (1, 2) THEN 1 ELSE 0 END) as pendientes
+                SUM(CASE WHEN aspirantes_complementarios.estado = 1 THEN 1 ELSE 0 END) as pendientes
             ')
             ->leftJoin('aspirantes_complementarios', 'complementarios_ofertados.id', '=', 'aspirantes_complementarios.complementario_id')
             ->groupBy(

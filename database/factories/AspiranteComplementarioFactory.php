@@ -31,7 +31,7 @@ class AspiranteComplementarioFactory extends Factory
             'persona_id' => Persona::factory(),
             'complementario_id' => ComplementarioOfertado::factory(),
             'observaciones' => $this->faker->optional(0.7)->randomElement($observaciones),
-            'estado' => $this->faker->randomElement([1, 2, 3, 4]),
+            'estado' => $this->faker->randomElement([1, 3, 4]),
         ];
     }
 
@@ -45,15 +45,6 @@ class AspiranteComplementarioFactory extends Factory
         ]);
     }
 
-    /**
-     * Estado: Completo (documento subido)
-     */
-    public function completo(): static
-    {
-        return $this->state(fn (array $attributes) => [
-            'estado' => 2,
-        ]);
-    }
 
     /**
      * Estado: Admitido
@@ -71,7 +62,7 @@ class AspiranteComplementarioFactory extends Factory
     public function rechazado(): static
     {
         return $this->state(fn (array $attributes) => [
-            'estado' => 2,
+            'estado' => 4,
         ]);
     }
 

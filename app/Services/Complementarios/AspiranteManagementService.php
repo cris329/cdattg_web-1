@@ -126,7 +126,7 @@ class AspiranteManagementService
             $personaNombre = $aspirante->persona->primer_nombre . ' ' . $aspirante->persona->primer_apellido;
             $numeroDocumento = $aspirante->persona->numero_documento;
 
-            $this->aspiranteRepository->update($aspirante, ['estado' => 2]);
+            $this->aspiranteRepository->update($aspirante, ['estado' => 4]);
 
             Log::info('Aspirante rechazado exitosamente', [
                 'aspirante_id' => $aspiranteId,

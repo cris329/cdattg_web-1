@@ -104,16 +104,16 @@ class EstadisticaComplementarioServiceTest extends TestCase
         // Mock para AspiranteComplementario::whereIn usando alias
         // Nota: Este mock puede no funcionar si el modelo ya está cargado
         $builderMock = Mockery::mock(Builder::class);
-        $builderMock->shouldReceive('whereIn')
-            ->with('estado', [1, 2])
+        $builderMock->shouldReceive('where')
+            ->with('estado', 1)
             ->andReturnSelf();
         $builderMock->shouldReceive('count')
             ->andReturn(10);
 
         try {
             $modelMock = Mockery::mock('alias:' . AspiranteComplementario::class);
-            $modelMock->shouldReceive('whereIn')
-                ->with('estado', [1, 2])
+            $modelMock->shouldReceive('where')
+                ->with('estado', 1)
                 ->andReturn($builderMock);
         } catch (\Exception $e) {
             // Si el mock del alias falla, el test requerirá BD
@@ -250,7 +250,7 @@ class EstadisticaComplementarioServiceTest extends TestCase
         AspiranteComplementarioFactory::new()->create([
             'persona_id' => $persona->id,
             'complementario_id' => $programa->id,
-            'estado' => 2,
+            'estado' => 1, // En proceso
         ]);
 
         $filtros = ['municipio_id' => 1];

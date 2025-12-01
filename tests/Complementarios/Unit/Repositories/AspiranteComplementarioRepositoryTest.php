@@ -131,7 +131,7 @@ class AspiranteComplementarioRepositoryTest extends TestCase
         $this->assertTrue($eliminado);
         $this->assertDatabaseHas('aspirantes_complementarios', [
             'id' => $aspirante->id,
-            'estado' => 2, // Rechazado
+            'estado' => 4, // Rechazado
         ]);
     }
 

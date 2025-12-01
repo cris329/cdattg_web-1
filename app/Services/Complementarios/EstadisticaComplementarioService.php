@@ -33,7 +33,7 @@ class EstadisticaComplementarioService
         $totalAspirantes = $estadisticas['total'];
         $aspirantesAceptados = $estadisticas['aceptados'];
 
-        $aspirantesPendientes = AspiranteComplementario::whereIn('estado', [1, 2])->count();
+        $aspirantesPendientes = AspiranteComplementario::where('estado', 1)->count();
         $programasActivos = $this->programaRepository->countActivos();
         $tendenciaInscripciones = $this->aspiranteRepository->getTendenciaInscripciones(6);
         $distribucionProgramas = $this->aspiranteRepository->getDistribucionPorProgramas();
@@ -90,7 +90,7 @@ class EstadisticaComplementarioService
         return [
             'total_filtrado' => $query->count(),
             'aceptados_filtrado' => (clone $query)->where('estado', 3)->count(),
-            'pendientes_filtrado' => (clone $query)->whereIn('estado', [1, 2])->count(),
+            'pendientes_filtrado' => (clone $query)->where('estado', 1)->count(),
             'datos' => $query->get()
         ];
     }
@@ -105,7 +105,7 @@ class EstadisticaComplementarioService
                 MONTH(created_at) as month,
                 COUNT(*) as total_inscripciones,
                 SUM(CASE WHEN estado = 3 THEN 1 ELSE 0 END) as aceptados,
-                SUM(CASE WHEN estado IN (1, 2) THEN 1 ELSE 0 END) as pendientes
+                SUM(CASE WHEN estado = 1 THEN 1 ELSE 0 END) as pendientes
             ')
             ->where('created_at', '>=', now()->subMonths($meses))
             ->groupBy('year', 'month')

@@ -16,13 +16,25 @@
 </testsuites>
     <source>
         <include>
-            <directory>app</directory>
+            <directory>app/Http/Controllers/Complementarios</directory>
+            <directory>app/Models/Complementarios</directory>
+            <directory>app/Http/Requests/Complementarios</directory>
+            <directory>app/Services/Complementarios</directory>
+            <directory>app/Repositories/Complementarios</directory>
+            <directory>app/Jobs/Complementarios</directory>
+            <directory>app/Exceptions/Complementarios</directory>
         </include>
     </source>
 
     <coverage processUncoveredFiles="true">
         <include>
-            <directory suffix=".php">app/</directory>
+            <directory suffix=".php">app/Http/Controllers/Complementarios</directory>
+            <directory suffix=".php">app/Models/Complementarios</directory>
+            <directory suffix=".php">app/Http/Requests/Complementarios</directory>
+            <directory suffix=".php">app/Services/Complementarios</directory>
+            <directory suffix=".php">app/Repositories/Complementarios</directory>
+            <directory suffix=".php">app/Jobs/Complementarios</directory>
+            <directory suffix=".php">app/Exceptions/Complementarios</directory>
         </include>
         <report>
             <text outputFile="php://stdout" />

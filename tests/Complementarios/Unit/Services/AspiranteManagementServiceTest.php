@@ -383,7 +383,7 @@ class AspiranteManagementServiceTest extends TestCase
 
         $this->aspiranteRepositoryMock->shouldReceive('update')
             ->once()
-            ->with($aspirante, ['estado' => 2])
+            ->with($aspirante, ['estado' => 4])
             ->andReturn(true);
 
         $resultado = $this->service->rechazarAspirante(1, 1);

@@ -196,7 +196,7 @@ class AspiranteComplementarioControllerTest extends TestCase
         $response->assertJson(['success' => true]);
         $this->assertDatabaseHas('aspirantes_complementarios', [
             'id' => $aspirante->id,
-            'estado' => 2, // Rechazado
+            'estado' => 4, // Rechazado
         ]);
     }
 
