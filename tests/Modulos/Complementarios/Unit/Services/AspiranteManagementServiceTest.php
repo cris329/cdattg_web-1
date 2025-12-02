@@ -10,13 +10,17 @@ use App\Repositories\PersonaRepository;
 use App\Models\Complementarios\ComplementarioOfertado;
 use App\Models\Persona;
 use App\Models\Complementarios\AspiranteComplementario;
-use Illuminate\Database\Eloquent\Collection;
+use App\Models\Complementarios\SofiaValidationProgress;
+use Illuminate\Database\Eloquent\Collection as EloquentCollection;
 use Illuminate\Foundation\Testing\RefreshDatabase;
+use Illuminate\Support\Facades\Auth;
 use Mockery;
 use PHPUnit\Framework\Attributes\Test;
 
 class AspiranteManagementServiceTest extends TestCase
 {
+    use RefreshDatabase;
+
     private const TEST_PROGRAMA_NOMBRE = 'Programa Test';
     private const TEST_NUMERO_DOCUMENTO = '1234567890';
     private const TEST_ERROR_INTERNO_SERVIDOR = 'Error interno del servidor';
@@ -61,7 +65,7 @@ class AspiranteManagementServiceTest extends TestCase
         $programa2->setAttribute('nombre', 'Programa 2');
         $programa2->setAttribute('aspirantes_count', 3);
         
-        $programas = new Collection([$programa1, $programa2]);
+        $programas = new EloquentCollection([$programa1, $programa2]);
 
         $this->programaRepositoryMock->shouldReceive('getAllWithAspirantesCount')
             ->once()
@@ -83,7 +87,7 @@ class AspiranteManagementServiceTest extends TestCase
         $programa->setAttribute('id', 1);
         $programa->setAttribute('nombre', 'Auxiliar de Cocina');
         
-        $aspirantes = new Collection([
+        $aspirantes = new EloquentCollection([
             new AspiranteComplementario(['id' => 1, 'complementario_id' => 1]),
             new AspiranteComplementario(['id' => 2, 'complementario_id' => 1]),
             new AspiranteComplementario(['id' => 3, 'complementario_id' => 1]),
@@ -104,8 +108,17 @@ class AspiranteManagementServiceTest extends TestCase
             ->with(1, ['persona', 'complementario'])
             ->andReturn($aspirantes);
 
-        // No mockeamos SofiaValidationProgress - usamos la base de datos real
-        // Como no hay registros en la BD de prueba, first() retornará null automáticamente
+        // Mockear SofiaValidationProgress para evitar error de tabla faltante
+        $sofiaProgressMock = Mockery::mock('alias:' . SofiaValidationProgress::class);
+        $queryBuilderMock = Mockery::mock();
+        $queryBuilderMock->shouldReceive('whereIn')
+            ->with('status', ['pending', 'processing'])
+            ->andReturnSelf();
+        $queryBuilderMock->shouldReceive('first')
+            ->andReturn(null);
+        $sofiaProgressMock->shouldReceive('where')
+            ->with('complementario_id', 1)
+            ->andReturn($queryBuilderMock);
 
         $data = $this->service->obtenerAspirantesPorPrograma('Auxiliar-de-Cocina');
 
@@ -120,7 +133,7 @@ class AspiranteManagementServiceTest extends TestCase
         $programa->setAttribute('id', 1);
         $programa->setAttribute('nombre', self::TEST_PROGRAMA_NOMBRE);
         
-        $aspirantes = new Collection([
+        $aspirantes = new EloquentCollection([
             new AspiranteComplementario(['id' => 1]),
             new AspiranteComplementario(['id' => 2]),
             new AspiranteComplementario(['id' => 3]),
@@ -137,8 +150,17 @@ class AspiranteManagementServiceTest extends TestCase
             ->with(1, ['persona', 'complementario'])
             ->andReturn($aspirantes);
 
-        // No mockeamos SofiaValidationProgress - usamos la base de datos real
-        // Como no hay registros en la BD de prueba, first() retornará null automáticamente
+        // Mockear SofiaValidationProgress para evitar error de tabla faltante
+        $sofiaProgressMock = Mockery::mock('alias:' . SofiaValidationProgress::class);
+        $queryBuilderMock = Mockery::mock();
+        $queryBuilderMock->shouldReceive('whereIn')
+            ->with('status', ['pending', 'processing'])
+            ->andReturnSelf();
+        $queryBuilderMock->shouldReceive('first')
+            ->andReturn(null);
+        $sofiaProgressMock->shouldReceive('where')
+            ->with('complementario_id', 1)
+            ->andReturn($queryBuilderMock);
 
         $data = $this->service->obtenerAspirantesPorProgramaId(1);
 
@@ -289,10 +311,12 @@ class AspiranteManagementServiceTest extends TestCase
             ->with('Programa-Inexistente')
             ->andReturn(null);
 
-        $this->expectException(\Symfony\Component\HttpKernel\Exception\HttpException::class);
-        $this->expectExceptionCode(404);
-
-        $this->service->obtenerAspirantesPorPrograma('Programa-Inexistente');
+        try {
+            $this->service->obtenerAspirantesPorPrograma('Programa-Inexistente');
+            $this->fail('Se esperaba una excepción HttpException con código 404');
+        } catch (\Symfony\Component\HttpKernel\Exception\HttpException $e) {
+            $this->assertEquals(404, $e->getStatusCode());
+        }
     }
 
     #[Test]
@@ -303,10 +327,12 @@ class AspiranteManagementServiceTest extends TestCase
             ->with(999, ['modalidad.parametro', 'jornada', 'diasFormacion'])
             ->andReturn(null);
 
-        $this->expectException(\Symfony\Component\HttpKernel\Exception\HttpException::class);
-        $this->expectExceptionCode(404);
-
-        $this->service->obtenerAspirantesPorProgramaId(999);
+        try {
+            $this->service->obtenerAspirantesPorProgramaId(999);
+            $this->fail('Se esperaba una excepción HttpException con código 404');
+        } catch (\Symfony\Component\HttpKernel\Exception\HttpException $e) {
+            $this->assertEquals(404, $e->getStatusCode());
+        }
     }
 
     #[Test]
@@ -357,28 +383,51 @@ class AspiranteManagementServiceTest extends TestCase
         $persona->setAttribute('primer_apellido', 'Pérez');
         $persona->setAttribute('numero_documento', self::TEST_NUMERO_DOCUMENTO);
 
-        $aspirante = new AspiranteComplementario(['id' => 1, 'persona_id' => 1, 'complementario_id' => 1]);
+        // Crear un mock parcial del aspirante para poder mockear el método load()
+        $aspirante = Mockery::mock(AspiranteComplementario::class)->makePartial();
+        $aspirante->setRawAttributes([
+            'id' => 1,
+            'persona_id' => 1,
+            'complementario_id' => 1,
+            'estado' => 1,
+        ]);
         $aspirante->setRelation('persona', $persona);
+        // Mockear load() para que no intente cargar desde la base de datos
+        $aspirante->shouldReceive('load')
+            ->with('persona')
+            ->andReturnSelf();
+        // Asegurar que el modelo tenga los atributos correctos para ->where('id', 1)
+        $aspirante->syncOriginal();
 
-        $collection = new Collection([$aspirante]);
+        $collection = new EloquentCollection([$aspirante]);
 
-        \Illuminate\Support\Facades\Auth::shouldReceive('user')
-            ->andReturn(new class {
-                public function can($permission) {
-                    // Parameter required by Laravel's Authorizable interface signature
-                    unset($permission);
-                    return true;
-                }
-            });
+        $userMock = new class {
+            public function can($permission) {
+                // Parameter required by Laravel's Authorizable interface signature
+                unset($permission);
+                return true;
+            }
+        };
+
+        Auth::shouldReceive('user')
+            ->andReturn($userMock);
+
+        Auth::shouldReceive('id')
+            ->andReturn(1);
 
         $this->programaRepositoryMock->shouldReceive('findWithRelations')
             ->once()
             ->with(1)
             ->andReturn($programa);
 
+        // El servicio llama a findByPrograma en validarRechazarAspirante (línea 329) y en rechazarAspirante (línea 121)
+        // Ambas veces hace ->where('id', $aspiranteId)->first() sobre la Collection retornada
+        // El método findByPrograma puede recibir un segundo parámetro opcional (relations)
+        // Necesitamos que retorne una Collection que soporte ->where('id', $aspiranteId)->first()
+        // El servicio llama primero sin relaciones (en validarRechazarAspirante) y luego sin relaciones (en rechazarAspirante)
         $this->aspiranteRepositoryMock->shouldReceive('findByPrograma')
-            ->twice()
             ->with(1)
+            ->twice()
             ->andReturn($collection);
 
         $this->aspiranteRepositoryMock->shouldReceive('update')
@@ -396,7 +445,7 @@ class AspiranteManagementServiceTest extends TestCase
     #[Test]
     public function no_rechaza_aspirante_sin_permisos(): void
     {
-        \Illuminate\Support\Facades\Auth::shouldReceive('user')
+        Auth::shouldReceive('user')
             ->andReturn(new class {
                 public function can($permission) {
                     // Parameter required by Laravel's Authorizable interface signature
@@ -415,7 +464,7 @@ class AspiranteManagementServiceTest extends TestCase
     #[Test]
     public function no_rechaza_aspirante_si_programa_no_existe(): void
     {
-        \Illuminate\Support\Facades\Auth::shouldReceive('user')
+        Auth::shouldReceive('user')
             ->andReturn(new class {
                 public function can($permission) {
                     // Parameter required by Laravel's Authorizable interface signature
@@ -441,7 +490,7 @@ class AspiranteManagementServiceTest extends TestCase
         $programa = new ComplementarioOfertado();
         $programa->setAttribute('id', 1);
 
-        \Illuminate\Support\Facades\Auth::shouldReceive('user')
+        Auth::shouldReceive('user')
             ->andReturn(new class {
                 public function can($permission) {
                     // Parameter required by Laravel's Authorizable interface signature
@@ -458,7 +507,7 @@ class AspiranteManagementServiceTest extends TestCase
         $this->aspiranteRepositoryMock->shouldReceive('findByPrograma')
             ->once()
             ->with(1)
-            ->andReturn(new Collection([]));
+            ->andReturn(new EloquentCollection([]));
 
         $resultado = $this->service->rechazarAspirante(1, 999);
 
@@ -469,14 +518,19 @@ class AspiranteManagementServiceTest extends TestCase
     #[Test]
     public function maneja_excepcion_al_rechazar_aspirante(): void
     {
-        \Illuminate\Support\Facades\Auth::shouldReceive('user')
-            ->andReturn(new class {
-                public function can($permission) {
-                    // Parameter required by Laravel's Authorizable interface signature
-                    unset($permission);
-                    return true;
-                }
-            });
+        $userMock = new class {
+            public function can($permission) {
+                // Parameter required by Laravel's Authorizable interface signature
+                unset($permission);
+                return true;
+            }
+        };
+
+        Auth::shouldReceive('user')
+            ->andReturn($userMock);
+
+        Auth::shouldReceive('id')
+            ->andReturn(1);
 
         $this->programaRepositoryMock->shouldReceive('findWithRelations')
             ->once()
@@ -502,7 +556,7 @@ class AspiranteManagementServiceTest extends TestCase
         $aspirante = new AspiranteComplementario(['id' => 1, 'persona_id' => 1]);
         $aspirante->setRelation('persona', $persona);
 
-        $aspirantes = new Collection([$aspirante]);
+        $aspirantes = new EloquentCollection([$aspirante]);
         $files = ['documento1.pdf', 'documento2.pdf'];
 
         $documentoServiceMock = Mockery::mock(\App\Services\Complementarios\AspiranteDocumentoService::class);
@@ -574,7 +628,7 @@ class AspiranteManagementServiceTest extends TestCase
         $this->aspiranteRepositoryMock->shouldReceive('findByPrograma')
             ->once()
             ->with(1, ['persona.tipoDocumento'])
-            ->andReturn(new Collection([]));
+            ->andReturn(new EloquentCollection([]));
 
         $documentoServiceMock = Mockery::mock(\App\Services\Complementarios\AspiranteDocumentoService::class);
 
@@ -594,7 +648,7 @@ class AspiranteManagementServiceTest extends TestCase
 
         $documentoServiceMock = Mockery::mock(\App\Services\Complementarios\AspiranteDocumentoService::class);
 
-        \Illuminate\Support\Facades\Auth::shouldReceive('id')
+        Auth::shouldReceive('id')
             ->andReturn(1);
 
         $resultado = $this->service->validarDocumentos(1, $documentoServiceMock);
