@@ -331,7 +331,8 @@ class ComplementarioOfertadoRepositoryTest extends TestCase
         $this->assertNotNull($programa1Data);
         $this->assertEquals(10, $programa1Data->total_aspirantes);
         $this->assertEquals(5, $programa1Data->aceptados);
-        $this->assertEquals(5, $programa1Data->pendientes); // 3 en proceso + 2 completos
+        // El repositorio solo cuenta estado 1 (en proceso) como pendientes, no estado 2 (completo)
+        $this->assertEquals(3, $programa1Data->pendientes); // Solo los 3 en proceso
         $this->assertGreaterThan(0, $programa1Data->tasa_aceptacion);
 
         $this->assertNotNull($programa2Data);

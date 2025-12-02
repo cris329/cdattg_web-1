@@ -57,6 +57,16 @@ class AspiranteComplementarioFactory extends Factory
     }
 
     /**
+     * Estado: Completo (con documento)
+     */
+    public function completo(): static
+    {
+        return $this->state(fn (array $attributes) => [
+            'estado' => 2,
+        ]);
+    }
+
+    /**
      * Estado: Rechazado
      */
     public function rechazado(): static

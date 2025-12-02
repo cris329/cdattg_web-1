@@ -16,10 +16,12 @@ use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Support\Facades\Auth;
 use Mockery;
 use PHPUnit\Framework\Attributes\Test;
+use Tests\Complementarios\Concerns\SeedsComplementariosDatabase;
 
 class AspiranteManagementServiceTest extends TestCase
 {
     use RefreshDatabase;
+    use SeedsComplementariosDatabase;
 
     private const TEST_PROGRAMA_NOMBRE = 'Programa Test';
     private const TEST_NUMERO_DOCUMENTO = '1234567890';
@@ -35,6 +37,8 @@ class AspiranteManagementServiceTest extends TestCase
     {
         parent::setUp();
         
+        $this->seedComplementariosDatabaseIfNeeded();
+        
         $this->aspiranteRepositoryMock = Mockery::mock(AspiranteComplementarioRepository::class);
         $this->programaRepositoryMock = Mockery::mock(ComplementarioOfertadoRepository::class);
         $this->personaRepositoryMock = Mockery::mock(PersonaRepository::class);
@@ -48,6 +52,8 @@ class AspiranteManagementServiceTest extends TestCase
 
     protected function tearDown(): void
     {
+        // Cerrar todos los mocks y limpiar el contenedor
+        // Esto limpia los mocks de alias que pueden interferir con factories
         Mockery::close();
         parent::tearDown();
     }
@@ -108,17 +114,9 @@ class AspiranteManagementServiceTest extends TestCase
             ->with(1, ['persona', 'complementario'])
             ->andReturn($aspirantes);
 
-        // Mockear SofiaValidationProgress para evitar error de tabla faltante
-        $sofiaProgressMock = Mockery::mock('alias:' . SofiaValidationProgress::class);
-        $queryBuilderMock = Mockery::mock();
-        $queryBuilderMock->shouldReceive('whereIn')
-            ->with('status', ['pending', 'processing'])
-            ->andReturnSelf();
-        $queryBuilderMock->shouldReceive('first')
-            ->andReturn(null);
-        $sofiaProgressMock->shouldReceive('where')
-            ->with('complementario_id', 1)
-            ->andReturn($queryBuilderMock);
+        // No necesitamos mockear SofiaValidationProgress ya que usamos RefreshDatabase
+        // y la tabla existe gracias a seedComplementariosDatabaseIfNeeded()
+        // El servicio simplemente retornará null si no hay progreso existente
 
         $data = $this->service->obtenerAspirantesPorPrograma('Auxiliar-de-Cocina');
 
@@ -150,17 +148,9 @@ class AspiranteManagementServiceTest extends TestCase
             ->with(1, ['persona', 'complementario'])
             ->andReturn($aspirantes);
 
-        // Mockear SofiaValidationProgress para evitar error de tabla faltante
-        $sofiaProgressMock = Mockery::mock('alias:' . SofiaValidationProgress::class);
-        $queryBuilderMock = Mockery::mock();
-        $queryBuilderMock->shouldReceive('whereIn')
-            ->with('status', ['pending', 'processing'])
-            ->andReturnSelf();
-        $queryBuilderMock->shouldReceive('first')
-            ->andReturn(null);
-        $sofiaProgressMock->shouldReceive('where')
-            ->with('complementario_id', 1)
-            ->andReturn($queryBuilderMock);
+        // No necesitamos mockear SofiaValidationProgress ya que usamos RefreshDatabase
+        // y la tabla existe gracias a seedComplementariosDatabaseIfNeeded()
+        // El servicio simplemente retornará null si no hay progreso existente
 
         $data = $this->service->obtenerAspirantesPorProgramaId(1);
 
