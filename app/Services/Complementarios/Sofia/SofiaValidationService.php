@@ -99,6 +99,14 @@ class SofiaValidationService
     }
 
     /**
+     * Verificar que el servicio esté disponible
+     */
+    public function checkServiceHealth(): void
+    {
+        $this->httpClient->checkHealth();
+    }
+
+    /**
      * Registrar auditoría de éxito
      */
     private function registerAuditSuccess(

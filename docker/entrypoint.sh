@@ -88,10 +88,28 @@ if [ "${WAIT_FOR_DB,,}" != "false" ]; then
     wait_for_database
 fi
 
+# Crear directorios necesarios con permisos correctos
+echo "📁 Creando directorios necesarios..."
 mkdir -p storage/logs storage/framework/cache storage/framework/cache/data storage/framework/sessions storage/framework/views bootstrap/cache
 
+# Aplicar permisos de forma más agresiva
+echo "🔧 Configurando permisos en storage y bootstrap/cache..."
 ensure_permissions storage
 ensure_permissions bootstrap/cache
+
+# Asegurar permisos específicos en directorios críticos de Laravel
+echo "🔧 Asegurando permisos en directorios críticos..."
+chown -R www-data:www-data storage bootstrap/cache 2>/dev/null || true
+chmod -R 775 storage bootstrap/cache 2>/dev/null || true
+
+# Asegurar permisos específicos en storage/framework/views
+if [ -d "storage/framework/views" ]; then
+    chown -R www-data:www-data storage/framework/views 2>/dev/null || true
+    chmod -R 775 storage/framework/views 2>/dev/null || true
+    # Asegurar que los archivos dentro también tengan permisos correctos
+    find storage/framework/views -type f -exec chmod 664 {} \; 2>/dev/null || true
+    find storage/framework/views -type d -exec chmod 775 {} \; 2>/dev/null || true
+fi
 
 log_file="storage/logs/laravel.log"
 if [ ! -f "$log_file" ]; then

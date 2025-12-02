@@ -14,11 +14,13 @@ use App\Models\JornadaFormacion;
 use App\Models\Ambiente;
 use App\Models\Parametro;
 use Illuminate\Database\Eloquent\Collection;
+use Illuminate\Foundation\Testing\RefreshDatabase;
 use Mockery;
 use PHPUnit\Framework\Attributes\Test;
 
 class ComplementarioServiceTest extends TestCase
 {
+    use RefreshDatabase;
     private const TEST_OBSERVACIONES = 'Observaciones test';
     private const TEST_HORA_INICIO = '08:00:00';
     private const TEST_HORA_FIN = '12:00:00';
