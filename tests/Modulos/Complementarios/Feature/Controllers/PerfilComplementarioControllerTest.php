@@ -88,29 +88,19 @@ class PerfilComplementarioControllerTest extends TestCase
     #[Test]
     public function usuario_sin_persona_es_redirigido_a_home()
     {
-        // Create persona first
-        $persona = Persona::factory()->create();
-        
-        // Create user with persona
-        $userConPersona = User::factory()->create([
-            'persona_id' => $persona->id,
+        // Create a real user
+        $user = User::factory()->create([
+            'persona_id' => Persona::factory()->create()->id,
         ]);
 
-        $userId = $userConPersona->id;
-        /** @var User $userConPersona */
-        $this->actingAs($userConPersona);
+        // Force the persona relation to be null using setRelation
+        // This simulates a user without persona without modifying the database
+        $user->setRelation('persona', null);
 
-        // Temporarily disable foreign key constraints to simulate orphaned user
-        // This tests the controller's null check for persona
-        \Illuminate\Support\Facades\Schema::disableForeignKeyConstraints();
-        $persona->delete();
-        \Illuminate\Support\Facades\Schema::enableForeignKeyConstraints();
-        
-        // Reload user to clear cached persona relationship
-        /** @var User $userReloaded */
-        $userReloaded = User::find($userId);
-        $this->assertNotNull($userReloaded, 'User should still exist after persona deletion');
-        $this->actingAs($userReloaded);
+        // Use actingAs instead of mocking Auth - this is the standard Laravel way
+        // and handles all authentication properly
+        /** @var User $user */
+        $this->actingAs($user);
 
         $response = $this->get(route(self::ROUTE_PERFIL));
 

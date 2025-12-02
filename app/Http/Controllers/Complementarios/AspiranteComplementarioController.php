@@ -4,6 +4,7 @@ namespace App\Http\Controllers\Complementarios;
 
 use App\Http\Controllers\Controller;
 use App\Http\Requests\Complementarios\AspiranteRequest;
+use App\Http\Requests\Complementarios\BuscarPersonaRequest;
 use App\Services\Complementarios\AspiranteManagementService;
 use App\Services\Complementarios\AspiranteExportService;
 use App\Services\Complementarios\AspiranteDocumentoService;
@@ -141,13 +142,9 @@ class AspiranteComplementarioController extends Controller
     /**
      * Buscar persona por número de documento
      */
-    public function buscarPersona(Request $request): JsonResponse
+    public function buscarPersona(BuscarPersonaRequest $request): JsonResponse
     {
-        $request->validate([
-            'numero_documento' => 'required|string|max:20'
-        ]);
-
-        $persona = $this->personaService->buscarPorDocumento(trim($request->numero_documento));
+        $persona = $this->personaService->buscarPorDocumento(trim($request->validated()['numero_documento']));
 
         if (!$persona) {
             return response()->json([
@@ -273,10 +270,7 @@ class AspiranteComplementarioController extends Controller
         try {
             $estadisticas = $this->aspiranteRepository->getEstadisticasExclusion($complementarioId);
 
-            return response()->json([
-                'success' => true,
-                'estadisticas' => $estadisticas
-            ]);
+            return response()->json($estadisticas);
         } catch (\Exception $e) {
             return response()->json([
                 'success' => false,
