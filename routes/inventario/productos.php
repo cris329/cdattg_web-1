@@ -7,7 +7,7 @@ use App\Http\Controllers\Inventario\ProductoController;
 Route::prefix('inventario')
     ->name('inventario.')
     ->group(function () {
-        // Rutas específicas ANTES del resource (sin parámetros dinámicos que puedan entrar en conflicto)
+        
         Route::get('productos/catalogo', [ProductoController::class, 'catalogo'])
             ->name('productos.catalogo');
 
@@ -17,14 +17,12 @@ Route::prefix('inventario')
         Route::get('productos/buscar', [ProductoController::class, 'buscar'])
             ->name('productos.buscar');
         
-        // Rutas AJAX para funcionalidades e-commerce
         Route::post('productos/agregar-carrito', [ProductoController::class, 'agregarAlCarrito'])
             ->name('productos.agregar-carrito');
         
-        // Rutas administrativas - resource (debe ir antes de rutas con parámetros dinámicos)
+
         Route::resource('productos', ProductoController::class);
         
-        // Rutas con parámetros dinámicos DESPUÉS del resource
         Route::get('productos/detalles/{id}', [ProductoController::class, 'detalles'])
             ->name('productos.detalles');
         

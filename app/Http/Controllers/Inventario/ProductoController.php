@@ -261,7 +261,7 @@ class ProductoController extends Controller
 
 
     /**
-     * Agregar producto al carrito (AJAX)
+     * Agregar producto al carrito
      */
     public function agregarAlCarrito(ProductoRequest $request): JsonResponse
     {
