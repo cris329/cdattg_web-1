@@ -2,13 +2,7 @@
 
 @section('title', 'Historial de Mis Préstamos')
 
-@section('css')
-    <link href="{{ asset('css/parametros.css') }}" rel="stylesheet">
-@endsection
-
-@push('css')
-    @vite(['resources/css/inventario/shared/base.css'])
-@endpush
+@include('inventario._components.common-css')
 
 @section('content')
 <div class="container-fluid">
@@ -127,10 +121,5 @@
 @include('inventario._components.common-footer')
 @endsection
 
-@push('css')
-    @vite([
-        'resources/css/inventario/shared/base.css',
-    ])
-@endpush
 
 

@@ -8,7 +8,7 @@ use App\Inventario\Interfaces\Repositories\Devolucion\DevolucionRepositoryInterf
 use App\Inventario\Interfaces\Repositories\Orden\DetalleOrdenRepositoryInterface;
 use App\Inventario\Services\Devolucion\DevolucionService;
 use App\Exceptions\DevolucionException;
-use App\Models\Inventario\Devolucion;
+use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Validation\ValidationException;
 use Illuminate\View\View;
@@ -43,7 +43,7 @@ class DevolucionController extends Controller
 
             return view('inventario.devoluciones.index', compact('prestamos'));
         } catch (\Exception $e) {
-            \Log::error('Error en DevolucionController@index: ' . $e->getMessage(), [
+            Log::error('Error en DevolucionController@index: ' . $e->getMessage(), [
                 'exception' => $e,
                 'trace' => $e->getTraceAsString()
             ]);
@@ -70,7 +70,7 @@ class DevolucionController extends Controller
 
             return view('inventario.devoluciones.create', compact('detalleOrden'));
         } catch (\Exception $e) {
-            \Log::error('Error en DevolucionController@create: ' . $e->getMessage(), [
+            Log::error('Error en DevolucionController@create: ' . $e->getMessage(), [
                 'exception' => $e,
                 'detalle_orden_id' => $detalleOrdenId,
                 'trace' => $e->getTraceAsString()
