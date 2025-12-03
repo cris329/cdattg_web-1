@@ -82,7 +82,7 @@ class NotificacionFactory extends Factory
     public function read(): static
     {
         return $this->state(fn (array $attributes) => [
-            'leida_en' => now()->subMinutes(rand(1, 1440)), // Leída hace entre 1 minuto y 24 horas
+            'leida_en' => now()->subMinutes(random_int(1, 1440)), // Leída hace entre 1 minuto y 24 horas
         ]);
     }
 

@@ -123,8 +123,8 @@ trait HasUserId
      */
     private function crearPersonaBasica(): ?int
     {
-        $uniqueId = uniqid('persona_', true);
-        $timestamp = time() . rand(1000, 9999);
+        $uniqueId = 'persona_' . bin2hex(random_bytes(8));
+        $timestamp = time() . random_int(1000, 9999);
 
         return DB::table('personas')->insertGetId([
             'numero_documento' => $uniqueId . $timestamp,
@@ -144,8 +144,8 @@ trait HasUserId
      */
     private function insertarUsuarioBasico(int $personaId): int
     {
-        $uniqueId = uniqid('user_', true);
-        $timestamp = time() . rand(1000, 9999);
+        $uniqueId = 'user_' . bin2hex(random_bytes(8));
+        $timestamp = time() . random_int(1000, 9999);
 
         return DB::table('users')->insertGetId([
             'email' => strtolower($uniqueId . $timestamp . '@factory.test'),

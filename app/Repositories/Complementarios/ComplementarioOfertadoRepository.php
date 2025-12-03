@@ -110,13 +110,39 @@ class ComplementarioOfertadoRepository
     public function getProgramasConMayorDemanda(int $limit = 10): Collection
     {
         return ComplementarioOfertado::selectRaw('
-                complementarios_ofertados.*,
+                complementarios_ofertados.id,
+                complementarios_ofertados.codigo,
+                complementarios_ofertados.nombre,
+                complementarios_ofertados.duracion,
+                complementarios_ofertados.cupos,
+                complementarios_ofertados.estado,
+                complementarios_ofertados.modalidad_id,
+                complementarios_ofertados.jornada_id,
+                complementarios_ofertados.ambiente_id,
+                complementarios_ofertados.justificacion,
+                complementarios_ofertados.requisitos_ingreso,
+                complementarios_ofertados.created_at,
+                complementarios_ofertados.updated_at,
                 COUNT(aspirantes_complementarios.id) as total_aspirantes,
                 SUM(CASE WHEN aspirantes_complementarios.estado = 3 THEN 1 ELSE 0 END) as aceptados,
-                SUM(CASE WHEN aspirantes_complementarios.estado IN (1, 2) THEN 1 ELSE 0 END) as pendientes
+                SUM(CASE WHEN aspirantes_complementarios.estado = 1 THEN 1 ELSE 0 END) as pendientes
             ')
             ->leftJoin('aspirantes_complementarios', 'complementarios_ofertados.id', '=', 'aspirantes_complementarios.complementario_id')
-            ->groupBy('complementarios_ofertados.id')
+            ->groupBy(
+                'complementarios_ofertados.id',
+                'complementarios_ofertados.codigo',
+                'complementarios_ofertados.nombre',
+                'complementarios_ofertados.duracion',
+                'complementarios_ofertados.cupos',
+                'complementarios_ofertados.estado',
+                'complementarios_ofertados.modalidad_id',
+                'complementarios_ofertados.jornada_id',
+                'complementarios_ofertados.ambiente_id',
+                'complementarios_ofertados.justificacion',
+                'complementarios_ofertados.requisitos_ingreso',
+                'complementarios_ofertados.created_at',
+                'complementarios_ofertados.updated_at'
+            )
             ->orderBy('total_aspirantes', 'desc')
             ->limit($limit)
             ->get()

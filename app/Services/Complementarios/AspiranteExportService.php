@@ -18,6 +18,8 @@ use setasign\Fpdi\Fpdi;
 
 class AspiranteExportService
 {
+    private const COLOR_NEGRO_RGB = '000000';
+
     public function __construct(
         private readonly AspiranteComplementarioRepository $aspiranteRepository,
         private readonly ComplementarioOfertadoRepository $programaRepository,
@@ -119,14 +121,71 @@ class AspiranteExportService
         $spreadsheet = new Spreadsheet();
         $sheet = $spreadsheet->getActiveSheet();
 
+        // Agregar título
+        $sheet->setCellValue('A1', 'FORMATO PARA LA INSCRIPCIÓN DE ASPIRANTES EN SOFIA PLUS v1.0');
+        $sheet->mergeCells('A1:G1');
+        
+        // Estilo para el título con bordes oscuros
+        $titleStyle = [
+            'font' => [
+                'bold' => false,
+                'size' => 14,
+                'color' => ['rgb' => self::COLOR_NEGRO_RGB],
+                'name' => 'Calibri',
+            ],
+            'fill' => [
+                'fillType' => \PhpOffice\PhpSpreadsheet\Style\Fill::FILL_SOLID,
+                'startColor' => ['rgb' => 'C4D79B'],
+            ],
+            'alignment' => [
+                'horizontal' => \PhpOffice\PhpSpreadsheet\Style\Alignment::HORIZONTAL_CENTER,
+            ],
+            'borders' => [
+                'allBorders' => [
+                    'borderStyle' => \PhpOffice\PhpSpreadsheet\Style\Border::BORDER_THICK,
+                    'color' => ['rgb' => self::COLOR_NEGRO_RGB],
+                ],
+            ],
+        ];
+        $sheet->getStyle('A1:G1')->applyFromArray($titleStyle);
+
         // Establecer encabezados
         $this->establecerEncabezados($sheet);
 
         // Llenar datos
         $this->llenarDatos($sheet, $aspirantes);
 
-        // Auto-ajustar columnas
-        $this->autoAjustarColumnas($sheet);
+        // Configurar alturas de filas
+        $sheet->getRowDimension(1)->setRowHeight(15);
+        $sheet->getRowDimension(2)->setRowHeight(45);
+
+        $calibriStyle = [
+            'font' => [
+                'name' => 'Calibri',
+                'size' => 11,
+            ],
+        ];
+        $sheet->getStyle('A1:G' . ($sheet->getHighestRow()))->applyFromArray($calibriStyle);
+
+        // Aplicar tamaño de letra 8 y ajuste de texto para filas 2 en adelante
+        $dataStyle = [
+            'font' => [
+                'size' => 8,
+            ],
+            'alignment' => [
+                'wrapText' => true,
+            ],
+        ];
+        $sheet->getStyle('A2:G' . ($sheet->getHighestRow()))->applyFromArray($dataStyle);
+
+        // Configurar anchos de columna específicos
+        $sheet->getColumnDimension('A')->setWidth(20);
+        $sheet->getColumnDimension('B')->setWidth(10);
+        $sheet->getColumnDimension('C')->setWidth(10);
+        $sheet->getColumnDimension('D')->setWidth(10);
+        $sheet->getColumnDimension('E')->setWidth(25);
+        $sheet->getColumnDimension('F')->setWidth(40);
+        $sheet->getColumnDimension('G')->setWidth(10);
 
         return $spreadsheet;
     }
@@ -136,22 +195,35 @@ class AspiranteExportService
      */
     private function establecerEncabezados($sheet): void
     {
-        $sheet->setCellValue('A1', 'Tipo Documento');
-        $sheet->setCellValue('B1', 'Número Documento');
-        $sheet->setCellValue('C1', 'Caracterización');
+        $sheet->setCellValue('A2', 'Resultado del Registro (Reservado para el sistema)');
+        $sheet->setCellValue('B2', 'Tipo de Identificación');
+        $sheet->setCellValue('C2', 'Número de Identificación');
+        $sheet->setCellValue('D2', 'Código de la ficha');
+        $sheet->setCellValue('E2', 'Tipo Población Aspirante');
+        $sheet->setCellValue('F2', '');
+        $sheet->setCellValue('G2', 'Codigo Empresa (Solo si la ficha es cerrada)');
 
-        // Estilo para encabezados
+        // Estilo para encabezados con bordes oscuros, centrado vertical y horizontal, tamaño 8 y ajuste de texto
         $headerStyle = [
             'font' => [
-                'bold' => true,
-                'color' => ['rgb' => 'FFFFFF'],
+                'bold' => false,
+                'color' => ['rgb' => self::COLOR_NEGRO_RGB],
+                'name' => 'Calibri',
+                'size' => 8,
             ],
-            'fill' => [
-                'fillType' => \PhpOffice\PhpSpreadsheet\Style\Fill::FILL_SOLID,
-                'startColor' => ['rgb' => '007BFF'],
+            'alignment' => [
+                'horizontal' => \PhpOffice\PhpSpreadsheet\Style\Alignment::HORIZONTAL_CENTER,
+                'vertical' => \PhpOffice\PhpSpreadsheet\Style\Alignment::VERTICAL_CENTER,
+                'wrapText' => true,
+            ],
+            'borders' => [
+                'allBorders' => [
+                    'borderStyle' => \PhpOffice\PhpSpreadsheet\Style\Border::BORDER_THICK,
+                    'color' => ['rgb' => self::COLOR_NEGRO_RGB],
+                ],
             ],
         ];
-        $sheet->getStyle('A1:C1')->applyFromArray($headerStyle);
+        $sheet->getStyle('A2:G2')->applyFromArray($headerStyle);
     }
 
     /**
@@ -159,29 +231,76 @@ class AspiranteExportService
      */
     private function llenarDatos($sheet, $aspirantes): void
     {
-        $row = 2;
+        $row = 3;
         foreach ($aspirantes as $aspirante) {
             $tipoDocumento = $aspirante->persona->tipoDocumento ? $aspirante->persona->tipoDocumento->name : 'N/A';
             $numeroDocumento = $aspirante->persona->numero_documento;
+            
+            // Obtener caracterización
             $caracterizacion = $aspirante->persona->caracterizacion ?
-                $aspirante->persona->caracterizacion->nombre : 'Sin caracterización';
+                $aspirante->persona->caracterizacion->name : 'Sin caracterización';
 
-            $sheet->setCellValue('A' . $row, $tipoDocumento);
-            $sheet->setCellValue('B' . $row, $numeroDocumento);
-            $sheet->setCellValue('C' . $row, $caracterizacion);
+            // Convertir tipo de documento a iniciales (CC, TI, etc.)
+            $tipoIdentificacion = $this->convertirTipoDocumentoAIniciales($tipoDocumento);
+
+            // Solo llenar los campos que se quieren capturar, los demás quedan vacíos
+            $sheet->setCellValue('A' . $row, ''); // Resultado del Registro (vacío)
+            $sheet->setCellValue('B' . $row, $tipoIdentificacion); // Tipo de Identificación (iniciales)
+            $sheet->setCellValue('C' . $row, $numeroDocumento); // Número de Identificación
+            $sheet->setCellValue('D' . $row, ''); // Código de la ficha (vacío)
+            $sheet->setCellValue('E' . $row, $caracterizacion); // Tipo Población Aspirante
+            $sheet->setCellValue('F' . $row, ''); // Campo vacío
+            $sheet->setCellValue('G' . $row, ''); // Código Empresa (vacío)
 
             $row++;
         }
     }
 
     /**
-     * Auto-ajustar columnas
+     * Convertir tipo de documento a iniciales (CC, TI, etc.)
      */
-    private function autoAjustarColumnas($sheet): void
+    private function convertirTipoDocumentoAIniciales($tipoDocumento)
     {
-        foreach (range('A', 'C') as $column) {
-            $sheet->getColumnDimension($column)->setAutoSize(true);
+        // Limpiar el texto y quitar acentos
+        $tipoDocumento = $this->limpiarTexto($tipoDocumento);
+        
+        // Mapeo de tipos de documento a sus iniciales
+        $mapeo = [
+            'cedula de ciudadania' => 'CC',
+            'cedula de extranjeria' => 'CE',
+            'tarjeta de identidad' => 'TI',
+            'pasaporte' => 'PA',
+            'registro civil' => 'RC',
+            'cedula' => 'CC',
+            'extranjeria' => 'CE',
+            'tarjeta identidad' => 'TI',
+        ];
+
+        // Buscar coincidencia exacta primero
+        $tipoDocumentoLower = strtolower($tipoDocumento);
+        if (isset($mapeo[$tipoDocumentoLower])) {
+            return $mapeo[$tipoDocumentoLower];
         }
+
+        // Buscar coincidencia parcial
+        foreach ($mapeo as $nombre => $iniciales) {
+            if (strpos($tipoDocumentoLower, $nombre) !== false) {
+                return $iniciales;
+            }
+        }
+
+        // Si no se encuentra coincidencia, devolver las primeras 2 letras en mayúsculas
+        return strtoupper(substr($tipoDocumento, 0, 2));
+    }
+
+    /**
+     * Limpiar texto quitando acentos y caracteres especiales
+     */
+    private function limpiarTexto($texto)
+    {
+        $texto = iconv('UTF-8', 'ASCII//TRANSLIT', $texto);
+        $texto = preg_replace('/[^a-zA-Z0-9\s]/', '', $texto);
+        return trim($texto);
     }
 
     /**

@@ -22,9 +22,9 @@ class OrdenFactory extends Factory
         // Obtener tipo_orden_id de parametros_temas - campo NOT NULL
         $tipoOrdenId = $this->obtenerParametroTemaAleatorio();
         
-        $diasAdelante = rand(7, 120);
+        $diasAdelante = random_int(7, 120);
         // fecha_devolucion es nullable según la migración
-        $fechaDevolucion = rand(0, 1) === 1
+        $fechaDevolucion = random_int(0, 1) === 1
             ? date('Y-m-d', strtotime("+{$diasAdelante} days"))
             : null;
 
@@ -36,7 +36,7 @@ class OrdenFactory extends Factory
         ];
 
         return [
-            'descripcion_orden' => strtoupper($descripciones[array_rand($descripciones)]),
+            'descripcion_orden' => strtoupper($descripciones[random_int(0, count($descripciones) - 1)]),
             'tipo_orden_id' => $tipoOrdenId,
             'fecha_devolucion' => $fechaDevolucion,
             'user_create_id' => $this->getUserId(),

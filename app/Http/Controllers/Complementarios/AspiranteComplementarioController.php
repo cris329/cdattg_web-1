@@ -4,6 +4,7 @@ namespace App\Http\Controllers\Complementarios;
 
 use App\Http\Controllers\Controller;
 use App\Http\Requests\Complementarios\AspiranteRequest;
+use App\Http\Requests\Complementarios\BuscarPersonaRequest;
 use App\Services\Complementarios\AspiranteManagementService;
 use App\Services\Complementarios\AspiranteExportService;
 use App\Services\Complementarios\AspiranteDocumentoService;
@@ -141,13 +142,9 @@ class AspiranteComplementarioController extends Controller
     /**
      * Buscar persona por número de documento
      */
-    public function buscarPersona(Request $request): JsonResponse
+    public function buscarPersona(BuscarPersonaRequest $request): JsonResponse
     {
-        $request->validate([
-            'numero_documento' => 'required|string|max:20'
-        ]);
-
-        $persona = $this->personaService->buscarPorDocumento(trim($request->numero_documento));
+        $persona = $this->personaService->buscarPorDocumento(trim($request->validated()['numero_documento']));
 
         if (!$persona) {
             return response()->json([
@@ -208,29 +205,29 @@ class AspiranteComplementarioController extends Controller
         
         $temaGenero = $this->temaRepository->obtenerGeneros();
         $generosFallback = $this->complementarioService->getGeneros();
-        $generos = $temaGenero && $temaGenero->parametros->count() > 0
-            ? $temaGenero->parametros()->where('parametros_temas.status', 1)->orderBy('parametros.name')->get(['parametros.id', 'parametros.name'])
-            : $generosFallback;
+        $generos = ($temaGenero && isset($temaGenero->parametros) && $temaGenero->parametros->count() > 0)
+            ? $temaGenero
+            : (object) ['parametros' => $generosFallback];
         
         $temaCaracterizacion = $this->temaRepository->obtenerCaracterizacionesComplementarias();
-        $caracterizaciones = $temaCaracterizacion && $temaCaracterizacion->parametros->count() > 0
-            ? $temaCaracterizacion->parametros()->where('parametros_temas.status', 1)->orderBy('parametros.name')->get(['parametros.id', 'parametros.name'])
-            : collect();
+        $caracterizaciones = ($temaCaracterizacion && isset($temaCaracterizacion->parametros) && $temaCaracterizacion->parametros->count() > 0)
+            ? $temaCaracterizacion
+            : (object) ['parametros' => collect()];
         
         $temaVia = $this->temaRepository->obtenerVias();
-        $vias = $temaVia && $temaVia->parametros->count() > 0
-            ? $temaVia->parametros()->where('parametros_temas.status', 1)->orderBy('parametros.name')->get(['parametros.id', 'parametros.name'])
-            : collect();
+        $vias = ($temaVia && isset($temaVia->parametros) && $temaVia->parametros->count() > 0)
+            ? $temaVia
+            : (object) ['parametros' => collect()];
         
         $temaLetra = $this->temaRepository->obtenerLetras();
-        $letras = $temaLetra && $temaLetra->parametros->count() > 0
-            ? $temaLetra->parametros()->where('parametros_temas.status', 1)->orderBy('parametros.name')->get(['parametros.id', 'parametros.name'])
-            : collect();
+        $letras = ($temaLetra && isset($temaLetra->parametros) && $temaLetra->parametros->count() > 0)
+            ? $temaLetra
+            : (object) ['parametros' => collect()];
         
         $temaCardinal = $this->temaRepository->obtenerCardinales();
-        $cardinales = $temaCardinal && $temaCardinal->parametros->count() > 0
-            ? $temaCardinal->parametros()->where('parametros_temas.status', 1)->orderBy('parametros.name')->get(['parametros.id', 'parametros.name'])
-            : collect();
+        $cardinales = ($temaCardinal && isset($temaCardinal->parametros) && $temaCardinal->parametros->count() > 0)
+            ? $temaCardinal
+            : (object) ['parametros' => collect()];
         
         $paises = Pais::all();
         $departamentos = Departamento::all();
@@ -270,8 +267,15 @@ class AspiranteComplementarioController extends Controller
      */
     public function getEstadisticasExclusion(int $complementarioId): JsonResponse
     {
-        $estadisticas = $this->aspiranteRepository->getEstadisticasExclusion($complementarioId);
+        try {
+            $estadisticas = $this->aspiranteRepository->getEstadisticasExclusion($complementarioId);
 
-        return response()->json($estadisticas);
+            return response()->json($estadisticas);
+        } catch (\Exception $e) {
+            return response()->json([
+                'success' => false,
+                'message' => 'Error al obtener estadísticas de exclusión: ' . $e->getMessage()
+            ], 500);
+        }
     }
 }

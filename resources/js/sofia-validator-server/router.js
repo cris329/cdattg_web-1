@@ -1,4 +1,4 @@
-const { URL } = require('url');
+const { URL } = require('node:url');
 
 /**
  * Router para manejar rutas del servidor

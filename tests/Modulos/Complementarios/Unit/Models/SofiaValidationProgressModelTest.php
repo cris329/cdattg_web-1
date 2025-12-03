@@ -8,20 +8,18 @@ use App\Models\User;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use PHPUnit\Framework\Attributes\Test;
 use Tests\TestCase;
+use Tests\Complementarios\Concerns\SeedsComplementariosDatabase;
 
 class SofiaValidationProgressModelTest extends TestCase
 {
     use RefreshDatabase;
+    use SeedsComplementariosDatabase;
 
     protected function setUp(): void
     {
         parent::setUp();
 
-        $this->seed([
-            \Database\Seeders\RolePermissionSeeder::class,
-            \Database\Seeders\ParametroSeeder::class,
-            \Database\Seeders\TemaSeeder::class,
-        ]);
+        $this->seedComplementariosDatabaseIfNeeded();
     }
 
     #[Test]

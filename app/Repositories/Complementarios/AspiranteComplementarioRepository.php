@@ -41,7 +41,7 @@ class AspiranteComplementarioRepository
     {
         return AspiranteComplementario::with(['persona.tipoDocumento'])
             ->where('complementario_id', $programaId)
-            ->where('estado', '!=', 2) // Excluir rechazados
+            ->where('estado', '!=', 4) // Excluir rechazados
             ->whereHas('persona', function ($query) {
                 $query->where('condocumento', 1);
             })
@@ -58,7 +58,7 @@ class AspiranteComplementarioRepository
     {
         return AspiranteComplementario::with(['persona.tipoDocumento', 'persona.parametroCaracterizacion'])
             ->where('complementario_id', $programaId)
-            ->where('estado', '!=', 2) // Excluir rechazados
+            ->where('estado', '!=', 4) // Excluir rechazados
             ->whereHas('persona', function ($query) {
                 $query->where('condocumento', 1)
                       ->where('estado_sofia', '!=', 0); // Excluir no registrados en SenasofiaPlus
@@ -76,24 +76,24 @@ class AspiranteComplementarioRepository
     {
         $totalAspirantes = $this->countByPrograma($programaId);
 
-        $rechazados = $this->countByEstado($programaId, 2);
+        $rechazados = $this->countByEstado($programaId, 4);
 
         $sinDocumento = AspiranteComplementario::where('complementario_id', $programaId)
-            ->where('estado', '!=', 2)
+            ->where('estado', '!=', 4)
             ->whereHas('persona', function ($query) {
                 $query->where('condocumento', 0);
             })
             ->count();
 
         $noRegistradosSofia = AspiranteComplementario::where('complementario_id', $programaId)
-            ->where('estado', '!=', 2)
+            ->where('estado', '!=', 4)
             ->whereHas('persona', function ($query) {
                 $query->where('estado_sofia', 0);
             })
             ->count();
 
         $validos = AspiranteComplementario::where('complementario_id', $programaId)
-            ->where('estado', '!=', 2)
+            ->where('estado', '!=', 4)
             ->whereHas('persona', function ($query) {
                 $query->where('condocumento', 1)
                       ->where('estado_sofia', '!=', 0);
@@ -177,7 +177,7 @@ class AspiranteComplementarioRepository
     public function delete(AspiranteComplementario $aspirante): bool
     {
         // Cambiar estado a rechazado en lugar de eliminar
-        return $aspirante->update(['estado' => 2]);
+        return $aspirante->update(['estado' => 4]);
     }
 
     /**
@@ -199,7 +199,7 @@ class AspiranteComplementarioRepository
             'total' => AspiranteComplementario::count(),
             'activos' => AspiranteComplementario::where('estado', 1)->count(),
             'aceptados' => AspiranteComplementario::where('estado', 3)->count(),
-            'rechazados' => AspiranteComplementario::where('estado', 2)->count(),
+            'rechazados' => AspiranteComplementario::where('estado', 4)->count(),
         ];
     }
 

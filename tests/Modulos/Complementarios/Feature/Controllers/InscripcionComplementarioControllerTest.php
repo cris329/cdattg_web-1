@@ -11,10 +11,13 @@ use App\Models\Municipio;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Http\UploadedFile;
 use Illuminate\Support\Facades\Storage;
+use PHPUnit\Framework\Attributes\Test;
+use Tests\Complementarios\Concerns\SeedsComplementariosDatabase;
 
 class InscripcionComplementarioControllerTest extends TestCase
 {
     use RefreshDatabase;
+    use SeedsComplementariosDatabase;
 
     private const TEST_NOMBRE = 'Juan';
     private const TEST_APELLIDO = 'Pérez';
@@ -27,30 +30,12 @@ class InscripcionComplementarioControllerTest extends TestCase
     {
         parent::setUp();
         
-        // Ejecutar seeders necesarios para las pruebas
-        // Estos datos son requeridos por las claves foráneas en PersonaFactory
-        $this->seed([
-            \Database\Seeders\RolePermissionSeeder::class,
-            \Database\Seeders\ParametroSeeder::class,
-            \Database\Seeders\TemaSeeder::class,
-            \Database\Seeders\PaisSeeder::class,
-            \Database\Seeders\DepartamentoSeeder::class,
-            \Database\Seeders\MunicipioSeeder::class,
-            \Database\Seeders\PersonaSeeder::class,
-            \Database\Seeders\UsersSeeder::class,
-            \Database\Seeders\RegionalSeeder::class,
-            \Database\Seeders\CentroFormacionSeeder::class,
-            \Database\Seeders\SedeSeeder::class,
-            \Database\Seeders\BloqueSeeder::class,
-            \Database\Seeders\PisoSeeder::class,
-            \Database\Seeders\AmbienteSeeder::class,
-            \Database\Seeders\JornadaFormacionSeeder::class,
-        ]);
+        $this->seedComplementariosDatabaseIfNeeded();
         
         Storage::fake('google');
     }
 
-    /** @test */
+    #[Test]
     public function puede_ver_formulario_inscripcion_general()
     {
         $response = $this->get(route('inscripcion.general'));
@@ -59,7 +44,7 @@ class InscripcionComplementarioControllerTest extends TestCase
         $response->assertViewIs('complementarios.inscripciones.general');
     }
 
-    /** @test */
+    #[Test]
     public function puede_ver_formulario_inscripcion_programa()
     {
         $programa = ComplementarioOfertado::factory()->create();
@@ -71,7 +56,7 @@ class InscripcionComplementarioControllerTest extends TestCase
         $response->assertViewHas('programa');
     }
 
-    /** @test */
+    #[Test]
     public function puede_procesar_inscripcion_general()
     {
         // Obtener datos del seeder
@@ -140,7 +125,7 @@ class InscripcionComplementarioControllerTest extends TestCase
         ]);
     }
 
-    /** @test */
+    #[Test]
     public function no_procesa_inscripcion_general_si_persona_ya_existe()
     {
         // Obtener datos del seeder
@@ -176,7 +161,7 @@ class InscripcionComplementarioControllerTest extends TestCase
         $response->assertSessionHasErrors(['numero_documento', 'email']);
     }
 
-    /** @test */
+    #[Test]
     public function puede_procesar_inscripcion_a_programa()
     {
         // Obtener datos del seeder

@@ -26,7 +26,7 @@ class CategoriaFactory extends Factory
      */
     public function definition(): array
     {
-        $nombreCategoria = $this->faker->unique()->words(rand(1, 3), true);
+        $nombreCategoria = $this->faker->unique()->words(random_int(1, 3), true);
         
         $userId = null;
         try {

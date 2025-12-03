@@ -24,7 +24,6 @@
         $totalAspirantes = $aspirantes->count();
         $enProceso = $aspirantes->where('estado', 1)->count();
         $aceptados = $aspirantes->where('estado', 3)->count();
-        $completos = $aspirantes->where('estado', 2)->count();
         $rechazados = $aspirantes->where('estado', 4)->count();
         $conDocumento = $aspirantes->filter(fn($a) => $a->persona->condocumento == 1)->count();
     @endphp
@@ -81,12 +80,6 @@
                             <div class="border rounded p-2 bg-light">
                                 <div class="h4 mb-0 text-warning font-weight-bold">{{ $enProceso }}</div>
                                 <small class="text-muted">En Proceso</small>
-                            </div>
-                        </div>
-                        <div class="col-6">
-                            <div class="border rounded p-2 bg-light">
-                                <div class="h4 mb-0 text-info font-weight-bold">{{ $completos }}</div>
-                                <small class="text-muted">Completos</small>
                             </div>
                         </div>
                     </div>
@@ -257,10 +250,6 @@
                                 @if($aspirante->estado == 1)
                                     <span class="badge bg-warning text-dark">
                                         <i class="fas fa-clock mr-1"></i>EN PROCESO
-                                    </span>
-                                @elseif($aspirante->estado == 2)
-                                    <span class="badge bg-info">
-                                        <i class="fas fa-file-check mr-1"></i>COMPLETO
                                     </span>
                                 @elseif($aspirante->estado == 3)
                                     <span class="badge bg-success">

@@ -278,7 +278,7 @@ class InscripcionComplementarioService
             $this->aspiranteRepository->update($aspirante, [
                 'documento_identidad_path' => $path,
                 'documento_identidad_nombre' => $fileName,
-                'estado' => 2, // Estado "Completo"
+                // Mantener estado "En proceso" (1) - el estado 2 no existe
             ]);
 
             Log::info('Documento procesado exitosamente', [

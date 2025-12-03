@@ -29,7 +29,7 @@ class SofiaHttpClient
 
     public function __construct()
     {
-        $this->baseUrl = rtrim(config('services.playwright.url', 'http://playwright:3000'), '/');
+        $this->baseUrl = rtrim(config('services.playwright.url', 'https://playwright:3000'), '/');
         $this->timeout = self::DEFAULT_TIMEOUT;
     }
 
@@ -38,6 +38,9 @@ class SofiaHttpClient
      */
     public function validate(string $cedula): string
     {
+        // Verificar health check antes de validar (no bloquea si falla)
+        $this->checkHealth();
+
         $validateUrl = $this->baseUrl . '/validate';
 
         Log::info('Enviando peticion HTTP al servicio Playwright', [
@@ -46,8 +49,6 @@ class SofiaHttpClient
         ]);
 
         try {
-            $this->checkHealth();
-
             Log::info('Iniciando validacion HTTP', ['cedula' => $cedula]);
             $startTime = microtime(true);
 
@@ -90,7 +91,7 @@ class SofiaHttpClient
     /**
      * Verificar que el servicio esté disponible
      */
-    private function checkHealth(): void
+    public function checkHealth(): void
     {
         $healthUrl = $this->baseUrl . '/health';
         try {

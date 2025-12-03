@@ -11,10 +11,13 @@ use App\Models\ResultadosAprendizaje;
 use App\Models\GuiasAprendizaje;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Support\Facades\DB;
+use PHPUnit\Framework\Attributes\Test;
+use Tests\Complementarios\Concerns\SeedsComplementariosDatabase;
 
 class ProgramaComplementarioControllerTest extends TestCase
 {
     use RefreshDatabase;
+    use SeedsComplementariosDatabase;
 
     private const TEST_COMPETENCIA_NOMBRE = 'Competencia Test';
     private const TEST_COMPETENCIA_DESCRIPCION = 'Descripción de prueba';
@@ -28,29 +31,12 @@ class ProgramaComplementarioControllerTest extends TestCase
     {
         parent::setUp();
         
-        // Ejecutar seeders necesarios para las pruebas
-        $this->seed([
-            \Database\Seeders\RolePermissionSeeder::class,
-            \Database\Seeders\ParametroSeeder::class,
-            \Database\Seeders\TemaSeeder::class,
-            \Database\Seeders\PaisSeeder::class,
-            \Database\Seeders\DepartamentoSeeder::class,
-            \Database\Seeders\MunicipioSeeder::class,
-            \Database\Seeders\PersonaSeeder::class,
-            \Database\Seeders\UsersSeeder::class,
-            \Database\Seeders\RegionalSeeder::class,
-            \Database\Seeders\CentroFormacionSeeder::class,
-            \Database\Seeders\SedeSeeder::class,
-            \Database\Seeders\BloqueSeeder::class,
-            \Database\Seeders\PisoSeeder::class,
-            \Database\Seeders\AmbienteSeeder::class,
-            \Database\Seeders\JornadaFormacionSeeder::class,
-        ]);
+        $this->seedComplementariosDatabaseIfNeeded();
         
         $this->user = User::factory()->create();
     }
 
-    /** @test */
+    #[Test]
     public function puede_listar_programas_complementarios_admin()
     {
         $this->actingAs($this->user);
@@ -63,7 +49,7 @@ class ProgramaComplementarioControllerTest extends TestCase
         $response->assertViewHas('programas');
     }
 
-    /** @test */
+    #[Test]
     public function puede_ver_formulario_creacion_programa()
     {
         $this->actingAs($this->user);
@@ -74,7 +60,7 @@ class ProgramaComplementarioControllerTest extends TestCase
         $response->assertViewIs('complementarios.programas.admin.create');
     }
 
-    /** @test */
+    #[Test]
     public function puede_ver_programas_publicos()
     {
         ComplementarioOfertado::factory()->count(3)->conOferta()->create();
@@ -87,7 +73,7 @@ class ProgramaComplementarioControllerTest extends TestCase
         $response->assertViewHas('programas');
     }
 
-    /** @test */
+    #[Test]
     public function puede_ver_formulario_edicion_programa()
     {
         $this->actingAs($this->user);
@@ -100,7 +86,7 @@ class ProgramaComplementarioControllerTest extends TestCase
         $response->assertViewHas('programa');
     }
 
-    /** @test */
+    #[Test]
     public function puede_obtener_datos_programa_para_edicion_api()
     {
         $this->actingAs($this->user);
@@ -125,7 +111,7 @@ class ProgramaComplementarioControllerTest extends TestCase
         ]);
     }
 
-    /** @test */
+    #[Test]
     public function puede_crear_programa_complementario()
     {
         $this->actingAs($this->user);
@@ -202,7 +188,7 @@ class ProgramaComplementarioControllerTest extends TestCase
         $this->assertEquals('12:00', $dia1Pivot->hora_fin);
     }
 
-    /** @test */
+    #[Test]
     public function puede_crear_programa_complementario_con_estructura_academica()
     {
         $this->actingAs($this->user);
@@ -274,7 +260,7 @@ class ProgramaComplementarioControllerTest extends TestCase
         $this->assertTrue($programa->guiasAprendizaje->contains($guia->id));
     }
 
-    /** @test */
+    #[Test]
     public function puede_actualizar_programa_complementario()
     {
         $this->actingAs($this->user);
@@ -310,7 +296,7 @@ class ProgramaComplementarioControllerTest extends TestCase
         ]);
     }
 
-    /** @test */
+    #[Test]
     public function puede_eliminar_programa_complementario()
     {
         $this->actingAs($this->user);
@@ -325,7 +311,7 @@ class ProgramaComplementarioControllerTest extends TestCase
         ]);
     }
 
-    /** @test */
+    #[Test]
     public function puede_ver_detalles_programa_admin()
     {
         $this->actingAs($this->user);
@@ -338,7 +324,7 @@ class ProgramaComplementarioControllerTest extends TestCase
         $response->assertViewHas('programa');
     }
 
-    /** @test */
+    #[Test]
     public function puede_ver_programa_especifico_publico()
     {
         $programa = ComplementarioOfertado::factory()->conOferta()->create();
@@ -350,7 +336,7 @@ class ProgramaComplementarioControllerTest extends TestCase
         $response->assertViewHas('programaData');
     }
 
-    /** @test */
+    #[Test]
     public function puede_actualizar_programa_con_dias_formacion()
     {
         $this->actingAs($this->user);
@@ -417,7 +403,7 @@ class ProgramaComplementarioControllerTest extends TestCase
         $this->assertCount(2, $programa->diasFormacion);
     }
 
-    /** @test */
+    #[Test]
     public function puede_actualizar_programa_con_estructura_academica()
     {
         $this->actingAs($this->user);
@@ -480,7 +466,7 @@ class ProgramaComplementarioControllerTest extends TestCase
         $this->assertTrue($programa->guiasAprendizaje->contains($guia->id));
     }
 
-    /** @test */
+    #[Test]
     public function retorna_error_al_eliminar_programa_inexistente()
     {
         $this->actingAs($this->user);
@@ -490,7 +476,7 @@ class ProgramaComplementarioControllerTest extends TestCase
         $response->assertStatus(404);
     }
 
-    /** @test */
+    #[Test]
     public function puede_ver_programas_publicos_solo_con_oferta()
     {
         ComplementarioOfertado::factory()->conOferta()->count(3)->create();
@@ -509,7 +495,7 @@ class ProgramaComplementarioControllerTest extends TestCase
         }
     }
 
-    /** @test */
+    #[Test]
     public function puede_ver_detalles_programa_con_relaciones()
     {
         $this->actingAs($this->user);
@@ -550,7 +536,7 @@ class ProgramaComplementarioControllerTest extends TestCase
         $this->assertTrue($programaView->raps->contains($rap->id));
     }
 
-    /** @test */
+    #[Test]
     public function puede_crear_programa_sin_dias_formacion()
     {
         $this->actingAs($this->user);
@@ -576,7 +562,7 @@ class ProgramaComplementarioControllerTest extends TestCase
         ]);
     }
 
-    /** @test */
+    #[Test]
     public function puede_actualizar_programa_sin_estructura_academica()
     {
         $this->actingAs($this->user);

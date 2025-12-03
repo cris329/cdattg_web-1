@@ -9,12 +9,16 @@ use App\Models\Complementarios\AspiranteComplementario;
 use App\Models\User;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Spatie\Permission\Models\Permission;
+use PHPUnit\Framework\Attributes\Test;
+use Tests\Complementarios\Concerns\SeedsComplementariosDatabase;
 
 class AspiranteComplementarioControllerTest extends TestCase
 {
     use RefreshDatabase;
+    use SeedsComplementariosDatabase;
 
     private const TEST_NUMERO_DOCUMENTO = '1234567890';
+    private const NUMERO_DOCUMENTO_NO_EXISTE = '9999999999';
 
     protected User $user;
 
@@ -22,24 +26,7 @@ class AspiranteComplementarioControllerTest extends TestCase
     {
         parent::setUp();
         
-        // Ejecutar seeders necesarios para las pruebas
-        $this->seed([
-            \Database\Seeders\RolePermissionSeeder::class,
-            \Database\Seeders\ParametroSeeder::class,
-            \Database\Seeders\TemaSeeder::class,
-            \Database\Seeders\PaisSeeder::class,
-            \Database\Seeders\DepartamentoSeeder::class,
-            \Database\Seeders\MunicipioSeeder::class,
-            \Database\Seeders\PersonaSeeder::class,
-            \Database\Seeders\UsersSeeder::class,
-            \Database\Seeders\RegionalSeeder::class,
-            \Database\Seeders\CentroFormacionSeeder::class,
-            \Database\Seeders\SedeSeeder::class,
-            \Database\Seeders\BloqueSeeder::class,
-            \Database\Seeders\PisoSeeder::class,
-            \Database\Seeders\AmbienteSeeder::class,
-            \Database\Seeders\JornadaFormacionSeeder::class,
-        ]);
+        $this->seedComplementariosDatabaseIfNeeded();
         
         $this->user = User::factory()->create();
         
@@ -48,7 +35,7 @@ class AspiranteComplementarioControllerTest extends TestCase
         $this->user->givePermissionTo('ELIMINAR ASPIRANTE COMPLEMENTARIO');
     }
 
-    /** @test */
+    #[Test]
     public function puede_ver_gestion_aspirantes()
     {
         $this->actingAs($this->user);
@@ -61,7 +48,7 @@ class AspiranteComplementarioControllerTest extends TestCase
         $response->assertViewHas('programas');
     }
 
-    /** @test */
+    #[Test]
     public function puede_ver_aspirantes_de_programa_por_nombre()
     {
         $this->actingAs($this->user);
@@ -127,7 +114,7 @@ class AspiranteComplementarioControllerTest extends TestCase
         $response->assertViewHas('aspirantes');
     }
 
-    /** @test */
+    #[Test]
     public function puede_ver_aspirantes_de_programa_por_id()
     {
         $this->actingAs($this->user);
@@ -142,7 +129,7 @@ class AspiranteComplementarioControllerTest extends TestCase
         $response->assertViewHas('aspirantes');
     }
 
-    /** @test */
+    #[Test]
     public function puede_agregar_aspirante_existente()
     {
         $this->actingAs($this->user);
@@ -161,7 +148,7 @@ class AspiranteComplementarioControllerTest extends TestCase
         ]);
     }
 
-    /** @test */
+    #[Test]
     public function no_agrega_aspirante_si_no_existe_persona()
     {
         $this->actingAs($this->user);
@@ -169,15 +156,15 @@ class AspiranteComplementarioControllerTest extends TestCase
 
         // El servicio valida si existe la persona y devuelve JSON con success: false
         $response = $this->post(route('programas-complementarios.agregar-aspirante', $programa->id), [
-            'numero_documento' => '9999999999',
+            'numero_documento' => self::NUMERO_DOCUMENTO_NO_EXISTE,
         ]);
 
         $response->assertStatus(200);
         $response->assertJson(['success' => false]);
-        $response->assertJsonFragment(['message' => 'No se encontró ninguna persona registrada con el número de documento "9999999999".']);
+        $response->assertJsonFragment(['message' => 'No se encontró ninguna persona registrada con el número de documento "' . self::NUMERO_DOCUMENTO_NO_EXISTE . '".']);
     }
 
-    /** @test */
+    #[Test]
     public function no_agrega_aspirante_si_ya_esta_inscrito()
     {
         $this->actingAs($this->user);
@@ -193,7 +180,7 @@ class AspiranteComplementarioControllerTest extends TestCase
         $response->assertJson(['success' => false]);
     }
 
-    /** @test */
+    #[Test]
     public function puede_rechazar_aspirante()
     {
         $this->actingAs($this->user);
@@ -209,11 +196,11 @@ class AspiranteComplementarioControllerTest extends TestCase
         $response->assertJson(['success' => true]);
         $this->assertDatabaseHas('aspirantes_complementarios', [
             'id' => $aspirante->id,
-            'estado' => 2, // Rechazado
+            'estado' => 4, // Rechazado
         ]);
     }
 
-    /** @test */
+    #[Test]
     public function puede_exportar_aspirantes_a_excel()
     {
         $this->actingAs($this->user);
@@ -226,7 +213,7 @@ class AspiranteComplementarioControllerTest extends TestCase
         $response->assertHeader('Content-Type', 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet');
     }
 
-    /** @test */
+    #[Test]
     public function puede_descargar_cedulas_de_aspirantes()
     {
         $this->actingAs($this->user);
@@ -239,7 +226,7 @@ class AspiranteComplementarioControllerTest extends TestCase
         $this->assertContains($response->status(), [200, 302, 500]);
     }
 
-    /** @test */
+    #[Test]
     public function puede_validar_documentos_de_aspirantes()
     {
         $this->actingAs($this->user);
@@ -255,7 +242,7 @@ class AspiranteComplementarioControllerTest extends TestCase
         ]);
     }
 
-    /** @test */
+    #[Test]
     public function retorna_error_si_no_hay_aspirantes_para_validar_documentos()
     {
         $this->actingAs($this->user);
@@ -269,11 +256,11 @@ class AspiranteComplementarioControllerTest extends TestCase
         ]);
     }
 
-    /** @test */
+    #[Test]
     public function no_agrega_aspirante_si_programa_no_existe()
     {
         $this->actingAs($this->user);
-        $persona = Persona::factory()->create(['numero_documento' => self::TEST_NUMERO_DOCUMENTO]);
+        Persona::factory()->create(['numero_documento' => self::TEST_NUMERO_DOCUMENTO]);
 
         $response = $this->post(route('programas-complementarios.agregar-aspirante', 99999), [
             'numero_documento' => self::TEST_NUMERO_DOCUMENTO,
@@ -283,7 +270,7 @@ class AspiranteComplementarioControllerTest extends TestCase
         $response->assertJson(['success' => false]);
     }
 
-    /** @test */
+    #[Test]
     public function no_rechaza_aspirante_si_no_existe()
     {
         $this->actingAs($this->user);
@@ -298,7 +285,7 @@ class AspiranteComplementarioControllerTest extends TestCase
         $response->assertJson(['success' => false]);
     }
 
-    /** @test */
+    #[Test]
     public function no_rechaza_aspirante_si_programa_no_existe()
     {
         $this->actingAs($this->user);
@@ -313,7 +300,7 @@ class AspiranteComplementarioControllerTest extends TestCase
         $response->assertJson(['success' => false]);
     }
 
-    /** @test */
+    #[Test]
     public function exportar_excel_retorna_error_si_no_hay_aspirantes()
     {
         $this->actingAs($this->user);
@@ -329,7 +316,7 @@ class AspiranteComplementarioControllerTest extends TestCase
         $this->assertContains($statusCode, [200, 500]);
     }
 
-    /** @test */
+    #[Test]
     public function descargar_cedulas_retorna_error_si_no_hay_aspirantes()
     {
         $this->actingAs($this->user);
@@ -341,7 +328,7 @@ class AspiranteComplementarioControllerTest extends TestCase
         $this->assertContains($response->status(), [200, 302, 500]);
     }
 
-    /** @test */
+    #[Test]
     public function puede_ver_aspirantes_con_filtros()
     {
         $this->actingAs($this->user);
@@ -359,7 +346,7 @@ class AspiranteComplementarioControllerTest extends TestCase
         $this->assertGreaterThan(0, $aspirantes->count());
     }
 
-    /** @test */
+    #[Test]
     public function validar_documentos_retorna_resultado_correcto()
     {
         $this->actingAs($this->user);
@@ -375,7 +362,7 @@ class AspiranteComplementarioControllerTest extends TestCase
         ]);
     }
 
-    /** @test */
+    #[Test]
     public function puede_ver_gestion_aspirantes_con_programas_vacios()
     {
         $this->actingAs($this->user);
@@ -389,7 +376,7 @@ class AspiranteComplementarioControllerTest extends TestCase
         $this->assertNotNull($programas);
     }
 
-    /** @test */
+    #[Test]
     public function puede_ver_aspirantes_por_nombre_con_programa_inexistente()
     {
         $this->actingAs($this->user);
@@ -398,5 +385,257 @@ class AspiranteComplementarioControllerTest extends TestCase
 
         // Puede retornar 404 o vista vacía
         $this->assertContains($response->status(), [200, 404]);
+    }
+
+    #[Test]
+    public function puede_buscar_persona_por_documento()
+    {
+        $this->actingAs($this->user);
+        
+        Persona::factory()->create([
+            'numero_documento' => self::TEST_NUMERO_DOCUMENTO,
+        ]);
+
+        $response = $this->post(route('aspirantes.buscar-persona'), [
+            'numero_documento' => self::TEST_NUMERO_DOCUMENTO,
+        ]);
+
+        $response->assertStatus(200);
+        $response->assertJson([
+            'success' => true,
+            'found' => true,
+        ]);
+        $response->assertJsonStructure([
+            'success',
+            'found',
+            'persona' => [
+                'id',
+                'numero_documento',
+                'primer_nombre',
+                'primer_apellido',
+            ],
+        ]);
+    }
+
+    #[Test]
+    public function buscar_persona_retorna_error_si_no_existe()
+    {
+        $this->actingAs($this->user);
+
+        $response = $this->post(route('aspirantes.buscar-persona'), [
+            'numero_documento' => self::NUMERO_DOCUMENTO_NO_EXISTE,
+        ]);
+
+        $response->assertStatus(200);
+        $response->assertJson([
+            'success' => false,
+            'found' => false,
+            'message' => 'Persona no encontrada.',
+        ]);
+    }
+
+    #[Test]
+    public function buscar_persona_valida_numero_documento_requerido()
+    {
+        $this->actingAs($this->user);
+
+        $response = $this->post(route('aspirantes.buscar-persona'), []);
+
+        $response->assertStatus(422);
+    }
+
+    #[Test]
+    public function puede_mostrar_formulario_crear_aspirante()
+    {
+        $this->actingAs($this->user);
+        
+        // Crear temas necesarios con parámetros para evitar errores en el controlador
+        $temaTipoDoc = \App\Models\Tema::firstOrCreate(['id' => 2], ['name' => 'TIPO DE DOCUMENTO']);
+        $temaGenero = \App\Models\Tema::firstOrCreate(['id' => 3], ['name' => 'GENERO']);
+        \App\Models\Tema::firstOrCreate(['id' => 16], ['name' => 'CARACTERIZACION COMPLEMENTARIA']);
+        
+        // Crear parámetros básicos si no existen
+        $parametro1 = \App\Models\Parametro::firstOrCreate(['id' => 1], ['name' => 'CEDULA']);
+        \App\Models\Parametro::firstOrCreate(['id' => 2], ['name' => 'TARJETA IDENTIDAD']);
+        $parametro3 = \App\Models\Parametro::firstOrCreate(['id' => 3], ['name' => 'MASCULINO']);
+        
+        // Asociar parámetros a temas si no están asociados
+        if (!$temaTipoDoc->parametros()->where('parametros.id', $parametro1->id)->exists()) {
+            $temaTipoDoc->parametros()->attach($parametro1->id, ['status' => 1]);
+        }
+        if (!$temaGenero->parametros()->where('parametros.id', $parametro3->id)->exists()) {
+            $temaGenero->parametros()->attach($parametro3->id, ['status' => 1]);
+        }
+        
+        // Recargar relaciones para que estén disponibles
+        $temaTipoDoc->load('parametros');
+        $temaGenero->load('parametros');
+        
+        $programa = ComplementarioOfertado::factory()->create();
+
+        $response = $this->get(route('aspirantes.create', $programa->id));
+
+        $response->assertStatus(200);
+        $response->assertViewIs('complementarios.aspirantes.create');
+        $response->assertViewHas('programa');
+        $response->assertViewHas('documentos');
+        $response->assertViewHas('generos');
+        $response->assertViewHas('caracterizaciones');
+        $response->assertViewHas('paises');
+        $response->assertViewHas('departamentos');
+    }
+
+    #[Test]
+    public function puede_almacenar_nuevo_aspirante()
+    {
+        $this->actingAs($this->user);
+        
+        $programa = ComplementarioOfertado::factory()->create();
+        $persona = Persona::factory()->create(['numero_documento' => self::TEST_NUMERO_DOCUMENTO]);
+
+        $response = $this->post(route('aspirantes.store', $programa->id), [
+            'numero_documento' => self::TEST_NUMERO_DOCUMENTO,
+        ]);
+
+        $response->assertStatus(200);
+        $response->assertJson(['success' => true]);
+        $this->assertDatabaseHas('aspirantes_complementarios', [
+            'persona_id' => $persona->id,
+            'complementario_id' => $programa->id,
+        ]);
+    }
+
+    #[Test]
+    public function almacenar_aspirante_valida_datos_requeridos()
+    {
+        $this->actingAs($this->user);
+        
+        $programa = ComplementarioOfertado::factory()->create();
+
+        $response = $this->post(route('aspirantes.store', $programa->id), []);
+
+        $response->assertStatus(302);
+        $response->assertSessionHasErrors(['numero_documento']);
+    }
+
+    #[Test]
+    public function almacenar_aspirante_retorna_error_si_persona_no_existe()
+    {
+        $this->actingAs($this->user);
+        
+        $programa = ComplementarioOfertado::factory()->create();
+
+        $response = $this->post(route('aspirantes.store', $programa->id), [
+            'numero_documento' => self::NUMERO_DOCUMENTO_NO_EXISTE,
+        ]);
+
+        $response->assertStatus(200);
+        $response->assertJson(['success' => false]);
+    }
+
+    #[Test]
+    public function puede_obtener_estadisticas_exclusion()
+    {
+        $this->actingAs($this->user);
+        
+        $programa = ComplementarioOfertado::factory()->create();
+        AspiranteComplementario::factory()->count(3)->paraPrograma($programa)->create();
+        AspiranteComplementario::factory()->rechazado()->count(2)->paraPrograma($programa)->create();
+
+        $response = $this->get(route('aspirantes.estadisticas-exclusion', $programa->id));
+
+        $response->assertStatus(200);
+        $response->assertJsonStructure([
+            'total',
+            'rechazados',
+            'sin_documento',
+            'no_registrados_sofia',
+            'validos',
+        ]);
+    }
+
+    #[Test]
+    public function estadisticas_exclusion_retorna_ceros_si_no_hay_aspirantes()
+    {
+        $this->actingAs($this->user);
+        
+        $programa = ComplementarioOfertado::factory()->create();
+
+        $response = $this->get(route('aspirantes.estadisticas-exclusion', $programa->id));
+
+        $response->assertStatus(200);
+        $data = $response->json();
+        
+        $this->assertArrayHasKey('total', $data);
+        $this->assertArrayHasKey('rechazados', $data);
+        $this->assertArrayHasKey('sin_documento', $data);
+    }
+
+    #[Test]
+    public function buscar_persona_carga_relaciones_correctamente()
+    {
+        $this->actingAs($this->user);
+        
+        Persona::factory()->create([
+            'numero_documento' => self::TEST_NUMERO_DOCUMENTO,
+        ]);
+
+        $response = $this->post(route('aspirantes.buscar-persona'), [
+            'numero_documento' => self::TEST_NUMERO_DOCUMENTO,
+        ]);
+
+        $response->assertStatus(200);
+        $personaData = $response->json('persona');
+        
+        $this->assertNotNull($personaData);
+        $this->assertArrayHasKey('tipo_documento', $personaData);
+        $this->assertArrayHasKey('genero', $personaData);
+        $this->assertArrayHasKey('pais', $personaData);
+        $this->assertArrayHasKey('departamento', $personaData);
+        $this->assertArrayHasKey('municipio', $personaData);
+    }
+
+    #[Test]
+    public function crear_aspirante_muestra_todos_los_datos_necesarios()
+    {
+        $this->actingAs($this->user);
+        
+        // Crear todos los temas necesarios con parámetros para evitar errores
+        \App\Models\Tema::firstOrCreate(['id' => 2], ['name' => 'TIPO DE DOCUMENTO']);
+        \App\Models\Tema::firstOrCreate(['id' => 3], ['name' => 'GENERO']);
+        \App\Models\Tema::firstOrCreate(['id' => 16], ['name' => 'CARACTERIZACION COMPLEMENTARIA']);
+        $temaVia = \App\Models\Tema::firstOrCreate(['id' => 17], ['name' => 'VIA']);
+        $temaLetra = \App\Models\Tema::firstOrCreate(['id' => 18], ['name' => 'LETRA']);
+        
+        // Crear parámetros básicos si no existen
+        $parametroVia = \App\Models\Parametro::firstOrCreate(['id' => 100], ['name' => 'CALLE']);
+        $parametroLetra = \App\Models\Parametro::firstOrCreate(['id' => 101], ['name' => 'A']);
+        $parametroCardinal = \App\Models\Parametro::firstOrCreate(['id' => 102], ['name' => 'NORTE']);
+        
+        // Asociar parámetros a temas si no están asociados
+        if (!$temaVia->parametros()->where('parametros.id', $parametroVia->id)->exists()) {
+            $temaVia->parametros()->attach($parametroVia->id, ['status' => 1]);
+        }
+        if (!$temaLetra->parametros()->where('parametros.id', $parametroLetra->id)->exists()) {
+            $temaLetra->parametros()->attach($parametroLetra->id, ['status' => 1]);
+        }
+        // Cardinales usa el mismo tema que Letras (id 18)
+        if (!$temaLetra->parametros()->where('parametros.id', $parametroCardinal->id)->exists()) {
+            $temaLetra->parametros()->attach($parametroCardinal->id, ['status' => 1]);
+        }
+        
+        // Recargar relaciones para que estén disponibles
+        $temaVia->load('parametros');
+        $temaLetra->load('parametros');
+        
+        $programa = ComplementarioOfertado::factory()->create();
+
+        $response = $this->get(route('aspirantes.create', $programa->id));
+
+        $response->assertStatus(200);
+        $response->assertViewHas('vias');
+        $response->assertViewHas('letras');
+        $response->assertViewHas('cardinales');
+        $response->assertViewHas('municipios');
     }
 }

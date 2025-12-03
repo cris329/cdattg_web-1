@@ -9,6 +9,7 @@ use App\Models\Complementarios\ComplementarioOfertado;
 use App\Repositories\Complementarios\AspiranteComplementarioRepository;
 use App\Repositories\Complementarios\ComplementarioOfertadoRepository;
 use App\Repositories\PersonaRepository;
+use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Log;
 use PhpOffice\PhpSpreadsheet\Spreadsheet;
 use PhpOffice\PhpSpreadsheet\Writer\Xlsx;
@@ -33,7 +34,7 @@ class EstadisticaComplementarioService
         $totalAspirantes = $estadisticas['total'];
         $aspirantesAceptados = $estadisticas['aceptados'];
 
-        $aspirantesPendientes = AspiranteComplementario::whereIn('estado', [1, 2])->count();
+        $aspirantesPendientes = AspiranteComplementario::where('estado', 1)->count();
         $programasActivos = $this->programaRepository->countActivos();
         $tendenciaInscripciones = $this->aspiranteRepository->getTendenciaInscripciones(6);
         $distribucionProgramas = $this->aspiranteRepository->getDistribucionPorProgramas();
@@ -90,7 +91,7 @@ class EstadisticaComplementarioService
         return [
             'total_filtrado' => $query->count(),
             'aceptados_filtrado' => (clone $query)->where('estado', 3)->count(),
-            'pendientes_filtrado' => (clone $query)->whereIn('estado', [1, 2])->count(),
+            'pendientes_filtrado' => (clone $query)->where('estado', 1)->count(),
             'datos' => $query->get()
         ];
     }
@@ -100,15 +101,27 @@ class EstadisticaComplementarioService
      */
     public function generarReporteTendencias(int $meses = 12)
     {
-        return AspiranteComplementario::selectRaw('
-                YEAR(created_at) as year,
-                MONTH(created_at) as month,
+        $driver = DB::connection()->getDriverName();
+        
+        // Usar sintaxis específica según el driver de base de datos
+        if ($driver === 'sqlite') {
+            $yearExpr = "CAST(strftime('%Y', created_at) AS INTEGER)";
+            $monthExpr = "CAST(strftime('%m', created_at) AS INTEGER)";
+        } else {
+            // MySQL, PostgreSQL, etc.
+            $yearExpr = 'YEAR(created_at)';
+            $monthExpr = 'MONTH(created_at)';
+        }
+        
+        return AspiranteComplementario::selectRaw("
+                {$yearExpr} as year,
+                {$monthExpr} as month,
                 COUNT(*) as total_inscripciones,
                 SUM(CASE WHEN estado = 3 THEN 1 ELSE 0 END) as aceptados,
-                SUM(CASE WHEN estado IN (1, 2) THEN 1 ELSE 0 END) as pendientes
-            ')
+                SUM(CASE WHEN estado = 1 THEN 1 ELSE 0 END) as pendientes
+            ")
             ->where('created_at', '>=', now()->subMonths($meses))
-            ->groupBy('year', 'month')
+            ->groupBy(DB::raw($yearExpr), DB::raw($monthExpr))
             ->orderBy('year', 'desc')
             ->orderBy('month', 'desc')
             ->get();

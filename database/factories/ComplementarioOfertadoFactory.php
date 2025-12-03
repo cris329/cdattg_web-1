@@ -32,7 +32,13 @@ class ComplementarioOfertadoFactory extends Factory
             'Jardinería y Paisajismo',
         ];
         
-        $nombre = $this->faker->unique()->randomElement($nombres);
+        // Si se han agotado los nombres únicos, generar uno nuevo con faker
+        try {
+            $nombre = $this->faker->unique()->randomElement($nombres);
+        } catch (\OverflowException $e) {
+            // Si se agotaron los nombres únicos, generar uno nuevo
+            $nombre = $this->faker->words(3, true) . ' ' . $this->faker->unique()->numberBetween(1000, 9999);
+        }
         
         // Obtener IDs reales o crear registros si no existen
         // tema_id 5 es MODALIDADES DE FORMACION, parámetros 18, 19, 20

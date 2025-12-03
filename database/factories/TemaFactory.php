@@ -22,8 +22,8 @@ class TemaFactory extends Factory
     public function definition(): array
     {
         // Generar un nombre único para el tema
-        $nombreBase = $this->faker->words(rand(2, 4), true);
-        $nombreUnico = strtoupper($nombreBase . ' ' . uniqid());
+        $nombreBase = $this->faker->words(random_int(2, 4), true);
+        $nombreUnico = strtoupper($nombreBase . ' ' . bin2hex(random_bytes(8)));
 
         // Obtener o crear usuario para user_create_id y user_edit_id
         $userId = null;

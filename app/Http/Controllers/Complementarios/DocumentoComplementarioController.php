@@ -24,7 +24,7 @@ class DocumentoComplementarioController extends Controller
         $programa = ComplementarioOfertado::findOrFail($id);
 
         // Obtener aspirante_id de la URL
-        $aspiranteId = $request->query('aspirante_id');
+        $aspirante_id = $request->query('aspirante_id');
 
         return view('complementarios.inscripciones.documents', compact('programa', 'aspirante_id'));
     }
