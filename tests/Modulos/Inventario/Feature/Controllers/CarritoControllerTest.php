@@ -38,14 +38,22 @@ class CarritoControllerTest extends TestCase
     protected function setUp(): void
     {
         parent::setUp();
-        
-        // Desactivar CSRF para tests
+        $this->desactivarCSRF();
+        $this->ejecutarSeedersNecesarios();
+        $this->crearPermisos();
+        $this->crearUsuarioConPermisos();
+    }
+
+    private function desactivarCSRF(): void
+    {
         $this->withoutMiddleware([
             \Illuminate\Foundation\Http\Middleware\VerifyCsrfToken::class,
             \App\Http\Middleware\VerifyCsrfToken::class,
         ]);
-        
-        // Ejecutar solo los seeders necesarios para productos (carrito maneja productos)
+    }
+
+    private function ejecutarSeedersNecesarios(): void
+    {
         $this->seed([
             \Database\Seeders\RolePermissionSeeder::class,
             \Database\Seeders\ParametroSeeder::class,
@@ -61,15 +69,19 @@ class CarritoControllerTest extends TestCase
             \Database\Seeders\PisoSeeder::class,
             \Database\Seeders\AmbienteSeeder::class,
         ]);
+    }
 
-        // Crear permisos necesarios
+    private function crearPermisos(): void
+    {
         Permission::firstOrCreate(['name' => self::PERMISSION_VER_CARRITO]);
         Permission::firstOrCreate(['name' => self::PERMISSION_AGREGAR_CARRITO]);
         Permission::firstOrCreate(['name' => self::PERMISSION_ACTUALIZAR_CARRITO]);
         Permission::firstOrCreate(['name' => self::PERMISSION_ELIMINAR_CARRITO]);
         Permission::firstOrCreate(['name' => self::PERMISSION_VACIAR_CARRITO]);
+    }
 
-        // Crear usuario con permisos
+    private function crearUsuarioConPermisos(): void
+    {
         $this->user = User::factory()->create();
         $this->user->givePermissionTo(self::PERMISSION_VER_CARRITO);
     }

@@ -15,24 +15,21 @@ class DashboardControllerTest extends TestCase
 
     protected User $user;
 
-    // Constantes para permisos
     private const PERMISSION_VER_DASHBOARD = 'VER DASHBOARD INVENTARIO';
-
-    // Constantes para rutas
     private const ROUTE_DASHBOARD = 'inventario.dashboard';
-
-    // Constantes para vistas
     private const VIEW_DASHBOARD = 'inventario.dashboard.index';
-
-    // Constantes para datos
     private const ROUTE_LOGIN = 'verificarLogin';
 
     protected function setUp(): void
     {
         parent::setUp();
-        
-        // Ejecutar solo los seeders necesarios para dashboard (maneja productos, órdenes, etc.)
-        // RefreshDatabase ya ejecuta las migraciones automáticamente
+        $this->ejecutarSeedersNecesarios();
+        $this->crearPermisos();
+        $this->crearUsuarioConPermisos();
+    }
+
+    private function ejecutarSeedersNecesarios(): void
+    {
         $this->seed([
             \Database\Seeders\RolePermissionSeeder::class,
             \Database\Seeders\ParametroSeeder::class,
@@ -48,44 +45,62 @@ class DashboardControllerTest extends TestCase
             \Database\Seeders\PisoSeeder::class,
             \Database\Seeders\AmbienteSeeder::class,
         ]);
+    }
 
-        // Crear permisos necesarios
+    private function crearPermisos(): void
+    {
         Permission::firstOrCreate(['name' => self::PERMISSION_VER_DASHBOARD]);
+    }
 
-        // Crear usuario con permisos
+    private function crearUsuarioConPermisos(): void
+    {
         $this->user = User::factory()->create();
         $this->user->givePermissionTo(self::PERMISSION_VER_DASHBOARD);
     }
 
-    #[Test]
-    public function puede_ver_dashboard_de_inventario()
+    private function crearUsuarioSinPermisos(): User
+    {
+        return User::factory()->create();
+    }
+
+    private function verificarAccesoConPermisos(): void
     {
         $this->actingAs($this->user);
-
         $response = $this->get(route(self::ROUTE_DASHBOARD));
-
         $response->assertStatus(200);
         $response->assertViewIs(self::VIEW_DASHBOARD);
     }
 
-    #[Test]
-    public function no_puede_ver_dashboard_sin_permiso()
+    private function verificarAccesoSinPermisos(): void
     {
-        /** @var User $userSinPermiso */
-        $userSinPermiso = User::factory()->create();
+        $userSinPermiso = $this->crearUsuarioSinPermisos();
         $this->actingAs($userSinPermiso);
-
         $response = $this->get(route(self::ROUTE_DASHBOARD));
-
         $response->assertStatus(403);
     }
 
-    #[Test]
-    public function requiere_autenticacion_para_ver_dashboard()
+    private function verificarRedireccionAutenticacion(): void
     {
         $response = $this->get(route(self::ROUTE_DASHBOARD));
-
         $response->assertRedirect(route(self::ROUTE_LOGIN));
+    }
+
+    #[Test]
+    public function puede_ver_dashboard_de_inventario(): void
+    {
+        $this->verificarAccesoConPermisos();
+    }
+
+    #[Test]
+    public function no_puede_ver_dashboard_sin_permiso(): void
+    {
+        $this->verificarAccesoSinPermisos();
+    }
+
+    #[Test]
+    public function requiere_autenticacion_para_ver_dashboard(): void
+    {
+        $this->verificarRedireccionAutenticacion();
     }
 }
 

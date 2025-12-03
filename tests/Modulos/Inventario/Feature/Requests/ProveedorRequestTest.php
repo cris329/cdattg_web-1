@@ -24,7 +24,11 @@ class ProveedorRequestTest extends TestCase
     {
         parent::setUp();
         $this->migrateDatabases();
+        $this->ejecutarSeedersNecesarios();
+    }
 
+    private function ejecutarSeedersNecesarios(): void
+    {
         $this->seed([
             \Database\Seeders\RolePermissionSeeder::class,
             \Database\Seeders\ParametroSeeder::class,

@@ -24,8 +24,11 @@ class CarritoRequestTest extends TestCase
     {
         parent::setUp();
         $this->migrateDatabases();
+        $this->ejecutarSeedersNecesarios();
+    }
 
-        // Producto necesita: Ambiente → Piso → Bloque → Sede → Regional
+    private function ejecutarSeedersNecesarios(): void
+    {
         $this->seed([
             \Database\Seeders\RolePermissionSeeder::class,
             \Database\Seeders\ParametroSeeder::class,
@@ -167,23 +170,26 @@ class CarritoRequestTest extends TestCase
     }
 
     /**
-     * Validate required field in update context.
+     * Validate required field in specified context.
      */
-    private function validarCampoRequeridoEnActualizar(string $campo): void
+    private function validarCampoRequerido(string $campo, bool $esActualizar = false): void
     {
-        $rules = $this->obtenerRulesParaActualizar();
+        $rules = $esActualizar ? $this->obtenerRulesParaActualizar() : $this->obtenerRules();
         $this->validarYVerificarError([], $rules, $campo);
     }
 
     /**
-     * Validate field type in update context.
+     * Validate field type in specified context.
      */
-    private function validarTipoCampoEnActualizar(string $campo, mixed $valorInvalido): void
+    private function validarTipoCampo(string $campo, mixed $valorInvalido, bool $esActualizar = false): void
     {
-        $rules = $this->obtenerRulesParaActualizar();
+        $rules = $esActualizar ? $this->obtenerRulesParaActualizar() : $this->obtenerRules();
         $this->validarYVerificarError([$campo => $valorInvalido], $rules, $campo);
     }
 
+    /**
+     * Validate field validation rules (min, max, etc.) in update context.
+     */
     private function validarCampoEnActualizar(string $campo, mixed $valorInvalido): void
     {
         $rules = $this->obtenerRulesParaActualizar();
@@ -196,22 +202,24 @@ class CarritoRequestTest extends TestCase
         $this->assertArrayHasKey($campo, $errorArray, "Field {$campo} must have validation errors");
     }
 
-    /**
-     * Validate required field in add context.
-     */
-    private function validarCampoRequeridoEnAgregar(string $campo): void
+    private function validarCampoRequeridoEnActualizar(string $campo): void
     {
-        $rules = $this->obtenerRules();
-        $this->validarYVerificarError([], $rules, $campo);
+        $this->validarCampoRequerido($campo, true);
     }
 
-    /**
-     * Validate field type in add context.
-     */
+    private function validarTipoCampoEnActualizar(string $campo, mixed $valorInvalido): void
+    {
+        $this->validarTipoCampo($campo, $valorInvalido, true);
+    }
+
+    private function validarCampoRequeridoEnAgregar(string $campo): void
+    {
+        $this->validarCampoRequerido($campo, false);
+    }
+
     private function validarTipoCampoEnAgregar(string $campo, mixed $valorInvalido): void
     {
-        $rules = $this->obtenerRules();
-        $this->validarYVerificarError([$campo => $valorInvalido], $rules, $campo);
+        $this->validarTipoCampo($campo, $valorInvalido, false);
     }
 
     /**

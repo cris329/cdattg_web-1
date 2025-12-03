@@ -50,22 +50,8 @@ class ContratoConvenioControllerTest extends TestCase
     protected function setUp(): void
     {
         parent::setUp();
-        
-        // Desactivar CSRF para tests
-        $this->withoutMiddleware([
-            \Illuminate\Foundation\Http\Middleware\VerifyCsrfToken::class,
-            \App\Http\Middleware\VerifyCsrfToken::class,
-        ]);
-        
-        // Ejecutar solo los seeders necesarios para contratos (necesita proveedores)
-        $this->seed([
-            \Database\Seeders\RolePermissionSeeder::class,
-            \Database\Seeders\ParametroSeeder::class,
-            \Database\Seeders\TemaSeeder::class,
-            \Database\Seeders\PaisSeeder::class,
-            \Database\Seeders\DepartamentoSeeder::class,
-            \Database\Seeders\MunicipioSeeder::class,
-        ]);
+        $this->desactivarCSRF();
+        $this->ejecutarSeedersNecesarios();
 
         // Obtener tema ESTADOS (TemaSeeder ya lo crea)
         $temaEstados = Tema::where('name', self::TEMA_ESTADOS)->first();
@@ -129,13 +115,40 @@ class ContratoConvenioControllerTest extends TestCase
             'municipio_id' => $municipio->id,
         ]);
 
-        // Crear permisos necesarios
+        $this->crearPermisos();
+        $this->crearUsuarioConPermisos();
+    }
+
+    private function desactivarCSRF(): void
+    {
+        $this->withoutMiddleware([
+            \Illuminate\Foundation\Http\Middleware\VerifyCsrfToken::class,
+            \App\Http\Middleware\VerifyCsrfToken::class,
+        ]);
+    }
+
+    private function ejecutarSeedersNecesarios(): void
+    {
+        $this->seed([
+            \Database\Seeders\RolePermissionSeeder::class,
+            \Database\Seeders\ParametroSeeder::class,
+            \Database\Seeders\TemaSeeder::class,
+            \Database\Seeders\PaisSeeder::class,
+            \Database\Seeders\DepartamentoSeeder::class,
+            \Database\Seeders\MunicipioSeeder::class,
+        ]);
+    }
+
+    private function crearPermisos(): void
+    {
         Permission::firstOrCreate(['name' => self::PERMISSION_VER_CONTRATO]);
         Permission::firstOrCreate(['name' => self::PERMISSION_CREAR_CONTRATO]);
         Permission::firstOrCreate(['name' => self::PERMISSION_EDITAR_CONTRATO]);
         Permission::firstOrCreate(['name' => self::PERMISSION_ELIMINAR_CONTRATO]);
+    }
 
-        // Crear usuario con permisos
+    private function crearUsuarioConPermisos(): void
+    {
         $this->user = User::factory()->create();
         $this->user->givePermissionTo(self::PERMISSION_VER_CONTRATO);
     }

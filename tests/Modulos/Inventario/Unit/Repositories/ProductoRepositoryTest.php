@@ -21,8 +21,11 @@ class ProductoRepositoryTest extends TestCase
     {
         parent::setUp();
         $this->repository = new ProductoRepository();
-        
-        // Ejecutar seeders necesarios
+        $this->ejecutarSeedersNecesarios();
+    }
+
+    private function ejecutarSeedersNecesarios(): void
+    {
         $this->seed([
             \Database\Seeders\RolePermissionSeeder::class,
             \Database\Seeders\ParametroSeeder::class,

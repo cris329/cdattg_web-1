@@ -39,29 +39,8 @@ class DevolucionControllerTest extends TestCase
     protected function setUp(): void
     {
         parent::setUp();
-        
-        // Desactivar CSRF para tests
-        $this->withoutMiddleware([
-            \Illuminate\Foundation\Http\Middleware\VerifyCsrfToken::class,
-            \App\Http\Middleware\VerifyCsrfToken::class,
-        ]);
-        
-        // Ejecutar solo los seeders necesarios para devoluciones (necesita órdenes y productos)
-        $this->seed([
-            \Database\Seeders\RolePermissionSeeder::class,
-            \Database\Seeders\ParametroSeeder::class,
-            \Database\Seeders\TemaSeeder::class,
-            \Database\Seeders\PaisSeeder::class,
-            \Database\Seeders\DepartamentoSeeder::class,
-            \Database\Seeders\MunicipioSeeder::class,
-            \Database\Seeders\PersonaSeeder::class,
-            \Database\Seeders\UsersSeeder::class,
-            \Database\Seeders\RegionalSeeder::class,
-            \Database\Seeders\SedeSeeder::class,
-            \Database\Seeders\BloqueSeeder::class,
-            \Database\Seeders\PisoSeeder::class,
-            \Database\Seeders\AmbienteSeeder::class,
-        ]);
+        $this->desactivarCSRF();
+        $this->ejecutarSeedersNecesarios();
 
         // Obtener temas existentes (TemaSeeder ya los crea)
         $temaEstados = Tema::where('name', 'ESTADOS DE ORDEN')->first();
@@ -180,10 +159,44 @@ class DevolucionControllerTest extends TestCase
             'estado_orden_id' => $this->estadoAprobada->id,
         ]);
 
-        // Crear permisos necesarios
-        Permission::firstOrCreate(['name' => self::PERMISO_DEVOLVER_PRESTAMO]);
+        $this->crearPermisos();
+        $this->crearUsuarioConPermisos();
+    }
 
-        // Crear usuario con permisos
+    private function desactivarCSRF(): void
+    {
+        $this->withoutMiddleware([
+            \Illuminate\Foundation\Http\Middleware\VerifyCsrfToken::class,
+            \App\Http\Middleware\VerifyCsrfToken::class,
+        ]);
+    }
+
+    private function ejecutarSeedersNecesarios(): void
+    {
+        $this->seed([
+            \Database\Seeders\RolePermissionSeeder::class,
+            \Database\Seeders\ParametroSeeder::class,
+            \Database\Seeders\TemaSeeder::class,
+            \Database\Seeders\PaisSeeder::class,
+            \Database\Seeders\DepartamentoSeeder::class,
+            \Database\Seeders\MunicipioSeeder::class,
+            \Database\Seeders\PersonaSeeder::class,
+            \Database\Seeders\UsersSeeder::class,
+            \Database\Seeders\RegionalSeeder::class,
+            \Database\Seeders\SedeSeeder::class,
+            \Database\Seeders\BloqueSeeder::class,
+            \Database\Seeders\PisoSeeder::class,
+            \Database\Seeders\AmbienteSeeder::class,
+        ]);
+    }
+
+    private function crearPermisos(): void
+    {
+        Permission::firstOrCreate(['name' => self::PERMISO_DEVOLVER_PRESTAMO]);
+    }
+
+    private function crearUsuarioConPermisos(): void
+    {
         $this->user = User::factory()->create();
         $this->user->givePermissionTo(self::PERMISO_DEVOLVER_PRESTAMO);
     }

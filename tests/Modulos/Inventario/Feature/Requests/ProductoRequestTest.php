@@ -26,8 +26,11 @@ class ProductoRequestTest extends TestCase
     {
         parent::setUp();
         $this->migrateDatabases();
+        $this->ejecutarSeedersNecesarios();
+    }
 
-        // Producto necesita: Ambiente → Piso → Bloque → Sede → Regional
+    private function ejecutarSeedersNecesarios(): void
+    {
         $this->seed([
             \Database\Seeders\RolePermissionSeeder::class,
             \Database\Seeders\ParametroSeeder::class,
@@ -92,9 +95,14 @@ class ProductoRequestTest extends TestCase
     private function obtenerRulesParaAgregarCarrito(): array
     {
         $request = new ProductoRequest();
-        $rutaAgregarCarrito = self::ROUTE_AGREGAR_CARRITO;
-        $request->setRouteResolver(function () use ($rutaAgregarCarrito) {
-            return new class($rutaAgregarCarrito) {
+        $this->configurarRouteResolver($request, self::ROUTE_AGREGAR_CARRITO);
+        return $request->rules();
+    }
+
+    private function configurarRouteResolver(ProductoRequest $request, string $ruta): void
+    {
+        $request->setRouteResolver(function () use ($ruta) {
+            return new class($ruta) {
                 private string $ruta;
                 
                 public function __construct(string $ruta) {
@@ -106,7 +114,6 @@ class ProductoRequestTest extends TestCase
                 }
             };
         });
-        return $request->rules();
     }
 
     private function validarYVerificarError(array $data, array $rules, string $campoEsperado): void

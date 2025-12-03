@@ -24,8 +24,11 @@ class DevolucionRequestTest extends TestCase
     {
         parent::setUp();
         $this->migrateDatabases();
+        $this->ejecutarSeedersNecesarios();
+    }
 
-        // DetalleOrden necesita
+    private function ejecutarSeedersNecesarios(): void
+    {
         $this->seed([
             \Database\Seeders\RolePermissionSeeder::class,
             \Database\Seeders\ParametroSeeder::class,

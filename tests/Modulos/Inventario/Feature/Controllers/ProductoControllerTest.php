@@ -46,9 +46,13 @@ class ProductoControllerTest extends TestCase
     protected function setUp(): void
     {
         parent::setUp();
-        
-        // Ejecutar solo los seeders necesarios para productos
-        // RefreshDatabase ya ejecuta las migraciones automáticamente
+        $this->ejecutarSeedersNecesarios();
+        $this->crearPermisos();
+        $this->crearUsuarioConPermisos();
+    }
+
+    private function ejecutarSeedersNecesarios(): void
+    {
         $this->seed([
             \Database\Seeders\RolePermissionSeeder::class,
             \Database\Seeders\ParametroSeeder::class,
@@ -64,16 +68,20 @@ class ProductoControllerTest extends TestCase
             \Database\Seeders\PisoSeeder::class,
             \Database\Seeders\AmbienteSeeder::class,
         ]);
+    }
 
-        // Crear permisos necesarios
+    private function crearPermisos(): void
+    {
         Permission::firstOrCreate(['name' => self::PERMISSION_VER_PRODUCTO]);
         Permission::firstOrCreate(['name' => self::PERMISSION_CREAR_PRODUCTO]);
         Permission::firstOrCreate(['name' => self::PERMISSION_EDITAR_PRODUCTO]);
         Permission::firstOrCreate(['name' => self::PERMISSION_ELIMINAR_PRODUCTO]);
         Permission::firstOrCreate(['name' => self::PERMISSION_BUSCAR_PRODUCTO]);
         Permission::firstOrCreate(['name' => self::PERMISSION_VER_CATALOGO_PRODUCTO]);
+    }
 
-        // Crear usuario con permisos usando factory
+    private function crearUsuarioConPermisos(): void
+    {
         $this->user = User::factory()->create();
         $this->user->givePermissionTo(self::PERMISSION_VER_PRODUCTO);
     }
