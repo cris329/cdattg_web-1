@@ -177,11 +177,28 @@ body.inventario-module .bg-light {
 }
 
 body.inventario-module .text-muted {
-    color: #fdfdfd !important;
+    color: #6c757d !important;
 }
 
 body.inventario-module .text-dark {
-    color: #fdfdfd !important;
+    color: #2c3e50 !important;
+}
+
+/* Excepción para notificaciones - texto oscuro legible */
+body.inventario-module .list-group-item .text-dark {
+    color: #2c3e50 !important;
+}
+
+body.inventario-module .list-group-item .text-muted {
+    color: #6c757d !important;
+}
+
+body.inventario-module .list-group-item p {
+    color: #495057 !important;
+}
+
+body.inventario-module .list-group-item strong {
+    color: #2c3e50 !important;
 }
 
 body.inventario-module .dashboard-header {
