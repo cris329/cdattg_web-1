@@ -35,7 +35,7 @@
                         </div>
 
                         <div class="card-body">
-                            <form action="{{ route('inventario.proveedores.store') }}" method="POST">
+                            <form id="proveedor-form" action="{{ route('inventario.proveedores.store') }}" method="POST">
                                 @csrf
                                 
                                 <div class="row">
@@ -126,31 +126,67 @@
                                             @enderror
                                         </div>
                                     </div>
-                                    {{-- Componente de filtro departamento-municipio --}}
-                                    @include('inventario._components.filtro-departamento', [
-                                        'departamentos' => $departamentos,
-                                        'municipios' => $municipios
-                                    ])
                                 </div>
 
+                                {{-- Componente de filtro departamento-municipio --}}
+                                @include('inventario._components.filtro-departamento', [
+                                    'departamentos' => $departamentos,
+                                    'municipios' => $municipios
+                                ])
+
                                 <div class="row">
-                                    <div class="col-md-6">
+                                    <div class="col-md-4">
                                         <div class="form-group">
-                                            <label for="contacto">Contacto</label>
+                                            <label for="contacto_nombre">Nombre del Contacto</label>
                                             <input
                                                 type="text"
-                                                class="form-control @error('contacto') is-invalid @enderror"
-                                                id="contacto"
-                                                name="contacto"
-                                                value="{{ old('contacto') }}"
-                                                placeholder="Ingrese el nombre del contacto"
+                                                class="form-control @error('contactos.0.nombre') is-invalid @enderror"
+                                                id="contacto_nombre"
+                                                name="contactos[0][nombre]"
+                                                value="{{ old('contactos.0.nombre') }}"
+                                                placeholder="Nombre del contacto"
                                             >
-                                            @error('contacto')
+                                            @error('contactos.0.nombre')
                                                 <div class="invalid-feedback">{{ $message }}</div>
                                             @enderror
                                         </div>
                                     </div>
-                                    <div class="col-md-6">
+                                    <div class="col-md-3">
+                                        <div class="form-group">
+                                            <label for="contacto_telefono">Teléfono del Contacto</label>
+                                            <input
+                                                type="text"
+                                                class="form-control @error('contactos.0.telefono') is-invalid @enderror"
+                                                id="contacto_telefono"
+                                                name="contactos[0][telefono]"
+                                                value="{{ old('contactos.0.telefono') }}"
+                                                placeholder="Teléfono"
+                                            >
+                                            @error('contactos.0.telefono')
+                                                <div class="invalid-feedback">{{ $message }}</div>
+                                            @enderror
+                                        </div>
+                                    </div>
+                                    <div class="col-md-5">
+                                        <div class="form-group">
+                                            <label for="contacto_email">Email del Contacto</label>
+                                            <input
+                                                type="email"
+                                                class="form-control @error('contactos.0.email') is-invalid @enderror"
+                                                id="contacto_email"
+                                                name="contactos[0][email]"
+                                                value="{{ old('contactos.0.email') }}"
+                                                placeholder="Email"
+                                            >
+                                            @error('contactos.0.email')
+                                                <div class="invalid-feedback">{{ $message }}</div>
+                                            @enderror
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <div class="row">
+                                    <div class="col-md-12">
                                         <div class="form-group">
                                             <label for="estado_id">Estado</label>
                                             <select
@@ -176,40 +212,17 @@
                                         </div>
                                     </div>
                                 </div>
-
-                                <div class="row">
-                                    <div class="col-12">
-                                        <div class="form-group">
-                                            <label for="observaciones">Observaciones</label>
-                                            <textarea
-                                                class="form-control @error('observaciones') is-invalid @enderror"
-                                                id="observaciones"
-                                                name="observaciones"
-                                                rows="3"
-                                                placeholder="Ingrese observaciones sobre el proveedor (opcional)"
-                                            >{{ old('observaciones') }}</textarea>
-                                            @error('observaciones')
-                                                <div class="invalid-feedback">{{ $message }}</div>
-                                            @enderror
-                                        </div>
-                                    </div>
-                                </div>
-
-                                <div class="row">
-                                    <div class="col-12">
-                                        <div class="card-footer bg-white py-3">
-                                            <div class="action-buttons">
-                                                <button type="submit" class="btn btn-outline-primary btn-sm">
-                                                    <i class="fas fa-save mr-1"></i> Guardar
-                                                </button>
-                                                <a href="{{ route('inventario.proveedores.index') }}" class="btn btn-outline-secondary btn-sm">
-                                                    <i class="fas fa-times mr-1"></i> Cancelar
-                                                </a>
-                                            </div>
-                                        </div>
-                                    </div>
-                                </div>
                             </form>
+                        </div>
+                        <div class="card-footer bg-white py-3">
+                            <div class="action-buttons">
+                                <button type="submit" form="proveedor-form" class="btn btn-outline-primary btn-sm">
+                                    <i class="fas fa-save mr-1"></i> Guardar
+                                </button>
+                                <a href="{{ route('inventario.proveedores.index') }}" class="btn btn-outline-secondary btn-sm">
+                                    <i class="fas fa-times mr-1"></i> Cancelar
+                                </a>
+                            </div>
                         </div>
                     </div>
                 </div>

@@ -59,11 +59,6 @@ class ProveedorController extends Controller
     public function show(Proveedor $proveedor): View
     {
         $proveedor = $this->repository->encontrarConRelaciones($proveedor->id);
-
-        if (!$proveedor) {
-            abort(404);
-        }
-
         return view('inventario.proveedores.show', compact('proveedor'));
     }
 
@@ -76,22 +71,34 @@ class ProveedorController extends Controller
 
     public function store(ProveedorRequest $request): RedirectResponse
     {
-        $validated = $request->validated();
-        $this->service->crear($validated, Auth::id());
+        try {
+            $validated = $request->validated();
+            $this->service->crear($validated, Auth::id());
 
-        return redirect()
-            ->route('inventario.proveedores.index')
-            ->with('success', 'Proveedor creado exitosamente.');
+            return redirect()
+                ->route('inventario.proveedores.index')
+                ->with('success', 'Proveedor creado exitosamente.');
+        } catch (ProveedorException $e) {
+            return back()
+                ->withInput()
+                ->with('error', 'Error al crear el proveedor: ' . $e->getMessage());
+        }
     }
 
     public function update(ProveedorRequest $request, Proveedor $proveedor): RedirectResponse
     {
-        $validated = $request->validated();
-        $this->service->actualizar($proveedor, $validated, Auth::id());
+        try {
+            $validated = $request->validated();
+            $this->service->actualizar($proveedor, $validated, Auth::id());
 
-        return redirect()
-            ->route('inventario.proveedores.index')
-            ->with('success', 'Proveedor actualizado exitosamente.');
+            return redirect()
+                ->route('inventario.proveedores.index')
+                ->with('success', 'Proveedor actualizado exitosamente.');
+        } catch (ProveedorException $e) {
+            return back()
+                ->withInput()
+                ->with('error', 'Error al actualizar el proveedor: ' . $e->getMessage());
+        }
     }
 
     public function destroy(Proveedor $proveedor): RedirectResponse
@@ -111,10 +118,17 @@ class ProveedorController extends Controller
      */
     public function getMunicipiosPorDepartamento(int $departamentoId): JsonResponse
     {
-        $municipios = Municipio::where('departamento_id', $departamentoId)
-            ->orderBy('municipio')
-            ->get(['id', 'municipio']);
+        try {
+            $municipios = Municipio::where('departamento_id', $departamentoId)
+                ->orderBy('municipio')
+                ->get(['id', 'municipio']);
 
-        return response()->json($municipios);
+            return response()->json($municipios);
+        } catch (\Exception $e) {
+            return response()->json([
+                'error' => 'Error al obtener los municipios',
+                'message' => $e->getMessage()
+            ], 500);
+        }
     }
 }

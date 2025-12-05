@@ -98,10 +98,6 @@
                                             </td>
                                         </tr>
                                         <tr>
-                                            <th class="py-3">Descripción</th>
-                                            <td class="py-3">{{ $categoria->descripcion ?? 'Sin descripción' }}</td>
-                                        </tr>
-                                        <tr>
                                             <th class="py-3">Total de Productos</th>
                                             <td class="py-3">
                                                 <span class="status-badge status-active">

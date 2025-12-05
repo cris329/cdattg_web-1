@@ -82,22 +82,30 @@ class ContratoConvenioController extends Controller
 
     public function store(ContratoConvenioRequest $request): RedirectResponse
     {
-        $validated = $request->validated();
-        $this->service->crear($validated, Auth::id());
+        try {
+            $validated = $request->validated();
+            $this->service->crear($validated, Auth::id());
 
-        return redirect()
-            ->route('inventario.contratos-convenios.index')
-            ->with('success', 'Contrato/Convenio creado exitosamente.');
+            return redirect()
+                ->route('inventario.contratos-convenios.index')
+                ->with('success', 'Contrato/Convenio creado exitosamente.');
+        } catch (ContratoConvenioException $e) {
+            return back()->withInput()->with('error', $e->getMessage());
+        }
     }
 
     public function update(ContratoConvenioRequest $request, ContratoConvenio $contratoConvenio): RedirectResponse
     {
-        $validated = $request->validated();
-        $this->service->actualizar($contratoConvenio, $validated, Auth::id());
+        try {
+            $validated = $request->validated();
+            $this->service->actualizar($contratoConvenio, $validated, Auth::id());
 
-        return redirect()
-            ->route('inventario.contratos-convenios.index')
-            ->with('success', 'Contrato/Convenio actualizado exitosamente.');
+            return redirect()
+                ->route('inventario.contratos-convenios.index')
+                ->with('success', 'Contrato/Convenio actualizado exitosamente.');
+        } catch (ContratoConvenioException $e) {
+            return back()->withInput()->with('error', $e->getMessage());
+        }
     }
 
     public function destroy(ContratoConvenio $contratoConvenio): RedirectResponse

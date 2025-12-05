@@ -89,18 +89,22 @@ class CategoriaController extends Controller
 
     public function update(MarcaCategoriaRequest $request, Parametro $categoria): RedirectResponse
     {
-        $validated = $request->validated();
-        $categoriaModel = $this->repository->encontrar($categoria->id);
+        try {
+            $validated = $request->validated();
+            $categoriaModel = $this->repository->encontrar($categoria->id);
 
-        if (!$categoriaModel) {
-            abort(404);
+            if (!$categoriaModel) {
+                abort(404);
+            }
+
+            $this->service->actualizar($categoriaModel, $validated, Auth::id());
+
+            return redirect()
+                ->route('inventario.categorias.index')
+                ->with('success', 'categoria actualizada exitosamente.');
+        } catch (CategoriaException $e) {
+            return back()->withInput()->with('error', $e->getMessage());
         }
-
-        $this->service->actualizar($categoriaModel, $validated, Auth::id());
-
-        return redirect()
-            ->route('inventario.categorias.index')
-            ->with('success', 'categoria actualizada exitosamente.');
     }
 
     public function destroy(Parametro $categoria): RedirectResponse

@@ -61,7 +61,20 @@
                                 <td>{{ $proveedor->direccion ?? 'N/A' }}</td>
                                 <td>{{ $proveedor->departamento->departamento ?? 'N/A' }}</td>
                                 <td>{{ $proveedor->municipio->municipio ?? 'N/A' }}</td>
-                                <td>{{ $proveedor->contacto ?? 'N/A' }}</td>
+                                <td>
+                                    @if($proveedor->contacto)
+                                        @if($proveedor->contacto->email)
+                                            <a href="mailto:{{ $proveedor->contacto->email }}" class="text-primary" title="{{ $proveedor->contacto->nombre }}">
+                                                <i class="fas fa-envelope mr-1"></i>
+                                                {{ $proveedor->contacto->email }}
+                                            </a>
+                                        @else
+                                            <span class="text-muted" title="{{ $proveedor->contacto->nombre }}">N/A</span>
+                                        @endif
+                                    @else
+                                        <span class="text-muted">N/A</span>
+                                    @endif
+                                </td>
                                 <td>
                                     <span class="badge badge-info">
                                         {{ $proveedor->contratos_convenios_count ?? 0 }}

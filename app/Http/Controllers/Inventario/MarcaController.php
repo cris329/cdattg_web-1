@@ -90,18 +90,22 @@ class MarcaController extends Controller
 
     public function update(MarcaCategoriaRequest $request, Parametro $marca): RedirectResponse
     {
-        $validated = $request->validated();
-        $marcaModel = $this->repository->encontrar($marca->id);
+        try {
+            $validated = $request->validated();
+            $marcaModel = $this->repository->encontrar($marca->id);
 
-        if (!$marcaModel) {
-            abort(404);
+            if (!$marcaModel) {
+                abort(404);
+            }
+
+            $this->service->actualizar($marcaModel, $validated, Auth::id());
+
+            return redirect()
+                ->route('inventario.marcas.index')
+                ->with('success', 'Marca actualizada exitosamente.');
+        } catch (MarcaException $e) {
+            return back()->withInput()->with('error', $e->getMessage());
         }
-
-        $this->service->actualizar($marcaModel, $validated, Auth::id());
-
-        return redirect()
-            ->route('inventario.marcas.index')
-            ->with('success', 'Marca actualizada exitosamente.');
     }
 
     public function destroy(Parametro $marca): RedirectResponse

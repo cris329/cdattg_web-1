@@ -7,6 +7,7 @@ use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\HasMany;
+use Illuminate\Database\Eloquent\Relations\HasOne;
 
 class Proveedor extends Model
 {
@@ -34,7 +35,6 @@ class Proveedor extends Model
         'direccion',
         'departamento_id',
         'municipio_id',
-        'contacto',
         'estado_id',
         'user_create_id',
         'user_update_id'
@@ -68,5 +68,11 @@ class Proveedor extends Model
     public function productos() : HasMany
     {
         return $this->hasMany(Producto::class);
+    }
+
+    // Relación con contacto
+    public function contacto() : HasOne
+    {
+        return $this->hasOne(ProveedorContacto::class);
     }
 }

@@ -50,7 +50,10 @@ class ProveedorRequest extends FormRequest
                 'direccion' => 'nullable|string|max:255',
                 'departamento_id' => 'nullable|exists:departamentos,id',
                 'municipio_id' => 'nullable|exists:municipios,id',
-                'contacto' => 'nullable|string|max:100',
+                'contactos' => 'nullable|array',
+                'contactos.0.nombre' => 'nullable|string|max:100',
+                'contactos.0.telefono' => 'nullable|string|max:20',
+                'contactos.0.email' => 'nullable|email|max:255',
                 'estado_id' => 'nullable|exists:parametros_temas,id'
             ];
         }
@@ -64,7 +67,10 @@ class ProveedorRequest extends FormRequest
             'direccion' => 'nullable|string|max:255',
             'departamento_id' => 'nullable|exists:departamentos,id',
             'municipio_id' => 'nullable|exists:municipios,id',
-            'contacto' => 'nullable|string|max:100',
+            'contactos' => 'nullable|array',
+            'contactos.0.nombre' => 'nullable|string|max:100',
+            'contactos.0.telefono' => 'nullable|string|max:20',
+            'contactos.0.email' => 'nullable|email|max:255',
             'estado_id' => 'nullable|exists:parametros_temas,id'
         ];
     }

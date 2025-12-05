@@ -159,10 +159,28 @@
                                             <th class="py-3">Contacto</th>
                                             <td class="py-3">
                                                 @if($proveedor->contacto)
-                                                    <i class="fas fa-user mr-1"></i>
-                                                    {{ $proveedor->contacto }}
+                                                    <div class="mb-2">
+                                                        <strong><i class="fas fa-user mr-1"></i>Nombre:</strong> 
+                                                        {{ $proveedor->contacto->nombre }}
+                                                    </div>
+                                                    @if($proveedor->contacto->telefono)
+                                                        <div class="mb-2">
+                                                            <strong><i class="fas fa-phone mr-1"></i>Teléfono:</strong>
+                                                            <a href="tel:{{ $proveedor->contacto->telefono }}" class="text-primary">
+                                                                {{ $proveedor->contacto->telefono }}
+                                                            </a>
+                                                        </div>
+                                                    @endif
+                                                    @if($proveedor->contacto->email)
+                                                        <div>
+                                                            <strong><i class="fas fa-envelope mr-1"></i>Email:</strong>
+                                                            <a href="mailto:{{ $proveedor->contacto->email }}" class="text-primary">
+                                                                {{ $proveedor->contacto->email }}
+                                                            </a>
+                                                        </div>
+                                                    @endif
                                                 @else
-                                                    <span class="text-muted">No especificado</span>
+                                                    <span class="text-muted">No hay contacto registrado</span>
                                                 @endif
                                             </td>
                                         </tr>

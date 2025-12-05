@@ -35,7 +35,8 @@ class ProveedorRepository implements ProveedorRepositoryInterface
             'userUpdate.persona',
             'estado.parametro',
             'departamento',
-            'municipio'
+            'municipio',
+            'contacto'
         ])
         ->withCount('contratosConvenios')
         ->latest();
@@ -47,7 +48,11 @@ class ProveedorRepository implements ProveedorRepositoryInterface
                     ->orWhere('nit', 'LIKE', "%{$search}%")
                     ->orWhere('email', 'LIKE', "%{$search}%")
                     ->orWhere('telefono', 'LIKE', "%{$search}%")
-                    ->orWhere('contacto', 'LIKE', "%{$search}%")
+                    ->orWhereHas('contacto', function ($contactoQuery) use ($search) {
+                        $contactoQuery->where('nombre', 'LIKE', "%{$search}%")
+                            ->orWhere('telefono', 'LIKE', "%{$search}%")
+                            ->orWhere('email', 'LIKE', "%{$search}%");
+                    })
                     ->orWhereHas('departamento', function ($departamentoQuery) use ($search) {
                         $departamentoQuery->where('departamento', 'LIKE', "%{$search}%");
                     })
@@ -75,7 +80,8 @@ class ProveedorRepository implements ProveedorRepositoryInterface
             'userUpdate.persona',
             'estado.parametro',
             'departamento',
-            'municipio'
+            'municipio',
+            'contacto'
         ])->find($id);
     }
 

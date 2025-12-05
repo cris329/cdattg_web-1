@@ -108,14 +108,20 @@ class ProductoController extends Controller
      */
     public function store(ProductoRequest $request): RedirectResponse
     {
-        $validated = $request->validated();
-        $validated['imagen'] = $request->hasFile('imagen') ? $request->file('imagen') : null;
+        try {
+            $validated = $request->validated();
+            $validated['imagen'] = $request->hasFile('imagen') ? $request->file('imagen') : null;
 
-        $this->service->crear($validated, Auth::id());
+            $this->service->crear($validated, Auth::id());
 
-        return redirect()
-            ->route('inventario.productos.index')
-            ->with('success', 'Producto creado correctamente.');
+            return redirect()
+                ->route('inventario.productos.index')
+                ->with('success', 'Producto creado correctamente.');
+        } catch (\Exception $e) {
+            return back()
+                ->withInput()
+                ->with('error', 'Error al crear el producto: ' . $e->getMessage());
+        }
     }
 
     /**
@@ -155,22 +161,28 @@ class ProductoController extends Controller
      */
     public function update(ProductoRequest $request, string $id): RedirectResponse
     {
-        $producto = $this->repository->encontrar((int) $id);
+        try {
+            $producto = $this->repository->encontrar((int) $id);
 
-        if (!$producto) {
-            abort(404);
+            if (!$producto) {
+                abort(404);
+            }
+            $validated = $request->validated();
+
+            if ($request->hasFile('imagen')) {
+                $validated['imagen'] = $request->file('imagen');
+            }
+
+            $this->service->actualizar($producto, $validated, Auth::id());
+
+            return redirect()
+                ->route('inventario.productos.show', $producto->id)
+                ->with('success', 'Producto actualizado correctamente.');
+        } catch (\Exception $e) {
+            return back()
+                ->withInput()
+                ->with('error', 'Error al actualizar el producto: ' . $e->getMessage());
         }
-        $validated = $request->validated();
-
-        if ($request->hasFile('imagen')) {
-            $validated['imagen'] = $request->file('imagen');
-        }
-
-        $this->service->actualizar($producto, $validated, Auth::id());
-
-        return redirect()
-            ->route('inventario.productos.show', $producto->id)
-            ->with('success', 'Producto actualizado correctamente.');
     }
 
     /**
@@ -178,16 +190,21 @@ class ProductoController extends Controller
      */
     public function destroy(string $id): RedirectResponse
     {
-        $producto = $this->repository->encontrar((int) $id);
+        try {
+            $producto = $this->repository->encontrar((int) $id);
 
-        if (!$producto) {
-            abort(404);
+            if (!$producto) {
+                abort(404);
+            }
+            $this->service->eliminar($producto);
+
+            return redirect()
+                ->route('inventario.productos.index')
+                ->with('success', 'Producto eliminado correctamente');
+        } catch (\Exception $e) {
+            return back()
+                ->with('error', 'Error al eliminar el producto: ' . $e->getMessage());
         }
-        $this->service->eliminar($producto);
-
-        return redirect()
-            ->route('inventario.productos.index')
-            ->with('success', 'Producto eliminado correctamente');
     }
 
     public function buscarPorCodigo(string $codigo): JsonResponse

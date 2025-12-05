@@ -78,8 +78,6 @@ class CarritoController extends Controller
     public function eliminar(int $id): JsonResponse
     {
         try {
-            // Esta es una operación del lado del cliente (localStorage)
-            // Solo validamos que el producto existe
             $producto = $this->productoRepository->encontrar($id);
 
             if (!$producto) {

@@ -74,25 +74,6 @@
                                         </div>
                                     </div>
                                 </div>
-
-                                <div class="row">
-                                    <div class="col-12">
-                                        <div class="form-group">
-                                            <label for="descripcion">Descripción</label>
-                                            <textarea
-                                                class="form-control @error('descripcion') is-invalid @enderror"
-                                                id="descripcion"
-                                                name="descripcion"
-                                                rows="3"
-                                                placeholder="Ingrese una descripción de la marca (opcional)"
-                                            >{{ old('descripcion', $marca->descripcion) }}</textarea>
-                                            @error('descripcion')
-                                                <div class="invalid-feedback">{{ $message }}</div>
-                                            @enderror
-                                        </div>
-                                    </div>
-                                </div>
-
                                 <div class="row">
                                     <div class="col-12">
                                         <div class="card-footer bg-white py-3">

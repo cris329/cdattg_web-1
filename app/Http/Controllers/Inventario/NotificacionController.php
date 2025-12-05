@@ -46,19 +46,26 @@ class NotificacionController extends Controller
      */
     public function markAsRead(string $id) : JsonResponse
     {
-        $resultado = $this->service->marcarComoLeida(Auth::id(), $id);
+        try {
+            $resultado = $this->service->marcarComoLeida(Auth::id(), $id);
 
-        if ($resultado) {
+            if ($resultado) {
+                return response()->json([
+                    'success' => true,
+                    'message' => 'Notificación marcada como leída'
+                ]);
+            }
+
             return response()->json([
-                'success' => true,
-                'message' => 'Notificación marcada como leída'
-            ]);
+                'success' => false,
+                'message' => 'Notificación no encontrada'
+            ], 404);
+        } catch (\Exception $e) {
+            return response()->json([
+                'success' => false,
+                'message' => 'Error al marcar notificación: ' . $e->getMessage()
+            ], 500);
         }
-
-        return response()->json([
-            'success' => false,
-            'message' => 'Notificación no encontrada'
-        ], 404);
     }
 
     /**
@@ -66,12 +73,19 @@ class NotificacionController extends Controller
      */
     public function markAllAsRead() : JsonResponse
     {
-        $count = $this->service->marcarTodasComoLeidas(Auth::id());
+        try {
+            $count = $this->service->marcarTodasComoLeidas(Auth::id());
 
-        return response()->json([
-            'success' => true,
-            'message' => "Todas las notificaciones marcadas como leídas ({$count})"
-        ]);
+            return response()->json([
+                'success' => true,
+                'message' => "Todas las notificaciones marcadas como leídas ({$count})"
+            ]);
+        } catch (\Exception $e) {
+            return response()->json([
+                'success' => false,
+                'message' => 'Error al marcar notificaciones: ' . $e->getMessage()
+            ], 500);
+        }
     }
 
     /**
@@ -79,13 +93,17 @@ class NotificacionController extends Controller
      */
     public function destroy(string $id) : RedirectResponse
     {
-        $resultado = $this->service->eliminar(Auth::id(), $id);
+        try {
+            $resultado = $this->service->eliminar(Auth::id(), $id);
 
-        if ($resultado) {
-            return back()->with('success', 'Notificación eliminada exitosamente');
+            if ($resultado) {
+                return back()->with('success', 'Notificación eliminada exitosamente');
+            }
+
+            abort(404, 'Notificación no encontrada');
+        } catch (\Exception $e) {
+            return back()->with('error', 'Error al eliminar notificación: ' . $e->getMessage());
         }
-
-        abort(404, 'Notificación no encontrada');
     }
 
     /**
@@ -93,14 +111,21 @@ class NotificacionController extends Controller
      */
     public function destroyAll()  : JsonResponse
     {
-        $count = Auth::user()->notifications()->count();
+        try {
+            $count = Auth::user()->notifications()->count();
 
-        Auth::user()->notifications()->delete();
+            Auth::user()->notifications()->delete();
 
-        return response()->json([
-            'success' => true,
-            'message' => 'Todas las notificaciones han sido eliminadas',
-            'deleted' => $count
-        ]);
+            return response()->json([
+                'success' => true,
+                'message' => 'Todas las notificaciones han sido eliminadas',
+                'deleted' => $count
+            ]);
+        } catch (\Exception $e) {
+            return response()->json([
+                'success' => false,
+                'message' => 'Error al eliminar notificaciones: ' . $e->getMessage()
+            ], 500);
+        }
     }
 }
