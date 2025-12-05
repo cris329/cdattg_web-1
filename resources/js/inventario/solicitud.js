@@ -9,7 +9,7 @@ document.addEventListener('DOMContentLoaded', function () {
 });
 
 /**
- * Cargar datos del carrito desde localStorage
+ * Cargar datos del carrito desde sessionStorage
  */
 function cargarDatosCarrito() {
     const carritoDataString = obtenerDatosCarrito();
@@ -43,7 +43,7 @@ function debeCargarDesdeCarrito() {
 }
 
 function obtenerDatosCarrito() {
-    return localStorage.getItem('carrito_data');
+    return sessionStorage.getItem('carrito_data');
 }
 
 function aplicarDatosCarrito(data) {
@@ -165,8 +165,8 @@ function setupFormSubmit() {
     if (!form) return;
 
     form.addEventListener('submit', function(e) {
-        // Obtener datos del carrito desde localStorage
-        const carritoDataString = localStorage.getItem('carrito_data');
+        // Obtener datos del carrito desde sessionStorage
+        const carritoDataString = sessionStorage.getItem('carrito_data');
         let carritoItems = [];
         
         if (carritoDataString) {
