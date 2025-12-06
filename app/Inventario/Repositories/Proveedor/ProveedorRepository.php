@@ -36,7 +36,7 @@ class ProveedorRepository implements ProveedorRepositoryInterface
             'estado.parametro',
             'departamento',
             'municipio',
-            'contacto'
+            'persona'
         ])
         ->withCount('contratosConvenios')
         ->latest();
@@ -48,9 +48,13 @@ class ProveedorRepository implements ProveedorRepositoryInterface
                     ->orWhere('nit', 'LIKE', "%{$search}%")
                     ->orWhere('email', 'LIKE', "%{$search}%")
                     ->orWhere('telefono', 'LIKE', "%{$search}%")
-                    ->orWhereHas('contacto', function ($contactoQuery) use ($search) {
-                        $contactoQuery->where('nombre', 'LIKE', "%{$search}%")
+                    ->orWhereHas('persona', function ($personaQuery) use ($search) {
+                        $personaQuery->where('primer_nombre', 'LIKE', "%{$search}%")
+                            ->orWhere('segundo_nombre', 'LIKE', "%{$search}%")
+                            ->orWhere('primer_apellido', 'LIKE', "%{$search}%")
+                            ->orWhere('segundo_apellido', 'LIKE', "%{$search}%")
                             ->orWhere('telefono', 'LIKE', "%{$search}%")
+                            ->orWhere('celular', 'LIKE', "%{$search}%")
                             ->orWhere('email', 'LIKE', "%{$search}%");
                     })
                     ->orWhereHas('departamento', function ($departamentoQuery) use ($search) {
@@ -81,7 +85,7 @@ class ProveedorRepository implements ProveedorRepositoryInterface
             'estado.parametro',
             'departamento',
             'municipio',
-            'contacto'
+            'persona'
         ])->find($id);
     }
 

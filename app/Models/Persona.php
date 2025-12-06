@@ -8,6 +8,7 @@ use Illuminate\Database\Eloquent\Model;
 use Illuminate\Notifications\Notifiable;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\BelongsToMany;
+use Illuminate\Database\Eloquent\Relations\HasOne;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Schema;
 use Laravel\Sanctum\HasApiTokens;
@@ -111,6 +112,16 @@ class Persona extends Model
     public function instructor()
     {
         return $this->hasOne(Instructor::class);
+    }
+
+    public function proveedor(): HasOne
+    {
+        return $this->hasOne(\App\Models\Inventario\Proveedor::class);
+    }
+
+    public function esProveedor(): bool
+    {
+        return $this->proveedor()->exists();
     }
 
     public function caracterizacionProgramas()

@@ -48,12 +48,10 @@ class ProveedorRequest extends FormRequest
                 ],
                 'telefono' => 'nullable|string|max:10',
                 'direccion' => 'nullable|string|max:255',
+                'pais_id' => 'nullable|exists:pais,id',
                 'departamento_id' => 'nullable|exists:departamentos,id',
                 'municipio_id' => 'nullable|exists:municipios,id',
-                'contactos' => 'nullable|array',
-                'contactos.0.nombre' => 'nullable|string|max:100',
-                'contactos.0.telefono' => 'nullable|string|max:20',
-                'contactos.0.email' => 'nullable|email|max:255',
+                'persona_id' => 'nullable|exists:personas,id',
                 'estado_id' => 'nullable|exists:parametros_temas,id'
             ];
         }
@@ -65,12 +63,10 @@ class ProveedorRequest extends FormRequest
             'email' => 'nullable|email|max:255|unique:proveedores,email',
             'telefono' => 'nullable|string|max:10',
             'direccion' => 'nullable|string|max:255',
+            'pais_id' => 'nullable|exists:pais,id',
             'departamento_id' => 'nullable|exists:departamentos,id',
             'municipio_id' => 'nullable|exists:municipios,id',
-            'contactos' => 'nullable|array',
-            'contactos.0.nombre' => 'nullable|string|max:100',
-            'contactos.0.telefono' => 'nullable|string|max:20',
-            'contactos.0.email' => 'nullable|email|max:255',
+            'persona_id' => 'nullable|exists:personas,id',
             'estado_id' => 'nullable|exists:parametros_temas,id'
         ];
     }

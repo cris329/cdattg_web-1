@@ -7,8 +7,10 @@ namespace App\Http\Controllers\Inventario;
 use App\Inventario\Interfaces\Repositories\Proveedor\ProveedorRepositoryInterface;
 use App\Inventario\Services\Proveedor\ProveedorService;
 use App\Models\Inventario\Proveedor;
+use App\Models\Pais;
 use App\Models\Departamento;
 use App\Models\Municipio;
+use App\Models\Persona;
 use App\Http\Requests\Inventario\ProveedorRequest;
 use App\Exceptions\ProveedorException;
 use Illuminate\Http\Request;
@@ -51,9 +53,14 @@ class ProveedorController extends Controller
 
     public function create() : View
     {
+        $paises = Pais::where('status', 1)->orderBy('pais')->get();
         $departamentos = Departamento::orderBy('departamento')->get();
         $municipios = Municipio::with('departamento')->get();
-        return view('inventario.proveedores.create', compact('departamentos', 'municipios'));
+        $personas = Persona::where('status', 1)
+            ->orderBy('primer_nombre')
+            ->orderBy('primer_apellido')
+            ->get();
+        return view('inventario.proveedores.create', compact('paises', 'departamentos', 'municipios', 'personas'));
     }
 
     public function show(Proveedor $proveedor): View
@@ -64,9 +71,14 @@ class ProveedorController extends Controller
 
     public function edit(Proveedor $proveedor) : View
     {
+        $paises = Pais::where('status', 1)->orderBy('pais')->get();
         $departamentos = Departamento::orderBy('departamento')->get();
         $municipios = Municipio::with('departamento')->get();
-        return view('inventario.proveedores.edit', compact('proveedor', 'departamentos', 'municipios'));
+        $personas = Persona::where('status', 1)
+            ->orderBy('primer_nombre')
+            ->orderBy('primer_apellido')
+            ->get();
+        return view('inventario.proveedores.edit', compact('proveedor', 'paises', 'departamentos', 'municipios', 'personas'));
     }
 
     public function store(ProveedorRequest $request): RedirectResponse
@@ -110,6 +122,25 @@ class ProveedorController extends Controller
                 ->with('success', 'Proveedor eliminado exitosamente.');
         } catch (ProveedorException $e) {
             return back()->with('error', $e->getMessage());
+        }
+    }
+
+    /**
+     * Obtener departamentos por país
+     */
+    public function getDepartamentosPorPais(int $paisId): JsonResponse
+    {
+        try {
+            $departamentos = Departamento::where('pais_id', $paisId)
+                ->orderBy('departamento')
+                ->get(['id', 'departamento']);
+
+            return response()->json($departamentos);
+        } catch (\Exception $e) {
+            return response()->json([
+                'error' => 'Error al obtener los departamentos',
+                'message' => $e->getMessage()
+            ], 500);
         }
     }
 

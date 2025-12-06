@@ -33,9 +33,11 @@ class Proveedor extends Model
         'email',
         'telefono',
         'direccion',
+        'pais_id',
         'departamento_id',
         'municipio_id',
         'estado_id',
+        'persona_id',
         'user_create_id',
         'user_update_id'
     ];
@@ -44,6 +46,12 @@ class Proveedor extends Model
     public function estado() : BelongsTo
     {
         return $this->belongsTo(\App\Models\ParametroTema::class, 'estado_id');
+    }
+
+    // Relación con el país
+    public function pais() : BelongsTo
+    {
+        return $this->belongsTo(\App\Models\Pais::class);
     }
 
     // Relación con el departamento
@@ -70,9 +78,9 @@ class Proveedor extends Model
         return $this->hasMany(Producto::class);
     }
 
-    // Relación con contacto
-    public function contacto() : HasOne
+    // Relación con persona (contacto)
+    public function persona(): BelongsTo
     {
-        return $this->hasOne(ProveedorContacto::class);
+        return $this->belongsTo(\App\Models\Persona::class);
     }
 }

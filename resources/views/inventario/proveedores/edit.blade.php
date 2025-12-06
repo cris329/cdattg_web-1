@@ -129,59 +129,44 @@
                                     </div>
                                 </div>
 
-                                {{-- Componente de filtro departamento-municipio --}}
+                                {{-- Componente de filtro país-departamento-municipio --}}
                                 @include('inventario._components.filtro-departamento', [
+                                    'paises' => $paises,
                                     'departamentos' => $departamentos,
                                     'municipios' => $municipios,
+                                    'paisSeleccionado' => $proveedor->pais_id,
                                     'municipioSeleccionado' => $proveedor->municipio_id,
                                     'departamentoSeleccionado' => $proveedor->departamento_id
                                 ])
 
                                 <div class="row">
-                                    <div class="col-md-4">
+                                    <div class="col-md-12">
                                         <div class="form-group">
-                                            <label for="contacto_nombre">Nombre del Contacto</label>
-                                            <input
-                                                type="text"
-                                                class="form-control @error('contactos.0.nombre') is-invalid @enderror"
-                                                id="contacto_nombre"
-                                                name="contactos[0][nombre]"
-                                                value="{{ old('contactos.0.nombre', $proveedor->contacto->nombre ?? '') }}"
-                                                placeholder="Nombre del contacto"
+                                            <label for="persona_id">
+                                                <i class="fas fa-user mr-2"></i>Persona de Contacto
+                                            </label>
+                                            <select
+                                                class="form-control @error('persona_id') is-invalid @enderror"
+                                                id="persona_id"
+                                                name="persona_id"
                                             >
-                                            @error('contactos.0.nombre')
-                                                <div class="invalid-feedback">{{ $message }}</div>
-                                            @enderror
-                                        </div>
-                                    </div>
-                                    <div class="col-md-3">
-                                        <div class="form-group">
-                                            <label for="contacto_telefono">Teléfono del Contacto</label>
-                                            <input
-                                                type="text"
-                                                class="form-control @error('contactos.0.telefono') is-invalid @enderror"
-                                                id="contacto_telefono"
-                                                name="contactos[0][telefono]"
-                                                value="{{ old('contactos.0.telefono', $proveedor->contacto->telefono ?? '') }}"
-                                                placeholder="Teléfono"
-                                            >
-                                            @error('contactos.0.telefono')
-                                                <div class="invalid-feedback">{{ $message }}</div>
-                                            @enderror
-                                        </div>
-                                    </div>
-                                    <div class="col-md-5">
-                                        <div class="form-group">
-                                            <label for="contacto_email">Email del Contacto</label>
-                                            <input
-                                                type="email"
-                                                class="form-control @error('contactos.0.email') is-invalid @enderror"
-                                                id="contacto_email"
-                                                name="contactos[0][email]"
-                                                value="{{ old('contactos.0.email', $proveedor->contacto->email ?? '') }}"
-                                                placeholder="Email"
-                                            >
-                                            @error('contactos.0.email')
+                                                <option value="">Seleccione una persona</option>
+                                                @foreach($personas as $persona)
+                                                    <option value="{{ $persona->id }}" {{ old('persona_id', $proveedor->persona_id) == $persona->id ? 'selected' : '' }}>
+                                                        {{ $persona->nombre_completo }} 
+                                                        @if($persona->numero_documento)
+                                                            - {{ $persona->numero_documento }}
+                                                        @endif
+                                                        @if($persona->email)
+                                                            ({{ $persona->email }})
+                                                        @endif
+                                                    </option>
+                                                @endforeach
+                                            </select>
+                                            <small class="form-text text-muted">
+                                                Seleccione una persona registrada en el sistema como contacto del proveedor.
+                                            </small>
+                                            @error('persona_id')
                                                 <div class="invalid-feedback">{{ $message }}</div>
                                             @enderror
                                         </div>

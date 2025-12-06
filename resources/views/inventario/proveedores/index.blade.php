@@ -62,14 +62,14 @@
                                 <td>{{ $proveedor->departamento->departamento ?? 'N/A' }}</td>
                                 <td>{{ $proveedor->municipio->municipio ?? 'N/A' }}</td>
                                 <td>
-                                    @if($proveedor->contacto)
-                                        @if($proveedor->contacto->email)
-                                            <a href="mailto:{{ $proveedor->contacto->email }}" class="text-primary" title="{{ $proveedor->contacto->nombre }}">
+                                    @if($proveedor->persona)
+                                        @if($proveedor->persona->email)
+                                            <a href="mailto:{{ $proveedor->persona->email }}" class="text-primary" title="{{ $proveedor->persona->nombre_completo }}">
                                                 <i class="fas fa-envelope mr-1"></i>
-                                                {{ $proveedor->contacto->email }}
+                                                {{ $proveedor->persona->email }}
                                             </a>
                                         @else
-                                            <span class="text-muted" title="{{ $proveedor->contacto->nombre }}">N/A</span>
+                                            <span class="text-muted" title="{{ $proveedor->persona->nombre_completo }}">N/A</span>
                                         @endif
                                     @else
                                         <span class="text-muted">N/A</span>

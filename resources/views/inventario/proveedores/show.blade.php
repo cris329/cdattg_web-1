@@ -158,27 +158,51 @@
                                         <tr>
                                             <th class="py-3">Contacto</th>
                                             <td class="py-3">
-                                                @if($proveedor->contacto)
-                                                    <div class="mb-2">
-                                                        <strong><i class="fas fa-user mr-1"></i>Nombre:</strong> 
-                                                        {{ $proveedor->contacto->nombre }}
-                                                    </div>
-                                                    @if($proveedor->contacto->telefono)
+                                                @if($proveedor->persona)
+                                                    <div class="p-3 border rounded">
                                                         <div class="mb-2">
-                                                            <strong><i class="fas fa-phone mr-1"></i>Teléfono:</strong>
-                                                            <a href="tel:{{ $proveedor->contacto->telefono }}" class="text-primary">
-                                                                {{ $proveedor->contacto->telefono }}
-                                                            </a>
+                                                            <strong><i class="fas fa-user mr-1"></i>Nombre Completo:</strong> 
+                                                            {{ $proveedor->persona->nombre_completo }}
                                                         </div>
-                                                    @endif
-                                                    @if($proveedor->contacto->email)
-                                                        <div>
-                                                            <strong><i class="fas fa-envelope mr-1"></i>Email:</strong>
-                                                            <a href="mailto:{{ $proveedor->contacto->email }}" class="text-primary">
-                                                                {{ $proveedor->contacto->email }}
-                                                            </a>
-                                                        </div>
-                                                    @endif
+                                                        @if($proveedor->persona->numero_documento)
+                                                            <div class="mb-2">
+                                                                <strong><i class="fas fa-id-card mr-1"></i>Documento:</strong>
+                                                                {{ $proveedor->persona->numero_documento }}
+                                                            </div>
+                                                        @endif
+                                                        @if($proveedor->persona->telefono)
+                                                            <div class="mb-2">
+                                                                <strong><i class="fas fa-phone mr-1"></i>Teléfono:</strong>
+                                                                <a href="tel:{{ $proveedor->persona->telefono }}" class="text-primary">
+                                                                    {{ $proveedor->persona->telefono }}
+                                                                </a>
+                                                            </div>
+                                                        @endif
+                                                        @if($proveedor->persona->celular)
+                                                            <div class="mb-2">
+                                                                <strong><i class="fas fa-mobile-alt mr-1"></i>Celular:</strong>
+                                                                <a href="tel:{{ $proveedor->persona->celular }}" class="text-primary">
+                                                                    {{ $proveedor->persona->celular }}
+                                                                </a>
+                                                            </div>
+                                                        @endif
+                                                        @if($proveedor->persona->email)
+                                                            <div>
+                                                                <strong><i class="fas fa-envelope mr-1"></i>Email:</strong>
+                                                                <a href="mailto:{{ $proveedor->persona->email }}" class="text-primary">
+                                                                    {{ $proveedor->persona->email }}
+                                                                </a>
+                                                            </div>
+                                                        @endif
+                                                        @if($proveedor->persona->user && $proveedor->persona->user->hasRole('PROVEEDOR'))
+                                                            <div class="mt-2">
+                                                                <span class="badge badge-success">
+                                                                    <i class="fas fa-check-circle mr-1"></i>
+                                                                    Rol PROVEEDOR asignado
+                                                                </span>
+                                                            </div>
+                                                        @endif
+                                                    </div>
                                                 @else
                                                     <span class="text-muted">No hay contacto registrado</span>
                                                 @endif
