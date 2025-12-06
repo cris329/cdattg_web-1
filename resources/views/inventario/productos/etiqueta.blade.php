@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Etiqueta - {{ $producto->producto }}</title>
+    <title>Etiqueta - {{ $producto->name }}</title>
     <style>
         @page { size: auto; margin: 10mm; }
         body { font-family: Arial, sans-serif; }
@@ -18,7 +18,7 @@
 </head>
 <body onload="renderAndPrint()">
     <div class="label">
-        <div class="title">{{ $producto->producto }}</div>
+        <div class="title">{{ $producto->name }}</div>
         <svg id="barcode" class="barcode"></svg>
         <div class="code">{{ $producto->codigo_barras ?? 'SIN CODIGO' }}</div>
     </div>

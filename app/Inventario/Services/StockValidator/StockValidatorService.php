@@ -163,7 +163,7 @@ class StockValidatorService implements StockValidatorServiceInterface
     {
         if (!$this->hayStockSuficiente($producto, $cantidadRequerida)) {
             throw new \App\Exceptions\OrdenException(
-                "Stock insuficiente para '{$producto->producto}'. " .
+                "Stock insuficiente para '{$producto->name}'. " .
                 "Disponible: {$producto->cantidad}, Solicitado: {$cantidadRequerida}"
             );
         }

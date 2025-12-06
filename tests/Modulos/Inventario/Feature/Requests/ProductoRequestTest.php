@@ -56,7 +56,7 @@ class ProductoRequestTest extends TestCase
 
         $this->assertTrue($validator->fails());
         $camposRequeridos = [
-            'producto', 'tipo_producto_id', 'descripcion', 'peso',
+            'name', 'tipo_producto_id', 'descripcion', 'peso',
             'unidad_medida_id', 'cantidad', 'estado_producto_id',
             'categoria_id', 'marca_id', 'contrato_convenio_id',
             'ambiente_id', 'proveedor_id'
@@ -67,14 +67,14 @@ class ProductoRequestTest extends TestCase
     #[Test]
     public function valida_unicidad_de_producto_en_store(): void
     {
-        Producto::factory()->create(['producto' => 'PRODUCTO TEST']);
+        Producto::factory()->create(['name' => 'PRODUCTO TEST']);
 
         $rules = $this->obtenerRules();
 
         $this->validarYVerificarError(
-            ['producto' => 'PRODUCTO TEST'],
+            ['name' => 'PRODUCTO TEST'],
             $rules,
-            'producto'
+            'name'
         );
     }
 
@@ -174,7 +174,7 @@ class ProductoRequestTest extends TestCase
         $rules = $this->obtenerRules();
 
         $validator = Validator::make([
-            'producto' => self::PRODUCTO_NUEVO,
+            'name' => self::PRODUCTO_NUEVO,
             'tipo_producto_id' => $tipoProducto->id,
             'descripcion' => 'Descripción del producto',
             'peso' => self::PESO_VALIDO,
@@ -223,7 +223,7 @@ class ProductoRequestTest extends TestCase
     {
         $rules = $this->obtenerRules();
         $datos = [
-            'producto' => self::PRODUCTO_NUEVO,
+            'name' => self::PRODUCTO_NUEVO,
             $campo => $valorInvalido,
         ];
         $this->validarYVerificarError($datos, $rules, $campo);

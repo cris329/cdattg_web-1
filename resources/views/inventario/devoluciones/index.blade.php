@@ -51,9 +51,9 @@
                                             @foreach($prestamos as $detalle)
                                                 <tr>
                                                     <td>
-                                                        <strong>{{ $detalle->producto->producto }}</strong>
+                                                        <strong>{{ $detalle->name->name }}</strong>
                                                         <br>
-                                                        <small class="text-muted">{{ $detalle->producto->descripcion }}</small>
+                                                        <small class="text-muted">{{ $detalle->name->descripcion }}</small>
                                                     </td>
                                                     <td>{{ $detalle->cantidad }}</td>
                                                     <td>{{ $detalle->getCantidadDevuelta() }}</td>

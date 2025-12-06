@@ -46,8 +46,8 @@ class ProveedorRepositoryTest extends TestCase
     #[Test]
     public function puede_obtener_proveedores_con_filtros()
     {
-        Proveedor::factory()->create(['proveedor' => self::PROVEEDOR_TEST]);
-        Proveedor::factory()->create(['proveedor' => 'OTRO PROVEEDOR']);
+        Proveedor::factory()->create(['name' => self::PROVEEDOR_TEST]);
+        Proveedor::factory()->create(['name' => 'OTRO PROVEEDOR']);
 
         $resultado = $this->repository->obtenerConFiltros();
 
@@ -57,8 +57,8 @@ class ProveedorRepositoryTest extends TestCase
     #[Test]
     public function puede_filtrar_proveedores_por_busqueda()
     {
-        Proveedor::factory()->create(['proveedor' => 'TECNOLOGIA S.A.S']);
-        Proveedor::factory()->create(['proveedor' => 'SUMINISTROS LTDA']);
+        Proveedor::factory()->create(['name' => 'TECNOLOGIA S.A.S']);
+        Proveedor::factory()->create(['name' => 'SUMINISTROS LTDA']);
 
         $resultado = $this->repository->obtenerConFiltros(['search' => 'TECNOLOGIA']);
 
@@ -113,7 +113,7 @@ class ProveedorRepositoryTest extends TestCase
         }
         
         $datos = [
-            'proveedor' => self::PROVEEDOR_TEST,
+            'name' => self::PROVEEDOR_TEST,
             'nit' => '123456789-0',
             'email' => 'test@example.com',
             'telefono' => '6012345678',
@@ -125,18 +125,18 @@ class ProveedorRepositoryTest extends TestCase
         $resultado = $this->repository->crear($datos);
 
         $this->assertInstanceOf(Proveedor::class, $resultado);
-        $this->assertEquals(self::PROVEEDOR_TEST, $resultado->proveedor);
+        $this->assertEquals(self::PROVEEDOR_TEST, $resultado->name);
     }
 
     #[Test]
     public function puede_actualizar_proveedor()
     {
-        $proveedor = Proveedor::factory()->create(['proveedor' => 'ORIGINAL']);
+        $proveedor = Proveedor::factory()->create(['name' => 'ORIGINAL']);
 
-        $resultado = $this->repository->actualizar($proveedor->id, ['proveedor' => 'ACTUALIZADO']);
+        $resultado = $this->repository->actualizar($proveedor->id, ['name' => 'ACTUALIZADO']);
 
         $this->assertTrue($resultado);
-        $this->assertEquals('ACTUALIZADO', Proveedor::find($proveedor->id)->proveedor);
+        $this->assertEquals('ACTUALIZADO', Proveedor::find($proveedor->id)->name);
     }
 
     #[Test]

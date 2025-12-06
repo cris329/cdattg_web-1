@@ -47,7 +47,7 @@ class CarritoServiceTest extends TestCase
     {
         $productoMock = Mockery::mock(Producto::class)->makePartial();
         $productoMock->id = self::ID_PRODUCTO_TEST;
-        $productoMock->producto = self::NOMBRE_PRODUCTO_TEST;
+        $productoMock->name = self::NOMBRE_PRODUCTO_TEST;
         $productoMock->cantidad = 10;
 
         $items = [
@@ -73,7 +73,7 @@ class CarritoServiceTest extends TestCase
     {
         $productoMock = Mockery::mock(Producto::class)->makePartial();
         $productoMock->id = self::ID_PRODUCTO_TEST;
-        $productoMock->producto = self::NOMBRE_PRODUCTO_TEST;
+        $productoMock->name = self::NOMBRE_PRODUCTO_TEST;
         $productoMock->cantidad = 5;
 
         $items = [
@@ -122,7 +122,7 @@ class CarritoServiceTest extends TestCase
     {
         $productoMock = Mockery::mock(Producto::class)->makePartial();
         $productoMock->id = self::ID_PRODUCTO_TEST;
-        $productoMock->producto = self::NOMBRE_PRODUCTO_TEST;
+        $productoMock->name = self::NOMBRE_PRODUCTO_TEST;
         $productoMock->cantidad = 10;
 
         $this->mockRepository->shouldReceive('encontrar')
@@ -143,7 +143,7 @@ class CarritoServiceTest extends TestCase
     {
         $productoMock = Mockery::mock(Producto::class)->makePartial();
         $productoMock->id = self::ID_PRODUCTO_TEST;
-        $productoMock->producto = self::NOMBRE_PRODUCTO_TEST;
+        $productoMock->name = self::NOMBRE_PRODUCTO_TEST;
         $productoMock->cantidad = 5;
 
         $this->mockRepository->shouldReceive('encontrar')
@@ -177,7 +177,7 @@ class CarritoServiceTest extends TestCase
     {
         $productoMock = Mockery::mock(Producto::class)->makePartial();
         $productoMock->id = self::ID_PRODUCTO_TEST;
-        $productoMock->producto = self::NOMBRE_PRODUCTO_TEST;
+        $productoMock->name = self::NOMBRE_PRODUCTO_TEST;
         $productoMock->codigo_barras = '12345678901';
         $productoMock->imagen = 'img/producto.jpg';
         $productoMock->cantidad = 10;

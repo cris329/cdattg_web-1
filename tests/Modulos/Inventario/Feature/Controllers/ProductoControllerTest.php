@@ -106,7 +106,7 @@ class ProductoControllerTest extends TestCase
         $this->user->givePermissionTo(self::PERMISSION_BUSCAR_PRODUCTO);
         $this->actingAs($this->user);
 
-        Producto::factory()->create(['producto' => 'Producto Test']);
+        Producto::factory()->create(['name' => 'Producto Test']);
 
         $response = $this->get(route(self::ROUTE_BUSCAR, ['search' => 'Test']));
 
@@ -230,7 +230,7 @@ class ProductoControllerTest extends TestCase
         }
 
         $response = $this->post(route(self::ROUTE_STORE), [
-            'producto' => 'Producto de Prueba '.$this->faker->word(),
+            'name' => 'Producto de Prueba '.$this->faker->word(),
             'tipo_producto_id' => $tipoProducto->id,
             'descripcion' => $this->faker->sentence(),
             'peso' => $this->faker->randomFloat(2, 0.1, 100),
@@ -294,7 +294,7 @@ class ProductoControllerTest extends TestCase
         $producto = Producto::factory()->create();
 
         $response = $this->put(route(self::ROUTE_UPDATE, $producto->id), [
-            'producto' => self::PRODUCTO_ACTUALIZADO,
+            'name' => self::PRODUCTO_ACTUALIZADO,
             'tipo_producto_id' => $producto->tipo_producto_id,
             'descripcion' => $producto->descripcion,
             'peso' => $producto->peso,
@@ -310,7 +310,7 @@ class ProductoControllerTest extends TestCase
         $response->assertRedirect();
         $this->assertDatabaseHas('productos', [
             'id' => $producto->id,
-            'producto' => strtoupper(self::PRODUCTO_ACTUALIZADO),
+            'name' => strtoupper(self::PRODUCTO_ACTUALIZADO),
         ]);
     }
 

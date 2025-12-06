@@ -29,7 +29,7 @@
     <form id="add-to-cart-form" class="cart-form">
         @csrf
         <input type="hidden" name="producto_id" value="{{ $producto->id }}">
-        <input type="hidden" name="producto_name" value="{{ $producto->producto }}">
+        <input type="hidden" name="producto_name" value="{{ $producto->name }}">
         <input type="hidden" name="max_stock" value="{{ $producto->cantidad }}">
 
         <div class="form-group">

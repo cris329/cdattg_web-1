@@ -307,7 +307,7 @@ class ProductoController extends Controller
             'message' => 'Producto agregado al carrito',
             'producto' => [
                 'id' => $producto->id,
-                'nombre' => $producto->producto,
+                'nombre' => $producto->name,
                 'stock' => $producto->cantidad
             ]
         ]);

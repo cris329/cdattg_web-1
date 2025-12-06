@@ -126,7 +126,7 @@
                                                         <p class="mb-1 text-dark">
                                                             @if(str_contains($tipo, 'StockBajo'))
                                                                 <strong>
-                                                                    {{ $datos['producto_nombre'] ?? ($datos['producto']['producto'] ?? 'N/A') }}
+                                                                    {{ $datos['producto_nombre'] ?? ($datos['producto']['name'] ?? 'N/A') }}
                                                                 </strong>
                                                                 - Stock:
                                                                 <span class="badge badge-{{ ($datos['stock_actual'] ?? 0) == 0 ? 'danger' : 'warning' }}">
@@ -139,7 +139,7 @@
                                                                     {{ ($datos['cantidad'] ?? 0) > 1 ? 'unidades' : 'unidad' }}
                                                                 </strong>
                                                                 de
-                                                                <strong>{{ $datos['producto']['producto'] ?? 'N/A' }}</strong>
+                                                                <strong>{{ $datos['producto']['name'] ?? 'N/A' }}</strong>
                                                                 ha sido aprobada.
                                                                 <br>
                                                                 <small class="text-muted">
@@ -157,7 +157,7 @@
                                                                     {{ ($datos['cantidad'] ?? 0) > 1 ? 'unidades' : 'unidad' }}
                                                                 </strong>
                                                                 de
-                                                                <strong>{{ $datos['producto']['producto'] ?? 'N/A' }}</strong>
+                                                                <strong>{{ $datos['producto']['name'] ?? 'N/A' }}</strong>
                                                                 ha sido rechazada.
                                                                 <br>
                                                                 <small class="text-muted">

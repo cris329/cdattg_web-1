@@ -89,8 +89,8 @@
                                     </span>
                                 </td>
                                 <td>
-                                    @if($contrato->proveedor)
-                                        {{ is_object($contrato->proveedor) ? ($contrato->proveedor->proveedor ?? 'N/A') : $contrato->proveedor }}
+                                    @if($contrato->name)
+                                        {{ is_object($contrato->name) ? ($contrato->name->name ?? 'N/A') : $contrato->name }}
                                     @else
                                         N/A
                                     @endif

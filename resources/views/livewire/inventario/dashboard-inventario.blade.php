@@ -169,7 +169,7 @@
                             <tbody>
                                 @forelse($productosRecientes as $producto)
                                 <tr>
-                                    <td>{{ $producto['producto'] }}</td>
+                                    <td>{{ $producto['name'] }}</td>
                                     <td>{{ $producto['cantidad'] }}</td>
                                     <td>
                                         @if(isset($producto['estado']) && isset($producto['estado']['parametro']))

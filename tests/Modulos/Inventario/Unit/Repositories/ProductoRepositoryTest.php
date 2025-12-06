@@ -56,8 +56,8 @@ class ProductoRepositoryTest extends TestCase
     #[Test]
     public function puede_filtrar_productos_por_busqueda()
     {
-        Producto::factory()->create(['producto' => 'COMPUTADOR TEST']);
-        Producto::factory()->create(['producto' => 'MOUSE TEST']);
+        Producto::factory()->create(['name' => 'COMPUTADOR TEST']);
+        Producto::factory()->create(['name' => 'MOUSE TEST']);
 
         $resultado = $this->repository->obtenerConFiltros(['search' => 'COMPUTADOR']);
 
@@ -144,7 +144,7 @@ class ProductoRepositoryTest extends TestCase
     public function puede_crear_producto()
     {
         $datos = [
-            'producto' => 'PRODUCTO TEST',
+            'name' => 'PRODUCTO TEST',
             'tipo_producto_id' => 28,
             'unidad_medida_id' => 30,
             'cantidad' => 10,
@@ -161,18 +161,18 @@ class ProductoRepositoryTest extends TestCase
         $resultado = $this->repository->crear($datos);
 
         $this->assertInstanceOf(Producto::class, $resultado);
-        $this->assertEquals('PRODUCTO TEST', $resultado->producto);
+        $this->assertEquals('PRODUCTO TEST', $resultado->name);
     }
 
     #[Test]
     public function puede_actualizar_producto()
     {
-        $producto = Producto::factory()->create(['producto' => 'ORIGINAL']);
+        $producto = Producto::factory()->create(['name' => 'ORIGINAL']);
 
-        $resultado = $this->repository->actualizar($producto, ['producto' => 'ACTUALIZADO']);
+        $resultado = $this->repository->actualizar($producto, ['name' => 'ACTUALIZADO']);
 
         $this->assertTrue($resultado);
-        $this->assertEquals('ACTUALIZADO', $producto->fresh()->producto);
+        $this->assertEquals('ACTUALIZADO', $producto->fresh()->name);
     }
 
     #[Test]

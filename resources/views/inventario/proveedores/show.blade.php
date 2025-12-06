@@ -13,7 +13,7 @@
             ['label' => 'Inicio', 'url' => '#'],
             ['label' => 'Inventario', 'active' => true],
             ['label' => 'Proveedores', 'url' => route('inventario.proveedores.index')],
-            ['label' => $proveedor->proveedor, 'active' => true]
+            ['label' => $proveedor->name, 'active' => true]
         ]"
     />
 @endsection
@@ -84,7 +84,7 @@
                                         <tr>
                                             <th class="py-3">Nombre del Proveedor</th>
                                             <td class="py-3">
-                                                <strong>{{ $proveedor->proveedor }}</strong>
+                                                <strong>{{ $proveedor->name }}</strong>
                                                 <br><small class="text-muted">Proveedor registrado</small>
                                             </td>
                                         </tr>

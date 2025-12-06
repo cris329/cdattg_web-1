@@ -93,7 +93,7 @@
                     <div class="col-lg-3 col-md-4 col-sm-6 mb-4 product-card"
                          data-id="{{ $producto->id }}"
                          data-type="{{ $producto->tipo_producto_id }}"
-                         data-name="{{ strtolower($producto->producto) }}"
+                         data-name="{{ strtolower($producto->name) }}"
                          data-code="{{ strtolower($producto->codigo_barras) }}">
                         <div class="card h-100 shadow-sm hover-shadow">
                             {{-- Imagen del producto --}}
@@ -101,7 +101,7 @@
                                 @if($producto->imagen)
                                     <img src="{{ asset($producto->imagen) }}"
                                          class="card-img-top product-image"
-                                         alt="{{ $producto->producto }}"
+                                         alt="{{ $producto->name }}"
                                 @else
                                     <div class="no-image-placeholder">
                                         <i class="fas fa-box fa-4x text-muted"></i>
@@ -142,7 +142,7 @@
 
                                 {{-- Nombre del producto --}}
                                 <h5 class="card-title font-weight-bold mb-2">
-                                    {{ Str::limit($producto->producto, 50) }}
+                                    {{ Str::limit($producto->name, 50) }}
                                 </h5>
 
                                 {{-- Descripción --}}
@@ -168,7 +168,7 @@
 
                                 {{-- Acciones --}}
                                 <fieldset class="btn-group d-flex border-0 p-0 m-0">
-                                    <legend class="sr-only">Acciones del producto {{ $producto->producto }}</legend>
+                                    <legend class="sr-only">Acciones del producto {{ $producto->name }}</legend>
                                     <button type="button"
                                             class="btn btn-sm btn-info btn-view-details w-50"
                                             data-id="{{ $producto->id }}"
@@ -179,7 +179,7 @@
                                         <button type="button"
                                                 class="btn btn-sm btn-success btn-add-to-cart w-50"
                                                 data-id="{{ $producto->id }}"
-                                                data-name="{{ $producto->producto }}"
+                                                data-name="{{ $producto->name }}"
                                                 data-stock="{{ $producto->cantidad }}"
                                                 title="Agregar al carrito">
                                             <i class="fas fa-cart-plus"></i> Agregar

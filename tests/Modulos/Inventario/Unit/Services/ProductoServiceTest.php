@@ -69,7 +69,7 @@ class ProductoServiceTest extends TestCase
     public function puede_crear_producto(): void
     {
         $datos = [
-            'producto' => self::PRODUCTO_TEST,
+            'name' => self::PRODUCTO_TEST,
             'descripcion' => 'Descripción del producto',
             'cantidad' => self::CANTIDAD_INICIAL,
         ];
@@ -77,7 +77,7 @@ class ProductoServiceTest extends TestCase
         /** @var Producto $productoMock */
         $productoMock = Mockery::mock(Producto::class)->makePartial();
         $productoMock->id = 1;
-        $productoMock->producto = self::PRODUCTO_TEST;
+        $productoMock->name = self::PRODUCTO_TEST;
 
         $this->mockBarcodeService->shouldReceive('resolverCodigoBarras')
             ->once()
@@ -92,7 +92,7 @@ class ProductoServiceTest extends TestCase
         $this->mockRepository->shouldReceive('crear')
             ->once()
             ->with(Mockery::on(function ($argument) {
-                return $argument['producto'] === self::PRODUCTO_TEST &&
+                return $argument['name'] === self::PRODUCTO_TEST &&
                        $argument['codigo_barras'] === self::CODIGO_BARRAS_TEST &&
                        $argument['imagen'] === self::IMAGEN_TEST &&
                        isset($argument['user_create_id']) &&
@@ -103,14 +103,14 @@ class ProductoServiceTest extends TestCase
         $resultado = $this->service->crear($datos, self::USER_ID);
 
         $this->assertEquals(1, $resultado->id);
-        $this->assertEquals(self::PRODUCTO_TEST, $resultado->producto);
+        $this->assertEquals(self::PRODUCTO_TEST, $resultado->name);
     }
 
     #[Test]
     public function puede_crear_producto_con_codigo_barras(): void
     {
         $datos = [
-            'producto' => self::PRODUCTO_TEST,
+            'name' => self::PRODUCTO_TEST,
             'codigo_barras' => self::CODIGO_BARRAS_ACTUALIZADO,
         ];
 
@@ -165,7 +165,7 @@ class ProductoServiceTest extends TestCase
         $this->mockRepository->shouldReceive('actualizar')
             ->once()
             ->with($productoMock, Mockery::on(function ($argument) {
-                return $argument['producto'] === self::PRODUCTO_ACTUALIZADO &&
+                return $argument['name'] === self::PRODUCTO_ACTUALIZADO &&
                        $argument['cantidad'] === self::CANTIDAD_ACTUALIZADA &&
                        isset($argument['user_update_id']);
             }))

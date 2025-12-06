@@ -38,7 +38,7 @@ class OrdenRepository implements OrdenRepositoryInterface
                         $tipoQuery->where('name', 'LIKE', "%{$search}%");
                     })
                     ->orWhereHas('detalles.producto', function ($productoQuery) use ($search) {
-                        $productoQuery->where('producto', 'LIKE', "%{$search}%")
+                        $productoQuery->where('name', 'LIKE', "%{$search}%")
                             ->orWhere('codigo_barras', 'LIKE', "%{$search}%");
                     });
 

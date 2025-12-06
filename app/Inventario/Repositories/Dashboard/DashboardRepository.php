@@ -159,7 +159,7 @@ class DashboardRepository
             ->get()
             ->map(function ($producto) {
                 return [
-                    'producto' => $producto->producto,
+                    'producto' => $producto->name,
                     'cantidad' => (int) $producto->cantidad,
                     'estado' => $producto->estado_nombre ? [
                         'parametro' => [

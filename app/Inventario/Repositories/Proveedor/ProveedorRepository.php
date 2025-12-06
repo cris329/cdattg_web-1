@@ -19,7 +19,7 @@ class ProveedorRepository implements ProveedorRepositoryInterface
      */
     public function obtenerTodos(): Collection
     {
-        return Proveedor::orderBy('proveedor')->get();
+        return Proveedor::orderBy('name')->get();
     }
 
     /**
@@ -44,7 +44,7 @@ class ProveedorRepository implements ProveedorRepositoryInterface
         if (!empty($filtros['search'])) {
             $search = $filtros['search'];
             $query->where(function ($q) use ($search) {
-                $q->where('proveedor', 'LIKE', "%{$search}%")
+                $q->where('name', 'LIKE', "%{$search}%")
                     ->orWhere('nit', 'LIKE', "%{$search}%")
                     ->orWhere('email', 'LIKE', "%{$search}%")
                     ->orWhere('telefono', 'LIKE', "%{$search}%")

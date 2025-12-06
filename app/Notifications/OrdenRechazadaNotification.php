@@ -50,7 +50,7 @@ class OrdenRechazadaNotification extends Notification implements ShouldQueue
             ->line('Lamentamos informarte que tu solicitud de ' . strtolower($tipoOrden) . ' ha sido rechazada.')
             ->line('**Orden:** #' . $orden->id)
             ->line('**Tipo:** ' . $tipoOrden)
-            ->line('**Producto:** ' . $producto->producto)
+            ->line('**Producto:** ' . $producto->name)
             ->line('**Cantidad Solicitada:** ' . $this->detalleOrden->cantidad . ' unidades')
             ->line('**Rechazado por:** ' . $this->aprobador->name);
 
@@ -78,7 +78,7 @@ class OrdenRechazadaNotification extends Notification implements ShouldQueue
             'detalle_orden_id' => $this->detalleOrden->id,
             'producto' => [
                 'id' => $this->detalleOrden->producto->id,
-                'producto' => $this->detalleOrden->producto->producto,
+                'producto' => $this->detalleOrden->producto->name,
             ],
             'cantidad' => $this->detalleOrden->cantidad,
             'aprobador' => [

@@ -39,13 +39,13 @@ class ProductoModelTest extends TestCase
     #[Test]
     public function puede_actualizar_producto(): void
     {
-        $this->producto->update(['producto' => 'Producto Actualizado']);
+        $this->producto->update(['name' => 'Producto Actualizado']);
 
-        // El modelo convierte autZADOomáticamente a mayúsculas
-        $this->assertEquals(self::PRODUCTO_ACTUALIZADO, $this->producto->producto);
+        // El modelo convierte automáticamente a mayúsculas
+        $this->assertEquals(self::PRODUCTO_ACTUALIZADO, $this->producto->name);
         $this->assertDatabaseHas('productos', [
             'id' => $this->producto->id,
-            'producto' => self::PRODUCTO_ACTUALIZADO,
+            'name' => self::PRODUCTO_ACTUALIZADO,
         ]);
     }
 }

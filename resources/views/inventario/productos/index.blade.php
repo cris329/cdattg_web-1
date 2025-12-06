@@ -60,7 +60,7 @@
                             <tr>
                                 <td>{{ $loop->iteration }}</td>
                                 <td>
-                                    <strong>{{ $producto->producto }}</strong>
+                                    <strong>{{ $producto->name }}</strong>
                                     <br>
                                     <small class="text-muted">
                                         {{ Str::limit($producto->descripcion, 30) ?? 'Sin descripción' }}
@@ -134,7 +134,7 @@
                                 </td>
                                 <td>
                                     <small>
-                                        {{ $producto->proveedor->proveedor ?? 'N/A' }}
+                                        {{ $producto->proveedor->name ?? 'N/A' }}
                                     </small>
                                 </td>
                                 <td class="text-center">

@@ -48,7 +48,7 @@
                                                 class="form-control @error('proveedor') is-invalid @enderror"
                                                 id="proveedor"
                                                 name="proveedor"
-                                                value="{{ old('proveedor', $proveedor->proveedor) }}"
+                                                value="{{ old('name', $proveedor->name) }}"
                                                 placeholder="Ingrese el nombre del proveedor"
                                                 required
                                             >

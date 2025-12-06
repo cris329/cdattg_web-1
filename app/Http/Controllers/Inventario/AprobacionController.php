@@ -59,7 +59,7 @@ class AprobacionController extends Controller
 
             return back()->with(
                 'success',
-                "Solicitud aprobada. Stock actualizado para '{$detalleOrden->producto->producto}'."
+                "Solicitud aprobada. Stock actualizado para '{$detalleOrden->producto->name}'."
             );
         });
     }

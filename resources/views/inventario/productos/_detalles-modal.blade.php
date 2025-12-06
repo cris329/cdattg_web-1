@@ -10,11 +10,11 @@
     @endphp
     <button type="button"
             class="modal-img-container"
-            aria-label="Ampliar imagen del producto {{ $producto->producto }}"
+            aria-label="Ampliar imagen del producto {{ $producto->name }}"
             style="cursor: pointer; position: relative; border-radius: 8px; overflow: hidden; border: none; padding: 0; background: transparent; width: 100%;"
             onclick="expandirImagen('{{ $imagenProducto }}')">
         <img src="{{ $imagenProducto }}"
-             alt="{{ $producto->producto }}"
+             alt="{{ $producto->name }}"
              class="modal-img"
              style="width: 100%; height: 100%; object-fit: contain; border-radius: 8px;"
              title="Haz clic para ampliar">
@@ -29,7 +29,7 @@
     @include('inventario._components.image-modal')
 
     <!-- Nombre del producto -->
-    <h5 class="modal-title">{{ $producto->producto }}</h5>
+    <h5 class="modal-title">{{ $producto->name }}</h5>
 
     <!-- Tabla de información -->
     <table class="modal-table">
@@ -91,7 +91,7 @@
             </tr>
             <tr>
                 <td>Proveedor:</td>
-                <td>{{ $producto->proveedor?->proveedor ?? 'N/A' }}</td>
+                <td>{{ $producto->proveedor?->name ?? 'N/A' }}</td>
             </tr>
             @if($producto->contratoConvenio)
             <tr>
@@ -115,7 +115,7 @@
         @if($producto->cantidad > 0)
             <button type="button"
                     class="modal-btn modal-btn-success"
-                    onclick="agregarAlCarritoDesdeModal({{ $producto->id }}, '{{ addslashes($producto->producto) }}', {{ $producto->cantidad }})">
+                    onclick="agregarAlCarritoDesdeModal({{ $producto->id }}, '{{ addslashes($producto->name) }}', {{ $producto->cantidad }})">
                 <i class="fas fa-cart-plus"></i> Agregar al Carrito
             </button>
         @else

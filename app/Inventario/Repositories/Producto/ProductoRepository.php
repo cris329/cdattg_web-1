@@ -33,7 +33,7 @@ class ProductoRepository implements ProductoRepositoryInterface
         if (!empty($filtros['search'])) {
             $search = $filtros['search'];
             $query->where(function ($q) use ($search) {
-                $q->where('producto', 'LIKE', "%{$search}%")
+                $q->where('name', 'LIKE', "%{$search}%")
                     ->orWhere('codigo_barras', 'LIKE', "%{$search}%")
                     ->orWhere('descripcion', 'LIKE', "%{$search}%");
             });
@@ -108,7 +108,7 @@ class ProductoRepository implements ProductoRepositoryInterface
         ])->where('cantidad', '>', 0);
 
         if (!empty($filtros['search'])) {
-            $query->where('producto', 'LIKE', "%{$filtros['search']}%");
+            $query->where('name', 'LIKE', "%{$filtros['search']}%");
         }
 
         if (!empty($filtros['tipo_producto_id'])) {
@@ -131,7 +131,7 @@ class ProductoRepository implements ProductoRepositoryInterface
                 $query->orderBy('created_at', 'desc');
                 break;
             default:
-                $query->orderBy('producto', 'asc');
+                $query->orderBy('name', 'asc');
                 break;
         }
 
@@ -156,14 +156,14 @@ class ProductoRepository implements ProductoRepositoryInterface
             'ambiente'
         ])
         ->where('cantidad', '>', 0)
-        ->orderBy('producto', 'asc');
+        ->orderBy('name', 'asc');
 
         if (!empty($filtros['estado_agotado_id'])) {
             $query->where('estado_producto_id', '!=', $filtros['estado_agotado_id']);
         }
 
         if (!empty($filtros['search'])) {
-            $query->where('producto', 'LIKE', "%{$filtros['search']}%");
+            $query->where('name', 'LIKE', "%{$filtros['search']}%");
         }
 
         if (!empty($filtros['tipo_producto_id'])) {

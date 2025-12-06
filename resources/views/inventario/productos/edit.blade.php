@@ -101,7 +101,7 @@
                                                    class="form-control-modern @error('producto') is-invalid @enderror"
                                                    id="producto"
                                                    name="producto"
-                                                   value="{{ old('producto', $producto->producto) }}"
+                                                   value="{{ old('name', $producto->name) }}"
                                                    placeholder="Ej: Laptop Dell XPS 15"
                                                    required>
                                             @error('producto')
@@ -390,8 +390,8 @@
                                             >
                                                 <option value="">Seleccionar proveedor</option>
                                                 @foreach($proveedores as $proveedor)
-                                                    <option value="{{ $proveedor->id }}" {{ old('proveedor_id', $producto->proveedor_id) == $proveedor->id ? 'selected' : '' }}>
-                                                        {{ $proveedor->proveedor }}
+                                                    <option value="{{ $proveedor->id }}" {{ old('proveedor_id', $producto->name_id) == $proveedor->id ? 'selected' : '' }}>
+                                                        {{ $proveedor->name }}
                                                     </option>
                                                 @endforeach
                                             </select>

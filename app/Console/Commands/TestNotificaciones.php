@@ -50,7 +50,7 @@ class TestNotificaciones extends Command
         if ($producto) {
             $superadmin->notify(new StockBajoNotification($producto, 5, 10));
             $this->info('✅ Notificación de Stock Bajo enviada');
-            $this->info("   Producto: {$producto->producto}");
+            $this->info("   Producto: {$producto->name}");
             $this->info('   Stock actual: 5 unidades');
         } else {
             $this->warn('⚠️  No hay productos en la base de datos');

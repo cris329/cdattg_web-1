@@ -21,7 +21,7 @@ class Producto extends Model
     protected $table = 'productos';
 
     protected $fillable = [
-        'producto',
+        'name',
         'tipo_producto_id',
         'descripcion',
         'peso',
@@ -47,14 +47,14 @@ class Producto extends Model
     protected static function booted() : void
     {
         static::creating(function ($producto) {
-            if (isset($producto->producto)) {
-                $producto->producto = strtoupper($producto->producto);
+            if (isset($producto->name)) {
+                $producto->name = strtoupper($producto->name);
             }
         });
 
         static::updating(function ($producto) {
-            if (isset($producto->producto)) {
-                $producto->producto = strtoupper($producto->producto);
+            if (isset($producto->name)) {
+                $producto->name = strtoupper($producto->name);
             }
         });
     }

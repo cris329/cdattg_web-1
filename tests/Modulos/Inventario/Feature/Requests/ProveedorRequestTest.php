@@ -95,33 +95,33 @@ class ProveedorRequestTest extends TestCase
     {
         $rules = $this->obtenerRules();
 
-        $this->validarYVerificarError([], $rules, 'proveedor');
+        $this->validarYVerificarError([], $rules, 'name');
     }
 
     #[Test]
     public function valida_unicidad_de_proveedor_en_store(): void
     {
-        Proveedor::factory()->create(['proveedor' => self::PROVEEDOR_TEST]);
+        Proveedor::factory()->create(['name' => self::PROVEEDOR_TEST]);
 
         $rules = $this->obtenerRules();
 
         $this->validarYVerificarError(
-            ['proveedor' => self::PROVEEDOR_TEST],
+            ['name' => self::PROVEEDOR_TEST],
             $rules,
-            'proveedor'
+            'name'
         );
     }
 
     #[Test]
     public function valida_unicidad_de_nit_en_update(): void
     {
-        $this->validarUnicidadEnUpdate('nit', self::NIT_TEST, ['proveedor' => 'OTRO PROVEEDOR']);
+        $this->validarUnicidadEnUpdate('nit', self::NIT_TEST, ['name' => 'OTRO PROVEEDOR']);
     }
 
     #[Test]
     public function valida_unicidad_de_email_en_update(): void
     {
-        $this->validarUnicidadEnUpdate('email', 'test1@example.com', ['proveedor' => 'OTRO PROVEEDOR']);
+        $this->validarUnicidadEnUpdate('email', 'test1@example.com', ['name' => 'OTRO PROVEEDOR']);
     }
 
     #[Test]
@@ -158,7 +158,7 @@ class ProveedorRequestTest extends TestCase
         $rules = $this->obtenerRules();
 
         $validator = Validator::make([
-            'proveedor' => 'PROVEEDOR VALIDO',
+            'name' => 'PROVEEDOR VALIDO',
             'nit' => self::NIT_TEST,
             'email' => 'proveedor@example.com',
             'telefono' => '1234567890',
@@ -195,7 +195,7 @@ class ProveedorRequestTest extends TestCase
     {
         $rules = $this->obtenerRules();
         $datos = [
-            'proveedor' => self::PROVEEDOR_TEST,
+            'name' => self::PROVEEDOR_TEST,
             $campo => $idInexistente,
         ];
 
@@ -209,7 +209,7 @@ class ProveedorRequestTest extends TestCase
     {
         $rules = $this->obtenerRules();
         $datos = [
-            'proveedor' => self::PROVEEDOR_TEST,
+            'name' => self::PROVEEDOR_TEST,
             $campo => $valorInvalido,
         ];
 

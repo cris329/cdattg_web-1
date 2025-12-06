@@ -43,10 +43,10 @@ class StockBajoNotification extends Notification implements ShouldQueue
         $nivelAlerta = $this->stockActual == 0 ? 'CRÍTICO' : 'BAJO';
 
         return (new MailMessage)
-            ->subject('⚠️ Alerta de Stock ' . $nivelAlerta . ' - ' . $this->producto->producto)
+            ->subject('⚠️ Alerta de Stock ' . $nivelAlerta . ' - ' . $this->producto->name)
             ->greeting('¡Hola, ' . $notifiable->name . '!')
             ->line('Se ha detectado un nivel de stock ' . strtolower($nivelAlerta) . ' para el siguiente producto:')
-            ->line('**Producto:** ' . $this->producto->producto)
+            ->line('**Producto:** ' . $this->producto->name)
             ->line('**Código:** ' . ($this->producto->codigo_barras ?? 'N/A'))
             ->line('**Stock Actual:** ' . $this->stockActual . ' unidades')
             ->line('**Stock Mínimo:** ' . $this->stockMinimo . ' unidades')
@@ -67,7 +67,7 @@ class StockBajoNotification extends Notification implements ShouldQueue
     {
         return [
             'producto_id' => $this->producto->id,
-            'producto_nombre' => $this->producto->producto,
+            'producto_nombre' => $this->producto->name,
             'stock_actual' => $this->stockActual,
             'stock_minimo' => $this->stockMinimo,
             'tipo' => 'stock_bajo',

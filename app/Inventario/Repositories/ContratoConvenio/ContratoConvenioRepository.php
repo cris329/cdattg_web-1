@@ -43,7 +43,7 @@ class ContratoConvenioRepository implements ContratoConvenioRepositoryInterface
                 $q->where('name', 'LIKE', "%{$search}%")
                     ->orWhere('codigo', 'LIKE', "%{$search}%")
                     ->orWhereHas('proveedor', function ($proveedorQuery) use ($search) {
-                        $proveedorQuery->where('proveedor', 'LIKE', "%{$search}%");
+                        $proveedorQuery->where('name', 'LIKE', "%{$search}%");
                     });
             });
         }

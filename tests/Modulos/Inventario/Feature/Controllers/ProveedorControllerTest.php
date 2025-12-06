@@ -154,7 +154,7 @@ class ProveedorControllerTest extends TestCase
         $this->actingAs($this->user);
 
         Proveedor::factory()->create([
-            'proveedor' => 'TECNOLOGIA SISTEMAS LTDA',
+            'name' => 'TECNOLOGIA SISTEMAS LTDA',
             'departamento_id' => $this->departamento->id,
             'municipio_id' => $this->municipio->id,
         ]);
@@ -190,7 +190,7 @@ class ProveedorControllerTest extends TestCase
         })->first()->id ?? 1;
 
         $response = $this->post(route(self::ROUTE_STORE), [
-            'proveedor' => 'NUEVO PROVEEDOR LTDA',
+            'name' => 'NUEVO PROVEEDOR LTDA',
             'nit' => self::NIT_EJEMPLO,
             'email' => 'contacto@proveedor.com',
             'telefono' => '6012345678',
@@ -205,7 +205,7 @@ class ProveedorControllerTest extends TestCase
         $response->assertSessionHas('success');
 
         $this->assertDatabaseHas('proveedores', [
-            'proveedor' => 'NUEVO PROVEEDOR LTDA',
+            'name' => 'NUEVO PROVEEDOR LTDA',
             'nit' => self::NIT_EJEMPLO,
         ]);
     }
@@ -216,7 +216,7 @@ class ProveedorControllerTest extends TestCase
         $this->actingAs($this->user);
 
         $response = $this->post(route(self::ROUTE_STORE), [
-            'proveedor' => 'PROVEEDOR SIN PERMISO',
+            'name' => 'PROVEEDOR SIN PERMISO',
             'nit' => self::NIT_EJEMPLO,
         ]);
 
@@ -267,7 +267,7 @@ class ProveedorControllerTest extends TestCase
         $this->actingAs($this->user);
 
         $proveedor = Proveedor::factory()->create([
-            'proveedor' => 'PROVEEDOR ORIGINAL',
+            'name' => 'PROVEEDOR ORIGINAL',
             'departamento_id' => $this->departamento->id,
             'municipio_id' => $this->municipio->id,
         ]);
@@ -277,7 +277,7 @@ class ProveedorControllerTest extends TestCase
         })->first()->id ?? 1;
 
         $response = $this->put(route(self::ROUTE_UPDATE, $proveedor->id), [
-            'proveedor' => self::PROVEEDOR_ACTUALIZADO,
+            'name' => self::PROVEEDOR_ACTUALIZADO,
             'nit' => $proveedor->nit,
             'email' => 'nuevo@email.com',
             'telefono' => $proveedor->telefono,
@@ -293,7 +293,7 @@ class ProveedorControllerTest extends TestCase
 
         $this->assertDatabaseHas('proveedores', [
             'id' => $proveedor->id,
-            'proveedor' => self::PROVEEDOR_ACTUALIZADO,
+            'name' => self::PROVEEDOR_ACTUALIZADO,
         ]);
     }
 
@@ -308,7 +308,7 @@ class ProveedorControllerTest extends TestCase
         ]);
 
         $response = $this->put(route(self::ROUTE_UPDATE, $proveedor->id), [
-            'proveedor' => self::PROVEEDOR_ACTUALIZADO,
+            'name' => self::PROVEEDOR_ACTUALIZADO,
             'nit' => $proveedor->nit,
         ]);
 

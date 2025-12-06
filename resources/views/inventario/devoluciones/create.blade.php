@@ -33,8 +33,8 @@
                             <div class="row mb-4">
                                 <div class="col-md-6">
                                     <h6>Producto</h6>
-                                    <p class="mb-0"><strong>{{ $detalleOrden->producto->producto }}</strong></p>
-                                    <small class="text-muted">{{ $detalleOrden->producto->descripcion }}</small>
+                                    <p class="mb-0"><strong>{{ $detalleOrden->name->name }}</strong></p>
+                                    <small class="text-muted">{{ $detalleOrden->name->descripcion }}</small>
                                 </div>
                                 <div class="col-md-6">
                                     <h6>Orden #{{ $detalleOrden->orden->id }}</h6>

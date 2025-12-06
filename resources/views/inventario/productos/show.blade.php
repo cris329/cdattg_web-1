@@ -9,7 +9,7 @@
         ['label' => 'Inicio', 'url' => '#'],
         ['label' => 'Inventario', 'active' => true],
         ['label' => 'Productos', 'url' => route('inventario.productos.index')],
-        ['label' => $producto->producto, 'active' => true],
+        ['label' => $producto->name, 'active' => true],
     ]" />
 @endsection
 
@@ -39,13 +39,13 @@
                         @endphp
                         <button type="button"
                                 class="border-0 bg-transparent p-0 w-100"
-                                aria-label="Ampliar imagen del producto {{ $producto->producto }}"
+                                aria-label="Ampliar imagen del producto {{ $producto->name }}"
                                 onclick="expandirImagen('{{ $imagenUrl }}')"
                                 onkeydown="if(event.key === 'Enter' || event.key === ' ') { event.preventDefault(); expandirImagen('{{ $imagenUrl }}'); }"
                                 onkeypress="if(event.key === 'Enter' || event.key === ' ') { event.preventDefault(); expandirImagen('{{ $imagenUrl }}'); }"
                                 onkeyup="if(event.key === 'Enter' || event.key === ' ') { event.preventDefault(); expandirImagen('{{ $imagenUrl }}'); }">
                             <img src="{{ $imagenUrl }}"
-                                alt="{{ $producto->producto }}"
+                                alt="{{ $producto->name }}"
                                 class="img-fluid"
                                 style="cursor: pointer;">
                         </button>
@@ -94,7 +94,7 @@
                             <li>
                                 <i class="fas fa-tag"></i>
                                 <strong>Producto:</strong>
-                                <span>{{ $producto->producto }}</span>
+                                <span>{{ $producto->name }}</span>
                             </li>
 
                             <li>
@@ -173,7 +173,7 @@
                             <li>
                                 <i class="fas fa-truck"></i>
                                 <strong>Proveedor:</strong>
-                                <span>{{ $producto->proveedor->proveedor ?? 'N/A' }}</span>
+                                <span>{{ $producto->name->name ?? 'N/A' }}</span>
                             </li>
 
 

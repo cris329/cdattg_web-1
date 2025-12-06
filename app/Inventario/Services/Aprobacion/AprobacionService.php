@@ -261,7 +261,7 @@ class AprobacionService
     private function construirDescripcionRechazo(string $descripcionAnterior, DetalleOrden $detalleOrden, string $motivoRechazo): string
     {
         $texto = $descripcionAnterior . "\n\n--- SOLICITUD RECHAZADA ---\n";
-        $texto .= "Producto: {$detalleOrden->producto->producto}\n";
+        $texto .= "Producto: {$detalleOrden->producto->name}\n";
         $texto .= "Motivo: {$motivoRechazo}\n";
         $texto .= "Rechazado por: " . Auth::user()->name . "\n";
         $texto .= "Fecha: " . now()->format('d/m/Y H:i') . "\n";

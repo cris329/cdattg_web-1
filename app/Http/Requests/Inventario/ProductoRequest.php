@@ -34,10 +34,10 @@ class ProductoRequest extends FormRequest
 
         if ($this->isMethod('PUT') || $this->isMethod('PATCH')) {
             $productoId = $this->route('producto');
-            $rules['producto'] = 'required|unique:productos,producto,' . $productoId;
+            $rules['name'] = 'required|unique:productos,name,' . $productoId;
             $rules['cantidad'] = 'required|integer|min:0';
         } else {
-            $rules['producto'] = 'required|unique:productos';
+            $rules['name'] = 'required|unique:productos,name';
             $rules['cantidad'] = 'required|integer|min:1';
             $rules['proveedor_id'] = 'required|exists:proveedores,id';
         }

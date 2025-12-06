@@ -19,16 +19,16 @@ class Proveedor extends Model
     protected static function booted()
     {
         static::creating(function ($proveedor) {
-            $proveedor->proveedor = strtoupper($proveedor->proveedor);
+            $proveedor->name = strtoupper($proveedor->name);
         });
 
         static::updating(function ($proveedor) {
-            $proveedor->proveedor = strtoupper($proveedor->proveedor);
+            $proveedor->name = strtoupper($proveedor->name);
         });
     }
 
     protected $fillable = [
-        'proveedor',
+        'name',
         'nit',
         'email',
         'telefono',

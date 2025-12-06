@@ -48,7 +48,7 @@ class OrdenAprobadaNotification extends Notification implements ShouldQueue
             ->line('¡Buenas noticias! Tu solicitud de ' . strtolower($tipoOrden) . ' ha sido aprobada.')
             ->line('**Orden:** #' . $orden->id)
             ->line('**Tipo:** ' . $tipoOrden)
-            ->line('**Producto:** ' . $producto->producto)
+            ->line('**Producto:** ' . $producto->name)
             ->line('**Cantidad Aprobada:** ' . $this->detalleOrden->cantidad . ' unidades')
             ->line('**Aprobado por:** ' . $this->aprobador->name)
             ->when($orden->fecha_devolucion, function ($message) use ($orden) {
@@ -72,7 +72,7 @@ class OrdenAprobadaNotification extends Notification implements ShouldQueue
             'detalle_orden_id' => $this->detalleOrden->id,
             'producto' => [
                 'id' => $this->detalleOrden->producto->id,
-                'producto' => $this->detalleOrden->producto->producto,
+                'producto' => $this->detalleOrden->producto->name,
             ],
             'cantidad' => $this->detalleOrden->cantidad,
             'aprobador' => [

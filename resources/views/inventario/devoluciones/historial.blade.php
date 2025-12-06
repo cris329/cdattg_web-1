@@ -51,10 +51,10 @@
                                             @foreach($devoluciones as $devolucion)
                                                 <tr>
                                                     <td>
-                                                        <strong>{{ $devolucion->detalleOrden->producto->producto ?? 'N/A' }}</strong>
-                                                        @if($devolucion->detalleOrden && $devolucion->detalleOrden->producto)
+                                                        <strong>{{ $devolucion->detalleOrden->name->name ?? 'N/A' }}</strong>
+                                                        @if($devolucion->detalleOrden && $devolucion->detalleOrden->name)
                                                             <br>
-                                                            <small class="text-muted">{{ $devolucion->detalleOrden->producto->descripcion ?? '' }}</small>
+                                                            <small class="text-muted">{{ $devolucion->detalleOrden->name->descripcion ?? '' }}</small>
                                                         @endif
                                                     </td>
                                                     <td>

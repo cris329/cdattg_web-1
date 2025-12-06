@@ -30,9 +30,9 @@ class ProveedorRequest extends FormRequest
             $proveedorId = is_object($proveedor) ? $proveedor->id : $proveedor;
             
             return [
-                'proveedor' => [
+                'name' => [
                     'required',
-                    Rule::unique('proveedores', 'proveedor')->ignore($proveedorId),
+                    Rule::unique('proveedores', 'name')->ignore($proveedorId),
                 ],
                 'nit' => [
                     'nullable',
@@ -58,7 +58,7 @@ class ProveedorRequest extends FormRequest
 
         // Store
         return [
-            'proveedor' => 'required|unique:proveedores,proveedor',
+            'name' => 'required|unique:proveedores,name',
             'nit' => 'nullable|string|max:50|unique:proveedores,nit',
             'email' => 'nullable|email|max:255|unique:proveedores,email',
             'telefono' => 'nullable|string|max:10',

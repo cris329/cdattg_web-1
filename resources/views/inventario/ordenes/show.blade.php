@@ -123,7 +123,7 @@
                                                 <td><strong>{{ $loop->iteration }}</strong></td>
                                                 <td>
                                                     <i class="fas fa-box text-primary"></i>
-                                                    {{ $detalle->producto->producto ?? 'N/A' }}
+                                                    {{ $detalle->name->name ?? 'N/A' }}
                                                 </td>
                                                 <td class="text-center">
                                                     <span class="badge badge-info">

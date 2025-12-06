@@ -103,7 +103,7 @@ class StockValidatorServiceTest extends TestCase
 
         $productoMock = Mockery::mock(Producto::class)->makePartial();
         $productoMock->cantidad = 5;
-        $productoMock->producto = 'Producto Test';
+        $productoMock->name = 'Producto Test';
 
         $this->service->validarStockSuficiente($productoMock, 10);
     }

@@ -1,7 +1,7 @@
 [
     {
         "id": 1,
-        "producto": "PAPEL ABSORBENTE",
+        "name": "PAPEL ABSORBENTE",
         "tipo_producto_id": 28,
         "descripcion": "",
         "peso": 0,
@@ -21,7 +21,7 @@
     },
     {
         "id": 2,
-        "producto": "PAPEL FILTRO",
+        "name": "PAPEL FILTRO",
         "tipo_producto_id": 28,
         "descripcion": "X 100 PIEZAS",
         "peso": 0,
@@ -41,7 +41,7 @@
     },
     {
         "id": 3,
-        "producto": "SAL DE COCINA",
+        "name": "SAL DE COCINA",
         "tipo_producto_id": 28,
         "descripcion": "No cuenta con empaque.",
         "peso": 0,
@@ -61,7 +61,7 @@
     },
     {
         "id": 4,
-        "producto": "MELAZA",
+        "name": "MELAZA",
         "tipo_producto_id": 28,
         "descripcion": "No cuenta con empaque etiquetado.",
         "peso": 0,
@@ -81,7 +81,7 @@
     },
     {
         "id": 5,
-        "producto": "PARAFINA",
+        "name": "PARAFINA",
         "tipo_producto_id": 28,
         "descripcion": "No cuenta con empaque etiquetado.",
         "peso": 0,
@@ -101,7 +101,7 @@
     },
     {
         "id": 6,
-        "producto": "GRAVA DE ACUARIO",
+        "name": "GRAVA DE ACUARIO",
         "tipo_producto_id": 28,
         "descripcion": "Verde, naranja y blanca",
         "peso": 0,
@@ -121,7 +121,7 @@
     },
     {
         "id": 7,
-        "producto": "PAPEL ALUMINIO",
+        "name": "PAPEL ALUMINIO",
         "tipo_producto_id": 28,
         "descripcion": "",
         "peso": 0,
@@ -141,7 +141,7 @@
     },
     {
         "id": 8,
-        "producto": "ASERRÍN",
+        "name": "ASERRÍN",
         "tipo_producto_id": 28,
         "descripcion": "",
         "peso": 0,
@@ -161,7 +161,7 @@
     },
     {
         "id": 9,
-        "producto": "TURBA",
+        "name": "TURBA",
         "tipo_producto_id": 28,
         "descripcion": "",
         "peso": 0,
@@ -181,7 +181,7 @@
     },
     {
         "id": 10,
-        "producto": "GRABA",
+        "name": "GRABA",
         "tipo_producto_id": 28,
         "descripcion": "",
         "peso": 0,
@@ -201,7 +201,7 @@
     },
     {
         "id": 11,
-        "producto": "ACONDICIONADOR ORGANICO DE SUELOS",
+        "name": "ACONDICIONADOR ORGANICO DE SUELOS",
         "tipo_producto_id": 28,
         "descripcion": "",
         "peso": 0,
@@ -221,7 +221,7 @@
     },
     {
         "id": 12,
-        "producto": "REGLA MEDIDORA DE PH",
+        "name": "REGLA MEDIDORA DE PH",
         "tipo_producto_id": 28,
         "descripcion": "",
         "peso": 0,
@@ -241,7 +241,7 @@
     },
     {
         "id": 13,
-        "producto": "PISETA 500 ML",
+        "name": "PISETA 500 ML",
         "tipo_producto_id": 28,
         "descripcion": "",
         "peso": 0,
@@ -261,7 +261,7 @@
     },
     {
         "id": 14,
-        "producto": "ATOMIZADORES",
+        "name": "ATOMIZADORES",
         "tipo_producto_id": 28,
         "descripcion": "",
         "peso": 0,
@@ -281,7 +281,7 @@
     },
     {
         "id": 15,
-        "producto": "FRASCO SCHOT 500 ML",
+        "name": "FRASCO SCHOT 500 ML",
         "tipo_producto_id": 28,
         "descripcion": "",
         "peso": 0,
@@ -301,7 +301,7 @@
     },
     {
         "id": 16,
-        "producto": "FRASCO SCHOT 250 ML",
+        "name": "FRASCO SCHOT 250 ML",
         "tipo_producto_id": 28,
         "descripcion": "",
         "peso": 0,
@@ -321,7 +321,7 @@
     },
     {
         "id": 17,
-        "producto": "JARRA METALICA",
+        "name": "JARRA METALICA",
         "tipo_producto_id": 28,
         "descripcion": "Jarra de un litro",
         "peso": 0,
@@ -341,7 +341,7 @@
     },
     {
         "id": 18,
-        "producto": "TUBOS PARA DENSIDAD",
+        "name": "TUBOS PARA DENSIDAD",
         "tipo_producto_id": 28,
         "descripcion": "Tubos de PVC",
         "peso": 0,
@@ -361,7 +361,7 @@
     },
     {
         "id": 19,
-        "producto": "CAJAS METALICAS PARA DENSIDAD",
+        "name": "CAJAS METALICAS PARA DENSIDAD",
         "tipo_producto_id": 28,
         "descripcion": "",
         "peso": 0,
@@ -381,7 +381,7 @@
     },
     {
         "id": 20,
-        "producto": "CAJA DE PLASTICO CON TAPA CON VOLUMEN DE 5L",
+        "name": "CAJA DE PLASTICO CON TAPA CON VOLUMEN DE 5L",
         "tipo_producto_id": 28,
         "descripcion": "",
         "peso": 0,
@@ -401,7 +401,7 @@
     },
     {
         "id": 21,
-        "producto": "BANDEJA METALICA",
+        "name": "BANDEJA METALICA",
         "tipo_producto_id": 28,
         "descripcion": "",
         "peso": 0,
@@ -421,7 +421,7 @@
     },
     {
         "id": 22,
-        "producto": "TARROS DE PLASTICO CON TAPA",
+        "name": "TARROS DE PLASTICO CON TAPA",
         "tipo_producto_id": 28,
         "descripcion": "2 tapas sin tarros",
         "peso": 0,
@@ -441,7 +441,7 @@
     },
     {
         "id": 23,
-        "producto": "EMBUDO",
+        "name": "EMBUDO",
         "tipo_producto_id": 28,
         "descripcion": "EMBUDO PEQUEÑO DE PLASTICO",
         "peso": 0,
@@ -461,7 +461,7 @@
     },
     {
         "id": 24,
-        "producto": "GOTERO",
+        "name": "GOTERO",
         "tipo_producto_id": 28,
         "descripcion": "",
         "peso": 0,
@@ -481,7 +481,7 @@
     },
     {
         "id": 25,
-        "producto": "ESPATULA",
+        "name": "ESPATULA",
         "tipo_producto_id": 28,
         "descripcion": "",
         "peso": 0,
@@ -501,7 +501,7 @@
     },
     {
         "id": 26,
-        "producto": "AGITADOR",
+        "name": "AGITADOR",
         "tipo_producto_id": 28,
         "descripcion": "Varillas en vidrio.",
         "peso": 0,
@@ -521,7 +521,7 @@
     },
     {
         "id": 27,
-        "producto": "CUCHARA",
+        "name": "CUCHARA",
         "tipo_producto_id": 28,
         "descripcion": "Cucharas medidoras en plástico.",
         "peso": 0,
@@ -541,7 +541,7 @@
     },
     {
         "id": 28,
-        "producto": "TABLA MUNSELL",
+        "name": "TABLA MUNSELL",
         "tipo_producto_id": 28,
         "descripcion": "",
         "peso": 0,
@@ -561,7 +561,7 @@
     },
     {
         "id": 29,
-        "producto": "FUNGICIDA",
+        "name": "FUNGICIDA",
         "tipo_producto_id": 28,
         "descripcion": "No cuentan con etiquetado.",
         "peso": 0,
@@ -581,7 +581,7 @@
     },
     {
         "id": 30,
-        "producto": "AGUA ESTERÍL PARA INYECCIÓN",
+        "name": "AGUA ESTERÍL PARA INYECCIÓN",
         "tipo_producto_id": 28,
         "descripcion": "",
         "peso": 0,
@@ -601,7 +601,7 @@
     },
     {
         "id": 31,
-        "producto": "AGUA OXIGENADA",
+        "name": "AGUA OXIGENADA",
         "tipo_producto_id": 28,
         "descripcion": "Cuenta con 20 mililitros",
         "peso": 0,
@@ -621,7 +621,7 @@
     },
     {
         "id": 32,
-        "producto": "YESO AGRICOLA",
+        "name": "YESO AGRICOLA",
         "tipo_producto_id": 28,
         "descripcion": "",
         "peso": 0,
@@ -641,7 +641,7 @@
     },
     {
         "id": 33,
-        "producto": "FLOCULANTE DE SUELOS",
+        "name": "FLOCULANTE DE SUELOS",
         "tipo_producto_id": 28,
         "descripcion": "Dos frascos de 60 mililitros",
         "peso": 0,
@@ -661,7 +661,7 @@
     },
     {
         "id": 34,
-        "producto": "DISPERSION DE TEXTURA",
+        "name": "DISPERSION DE TEXTURA",
         "tipo_producto_id": 28,
         "descripcion": "",
         "peso": 0,
@@ -681,7 +681,7 @@
     },
     {
         "id": 35,
-        "producto": "SLUCION FLOCULANTE DE TRICON",
+        "name": "SLUCION FLOCULANTE DE TRICON",
         "tipo_producto_id": 28,
         "descripcion": "Frasco de 120 mililitros",
         "peso": 0,
@@ -701,7 +701,7 @@
     },
     {
         "id": 36,
-        "producto": "SOLUCION DE EXTRACCION UNIVERSAL",
+        "name": "SOLUCION DE EXTRACCION UNIVERSAL",
         "tipo_producto_id": 28,
         "descripcion": "3 Frascos 250 mililitros - 2 Frascos de 120 mililitros",
         "peso": 0,
@@ -721,7 +721,7 @@
     },
     {
         "id": 37,
-        "producto": "INDICADOR DE PH TRICON",
+        "name": "INDICADOR DE PH TRICON",
         "tipo_producto_id": 28,
         "descripcion": "",
         "peso": 0,
@@ -741,7 +741,7 @@
     },
     {
         "id": 38,
-        "producto": "REACTIVO DE FOSFORO #2",
+        "name": "REACTIVO DE FOSFORO #2",
         "tipo_producto_id": 28,
         "descripcion": "2 Frascos de 30 mililitros",
         "peso": 0,
@@ -761,7 +761,7 @@
     },
     {
         "id": 39,
-        "producto": "REACTIVO DE NITRATO #1",
+        "name": "REACTIVO DE NITRATO #1",
         "tipo_producto_id": 28,
         "descripcion": "2 Frascos de 30 mililitros",
         "peso": 0,
@@ -781,7 +781,7 @@
     },
     {
         "id": 40,
-        "producto": "REACTIVO DE NITRATO #2",
+        "name": "REACTIVO DE NITRATO #2",
         "tipo_producto_id": 28,
         "descripcion": "Frasco de 30 gramos",
         "peso": 0,
@@ -801,7 +801,7 @@
     },
     {
         "id": 41,
-        "producto": "REACTIVO DE POTASIO C",
+        "name": "REACTIVO DE POTASIO C",
         "tipo_producto_id": 28,
         "descripcion": "1 Frasco de 25 mililitros - 1 frasco de 120 mililitros",
         "peso": 0,
@@ -821,7 +821,7 @@
     },
     {
         "id": 42,
-        "producto": "TEST DE SOLUCION DE MAGNESIO #1",
+        "name": "TEST DE SOLUCION DE MAGNESIO #1",
         "tipo_producto_id": 28,
         "descripcion": "Frasco de 30 mililitros.",
         "peso": 0,
@@ -841,7 +841,7 @@
     },
     {
         "id": 43,
-        "producto": "TEST DE SOLUCION DE CALCIO",
+        "name": "TEST DE SOLUCION DE CALCIO",
         "tipo_producto_id": 28,
         "descripcion": "Frasco de 30 mililitros",
         "peso": 0,
@@ -861,7 +861,7 @@
     },
     {
         "id": 44,
-        "producto": "TEST DE SOLUCION DE MAGNESIO  #2",
+        "name": "TEST DE SOLUCION DE MAGNESIO  #2",
         "tipo_producto_id": 28,
         "descripcion": "Frasco de 30 mililitros.",
         "peso": 0,
@@ -881,7 +881,7 @@
     },
     {
         "id": 45,
-        "producto": "INDICADOR ROJO DE CLORFENOL",
+        "name": "INDICADOR ROJO DE CLORFENOL",
         "tipo_producto_id": 28,
         "descripcion": "Frasco de 15 mililitros",
         "peso": 0,
@@ -901,7 +901,7 @@
     },
     {
         "id": 46,
-        "producto": "INDICADOR AZUL DE TIMOL",
+        "name": "INDICADOR AZUL DE TIMOL",
         "tipo_producto_id": 28,
         "descripcion": "Frasco de 15 mililitros",
         "peso": 0,
@@ -921,7 +921,7 @@
     },
     {
         "id": 47,
-        "producto": "INDICADOR DVERDE DE BRONQUESOL",
+        "name": "INDICADOR DVERDE DE BRONQUESOL",
         "tipo_producto_id": 28,
         "descripcion": "Frasco de 15 mililitos",
         "peso": 0,
@@ -941,7 +941,7 @@
     },
     {
         "id": 48,
-        "producto": "BOTELLA DESMINERILIZADORA",
+        "name": "BOTELLA DESMINERILIZADORA",
         "tipo_producto_id": 28,
         "descripcion": "Frasco de 250 mililitros",
         "peso": 0,
@@ -961,7 +961,7 @@
     },
     {
         "id": 49,
-        "producto": "REACTIVO PARA DETECCION DE HUMUS",
+        "name": "REACTIVO PARA DETECCION DE HUMUS",
         "tipo_producto_id": 28,
         "descripcion": "Frasco de 50 gramos",
         "peso": 0,
@@ -981,7 +981,7 @@
     },
     {
         "id": 50,
-        "producto": "REACTIVO DE POTASIO TABLETAS B",
+        "name": "REACTIVO DE POTASIO TABLETAS B",
         "tipo_producto_id": 28,
         "descripcion": "Tableta x 10 pastillas",
         "peso": 0,
@@ -1001,7 +1001,7 @@
     },
     {
         "id": 51,
-        "producto": "TABLESTAS DE FOSFORO",
+        "name": "TABLESTAS DE FOSFORO",
         "tipo_producto_id": 28,
         "descripcion": "Sobre x 10 pastillas",
         "peso": 0,
@@ -1021,7 +1021,7 @@
     },
     {
         "id": 52,
-        "producto": "BATA DE LABORATORIO (AZUL)",
+        "name": "BATA DE LABORATORIO (AZUL)",
         "tipo_producto_id": 28,
         "descripcion": "",
         "peso": 0,
@@ -1041,7 +1041,7 @@
     },
     {
         "id": 53,
-        "producto": "BATA DE LABORATORIO (VERDE)",
+        "name": "BATA DE LABORATORIO (VERDE)",
         "tipo_producto_id": 28,
         "descripcion": "",
         "peso": 0,
@@ -1061,7 +1061,7 @@
     },
     {
         "id": 54,
-        "producto": "TAPABOCAS",
+        "name": "TAPABOCAS",
         "tipo_producto_id": 28,
         "descripcion": "CUENTA CON 3 UNIDADES",
         "peso": 0,
@@ -1081,7 +1081,7 @@
     },
     {
         "id": 55,
-        "producto": "PAPEL ABSORBENTE",
+        "name": "PAPEL ABSORBENTE",
         "tipo_producto_id": 28,
         "descripcion": "",
         "peso": 0,
@@ -1101,7 +1101,7 @@
     },
     {
         "id": 56,
-        "producto": "PAPEL FILTRO",
+        "name": "PAPEL FILTRO",
         "tipo_producto_id": 28,
         "descripcion": "Cajas x 100 unidades",
         "peso": 0,
@@ -1121,7 +1121,7 @@
     },
     {
         "id": 57,
-        "producto": "FILTRO PARA TUBO",
+        "name": "FILTRO PARA TUBO",
         "tipo_producto_id": 28,
         "descripcion": "",
         "peso": 0,
@@ -1141,7 +1141,7 @@
     },
     {
         "id": 58,
-        "producto": "ANTISEPTICO EN GEL USO TOPICO",
+        "name": "ANTISEPTICO EN GEL USO TOPICO",
         "tipo_producto_id": 28,
         "descripcion": "",
         "peso": 0,
@@ -1161,7 +1161,7 @@
     },
     {
         "id": 59,
-        "producto": "JABON NEUTRO",
+        "name": "JABON NEUTRO",
         "tipo_producto_id": 28,
         "descripcion": "",
         "peso": 0,
@@ -1181,7 +1181,7 @@
     },
     {
         "id": 60,
-        "producto": "BLANQUEADOR DESINFECTANTE",
+        "name": "BLANQUEADOR DESINFECTANTE",
         "tipo_producto_id": 28,
         "descripcion": "",
         "peso": 0,
@@ -1201,7 +1201,7 @@
     },
     {
         "id": 61,
-        "producto": "DETERGENTE EN POLVO 3D",
+        "name": "DETERGENTE EN POLVO 3D",
         "tipo_producto_id": 28,
         "descripcion": "",
         "peso": 0,
@@ -1221,7 +1221,7 @@
     },
     {
         "id": 62,
-        "producto": "PAPEL VINIPEL",
+        "name": "PAPEL VINIPEL",
         "tipo_producto_id": 28,
         "descripcion": "",
         "peso": 0,
@@ -1241,7 +1241,7 @@
     },
     {
         "id": 63,
-        "producto": "JABON LIQUIDO LAVALOZA",
+        "name": "JABON LIQUIDO LAVALOZA",
         "tipo_producto_id": 28,
         "descripcion": "",
         "peso": 0,
@@ -1261,7 +1261,7 @@
     },
     {
         "id": 64,
-        "producto": "MECHERA",
+        "name": "MECHERA",
         "tipo_producto_id": 28,
         "descripcion": "",
         "peso": 0,
@@ -1281,7 +1281,7 @@
     },
     {
         "id": 65,
-        "producto": "BOLSA DE BASURA",
+        "name": "BOLSA DE BASURA",
         "tipo_producto_id": 28,
         "descripcion": "",
         "peso": 0,
@@ -1301,7 +1301,7 @@
     },
     {
         "id": 66,
-        "producto": "CINTA ENMASCARADA",
+        "name": "CINTA ENMASCARADA",
         "tipo_producto_id": 28,
         "descripcion": "",
         "peso": 0,
@@ -1321,7 +1321,7 @@
     },
     {
         "id": 67,
-        "producto": "GELATINA SIN SABOR",
+        "name": "GELATINA SIN SABOR",
         "tipo_producto_id": 28,
         "descripcion": "",
         "peso": 0,
@@ -1341,7 +1341,7 @@
     },
     {
         "id": 68,
-        "producto": "AMBIENTADOR",
+        "name": "AMBIENTADOR",
         "tipo_producto_id": 28,
         "descripcion": "",
         "peso": 0,
@@ -1361,7 +1361,7 @@
     },
     {
         "id": 69,
-        "producto": "ALCOHOL ANTISEPTICO",
+        "name": "ALCOHOL ANTISEPTICO",
         "tipo_producto_id": 28,
         "descripcion": "",
         "peso": 0,
@@ -1381,7 +1381,7 @@
     },
     {
         "id": 70,
-        "producto": "YODO PARA DESINFECCIÓN",
+        "name": "YODO PARA DESINFECCIÓN",
         "tipo_producto_id": 28,
         "descripcion": "",
         "peso": 0,
@@ -1401,7 +1401,7 @@
     },
     {
         "id": 71,
-        "producto": "PUNTAS DE MICROPIPETAS",
+        "name": "PUNTAS DE MICROPIPETAS",
         "tipo_producto_id": 28,
         "descripcion": "500-5000 UL   200UL   1000UL   10UL",
         "peso": 0,
@@ -1421,7 +1421,7 @@
     },
     {
         "id": 72,
-        "producto": "AGUA DESTILADA",
+        "name": "AGUA DESTILADA",
         "tipo_producto_id": 28,
         "descripcion": "",
         "peso": 0,
@@ -1441,7 +1441,7 @@
     },
     {
         "id": 73,
-        "producto": "DEDALES DE EXTRACION DE CELULOSA",
+        "name": "DEDALES DE EXTRACION DE CELULOSA",
         "tipo_producto_id": 28,
         "descripcion": "",
         "peso": 0,
@@ -1461,7 +1461,7 @@
     },
     {
         "id": 74,
-        "producto": "PROBETA PLASTICA 500 ML",
+        "name": "PROBETA PLASTICA 500 ML",
         "tipo_producto_id": 28,
         "descripcion": "",
         "peso": 0,
@@ -1481,7 +1481,7 @@
     },
     {
         "id": 75,
-        "producto": "PROBETA PLASTICA 250 ML",
+        "name": "PROBETA PLASTICA 250 ML",
         "tipo_producto_id": 28,
         "descripcion": "",
         "peso": 0,
@@ -1501,7 +1501,7 @@
     },
     {
         "id": 76,
-        "producto": "GOTERO PLASTICO",
+        "name": "GOTERO PLASTICO",
         "tipo_producto_id": 28,
         "descripcion": "",
         "peso": 0,
@@ -1521,7 +1521,7 @@
     },
     {
         "id": 77,
-        "producto": "ACIDIMETRO",
+        "name": "ACIDIMETRO",
         "tipo_producto_id": 28,
         "descripcion": "",
         "peso": 0,
@@ -1541,7 +1541,7 @@
     },
     {
         "id": 78,
-        "producto": "SOPORTE UNIVERSAL",
+        "name": "SOPORTE UNIVERSAL",
         "tipo_producto_id": 28,
         "descripcion": "",
         "peso": 0,
@@ -1561,7 +1561,7 @@
     },
     {
         "id": 79,
-        "producto": "TRIPODE DE LABORATORIO",
+        "name": "TRIPODE DE LABORATORIO",
         "tipo_producto_id": 28,
         "descripcion": "",
         "peso": 0,
@@ -1581,7 +1581,7 @@
     },
     {
         "id": 80,
-        "producto": "ARO METALICO",
+        "name": "ARO METALICO",
         "tipo_producto_id": 28,
         "descripcion": "ESTRECO-ANCHO",
         "peso": 0,
@@ -1601,7 +1601,7 @@
     },
     {
         "id": 81,
-        "producto": "PINZAS DE NUEZ",
+        "name": "PINZAS DE NUEZ",
         "tipo_producto_id": 28,
         "descripcion": "",
         "peso": 0,
@@ -1621,7 +1621,7 @@
     },
     {
         "id": 82,
-        "producto": "MECHERO BUNSEN",
+        "name": "MECHERO BUNSEN",
         "tipo_producto_id": 28,
         "descripcion": "",
         "peso": 0,
@@ -1641,7 +1641,7 @@
     },
     {
         "id": 83,
-        "producto": "PINZAS PARA CRISOL",
+        "name": "PINZAS PARA CRISOL",
         "tipo_producto_id": 28,
         "descripcion": "",
         "peso": 0,
@@ -1661,7 +1661,7 @@
     },
     {
         "id": 84,
-        "producto": "REJILLA DE ASBESTO",
+        "name": "REJILLA DE ASBESTO",
         "tipo_producto_id": 28,
         "descripcion": "",
         "peso": 0,
@@ -1681,7 +1681,7 @@
     },
     {
         "id": 85,
-        "producto": "FRASCOS PARA LACTEOS",
+        "name": "FRASCOS PARA LACTEOS",
         "tipo_producto_id": 28,
         "descripcion": "",
         "peso": 0,
@@ -1701,7 +1701,7 @@
     },
     {
         "id": 86,
-        "producto": "ESPATULA",
+        "name": "ESPATULA",
         "tipo_producto_id": 28,
         "descripcion": "",
         "peso": 0,
@@ -1721,7 +1721,7 @@
     },
     {
         "id": 87,
-        "producto": "PISETA 500 ML",
+        "name": "PISETA 500 ML",
         "tipo_producto_id": 28,
         "descripcion": "SE ENCUENTRAN DISTRIBUIDAS EN LOS OTROS LABORATORIOS",
         "peso": 0,
@@ -1741,7 +1741,7 @@
     },
     {
         "id": 88,
-        "producto": "MECHERO DE ALCOHOL",
+        "name": "MECHERO DE ALCOHOL",
         "tipo_producto_id": 28,
         "descripcion": "",
         "peso": 0,
@@ -1761,7 +1761,7 @@
     },
     {
         "id": 89,
-        "producto": "BEAKERS DE PLASTICO 100 ML",
+        "name": "BEAKERS DE PLASTICO 100 ML",
         "tipo_producto_id": 28,
         "descripcion": "",
         "peso": 0,
@@ -1781,7 +1781,7 @@
     },
     {
         "id": 90,
-        "producto": "PIPETEADOR PUMP 25 ML",
+        "name": "PIPETEADOR PUMP 25 ML",
         "tipo_producto_id": 28,
         "descripcion": "",
         "peso": 0,
@@ -1801,7 +1801,7 @@
     },
     {
         "id": 91,
-        "producto": "TERMOMETRO TH 310",
+        "name": "TERMOMETRO TH 310",
         "tipo_producto_id": 28,
         "descripcion": "",
         "peso": 0,
@@ -1821,7 +1821,7 @@
     },
     {
         "id": 92,
-        "producto": "PORTAFILTRO DE MENBRANA SCAN DE BACTERIAS",
+        "name": "PORTAFILTRO DE MENBRANA SCAN DE BACTERIAS",
         "tipo_producto_id": 28,
         "descripcion": "",
         "peso": 0,
@@ -1841,7 +1841,7 @@
     },
     {
         "id": 93,
-        "producto": "MAGNETOS",
+        "name": "MAGNETOS",
         "tipo_producto_id": 28,
         "descripcion": "",
         "peso": 0,
@@ -1861,7 +1861,7 @@
     },
     {
         "id": 94,
-        "producto": "TUBO PERFORADO DE BATIROMETRO DE MANTEQUILLA",
+        "name": "TUBO PERFORADO DE BATIROMETRO DE MANTEQUILLA",
         "tipo_producto_id": 28,
         "descripcion": "",
         "peso": 0,
@@ -1881,7 +1881,7 @@
     },
     {
         "id": 95,
-        "producto": "BUTIROMETRO PARA CENTRIFUGA DE GERBER",
+        "name": "BUTIROMETRO PARA CENTRIFUGA DE GERBER",
         "tipo_producto_id": 28,
         "descripcion": "",
         "peso": 0,
@@ -1901,7 +1901,7 @@
     },
     {
         "id": 96,
-        "producto": "TAPONES PARA BURIMETRO",
+        "name": "TAPONES PARA BURIMETRO",
         "tipo_producto_id": 28,
         "descripcion": "",
         "peso": 0,
@@ -1921,7 +1921,7 @@
     },
     {
         "id": 97,
-        "producto": "CUBETAS 10 ML DEL EQUIPO FOTOMETRO MULTI.PARAMETRO HI 83742 FENOL-COLOR",
+        "name": "CUBETAS 10 ML DEL EQUIPO FOTOMETRO MULTI.PARAMETRO HI 83742 FENOL-COLOR",
         "tipo_producto_id": 28,
         "descripcion": "",
         "peso": 0,
@@ -1941,7 +1941,7 @@
     },
     {
         "id": 98,
-        "producto": "GRADILLA",
+        "name": "GRADILLA",
         "tipo_producto_id": 28,
         "descripcion": "",
         "peso": 0,
@@ -1961,7 +1961,7 @@
     },
     {
         "id": 99,
-        "producto": "SOPORTE PARA BUTIROMETRO (CENTRIFUGA GERBER)",
+        "name": "SOPORTE PARA BUTIROMETRO (CENTRIFUGA GERBER)",
         "tipo_producto_id": 28,
         "descripcion": "",
         "peso": 0,
@@ -1981,7 +1981,7 @@
     },
     {
         "id": 100,
-        "producto": "TUBOS DE ENSAYO LISO N.15",
+        "name": "TUBOS DE ENSAYO LISO N.15",
         "tipo_producto_id": 28,
         "descripcion": "",
         "peso": 0,
@@ -2001,7 +2001,7 @@
     },
     {
         "id": 101,
-        "producto": "BEAKERS 1000 ML",
+        "name": "BEAKERS 1000 ML",
         "tipo_producto_id": 28,
         "descripcion": "2 QUEBRADOR 1 EN LA PARTE SUPERIOR\n                 Y EL OTRO EN LA PARTE INFERIOR - 1 POR REPONER SENNOVA MORICHE",
         "peso": 0,
@@ -2021,7 +2021,7 @@
     },
     {
         "id": 102,
-        "producto": "BEAKERS DE 250 ML",
+        "name": "BEAKERS DE 250 ML",
         "tipo_producto_id": 28,
         "descripcion": "",
         "peso": 0,
@@ -2041,7 +2041,7 @@
     },
     {
         "id": 103,
-        "producto": "BEAKERS 600 ML",
+        "name": "BEAKERS 600 ML",
         "tipo_producto_id": 28,
         "descripcion": "",
         "peso": 0,
@@ -2061,7 +2061,7 @@
     },
     {
         "id": 104,
-        "producto": "BEAKERS 100 ML",
+        "name": "BEAKERS 100 ML",
         "tipo_producto_id": 28,
         "descripcion": "",
         "peso": 0,
@@ -2081,7 +2081,7 @@
     },
     {
         "id": 105,
-        "producto": "ERLEMENYER 500 ML",
+        "name": "ERLEMENYER 500 ML",
         "tipo_producto_id": 28,
         "descripcion": "",
         "peso": 0,
@@ -2101,7 +2101,7 @@
     },
     {
         "id": 106,
-        "producto": "ERLEMENYER  250 ML",
+        "name": "ERLEMENYER  250 ML",
         "tipo_producto_id": 28,
         "descripcion": "1 TAPA ROSCA",
         "peso": 0,
@@ -2121,7 +2121,7 @@
     },
     {
         "id": 107,
-        "producto": "ERLEMENYER 200 ML",
+        "name": "ERLEMENYER 200 ML",
         "tipo_producto_id": 28,
         "descripcion": "",
         "peso": 0,
@@ -2141,7 +2141,7 @@
     },
     {
         "id": 108,
-        "producto": "ERLEMENYER 100 ML CON TAPA ESMERALIZADA",
+        "name": "ERLEMENYER 100 ML CON TAPA ESMERALIZADA",
         "tipo_producto_id": 28,
         "descripcion": "",
         "peso": 0,
@@ -2161,7 +2161,7 @@
     },
     {
         "id": 109,
-        "producto": "PROBETA 500 ML",
+        "name": "PROBETA 500 ML",
         "tipo_producto_id": 28,
         "descripcion": "",
         "peso": 0,
@@ -2181,7 +2181,7 @@
     },
     {
         "id": 110,
-        "producto": "PROBETA 250 ML",
+        "name": "PROBETA 250 ML",
         "tipo_producto_id": 28,
         "descripcion": "",
         "peso": 0,
@@ -2201,7 +2201,7 @@
     },
     {
         "id": 111,
-        "producto": "PROBETA 100 ML",
+        "name": "PROBETA 100 ML",
         "tipo_producto_id": 28,
         "descripcion": "",
         "peso": 0,
@@ -2221,7 +2221,7 @@
     },
     {
         "id": 112,
-        "producto": "PROBETA 25 ML",
+        "name": "PROBETA 25 ML",
         "tipo_producto_id": 28,
         "descripcion": "",
         "peso": 0,
@@ -2241,7 +2241,7 @@
     },
     {
         "id": 113,
-        "producto": "PROBETA 10 ML",
+        "name": "PROBETA 10 ML",
         "tipo_producto_id": 28,
         "descripcion": "",
         "peso": 0,
@@ -2261,7 +2261,7 @@
     },
     {
         "id": 114,
-        "producto": "VARILLA DE AGITACION",
+        "name": "VARILLA DE AGITACION",
         "tipo_producto_id": 28,
         "descripcion": "ESTA EN LOS OTROS LABORATORIOS",
         "peso": 0,
@@ -2281,7 +2281,7 @@
     },
     {
         "id": 115,
-        "producto": "MATRAZ AFORADO 100 ML",
+        "name": "MATRAZ AFORADO 100 ML",
         "tipo_producto_id": 28,
         "descripcion": "",
         "peso": 0,
@@ -2301,7 +2301,7 @@
     },
     {
         "id": 116,
-        "producto": "MATRAZ AFORADO 250 ML",
+        "name": "MATRAZ AFORADO 250 ML",
         "tipo_producto_id": 28,
         "descripcion": "",
         "peso": 0,
@@ -2321,7 +2321,7 @@
     },
     {
         "id": 117,
-        "producto": "MATRAZ AFORADO 200 ML",
+        "name": "MATRAZ AFORADO 200 ML",
         "tipo_producto_id": 28,
         "descripcion": "",
         "peso": 0,
@@ -2341,7 +2341,7 @@
     },
     {
         "id": 118,
-        "producto": "EMBUDO MEDIANO",
+        "name": "EMBUDO MEDIANO",
         "tipo_producto_id": 28,
         "descripcion": "",
         "peso": 0,
@@ -2361,7 +2361,7 @@
     },
     {
         "id": 119,
-        "producto": "CRISOL DE PORCELANA",
+        "name": "CRISOL DE PORCELANA",
         "tipo_producto_id": 28,
         "descripcion": "CON TAPA",
         "peso": 0,
@@ -2381,7 +2381,7 @@
     },
     {
         "id": 120,
-        "producto": "FRASCO SCHOT 250 ML",
+        "name": "FRASCO SCHOT 250 ML",
         "tipo_producto_id": 28,
         "descripcion": "",
         "peso": 0,
@@ -2401,7 +2401,7 @@
     },
     {
         "id": 121,
-        "producto": "FRASCO SCHOT 500 ML",
+        "name": "FRASCO SCHOT 500 ML",
         "tipo_producto_id": 28,
         "descripcion": "",
         "peso": 0,
@@ -2421,7 +2421,7 @@
     },
     {
         "id": 122,
-        "producto": "BURETA VOLUMETRICA 50 ML",
+        "name": "BURETA VOLUMETRICA 50 ML",
         "tipo_producto_id": 28,
         "descripcion": "",
         "peso": 0,
@@ -2441,7 +2441,7 @@
     },
     {
         "id": 123,
-        "producto": "PIPETA GRADUADA 1 ML",
+        "name": "PIPETA GRADUADA 1 ML",
         "tipo_producto_id": 28,
         "descripcion": "",
         "peso": 0,
@@ -2461,7 +2461,7 @@
     },
     {
         "id": 124,
-        "producto": "PIPETA GRADUADA 5 ML",
+        "name": "PIPETA GRADUADA 5 ML",
         "tipo_producto_id": 28,
         "descripcion": "",
         "peso": 0,
@@ -2481,7 +2481,7 @@
     },
     {
         "id": 125,
-        "producto": "PIPETA GRADUADA 10 ML",
+        "name": "PIPETA GRADUADA 10 ML",
         "tipo_producto_id": 28,
         "descripcion": "",
         "peso": 0,
@@ -2501,7 +2501,7 @@
     },
     {
         "id": 126,
-        "producto": "PIPETA AFORADA 10 ML",
+        "name": "PIPETA AFORADA 10 ML",
         "tipo_producto_id": 28,
         "descripcion": "",
         "peso": 0,
@@ -2521,7 +2521,7 @@
     },
     {
         "id": 127,
-        "producto": "PIPETA GRADUADA 20 ML",
+        "name": "PIPETA GRADUADA 20 ML",
         "tipo_producto_id": 28,
         "descripcion": "",
         "peso": 0,
@@ -2541,7 +2541,7 @@
     },
     {
         "id": 128,
-        "producto": "FRASCO DE VIDRIO BOCA ENTRECHA",
+        "name": "FRASCO DE VIDRIO BOCA ENTRECHA",
         "tipo_producto_id": 28,
         "descripcion": "",
         "peso": 0,
@@ -2561,7 +2561,7 @@
     },
     {
         "id": 129,
-        "producto": "FRASCO DE VIDRIO BOCA ANCHA",
+        "name": "FRASCO DE VIDRIO BOCA ANCHA",
         "tipo_producto_id": 28,
         "descripcion": "",
         "peso": 0,
@@ -2581,7 +2581,7 @@
     },
     {
         "id": 130,
-        "producto": "EMBUDO DE DECANTACIÓN 500 ML",
+        "name": "EMBUDO DE DECANTACIÓN 500 ML",
         "tipo_producto_id": 28,
         "descripcion": "",
         "peso": 0,
@@ -2601,7 +2601,7 @@
     },
     {
         "id": 131,
-        "producto": "EXTRACTOR SOXCHLET",
+        "name": "EXTRACTOR SOXCHLET",
         "tipo_producto_id": 28,
         "descripcion": "",
         "peso": 0,
@@ -2621,7 +2621,7 @@
     },
     {
         "id": 132,
-        "producto": "CONDENSADOR ALLIHN",
+        "name": "CONDENSADOR ALLIHN",
         "tipo_producto_id": 28,
         "descripcion": "",
         "peso": 0,
@@ -2641,7 +2641,7 @@
     },
     {
         "id": 133,
-        "producto": "BALON DE FONDO REDONDO AFORADO 250 ML CON BOCA ESMERILADA",
+        "name": "BALON DE FONDO REDONDO AFORADO 250 ML CON BOCA ESMERILADA",
         "tipo_producto_id": 28,
         "descripcion": "",
         "peso": 0,
@@ -2661,7 +2661,7 @@
     },
     {
         "id": 134,
-        "producto": "PICNOMETRO CON TERMOMETRO 25 ML",
+        "name": "PICNOMETRO CON TERMOMETRO 25 ML",
         "tipo_producto_id": 28,
         "descripcion": "",
         "peso": 0,
@@ -2681,7 +2681,7 @@
     },
     {
         "id": 135,
-        "producto": "LACTO DENSIMETRO",
+        "name": "LACTO DENSIMETRO",
         "tipo_producto_id": 28,
         "descripcion": "",
         "peso": 0,
@@ -2701,7 +2701,7 @@
     },
     {
         "id": 136,
-        "producto": "HIPOCLORITO 5,25%",
+        "name": "HIPOCLORITO 5,25%",
         "tipo_producto_id": 28,
         "descripcion": "",
         "peso": 0,
@@ -2721,7 +2721,7 @@
     },
     {
         "id": 137,
-        "producto": "HIPOCLORITO 2000 PPM",
+        "name": "HIPOCLORITO 2000 PPM",
         "tipo_producto_id": 28,
         "descripcion": "",
         "peso": 0,
@@ -2741,7 +2741,7 @@
     },
     {
         "id": 138,
-        "producto": "HIDROXIDO DE SODIO",
+        "name": "HIDROXIDO DE SODIO",
         "tipo_producto_id": 28,
         "descripcion": "",
         "peso": 0,
@@ -2761,7 +2761,7 @@
     },
     {
         "id": 139,
-        "producto": "ALCOHOL ISOPROPILICO",
+        "name": "ALCOHOL ISOPROPILICO",
         "tipo_producto_id": 28,
         "descripcion": "",
         "peso": 0,
@@ -2781,7 +2781,7 @@
     },
     {
         "id": 140,
-        "producto": "SOLUCION DE RELLENO 3M KCL",
+        "name": "SOLUCION DE RELLENO 3M KCL",
         "tipo_producto_id": 28,
         "descripcion": "",
         "peso": 0,
@@ -2801,7 +2801,7 @@
     },
     {
         "id": 141,
-        "producto": "ALCOHOL ETILICO AL 70%",
+        "name": "ALCOHOL ETILICO AL 70%",
         "tipo_producto_id": 28,
         "descripcion": "",
         "peso": 0,
@@ -2821,7 +2821,7 @@
     },
     {
         "id": 142,
-        "producto": "BICARBONATO DE SODIO",
+        "name": "BICARBONATO DE SODIO",
         "tipo_producto_id": 28,
         "descripcion": "",
         "peso": 0,
@@ -2841,7 +2841,7 @@
     },
     {
         "id": 143,
-        "producto": "SPEED- CLEAN",
+        "name": "SPEED- CLEAN",
         "tipo_producto_id": 28,
         "descripcion": "",
         "peso": 0,
@@ -2861,7 +2861,7 @@
     },
     {
         "id": 144,
-        "producto": "SOLUCION BUFFER PH 7.00",
+        "name": "SOLUCION BUFFER PH 7.00",
         "tipo_producto_id": 28,
         "descripcion": "PH 7.00 - PH 4.00   6 UNIDADES",
         "peso": 0,
@@ -2881,7 +2881,7 @@
     },
     {
         "id": 145,
-        "producto": "WATER WORKS PEROXIDE",
+        "name": "WATER WORKS PEROXIDE",
         "tipo_producto_id": 28,
         "descripcion": "50 TEST",
         "peso": 0,
@@ -2901,7 +2901,7 @@
     },
     {
         "id": 146,
-        "producto": "AZUL DE METILENO",
+        "name": "AZUL DE METILENO",
         "tipo_producto_id": 28,
         "descripcion": "4 UNIDADES",
         "peso": 0,
@@ -2921,7 +2921,7 @@
     },
     {
         "id": 147,
-        "producto": "PRUEBA DE DETECCIÓN DE ALMIDONES",
+        "name": "PRUEBA DE DETECCIÓN DE ALMIDONES",
         "tipo_producto_id": 28,
         "descripcion": "3 UNIDADES",
         "peso": 0,
@@ -2941,7 +2941,7 @@
     },
     {
         "id": 148,
-        "producto": "PRUEBA CLORUROS",
+        "name": "PRUEBA CLORUROS",
         "tipo_producto_id": 28,
         "descripcion": "A - B",
         "peso": 0,
@@ -2961,7 +2961,7 @@
     },
     {
         "id": 149,
-        "producto": "PRUEBA DE DETECCIÓN DE NEUTRALIZANTES",
+        "name": "PRUEBA DE DETECCIÓN DE NEUTRALIZANTES",
         "tipo_producto_id": 28,
         "descripcion": "1 UNIDAD",
         "peso": 0,
@@ -2981,7 +2981,7 @@
     },
     {
         "id": 150,
-        "producto": "PRUEBA DE REDUCTASA",
+        "name": "PRUEBA DE REDUCTASA",
         "tipo_producto_id": 28,
         "descripcion": "1 UNIDAD",
         "peso": 0,
@@ -3001,7 +3001,7 @@
     },
     {
         "id": 151,
-        "producto": "FENOLTALEINA",
+        "name": "FENOLTALEINA",
         "tipo_producto_id": 28,
         "descripcion": "3 UNIDADES DE 60 ML",
         "peso": 0,
@@ -3021,7 +3021,7 @@
     },
     {
         "id": 152,
-        "producto": "ALMIDON DE YUCA",
+        "name": "ALMIDON DE YUCA",
         "tipo_producto_id": 28,
         "descripcion": "6 UNIDADES DE 1000 KILOS",
         "peso": 0,
@@ -3041,7 +3041,7 @@
     },
     {
         "id": 153,
-        "producto": "BATA DE LABORATORIO (BLANCA)",
+        "name": "BATA DE LABORATORIO (BLANCA)",
         "tipo_producto_id": 28,
         "descripcion": "",
         "peso": 0,
@@ -3061,7 +3061,7 @@
     },
     {
         "id": 154,
-        "producto": "TAPABOCAS",
+        "name": "TAPABOCAS",
         "tipo_producto_id": 28,
         "descripcion": "",
         "peso": 0,
@@ -3081,7 +3081,7 @@
     },
     {
         "id": 155,
-        "producto": "GUANTES DE QUIRURJICOS",
+        "name": "GUANTES DE QUIRURJICOS",
         "tipo_producto_id": 28,
         "descripcion": "Talla 7",
         "peso": 0,
@@ -3101,7 +3101,7 @@
     },
     {
         "id": 156,
-        "producto": "COFIAS",
+        "name": "COFIAS",
         "tipo_producto_id": 28,
         "descripcion": "PAQUETE X 100 UND",
         "peso": 0,
@@ -3121,7 +3121,7 @@
     },
     {
         "id": 157,
-        "producto": "PAPEL ABSORBENTE",
+        "name": "PAPEL ABSORBENTE",
         "tipo_producto_id": 28,
         "descripcion": "",
         "peso": 0,
@@ -3141,7 +3141,7 @@
     },
     {
         "id": 158,
-        "producto": "PAPEL FILTRO",
+        "name": "PAPEL FILTRO",
         "tipo_producto_id": 28,
         "descripcion": "X 100 unidades",
         "peso": 0,
@@ -3161,7 +3161,7 @@
     },
     {
         "id": 159,
-        "producto": "LAMINAS PORTAOBJETOS",
+        "name": "LAMINAS PORTAOBJETOS",
         "tipo_producto_id": 28,
         "descripcion": "",
         "peso": 0,
@@ -3181,7 +3181,7 @@
     },
     {
         "id": 160,
-        "producto": "CUCHILLAS PARA BISTURI",
+        "name": "CUCHILLAS PARA BISTURI",
         "tipo_producto_id": 28,
         "descripcion": "CALIBRES N° 11-24-15-20-12-10-22",
         "peso": 0,
@@ -3201,7 +3201,7 @@
     },
     {
         "id": 161,
-        "producto": "LIMPIA VIDRIOS AZULADO",
+        "name": "LIMPIA VIDRIOS AZULADO",
         "tipo_producto_id": 28,
         "descripcion": "",
         "peso": 0,
@@ -3221,7 +3221,7 @@
     },
     {
         "id": 162,
-        "producto": "PAPEL ALUMINIO",
+        "name": "PAPEL ALUMINIO",
         "tipo_producto_id": 28,
         "descripcion": "",
         "peso": 0,
@@ -3241,7 +3241,7 @@
     },
     {
         "id": 163,
-        "producto": "PARAFIL",
+        "name": "PARAFIL",
         "tipo_producto_id": 28,
         "descripcion": "",
         "peso": 0,
@@ -3261,7 +3261,7 @@
     },
     {
         "id": 164,
-        "producto": "PAPEL KRAC",
+        "name": "PAPEL KRAC",
         "tipo_producto_id": 28,
         "descripcion": "Medio rollo",
         "peso": 0,
@@ -3281,7 +3281,7 @@
     },
     {
         "id": 165,
-        "producto": "PINZA AURICULAS DE 16CM",
+        "name": "PINZA AURICULAS DE 16CM",
         "tipo_producto_id": 28,
         "descripcion": "",
         "peso": 0,
@@ -3301,7 +3301,7 @@
     },
     {
         "id": 166,
-        "producto": "PUNTAS PARA MICROPIPETAS",
+        "name": "PUNTAS PARA MICROPIPETAS",
         "tipo_producto_id": 28,
         "descripcion": "200UL-1000UL-10UL",
         "peso": 0,
@@ -3321,7 +3321,7 @@
     },
     {
         "id": 167,
-        "producto": "CAPILARES DE HEMATOCRITO",
+        "name": "CAPILARES DE HEMATOCRITO",
         "tipo_producto_id": 28,
         "descripcion": "",
         "peso": 0,
@@ -3341,7 +3341,7 @@
     },
     {
         "id": 168,
-        "producto": "INFUSOR DE TÉ",
+        "name": "INFUSOR DE TÉ",
         "tipo_producto_id": 28,
         "descripcion": "",
         "peso": 0,
@@ -3361,7 +3361,7 @@
     },
     {
         "id": 169,
-        "producto": "MAGNETUS",
+        "name": "MAGNETUS",
         "tipo_producto_id": 28,
         "descripcion": "",
         "peso": 0,
@@ -3381,7 +3381,7 @@
     },
     {
         "id": 170,
-        "producto": "ESPATULA",
+        "name": "ESPATULA",
         "tipo_producto_id": 28,
         "descripcion": "",
         "peso": 0,
@@ -3401,7 +3401,7 @@
     },
     {
         "id": 171,
-        "producto": "PIPETEADOR PUMP",
+        "name": "PIPETEADOR PUMP",
         "tipo_producto_id": 28,
         "descripcion": "25ML-10ML",
         "peso": 0,
@@ -3421,7 +3421,7 @@
     },
     {
         "id": 172,
-        "producto": "TAPA DE COMPOTERO",
+        "name": "TAPA DE COMPOTERO",
         "tipo_producto_id": 28,
         "descripcion": "",
         "peso": 0,
@@ -3441,7 +3441,7 @@
     },
     {
         "id": 173,
-        "producto": "GRADILLA",
+        "name": "GRADILLA",
         "tipo_producto_id": 28,
         "descripcion": "",
         "peso": 0,
@@ -3461,7 +3461,7 @@
     },
     {
         "id": 174,
-        "producto": "MANGO PARA BISTURI #4",
+        "name": "MANGO PARA BISTURI #4",
         "tipo_producto_id": 28,
         "descripcion": "N#4-N#3",
         "peso": 0,
@@ -3481,7 +3481,7 @@
     },
     {
         "id": 175,
-        "producto": "PISETA",
+        "name": "PISETA",
         "tipo_producto_id": 28,
         "descripcion": "100ML-25ML",
         "peso": 0,
@@ -3501,7 +3501,7 @@
     },
     {
         "id": 176,
-        "producto": "PIPETA GRADUADA 5 ML",
+        "name": "PIPETA GRADUADA 5 ML",
         "tipo_producto_id": 28,
         "descripcion": "",
         "peso": 0,
@@ -3521,7 +3521,7 @@
     },
     {
         "id": 177,
-        "producto": "PIPETA GRADUADA 25 ML",
+        "name": "PIPETA GRADUADA 25 ML",
         "tipo_producto_id": 28,
         "descripcion": "",
         "peso": 0,
@@ -3541,7 +3541,7 @@
     },
     {
         "id": 178,
-        "producto": "PIPETA GRADUADA 10 ML",
+        "name": "PIPETA GRADUADA 10 ML",
         "tipo_producto_id": 28,
         "descripcion": "",
         "peso": 0,
@@ -3561,7 +3561,7 @@
     },
     {
         "id": 179,
-        "producto": "MECHERO DE ALCHOHOL",
+        "name": "MECHERO DE ALCHOHOL",
         "tipo_producto_id": 28,
         "descripcion": "",
         "peso": 0,
@@ -3581,7 +3581,7 @@
     },
     {
         "id": 180,
-        "producto": "PROBETA VIDRIO 100 ML",
+        "name": "PROBETA VIDRIO 100 ML",
         "tipo_producto_id": 28,
         "descripcion": "",
         "peso": 0,
@@ -3601,7 +3601,7 @@
     },
     {
         "id": 181,
-        "producto": "PROBETA VIDRIO 500 ML",
+        "name": "PROBETA VIDRIO 500 ML",
         "tipo_producto_id": 28,
         "descripcion": "",
         "peso": 0,
@@ -3621,7 +3621,7 @@
     },
     {
         "id": 182,
-        "producto": "BEAKER DE VIDIRO 1000 ML",
+        "name": "BEAKER DE VIDIRO 1000 ML",
         "tipo_producto_id": 28,
         "descripcion": "",
         "peso": 0,
@@ -3641,7 +3641,7 @@
     },
     {
         "id": 183,
-        "producto": "BEAKER DE VIDIRO 600 ML",
+        "name": "BEAKER DE VIDIRO 600 ML",
         "tipo_producto_id": 28,
         "descripcion": "",
         "peso": 0,
@@ -3661,7 +3661,7 @@
     },
     {
         "id": 184,
-        "producto": "BEAKER DE VIDIRO 250 ML",
+        "name": "BEAKER DE VIDIRO 250 ML",
         "tipo_producto_id": 28,
         "descripcion": "",
         "peso": 0,
@@ -3681,7 +3681,7 @@
     },
     {
         "id": 185,
-        "producto": "PROBETA VIDRIO 25 ML",
+        "name": "PROBETA VIDRIO 25 ML",
         "tipo_producto_id": 28,
         "descripcion": "",
         "peso": 0,
@@ -3701,7 +3701,7 @@
     },
     {
         "id": 186,
-        "producto": "PROBETA VIDRIO 10 ML",
+        "name": "PROBETA VIDRIO 10 ML",
         "tipo_producto_id": 28,
         "descripcion": "",
         "peso": 0,
@@ -3721,7 +3721,7 @@
     },
     {
         "id": 187,
-        "producto": "BALON AFORADO 500 ML",
+        "name": "BALON AFORADO 500 ML",
         "tipo_producto_id": 28,
         "descripcion": "",
         "peso": 0,
@@ -3741,7 +3741,7 @@
     },
     {
         "id": 188,
-        "producto": "BALON AFORADO 100 ML",
+        "name": "BALON AFORADO 100 ML",
         "tipo_producto_id": 28,
         "descripcion": "",
         "peso": 0,
@@ -3761,7 +3761,7 @@
     },
     {
         "id": 189,
-        "producto": "BALON AFORADO 1000 ML",
+        "name": "BALON AFORADO 1000 ML",
         "tipo_producto_id": 28,
         "descripcion": "",
         "peso": 0,
@@ -3781,7 +3781,7 @@
     },
     {
         "id": 190,
-        "producto": "ERLENMEYER BOCA ESMELILADA 100 ML",
+        "name": "ERLENMEYER BOCA ESMELILADA 100 ML",
         "tipo_producto_id": 28,
         "descripcion": "",
         "peso": 0,
@@ -3801,7 +3801,7 @@
     },
     {
         "id": 191,
-        "producto": "ERLENMEYER BOCA ESMELILADA 250 ML",
+        "name": "ERLENMEYER BOCA ESMELILADA 250 ML",
         "tipo_producto_id": 28,
         "descripcion": "",
         "peso": 0,
@@ -3821,7 +3821,7 @@
     },
     {
         "id": 192,
-        "producto": "FRASCO TIPO SCHOTT 250 ML",
+        "name": "FRASCO TIPO SCHOTT 250 ML",
         "tipo_producto_id": 28,
         "descripcion": "",
         "peso": 0,
@@ -3841,7 +3841,7 @@
     },
     {
         "id": 193,
-        "producto": "ERLENMEYER 500 ML",
+        "name": "ERLENMEYER 500 ML",
         "tipo_producto_id": 28,
         "descripcion": "",
         "peso": 0,
@@ -3861,7 +3861,7 @@
     },
     {
         "id": 194,
-        "producto": "FRASCO TIPO SCHOTT 500 ML",
+        "name": "FRASCO TIPO SCHOTT 500 ML",
         "tipo_producto_id": 28,
         "descripcion": "",
         "peso": 0,
@@ -3881,7 +3881,7 @@
     },
     {
         "id": 195,
-        "producto": "EMBUDO MEDIANIO",
+        "name": "EMBUDO MEDIANIO",
         "tipo_producto_id": 28,
         "descripcion": "FISURA EN LA PARTE INFERIOR",
         "peso": 0,
@@ -3901,7 +3901,7 @@
     },
     {
         "id": 196,
-        "producto": "CAJA PETRI",
+        "name": "CAJA PETRI",
         "tipo_producto_id": 28,
         "descripcion": "",
         "peso": 0,
@@ -3921,7 +3921,7 @@
     },
     {
         "id": 197,
-        "producto": "BAGUETE (AGITADOR DE VIDRIO)",
+        "name": "BAGUETE (AGITADOR DE VIDRIO)",
         "tipo_producto_id": 28,
         "descripcion": "",
         "peso": 0,
@@ -3941,7 +3941,7 @@
     },
     {
         "id": 198,
-        "producto": "MORTERO DE PORCELANA MEDIANO",
+        "name": "MORTERO DE PORCELANA MEDIANO",
         "tipo_producto_id": 28,
         "descripcion": "",
         "peso": 0,
@@ -3961,7 +3961,7 @@
     },
     {
         "id": 199,
-        "producto": "TERMOMETRO TH 310",
+        "name": "TERMOMETRO TH 310",
         "tipo_producto_id": 28,
         "descripcion": "",
         "peso": 0,
@@ -3981,7 +3981,7 @@
     },
     {
         "id": 200,
-        "producto": "TUBO DE ENSAYO TAPA ROSCA N.15",
+        "name": "TUBO DE ENSAYO TAPA ROSCA N.15",
         "tipo_producto_id": 28,
         "descripcion": "",
         "peso": 0,
@@ -4001,7 +4001,7 @@
     },
     {
         "id": 201,
-        "producto": "TUBO DE ENSAYO LISO  N.15",
+        "name": "TUBO DE ENSAYO LISO  N.15",
         "tipo_producto_id": 28,
         "descripcion": "",
         "peso": 0,
@@ -4021,7 +4021,7 @@
     },
     {
         "id": 202,
-        "producto": "BEAKERS 10 ML",
+        "name": "BEAKERS 10 ML",
         "tipo_producto_id": 28,
         "descripcion": "",
         "peso": 0,
@@ -4041,7 +4041,7 @@
     },
     {
         "id": 203,
-        "producto": "BEAKERS 100 ML",
+        "name": "BEAKERS 100 ML",
         "tipo_producto_id": 28,
         "descripcion": "",
         "peso": 0,
@@ -4061,7 +4061,7 @@
     },
     {
         "id": 204,
-        "producto": "CUBETA CON TAPA PARA TINCION GRAM",
+        "name": "CUBETA CON TAPA PARA TINCION GRAM",
         "tipo_producto_id": 28,
         "descripcion": "",
         "peso": 0,
@@ -4081,7 +4081,7 @@
     },
     {
         "id": 205,
-        "producto": "FRASCO AMBAR REDONDO 1000 ML",
+        "name": "FRASCO AMBAR REDONDO 1000 ML",
         "tipo_producto_id": 28,
         "descripcion": "",
         "peso": 0,
@@ -4101,7 +4101,7 @@
     },
     {
         "id": 206,
-        "producto": "FRASCO AMBAR CUADRADO 1000 ML",
+        "name": "FRASCO AMBAR CUADRADO 1000 ML",
         "tipo_producto_id": 28,
         "descripcion": "",
         "peso": 0,
@@ -4121,7 +4121,7 @@
     },
     {
         "id": 207,
-        "producto": "CAPSULA DE VIDRIO CON TAPA",
+        "name": "CAPSULA DE VIDRIO CON TAPA",
         "tipo_producto_id": 28,
         "descripcion": "",
         "peso": 0,
@@ -4141,7 +4141,7 @@
     },
     {
         "id": 208,
-        "producto": "VIDRIO DE RELOJ",
+        "name": "VIDRIO DE RELOJ",
         "tipo_producto_id": 28,
         "descripcion": "",
         "peso": 0,
@@ -4161,7 +4161,7 @@
     },
     {
         "id": 209,
-        "producto": "FRASCO PARA SIEMBRA",
+        "name": "FRASCO PARA SIEMBRA",
         "tipo_producto_id": 28,
         "descripcion": "",
         "peso": 0,
@@ -4181,7 +4181,7 @@
     },
     {
         "id": 210,
-        "producto": "ALCOHOL ETILICO AL 96%",
+        "name": "ALCOHOL ETILICO AL 96%",
         "tipo_producto_id": 28,
         "descripcion": "9 UNIDADES",
         "peso": 0,
@@ -4201,7 +4201,7 @@
     },
     {
         "id": 211,
-        "producto": "ALCOHOL INDUSTRIAL",
+        "name": "ALCOHOL INDUSTRIAL",
         "tipo_producto_id": 28,
         "descripcion": "8 UNIDADES",
         "peso": 0,
@@ -4221,7 +4221,7 @@
     },
     {
         "id": 212,
-        "producto": "ALCOHOL ISOPROPILICO",
+        "name": "ALCOHOL ISOPROPILICO",
         "tipo_producto_id": 28,
         "descripcion": "5 UNIDADES",
         "peso": 0,
@@ -4241,7 +4241,7 @@
     },
     {
         "id": 213,
-        "producto": "AGAR PATATA- GLUCOSA",
+        "name": "AGAR PATATA- GLUCOSA",
         "tipo_producto_id": 28,
         "descripcion": "",
         "peso": 0,
@@ -4261,7 +4261,7 @@
     },
     {
         "id": 214,
-        "producto": "AGAR -AGAR",
+        "name": "AGAR -AGAR",
         "tipo_producto_id": 28,
         "descripcion": "1 UNIDAD",
         "peso": 0,
@@ -4281,7 +4281,7 @@
     },
     {
         "id": 215,
-        "producto": "D(+)-GLUCOSA",
+        "name": "D(+)-GLUCOSA",
         "tipo_producto_id": 28,
         "descripcion": "1 UNIDAD",
         "peso": 0,
@@ -4301,7 +4301,7 @@
     },
     {
         "id": 216,
-        "producto": "AGAR -AGAR CHEMI PARMA",
+        "name": "AGAR -AGAR CHEMI PARMA",
         "tipo_producto_id": 28,
         "descripcion": "",
         "peso": 0,
@@ -4321,7 +4321,7 @@
     },
     {
         "id": 217,
-        "producto": "AZUL DE METILENO",
+        "name": "AZUL DE METILENO",
         "tipo_producto_id": 28,
         "descripcion": "",
         "peso": 0,
@@ -4341,7 +4341,7 @@
     },
     {
         "id": 218,
-        "producto": "INOSITOL",
+        "name": "INOSITOL",
         "tipo_producto_id": 28,
         "descripcion": "2 UNIDADES",
         "peso": 0,
@@ -4361,7 +4361,7 @@
     },
     {
         "id": 219,
-        "producto": "D(-)MANNITOL AR",
+        "name": "D(-)MANNITOL AR",
         "tipo_producto_id": 28,
         "descripcion": "",
         "peso": 0,
@@ -4381,7 +4381,7 @@
     },
     {
         "id": 220,
-        "producto": "DEXTROSE (ANHYDROUS) AR",
+        "name": "DEXTROSE (ANHYDROUS) AR",
         "tipo_producto_id": 28,
         "descripcion": "",
         "peso": 0,
@@ -4401,7 +4401,7 @@
     },
     {
         "id": 221,
-        "producto": "ETHANOL 94% AL 96%",
+        "name": "ETHANOL 94% AL 96%",
         "tipo_producto_id": 28,
         "descripcion": "2 GALONES",
         "peso": 0,
@@ -4421,7 +4421,7 @@
     },
     {
         "id": 222,
-        "producto": "HIPOCLORITO AL 15%",
+        "name": "HIPOCLORITO AL 15%",
         "tipo_producto_id": 28,
         "descripcion": "",
         "peso": 0,
@@ -4441,7 +4441,7 @@
     },
     {
         "id": 223,
-        "producto": "AGAR NUTRIENTE",
+        "name": "AGAR NUTRIENTE",
         "tipo_producto_id": 28,
         "descripcion": "",
         "peso": 0,
@@ -4461,7 +4461,7 @@
     },
     {
         "id": 224,
-        "producto": "REGULADOR FISIOLOGICO",
+        "name": "REGULADOR FISIOLOGICO",
         "tipo_producto_id": 28,
         "descripcion": "",
         "peso": 0,
@@ -4481,7 +4481,7 @@
     },
     {
         "id": 225,
-        "producto": "VINAGRE BLANCO MULTIUSOS",
+        "name": "VINAGRE BLANCO MULTIUSOS",
         "tipo_producto_id": 28,
         "descripcion": "",
         "peso": 0,
@@ -4501,7 +4501,7 @@
     },
     {
         "id": 226,
-        "producto": "ALCOHOL ETANOL AL 90%",
+        "name": "ALCOHOL ETANOL AL 90%",
         "tipo_producto_id": 28,
         "descripcion": "",
         "peso": 0,
@@ -4521,7 +4521,7 @@
     },
     {
         "id": 227,
-        "producto": "JABON LIQUIDO ANTIBACTERIAL",
+        "name": "JABON LIQUIDO ANTIBACTERIAL",
         "tipo_producto_id": 28,
         "descripcion": "",
         "peso": 0,
@@ -4541,7 +4541,7 @@
     },
     {
         "id": 228,
-        "producto": "ALCOHOL ANTISEPTICO AL 70%",
+        "name": "ALCOHOL ANTISEPTICO AL 70%",
         "tipo_producto_id": 28,
         "descripcion": "",
         "peso": 0,
@@ -4561,7 +4561,7 @@
     },
     {
         "id": 229,
-        "producto": "AZUCAR( SACAROSA)",
+        "name": "AZUCAR( SACAROSA)",
         "tipo_producto_id": 28,
         "descripcion": "",
         "peso": 0,
@@ -4581,7 +4581,7 @@
     },
     {
         "id": 230,
-        "producto": "AGUA ESTERIL PARA INYECCIÓN",
+        "name": "AGUA ESTERIL PARA INYECCIÓN",
         "tipo_producto_id": 28,
         "descripcion": "9 UNIDADES",
         "peso": 0,
@@ -4601,7 +4601,7 @@
     },
     {
         "id": 231,
-        "producto": "CARBON ACTIVADO",
+        "name": "CARBON ACTIVADO",
         "tipo_producto_id": 28,
         "descripcion": "",
         "peso": 0,
@@ -4621,7 +4621,7 @@
     },
     {
         "id": 232,
-        "producto": "FUNCINA DE GRAM",
+        "name": "FUNCINA DE GRAM",
         "tipo_producto_id": 28,
         "descripcion": "",
         "peso": 0,
@@ -4641,7 +4641,7 @@
     },
     {
         "id": 233,
-        "producto": "SPEED-CLEAN",
+        "name": "SPEED-CLEAN",
         "tipo_producto_id": 28,
         "descripcion": "",
         "peso": 0,
@@ -4661,7 +4661,7 @@
     },
     {
         "id": 234,
-        "producto": "PH SACKETS",
+        "name": "PH SACKETS",
         "tipo_producto_id": 28,
         "descripcion": "PH 10.01-PH4.01",
         "peso": 0,
@@ -4681,7 +4681,7 @@
     },
     {
         "id": 235,
-        "producto": "MYO-INOSITOL",
+        "name": "MYO-INOSITOL",
         "tipo_producto_id": 28,
         "descripcion": "4 UNIDADS",
         "peso": 0,
@@ -4701,7 +4701,7 @@
     },
     {
         "id": 236,
-        "producto": "DETERGENTE NEUTRO",
+        "name": "DETERGENTE NEUTRO",
         "tipo_producto_id": 28,
         "descripcion": "",
         "peso": 0,
@@ -4721,7 +4721,7 @@
     },
     {
         "id": 237,
-        "producto": "TINER",
+        "name": "TINER",
         "tipo_producto_id": 28,
         "descripcion": "2 UNIDADES",
         "peso": 0,
@@ -4741,7 +4741,7 @@
     },
     {
         "id": 238,
-        "producto": "BLANQUEADOR DESINFECTANTE",
+        "name": "BLANQUEADOR DESINFECTANTE",
         "tipo_producto_id": 28,
         "descripcion": "",
         "peso": 0,
@@ -4761,7 +4761,7 @@
     },
     {
         "id": 239,
-        "producto": "AGAR,PLANT TC",
+        "name": "AGAR,PLANT TC",
         "tipo_producto_id": 28,
         "descripcion": "",
         "peso": 0,
@@ -4781,7 +4781,7 @@
     },
     {
         "id": 240,
-        "producto": "ACEITE DE INMERCIÓN",
+        "name": "ACEITE DE INMERCIÓN",
         "tipo_producto_id": 28,
         "descripcion": "",
         "peso": 0,
@@ -4801,7 +4801,7 @@
     },
     {
         "id": 241,
-        "producto": "GUANTES DE NITRILO",
+        "name": "GUANTES DE NITRILO",
         "tipo_producto_id": 28,
         "descripcion": "CAJA X 100 UND",
         "peso": 0,
@@ -4821,7 +4821,7 @@
     },
     {
         "id": 242,
-        "producto": "TAPABOCAS DESECHABLE",
+        "name": "TAPABOCAS DESECHABLE",
         "tipo_producto_id": 28,
         "descripcion": "X 50 Unidades",
         "peso": 0,
@@ -4841,7 +4841,7 @@
     },
     {
         "id": 243,
-        "producto": "POLAINAS CON ANTIDESLIZANTE",
+        "name": "POLAINAS CON ANTIDESLIZANTE",
         "tipo_producto_id": 28,
         "descripcion": "X 50 Unidades",
         "peso": 0,
@@ -4861,7 +4861,7 @@
     },
     {
         "id": 244,
-        "producto": "COFIA (NURSE CAP STRIPED 21)",
+        "name": "COFIA (NURSE CAP STRIPED 21)",
         "tipo_producto_id": 28,
         "descripcion": "PAQUETE X 100 UND",
         "peso": 0,
@@ -4881,7 +4881,7 @@
     },
     {
         "id": 245,
-        "producto": "MASCARILLAS",
+        "name": "MASCARILLAS",
         "tipo_producto_id": 28,
         "descripcion": "",
         "peso": 0,
@@ -4901,7 +4901,7 @@
     },
     {
         "id": 246,
-        "producto": "MASCARILLA KN95",
+        "name": "MASCARILLA KN95",
         "tipo_producto_id": 28,
         "descripcion": "X 10 Unidades",
         "peso": 0,
@@ -4921,7 +4921,7 @@
     },
     {
         "id": 247,
-        "producto": "MASCARILLAS FACIALES",
+        "name": "MASCARILLAS FACIALES",
         "tipo_producto_id": 28,
         "descripcion": "X 25 Unidades",
         "peso": 0,
@@ -4941,7 +4941,7 @@
     },
     {
         "id": 248,
-        "producto": "GAFAS DE SEGURIDAD",
+        "name": "GAFAS DE SEGURIDAD",
         "tipo_producto_id": 28,
         "descripcion": "",
         "peso": 0,
@@ -4961,7 +4961,7 @@
     },
     {
         "id": 249,
-        "producto": "PAPEL ADSORBENTE",
+        "name": "PAPEL ADSORBENTE",
         "tipo_producto_id": 28,
         "descripcion": "",
         "peso": 0,
@@ -4981,7 +4981,7 @@
     },
     {
         "id": 250,
-        "producto": "JABON LIQUIDO",
+        "name": "JABON LIQUIDO",
         "tipo_producto_id": 28,
         "descripcion": "",
         "peso": 0,
@@ -5001,7 +5001,7 @@
     },
     {
         "id": 251,
-        "producto": "PAPEL FILTRO",
+        "name": "PAPEL FILTRO",
         "tipo_producto_id": 28,
         "descripcion": "Caja x 100 unidades",
         "peso": 0,
@@ -5021,7 +5021,7 @@
     },
     {
         "id": 252,
-        "producto": "LAMINAS PORTAOBJETO",
+        "name": "LAMINAS PORTAOBJETO",
         "tipo_producto_id": 28,
         "descripcion": "Caja x 50 piezas",
         "peso": 0,
@@ -5041,7 +5041,7 @@
     },
     {
         "id": 253,
-        "producto": "PUNTAS DE MICROPIPETAS 500 µL",
+        "name": "PUNTAS DE MICROPIPETAS 500 µL",
         "tipo_producto_id": 28,
         "descripcion": "1-10  µL  -   500  µL  -  200  µL",
         "peso": 0,
@@ -5061,7 +5061,7 @@
     },
     {
         "id": 254,
-        "producto": "ASA DE SIEMBRA",
+        "name": "ASA DE SIEMBRA",
         "tipo_producto_id": 28,
         "descripcion": "Paquete x 20 unidades",
         "peso": 0,
@@ -5081,7 +5081,7 @@
     },
     {
         "id": 255,
-        "producto": "FRASCO DE REACCION DE OXIGENO",
+        "name": "FRASCO DE REACCION DE OXIGENO",
         "tipo_producto_id": 28,
         "descripcion": "4 perlas de vidrio",
         "peso": 0,
@@ -5101,7 +5101,7 @@
     },
     {
         "id": 256,
-        "producto": "JERINGA DE PLASTICO GRADUAL",
+        "name": "JERINGA DE PLASTICO GRADUAL",
         "tipo_producto_id": 28,
         "descripcion": "Gradual de 50 centímetros",
         "peso": 0,
@@ -5121,7 +5121,7 @@
     },
     {
         "id": 257,
-        "producto": "PIPETA DE VALORACION",
+        "name": "PIPETA DE VALORACION",
         "tipo_producto_id": 28,
         "descripcion": "Pendiente",
         "peso": 0,
@@ -5141,7 +5141,7 @@
     },
     {
         "id": 258,
-        "producto": "KIT CALIBRACIÓN TURBIDEZ",
+        "name": "KIT CALIBRACIÓN TURBIDEZ",
         "tipo_producto_id": 28,
         "descripcion": "1 frasco de 60 ml - Pendiente",
         "peso": 0,
@@ -5161,7 +5161,7 @@
     },
     {
         "id": 259,
-        "producto": "SILLAS PEQUEÑAS",
+        "name": "SILLAS PEQUEÑAS",
         "tipo_producto_id": 28,
         "descripcion": "",
         "peso": 0,
@@ -5181,7 +5181,7 @@
     },
     {
         "id": 260,
-        "producto": "SILLAS CON ESPALDAR",
+        "name": "SILLAS CON ESPALDAR",
         "tipo_producto_id": 28,
         "descripcion": "",
         "peso": 0,
@@ -5201,7 +5201,7 @@
     },
     {
         "id": 261,
-        "producto": "KIT ANTIDERRAMES",
+        "name": "KIT ANTIDERRAMES",
         "tipo_producto_id": 28,
         "descripcion": "Cuenta con todos los elementos de emergencia.",
         "peso": 0,
@@ -5221,7 +5221,7 @@
     },
     {
         "id": 262,
-        "producto": "CARGADORES DE PILA BESTON",
+        "name": "CARGADORES DE PILA BESTON",
         "tipo_producto_id": 28,
         "descripcion": "UNO NO FUNCIONA",
         "peso": 0,
@@ -5241,7 +5241,7 @@
     },
     {
         "id": 263,
-        "producto": "FRASCOS SCHOT  250 ML",
+        "name": "FRASCOS SCHOT  250 ML",
         "tipo_producto_id": 28,
         "descripcion": "",
         "peso": 0,
@@ -5261,7 +5261,7 @@
     },
     {
         "id": 264,
-        "producto": "TUBO DE ENSAYO CON LLAVE",
+        "name": "TUBO DE ENSAYO CON LLAVE",
         "tipo_producto_id": 28,
         "descripcion": "Presenta rotura en la parte inferior -  y con masilla en la parte superior.",
         "peso": 0,
@@ -5281,7 +5281,7 @@
     },
     {
         "id": 265,
-        "producto": "BURETA VOLUMETRICA",
+        "name": "BURETA VOLUMETRICA",
         "tipo_producto_id": 28,
         "descripcion": "",
         "peso": 0,
@@ -5301,7 +5301,7 @@
     },
     {
         "id": 266,
-        "producto": "TUBO DE THIELE",
+        "name": "TUBO DE THIELE",
         "tipo_producto_id": 28,
         "descripcion": "",
         "peso": 0,
@@ -5321,7 +5321,7 @@
     },
     {
         "id": 267,
-        "producto": "TUBOS DE ENSAYO",
+        "name": "TUBOS DE ENSAYO",
         "tipo_producto_id": 28,
         "descripcion": "Los hay también con tapa",
         "peso": 0,
@@ -5341,7 +5341,7 @@
     },
     {
         "id": 268,
-        "producto": "EMBUDO DE DECANTACIÓN",
+        "name": "EMBUDO DE DECANTACIÓN",
         "tipo_producto_id": 28,
         "descripcion": "",
         "peso": 0,
@@ -5361,7 +5361,7 @@
     },
     {
         "id": 269,
-        "producto": "EMBUDO",
+        "name": "EMBUDO",
         "tipo_producto_id": 28,
         "descripcion": "",
         "peso": 0,
@@ -5381,7 +5381,7 @@
     },
     {
         "id": 270,
-        "producto": "TAPA ESMERILADA CON DESPRENDIMIENTO LATERAL",
+        "name": "TAPA ESMERILADA CON DESPRENDIMIENTO LATERAL",
         "tipo_producto_id": 28,
         "descripcion": "",
         "peso": 0,
@@ -5401,7 +5401,7 @@
     },
     {
         "id": 271,
-        "producto": "PIPETA GRADUADA 1 ML",
+        "name": "PIPETA GRADUADA 1 ML",
         "tipo_producto_id": 28,
         "descripcion": "",
         "peso": 0,
@@ -5421,7 +5421,7 @@
     },
     {
         "id": 272,
-        "producto": "PIPETA GRADUADA 2 ML",
+        "name": "PIPETA GRADUADA 2 ML",
         "tipo_producto_id": 28,
         "descripcion": "",
         "peso": 0,
@@ -5441,7 +5441,7 @@
     },
     {
         "id": 273,
-        "producto": "PIPETA GRADUADA 5 ML",
+        "name": "PIPETA GRADUADA 5 ML",
         "tipo_producto_id": 28,
         "descripcion": "",
         "peso": 0,
@@ -5461,7 +5461,7 @@
     },
     {
         "id": 274,
-        "producto": "PIPETA GRADUADA 10 ML",
+        "name": "PIPETA GRADUADA 10 ML",
         "tipo_producto_id": 28,
         "descripcion": "1 PLASTICA",
         "peso": 0,
@@ -5481,7 +5481,7 @@
     },
     {
         "id": 275,
-        "producto": "PIPETA AFORADA 10 ML",
+        "name": "PIPETA AFORADA 10 ML",
         "tipo_producto_id": 28,
         "descripcion": "",
         "peso": 0,
@@ -5501,7 +5501,7 @@
     },
     {
         "id": 276,
-        "producto": "PIPETA GRADUADA 20 ML",
+        "name": "PIPETA GRADUADA 20 ML",
         "tipo_producto_id": 28,
         "descripcion": "",
         "peso": 0,
@@ -5521,7 +5521,7 @@
     },
     {
         "id": 277,
-        "producto": "PIPETA GRADUADA 25 ML",
+        "name": "PIPETA GRADUADA 25 ML",
         "tipo_producto_id": 28,
         "descripcion": "",
         "peso": 0,
@@ -5541,7 +5541,7 @@
     },
     {
         "id": 278,
-        "producto": "TERMOMETRO",
+        "name": "TERMOMETRO",
         "tipo_producto_id": 28,
         "descripcion": "",
         "peso": 0,
@@ -5561,7 +5561,7 @@
     },
     {
         "id": 279,
-        "producto": "BEAKERS 1000 ML",
+        "name": "BEAKERS 1000 ML",
         "tipo_producto_id": 28,
         "descripcion": "2 fondo quebrado. 1 presenta una ruptura en la parte superior.",
         "peso": 0,
@@ -5581,7 +5581,7 @@
     },
     {
         "id": 280,
-        "producto": "BEAKERS 600 ML",
+        "name": "BEAKERS 600 ML",
         "tipo_producto_id": 28,
         "descripcion": "Reposición aprendiz Eddy Vivas, Ficha 2500567,  Tgo. Prevención y control",
         "peso": 0,
@@ -5601,7 +5601,7 @@
     },
     {
         "id": 281,
-        "producto": "BEAKERS 250 ML",
+        "name": "BEAKERS 250 ML",
         "tipo_producto_id": 28,
         "descripcion": "1 fondo quebrado",
         "peso": 0,
@@ -5621,7 +5621,7 @@
     },
     {
         "id": 282,
-        "producto": "BEAKERS 100 ML",
+        "name": "BEAKERS 100 ML",
         "tipo_producto_id": 28,
         "descripcion": "",
         "peso": 0,
@@ -5641,7 +5641,7 @@
     },
     {
         "id": 283,
-        "producto": "BEAKERS PLASTICO 50 ML",
+        "name": "BEAKERS PLASTICO 50 ML",
         "tipo_producto_id": 28,
         "descripcion": "",
         "peso": 0,
@@ -5661,7 +5661,7 @@
     },
     {
         "id": 284,
-        "producto": "BALON DE FONDO PLANO AFORADO 500 ML",
+        "name": "BALON DE FONDO PLANO AFORADO 500 ML",
         "tipo_producto_id": 28,
         "descripcion": "1 presenta ruptura a un costado.",
         "peso": 0,
@@ -5681,7 +5681,7 @@
     },
     {
         "id": 285,
-        "producto": "BALON DE FONDO PLANO AFORADO 250 ML",
+        "name": "BALON DE FONDO PLANO AFORADO 250 ML",
         "tipo_producto_id": 28,
         "descripcion": "",
         "peso": 0,
@@ -5701,7 +5701,7 @@
     },
     {
         "id": 286,
-        "producto": "BALON AFORADO FONDO PLANO 164 ML",
+        "name": "BALON AFORADO FONDO PLANO 164 ML",
         "tipo_producto_id": 28,
         "descripcion": "",
         "peso": 0,
@@ -5721,7 +5721,7 @@
     },
     {
         "id": 287,
-        "producto": "BALON AFORADO FONDO PLANO 432 ML",
+        "name": "BALON AFORADO FONDO PLANO 432 ML",
         "tipo_producto_id": 28,
         "descripcion": "",
         "peso": 0,
@@ -5741,7 +5741,7 @@
     },
     {
         "id": 288,
-        "producto": "MATRAZ AFORADO 500 ML",
+        "name": "MATRAZ AFORADO 500 ML",
         "tipo_producto_id": 28,
         "descripcion": "",
         "peso": 0,
@@ -5761,7 +5761,7 @@
     },
     {
         "id": 289,
-        "producto": "MATRAZ AFORADO 250 ML",
+        "name": "MATRAZ AFORADO 250 ML",
         "tipo_producto_id": 28,
         "descripcion": "",
         "peso": 0,
@@ -5781,7 +5781,7 @@
     },
     {
         "id": 290,
-        "producto": "PROBETA PLASTICO 500 ML",
+        "name": "PROBETA PLASTICO 500 ML",
         "tipo_producto_id": 28,
         "descripcion": "",
         "peso": 0,
@@ -5801,7 +5801,7 @@
     },
     {
         "id": 291,
-        "producto": "PROBETA VIDRIO 500 ML",
+        "name": "PROBETA VIDRIO 500 ML",
         "tipo_producto_id": 28,
         "descripcion": "PENDIENTE",
         "peso": 0,
@@ -5821,7 +5821,7 @@
     },
     {
         "id": 292,
-        "producto": "PROBETA PLASTICO 100 ML",
+        "name": "PROBETA PLASTICO 100 ML",
         "tipo_producto_id": 28,
         "descripcion": "",
         "peso": 0,
@@ -5841,7 +5841,7 @@
     },
     {
         "id": 293,
-        "producto": "PROBETA VIDRIO 100 ML",
+        "name": "PROBETA VIDRIO 100 ML",
         "tipo_producto_id": 28,
         "descripcion": "",
         "peso": 0,
@@ -5861,7 +5861,7 @@
     },
     {
         "id": 294,
-        "producto": "ERLEMENYER 250 ML CON BOCA Y TAPA ESMERILADA",
+        "name": "ERLEMENYER 250 ML CON BOCA Y TAPA ESMERILADA",
         "tipo_producto_id": 28,
         "descripcion": "",
         "peso": 0,
@@ -5881,7 +5881,7 @@
     },
     {
         "id": 295,
-        "producto": "CONDENSADOR SERPENTIN",
+        "name": "CONDENSADOR SERPENTIN",
         "tipo_producto_id": 28,
         "descripcion": "",
         "peso": 0,
@@ -5901,7 +5901,7 @@
     },
     {
         "id": 296,
-        "producto": "CONDENSADOR LIEBIG",
+        "name": "CONDENSADOR LIEBIG",
         "tipo_producto_id": 28,
         "descripcion": "",
         "peso": 0,
@@ -5921,7 +5921,7 @@
     },
     {
         "id": 297,
-        "producto": "BALON DE FONDO REDONDO AFORADO 1000 ML",
+        "name": "BALON DE FONDO REDONDO AFORADO 1000 ML",
         "tipo_producto_id": 28,
         "descripcion": "",
         "peso": 0,
@@ -5941,7 +5941,7 @@
     },
     {
         "id": 298,
-        "producto": "BALON DE FONFO REDONDO AFORADO 2000 ML",
+        "name": "BALON DE FONFO REDONDO AFORADO 2000 ML",
         "tipo_producto_id": 28,
         "descripcion": "",
         "peso": 0,
@@ -5961,7 +5961,7 @@
     },
     {
         "id": 299,
-        "producto": "MATRAZ AMBAR AFORADO 100 ML",
+        "name": "MATRAZ AMBAR AFORADO 100 ML",
         "tipo_producto_id": 28,
         "descripcion": "",
         "peso": 0,
@@ -5981,7 +5981,7 @@
     },
     {
         "id": 300,
-        "producto": "TUBO DE ENSAYO LISO",
+        "name": "TUBO DE ENSAYO LISO",
         "tipo_producto_id": 28,
         "descripcion": "5 TAPA ROSCA",
         "peso": 0,
@@ -6001,7 +6001,7 @@
     },
     {
         "id": 301,
-        "producto": "CABEZAL DE DESTILACIÓN",
+        "name": "CABEZAL DE DESTILACIÓN",
         "tipo_producto_id": 28,
         "descripcion": "",
         "peso": 0,
@@ -6021,7 +6021,7 @@
     },
     {
         "id": 302,
-        "producto": "MECHEROS",
+        "name": "MECHEROS",
         "tipo_producto_id": 28,
         "descripcion": "4 Aluminio - 1 de vidrio",
         "peso": 0,
@@ -6041,7 +6041,7 @@
     },
     {
         "id": 303,
-        "producto": "MORTERO DE PORCELANA",
+        "name": "MORTERO DE PORCELANA",
         "tipo_producto_id": 28,
         "descripcion": "",
         "peso": 0,
@@ -6061,7 +6061,7 @@
     },
     {
         "id": 304,
-        "producto": "CRISOL",
+        "name": "CRISOL",
         "tipo_producto_id": 28,
         "descripcion": "",
         "peso": 0,
@@ -6081,7 +6081,7 @@
     },
     {
         "id": 305,
-        "producto": "EMBUDO AFORADO 500 ML",
+        "name": "EMBUDO AFORADO 500 ML",
         "tipo_producto_id": 28,
         "descripcion": "",
         "peso": 0,
@@ -6101,7 +6101,7 @@
     },
     {
         "id": 306,
-        "producto": "EMBUDO BUCHNER",
+        "name": "EMBUDO BUCHNER",
         "tipo_producto_id": 28,
         "descripcion": "",
         "peso": 0,
@@ -6121,7 +6121,7 @@
     },
     {
         "id": 307,
-        "producto": "CUBETAS 10 ML",
+        "name": "CUBETAS 10 ML",
         "tipo_producto_id": 28,
         "descripcion": "",
         "peso": 0,
@@ -6141,7 +6141,7 @@
     },
     {
         "id": 308,
-        "producto": "CUBETAS 25 ML",
+        "name": "CUBETAS 25 ML",
         "tipo_producto_id": 28,
         "descripcion": "",
         "peso": 0,
@@ -6161,7 +6161,7 @@
     },
     {
         "id": 309,
-        "producto": "TUBO DE ENSAYO N.15 CON DESPRENDIMIENTO LATERAL",
+        "name": "TUBO DE ENSAYO N.15 CON DESPRENDIMIENTO LATERAL",
         "tipo_producto_id": 28,
         "descripcion": "",
         "peso": 0,
@@ -6181,7 +6181,7 @@
     },
     {
         "id": 310,
-        "producto": "GOTERO VIDIRO",
+        "name": "GOTERO VIDIRO",
         "tipo_producto_id": 28,
         "descripcion": "",
         "peso": 0,
@@ -6201,7 +6201,7 @@
     },
     {
         "id": 311,
-        "producto": "GRADILLAS",
+        "name": "GRADILLAS",
         "tipo_producto_id": 28,
         "descripcion": "",
         "peso": 0,
@@ -6221,7 +6221,7 @@
     },
     {
         "id": 312,
-        "producto": "PIPETEADOR PUMP",
+        "name": "PIPETEADOR PUMP",
         "tipo_producto_id": 28,
         "descripcion": "Volumen de 25 mililitros.",
         "peso": 0,
@@ -6241,7 +6241,7 @@
     },
     {
         "id": 313,
-        "producto": "DENSIMETRO",
+        "name": "DENSIMETRO",
         "tipo_producto_id": 28,
         "descripcion": "MAS 1 TERMOMETRO",
         "peso": 0,
@@ -6261,7 +6261,7 @@
     },
     {
         "id": 314,
-        "producto": "TRIPODE (soporte universal",
+        "name": "TRIPODE (soporte universal",
         "tipo_producto_id": 28,
         "descripcion": "",
         "peso": 0,
@@ -6281,7 +6281,7 @@
     },
     {
         "id": 315,
-        "producto": "BASE DE SOPORTE UNIVERSAL",
+        "name": "BASE DE SOPORTE UNIVERSAL",
         "tipo_producto_id": 28,
         "descripcion": "1 No cuenta con varilla",
         "peso": 0,
@@ -6301,7 +6301,7 @@
     },
     {
         "id": 316,
-        "producto": "REJILLA DE ASBESTO",
+        "name": "REJILLA DE ASBESTO",
         "tipo_producto_id": 28,
         "descripcion": "1 La tiene la estufa eléctrica.",
         "peso": 0,
@@ -6321,7 +6321,7 @@
     },
     {
         "id": 317,
-        "producto": "MECHERO BUNSEN",
+        "name": "MECHERO BUNSEN",
         "tipo_producto_id": 28,
         "descripcion": "",
         "peso": 0,
@@ -6341,7 +6341,7 @@
     },
     {
         "id": 318,
-        "producto": "PIE DE REY",
+        "name": "PIE DE REY",
         "tipo_producto_id": 28,
         "descripcion": "Con respetivo estuche",
         "peso": 0,
@@ -6361,7 +6361,7 @@
     },
     {
         "id": 319,
-        "producto": "PINZAS PARA CRISOL",
+        "name": "PINZAS PARA CRISOL",
         "tipo_producto_id": 28,
         "descripcion": "",
         "peso": 0,
@@ -6381,7 +6381,7 @@
     },
     {
         "id": 320,
-        "producto": "ARO METALICO ESTRECHO",
+        "name": "ARO METALICO ESTRECHO",
         "tipo_producto_id": 28,
         "descripcion": "",
         "peso": 0,
@@ -6401,7 +6401,7 @@
     },
     {
         "id": 321,
-        "producto": "ARO METALICO ANCHO",
+        "name": "ARO METALICO ANCHO",
         "tipo_producto_id": 28,
         "descripcion": "",
         "peso": 0,
@@ -6421,7 +6421,7 @@
     },
     {
         "id": 322,
-        "producto": "ESCOBILLA",
+        "name": "ESCOBILLA",
         "tipo_producto_id": 28,
         "descripcion": "",
         "peso": 0,
@@ -6441,7 +6441,7 @@
     },
     {
         "id": 323,
-        "producto": "PINZA DOBE NUEZ",
+        "name": "PINZA DOBE NUEZ",
         "tipo_producto_id": 28,
         "descripcion": "",
         "peso": 0,
@@ -6461,7 +6461,7 @@
     },
     {
         "id": 324,
-        "producto": "DOBLE NUEZ CORTO O REDUCIDO",
+        "name": "DOBLE NUEZ CORTO O REDUCIDO",
         "tipo_producto_id": 28,
         "descripcion": "",
         "peso": 0,
@@ -6481,7 +6481,7 @@
     },
     {
         "id": 325,
-        "producto": "PINZA DE LABORATORIO",
+        "name": "PINZA DE LABORATORIO",
         "tipo_producto_id": 28,
         "descripcion": "",
         "peso": 0,
@@ -6501,7 +6501,7 @@
     },
     {
         "id": 326,
-        "producto": "PERA",
+        "name": "PERA",
         "tipo_producto_id": 28,
         "descripcion": "4 No funcionan bien",
         "peso": 0,
@@ -6521,7 +6521,7 @@
     },
     {
         "id": 327,
-        "producto": "PINZA PARA MONTAJE DE DESTILACIÓN",
+        "name": "PINZA PARA MONTAJE DE DESTILACIÓN",
         "tipo_producto_id": 28,
         "descripcion": "",
         "peso": 0,
@@ -6541,7 +6541,7 @@
     },
     {
         "id": 328,
-        "producto": "GOTEROS PLASTICOS",
+        "name": "GOTEROS PLASTICOS",
         "tipo_producto_id": 28,
         "descripcion": "",
         "peso": 0,
@@ -6561,7 +6561,7 @@
     },
     {
         "id": 329,
-        "producto": "LLAVE PARA BURETA ELECTRICA",
+        "name": "LLAVE PARA BURETA ELECTRICA",
         "tipo_producto_id": 28,
         "descripcion": "",
         "peso": 0,
@@ -6581,7 +6581,7 @@
     },
     {
         "id": 330,
-        "producto": "BAGUETAS ( agitador de vidrio)",
+        "name": "BAGUETAS ( agitador de vidrio)",
         "tipo_producto_id": 28,
         "descripcion": "",
         "peso": 0,
@@ -6601,7 +6601,7 @@
     },
     {
         "id": 331,
-        "producto": "PIPETAS PASTEUR VIDRIO",
+        "name": "PIPETAS PASTEUR VIDRIO",
         "tipo_producto_id": 28,
         "descripcion": "",
         "peso": 0,
@@ -6621,7 +6621,7 @@
     },
     {
         "id": 332,
-        "producto": "ESPATULA",
+        "name": "ESPATULA",
         "tipo_producto_id": 28,
         "descripcion": "",
         "peso": 0,
@@ -6641,7 +6641,7 @@
     },
     {
         "id": 333,
-        "producto": "PISETA",
+        "name": "PISETA",
         "tipo_producto_id": 28,
         "descripcion": "3 De 100 mililitros  -  1 500 mililitros  -  1 de 250 mililitros",
         "peso": 0,
@@ -6661,7 +6661,7 @@
     },
     {
         "id": 334,
-        "producto": "ATOMIZADOR",
+        "name": "ATOMIZADOR",
         "tipo_producto_id": 28,
         "descripcion": "",
         "peso": 0,
@@ -6681,7 +6681,7 @@
     },
     {
         "id": 335,
-        "producto": "REPUESTO PARA BURETA DIGITAL",
+        "name": "REPUESTO PARA BURETA DIGITAL",
         "tipo_producto_id": 28,
         "descripcion": "",
         "peso": 0,
@@ -6701,7 +6701,7 @@
     },
     {
         "id": 336,
-        "producto": "PICNÓMETRO",
+        "name": "PICNÓMETRO",
         "tipo_producto_id": 28,
         "descripcion": "Reposición aprendiz Luz Montañez Perilla, Ficha 2543235 Tgo. Prevención y control",
         "peso": 0,
@@ -6721,7 +6721,7 @@
     },
     {
         "id": 337,
-        "producto": "PERLAS DE CRISOL",
+        "name": "PERLAS DE CRISOL",
         "tipo_producto_id": 28,
         "descripcion": "",
         "peso": 0,
@@ -6741,7 +6741,7 @@
     },
     {
         "id": 338,
-        "producto": "ADAPTADOR DE VIAL",
+        "name": "ADAPTADOR DE VIAL",
         "tipo_producto_id": 28,
         "descripcion": "",
         "peso": 0,
@@ -6761,7 +6761,7 @@
     },
     {
         "id": 339,
-        "producto": "ERLENMEYER 3000 ML",
+        "name": "ERLENMEYER 3000 ML",
         "tipo_producto_id": 28,
         "descripcion": "",
         "peso": 0,
@@ -6781,7 +6781,7 @@
     },
     {
         "id": 340,
-        "producto": "ERLENMEYER 2000 ML",
+        "name": "ERLENMEYER 2000 ML",
         "tipo_producto_id": 28,
         "descripcion": "",
         "peso": 0,
@@ -6801,7 +6801,7 @@
     },
     {
         "id": 341,
-        "producto": "ERLENMEYER 5000 ML",
+        "name": "ERLENMEYER 5000 ML",
         "tipo_producto_id": 28,
         "descripcion": "Fisura en la parte superior",
         "peso": 0,
@@ -6821,7 +6821,7 @@
     },
     {
         "id": 342,
-        "producto": "ERLENMEYER 500 ML",
+        "name": "ERLENMEYER 500 ML",
         "tipo_producto_id": 28,
         "descripcion": "1 Fisura en la parte superior",
         "peso": 0,
@@ -6841,7 +6841,7 @@
     },
     {
         "id": 343,
-        "producto": "ERLENMEYER 1000 ML",
+        "name": "ERLENMEYER 1000 ML",
         "tipo_producto_id": 28,
         "descripcion": "",
         "peso": 0,
@@ -6861,7 +6861,7 @@
     },
     {
         "id": 344,
-        "producto": "ERLENMEYER 250 ML",
+        "name": "ERLENMEYER 250 ML",
         "tipo_producto_id": 28,
         "descripcion": "9 TAPA ROSCA",
         "peso": 0,
@@ -6881,7 +6881,7 @@
     },
     {
         "id": 345,
-        "producto": "BURETA 10 ML",
+        "name": "BURETA 10 ML",
         "tipo_producto_id": 28,
         "descripcion": "",
         "peso": 0,
@@ -6901,7 +6901,7 @@
     },
     {
         "id": 346,
-        "producto": "ERLENMEYER DESTILACION 500 ML - 250 ML",
+        "name": "ERLENMEYER DESTILACION 500 ML - 250 ML",
         "tipo_producto_id": 28,
         "descripcion": "12 500 ML- 11 ML",
         "peso": 0,
@@ -6921,7 +6921,7 @@
     },
     {
         "id": 347,
-        "producto": "BURETA 50 ML",
+        "name": "BURETA 50 ML",
         "tipo_producto_id": 28,
         "descripcion": "",
         "peso": 0,
@@ -6941,7 +6941,7 @@
     },
     {
         "id": 348,
-        "producto": "BURETA 25 ML",
+        "name": "BURETA 25 ML",
         "tipo_producto_id": 28,
         "descripcion": "",
         "peso": 0,
@@ -6961,7 +6961,7 @@
     },
     {
         "id": 349,
-        "producto": "BALON FONDO PLANO TAPA ESMERALIZADA 250 ML",
+        "name": "BALON FONDO PLANO TAPA ESMERALIZADA 250 ML",
         "tipo_producto_id": 28,
         "descripcion": "1 CON TAPA- 2 FISURA",
         "peso": 0,
@@ -6981,7 +6981,7 @@
     },
     {
         "id": 350,
-        "producto": "BALON FONDO PLANO 500 ML",
+        "name": "BALON FONDO PLANO 500 ML",
         "tipo_producto_id": 28,
         "descripcion": "",
         "peso": 0,
@@ -7001,7 +7001,7 @@
     },
     {
         "id": 351,
-        "producto": "BALON FONDO PLANO TAPA ESMERALIZADA 1000 ML",
+        "name": "BALON FONDO PLANO TAPA ESMERALIZADA 1000 ML",
         "tipo_producto_id": 28,
         "descripcion": "",
         "peso": 0,
@@ -7021,7 +7021,7 @@
     },
     {
         "id": 352,
-        "producto": "BALON FONDO PLANO BOCA ANCHA 1000",
+        "name": "BALON FONDO PLANO BOCA ANCHA 1000",
         "tipo_producto_id": 28,
         "descripcion": "",
         "peso": 0,
@@ -7041,7 +7041,7 @@
     },
     {
         "id": 353,
-        "producto": "BALON FONDO REDONDO 500 ML",
+        "name": "BALON FONDO REDONDO 500 ML",
         "tipo_producto_id": 28,
         "descripcion": "",
         "peso": 0,
@@ -7061,7 +7061,7 @@
     },
     {
         "id": 354,
-        "producto": "BALON FONDO REDONDO TAPA ESMERALIZADA 500 ML",
+        "name": "BALON FONDO REDONDO TAPA ESMERALIZADA 500 ML",
         "tipo_producto_id": 28,
         "descripcion": "",
         "peso": 0,
@@ -7081,7 +7081,7 @@
     },
     {
         "id": 355,
-        "producto": "BALON FONDO REDONDO DECANTADOR 250 ML",
+        "name": "BALON FONDO REDONDO DECANTADOR 250 ML",
         "tipo_producto_id": 28,
         "descripcion": "",
         "peso": 0,
@@ -7101,7 +7101,7 @@
     },
     {
         "id": 356,
-        "producto": "BALON FONDO REDONDO DECANTADOR 150 ML",
+        "name": "BALON FONDO REDONDO DECANTADOR 150 ML",
         "tipo_producto_id": 28,
         "descripcion": "",
         "peso": 0,
@@ -7121,7 +7121,7 @@
     },
     {
         "id": 357,
-        "producto": "BALON FONDO REDONDO DECANTADOR 100 ML",
+        "name": "BALON FONDO REDONDO DECANTADOR 100 ML",
         "tipo_producto_id": 28,
         "descripcion": "",
         "peso": 0,
@@ -7141,7 +7141,7 @@
     },
     {
         "id": 358,
-        "producto": "BALON FONDO PLANO 100 ML",
+        "name": "BALON FONDO PLANO 100 ML",
         "tipo_producto_id": 28,
         "descripcion": "",
         "peso": 0,
@@ -7161,7 +7161,7 @@
     },
     {
         "id": 359,
-        "producto": "BALON FONDO PLANO 250 ML",
+        "name": "BALON FONDO PLANO 250 ML",
         "tipo_producto_id": 28,
         "descripcion": "",
         "peso": 0,
@@ -7181,7 +7181,7 @@
     },
     {
         "id": 360,
-        "producto": "BALON FONDO PLANO 432 ML",
+        "name": "BALON FONDO PLANO 432 ML",
         "tipo_producto_id": 28,
         "descripcion": "",
         "peso": 0,
@@ -7201,7 +7201,7 @@
     },
     {
         "id": 361,
-        "producto": "MICROBURETA",
+        "name": "MICROBURETA",
         "tipo_producto_id": 28,
         "descripcion": "",
         "peso": 0,
@@ -7221,7 +7221,7 @@
     },
     {
         "id": 362,
-        "producto": "MATRAZ AFORADO 50 ML",
+        "name": "MATRAZ AFORADO 50 ML",
         "tipo_producto_id": 28,
         "descripcion": "",
         "peso": 0,
@@ -7241,7 +7241,7 @@
     },
     {
         "id": 363,
-        "producto": "MATRAZ AFORADO 100 ML",
+        "name": "MATRAZ AFORADO 100 ML",
         "tipo_producto_id": 28,
         "descripcion": "No cuenta con tapa",
         "peso": 0,
@@ -7261,7 +7261,7 @@
     },
     {
         "id": 364,
-        "producto": "MATRAZ AFORADO 500 ML",
+        "name": "MATRAZ AFORADO 500 ML",
         "tipo_producto_id": 28,
         "descripcion": "",
         "peso": 0,
@@ -7281,7 +7281,7 @@
     },
     {
         "id": 365,
-        "producto": "ADAPTADOR DE DESTILACION",
+        "name": "ADAPTADOR DE DESTILACION",
         "tipo_producto_id": 28,
         "descripcion": "FISURADO EN LA PARTE SUPEROR",
         "peso": 0,
@@ -7301,7 +7301,7 @@
     },
     {
         "id": 366,
-        "producto": "TUBO CENTRIFUGA",
+        "name": "TUBO CENTRIFUGA",
         "tipo_producto_id": 28,
         "descripcion": "",
         "peso": 0,
@@ -7321,7 +7321,7 @@
     },
     {
         "id": 367,
-        "producto": "ROTOR",
+        "name": "ROTOR",
         "tipo_producto_id": 28,
         "descripcion": "",
         "peso": 0,
@@ -7341,7 +7341,7 @@
     },
     {
         "id": 368,
-        "producto": "CUBETA DE VIDRIO (test de jarras)",
+        "name": "CUBETA DE VIDRIO (test de jarras)",
         "tipo_producto_id": 28,
         "descripcion": "",
         "peso": 0,
@@ -7361,7 +7361,7 @@
     },
     {
         "id": 369,
-        "producto": "ALCOHOL AL 90%",
+        "name": "ALCOHOL AL 90%",
         "tipo_producto_id": 28,
         "descripcion": "",
         "peso": 0,
@@ -7381,7 +7381,7 @@
     },
     {
         "id": 370,
-        "producto": "HIPOCLORITO 5,25%",
+        "name": "HIPOCLORITO 5,25%",
         "tipo_producto_id": 28,
         "descripcion": "",
         "peso": 0,
@@ -7401,7 +7401,7 @@
     },
     {
         "id": 371,
-        "producto": "HIPOCLORITO 4%",
+        "name": "HIPOCLORITO 4%",
         "tipo_producto_id": 28,
         "descripcion": "",
         "peso": 0,
@@ -7421,7 +7421,7 @@
     },
     {
         "id": 372,
-        "producto": "HIPOCLORITO 3%",
+        "name": "HIPOCLORITO 3%",
         "tipo_producto_id": 28,
         "descripcion": "",
         "peso": 0,
@@ -7441,7 +7441,7 @@
     },
     {
         "id": 373,
-        "producto": "HIPOCLORITO DE SODIO 15%",
+        "name": "HIPOCLORITO DE SODIO 15%",
         "tipo_producto_id": 28,
         "descripcion": "",
         "peso": 0,
@@ -7461,7 +7461,7 @@
     },
     {
         "id": 374,
-        "producto": "HIPOCLORITO DE SODIO 1%",
+        "name": "HIPOCLORITO DE SODIO 1%",
         "tipo_producto_id": 28,
         "descripcion": "",
         "peso": 0,
@@ -7481,7 +7481,7 @@
     },
     {
         "id": 375,
-        "producto": "ALCOHOL ETILICO AL 96%",
+        "name": "ALCOHOL ETILICO AL 96%",
         "tipo_producto_id": 28,
         "descripcion": "",
         "peso": 0,
@@ -7501,7 +7501,7 @@
     },
     {
         "id": 376,
-        "producto": "ALCOHOL ISOPROPILICO",
+        "name": "ALCOHOL ISOPROPILICO",
         "tipo_producto_id": 28,
         "descripcion": "",
         "peso": 0,
@@ -7521,7 +7521,7 @@
     },
     {
         "id": 377,
-        "producto": "SPEED-CLEAN",
+        "name": "SPEED-CLEAN",
         "tipo_producto_id": 28,
         "descripcion": "",
         "peso": 0,
@@ -7541,7 +7541,7 @@
     },
     {
         "id": 378,
-        "producto": "BOLSA DE SAL",
+        "name": "BOLSA DE SAL",
         "tipo_producto_id": 28,
         "descripcion": "",
         "peso": 0,
@@ -7561,7 +7561,7 @@
     },
     {
         "id": 379,
-        "producto": "GLISERINA PURA",
+        "name": "GLISERINA PURA",
         "tipo_producto_id": 28,
         "descripcion": "",
         "peso": 0,
@@ -7581,7 +7581,7 @@
     },
     {
         "id": 380,
-        "producto": "KIT DE CALIBRACION INICIAL IDS PH-SENSOR",
+        "name": "KIT DE CALIBRACION INICIAL IDS PH-SENSOR",
         "tipo_producto_id": 28,
         "descripcion": "",
         "peso": 0,
@@ -7601,7 +7601,7 @@
     },
     {
         "id": 381,
-        "producto": "CICLOHEXANONA",
+        "name": "CICLOHEXANONA",
         "tipo_producto_id": 28,
         "descripcion": "",
         "peso": 0,
@@ -7621,7 +7621,7 @@
     },
     {
         "id": 382,
-        "producto": "SULFATO DE ALUMINIO",
+        "name": "SULFATO DE ALUMINIO",
         "tipo_producto_id": 28,
         "descripcion": "",
         "peso": 0,
@@ -7641,7 +7641,7 @@
     },
     {
         "id": 383,
-        "producto": "PIEDRA DE ALUMBRE",
+        "name": "PIEDRA DE ALUMBRE",
         "tipo_producto_id": 28,
         "descripcion": "",
         "peso": 0,
@@ -7661,7 +7661,7 @@
     },
     {
         "id": 384,
-        "producto": "PIEDRA DE ALUMBRE EN PASTA",
+        "name": "PIEDRA DE ALUMBRE EN PASTA",
         "tipo_producto_id": 28,
         "descripcion": "",
         "peso": 0,
@@ -7681,7 +7681,7 @@
     },
     {
         "id": 385,
-        "producto": "CLORURO DE MAGNESIO",
+        "name": "CLORURO DE MAGNESIO",
         "tipo_producto_id": 28,
         "descripcion": "SE ENCUENTRA DERRETIDO",
         "peso": 0,
@@ -7701,7 +7701,7 @@
     },
     {
         "id": 386,
-        "producto": "SAL DE MAR",
+        "name": "SAL DE MAR",
         "tipo_producto_id": 28,
         "descripcion": "",
         "peso": 0,
@@ -7721,7 +7721,7 @@
     },
     {
         "id": 387,
-        "producto": "MAIZENA",
+        "name": "MAIZENA",
         "tipo_producto_id": 28,
         "descripcion": "",
         "peso": 0,
@@ -7741,7 +7741,7 @@
     },
     {
         "id": 388,
-        "producto": "COLORANTE PARA ALIMENTOS",
+        "name": "COLORANTE PARA ALIMENTOS",
         "tipo_producto_id": 28,
         "descripcion": "",
         "peso": 0,
@@ -7761,7 +7761,7 @@
     },
     {
         "id": 389,
-        "producto": "COLORANTE DE ALIMENTOS",
+        "name": "COLORANTE DE ALIMENTOS",
         "tipo_producto_id": 28,
         "descripcion": "",
         "peso": 0,
@@ -7781,7 +7781,7 @@
     },
     {
         "id": 390,
-        "producto": "AGUA DE LINO",
+        "name": "AGUA DE LINO",
         "tipo_producto_id": 28,
         "descripcion": "",
         "peso": 0,
@@ -7801,7 +7801,7 @@
     },
     {
         "id": 391,
-        "producto": "FILTRADO 3 ESTEREO EL BOCACHICO",
+        "name": "FILTRADO 3 ESTEREO EL BOCACHICO",
         "tipo_producto_id": 28,
         "descripcion": "",
         "peso": 0,
@@ -7821,7 +7821,7 @@
     },
     {
         "id": 392,
-        "producto": "SOLUCION INDICADORA DE CALCIO Y MAGNESIO",
+        "name": "SOLUCION INDICADORA DE CALCIO Y MAGNESIO",
         "tipo_producto_id": 28,
         "descripcion": "",
         "peso": 0,
@@ -7841,7 +7841,7 @@
     },
     {
         "id": 393,
-        "producto": "SOLUCION ALCALINA",
+        "name": "SOLUCION ALCALINA",
         "tipo_producto_id": 28,
         "descripcion": "",
         "peso": 0,
@@ -7861,7 +7861,7 @@
     },
     {
         "id": 394,
-        "producto": "ACEITE MINERAL GL",
+        "name": "ACEITE MINERAL GL",
         "tipo_producto_id": 28,
         "descripcion": "",
         "peso": 0,
@@ -7881,7 +7881,7 @@
     },
     {
         "id": 395,
-        "producto": "PROPILENGLICOL LB",
+        "name": "PROPILENGLICOL LB",
         "tipo_producto_id": 28,
         "descripcion": "",
         "peso": 0,
@@ -7901,7 +7901,7 @@
     },
     {
         "id": 396,
-        "producto": "FILL SOLUCION 3M KCL- CLORURO DE POTASIO - 3 MOL",
+        "name": "FILL SOLUCION 3M KCL- CLORURO DE POTASIO - 3 MOL",
         "tipo_producto_id": 28,
         "descripcion": "",
         "peso": 0,
@@ -7921,7 +7921,7 @@
     },
     {
         "id": 397,
-        "producto": "VINAGRE BLANCO",
+        "name": "VINAGRE BLANCO",
         "tipo_producto_id": 28,
         "descripcion": "3 UNIDADES X 1000",
         "peso": 0,
@@ -7941,7 +7941,7 @@
     },
     {
         "id": 398,
-        "producto": "VINAGRE DE LIMPIEZA",
+        "name": "VINAGRE DE LIMPIEZA",
         "tipo_producto_id": 28,
         "descripcion": "",
         "peso": 0,
@@ -7961,7 +7961,7 @@
     },
     {
         "id": 399,
-        "producto": "VINAGRE DE MANZANA",
+        "name": "VINAGRE DE MANZANA",
         "tipo_producto_id": 28,
         "descripcion": "",
         "peso": 0,
@@ -7981,7 +7981,7 @@
     },
     {
         "id": 400,
-        "producto": "GENAPOL 40 S X KG",
+        "name": "GENAPOL 40 S X KG",
         "tipo_producto_id": 28,
         "descripcion": "",
         "peso": 0,
@@ -8001,7 +8001,7 @@
     },
     {
         "id": 401,
-        "producto": "ACIDO MURIATICO",
+        "name": "ACIDO MURIATICO",
         "tipo_producto_id": 28,
         "descripcion": "",
         "peso": 0,
@@ -8021,7 +8021,7 @@
     },
     {
         "id": 402,
-        "producto": "ALCOHOL INDUSTRIAL",
+        "name": "ALCOHOL INDUSTRIAL",
         "tipo_producto_id": 28,
         "descripcion": "",
         "peso": 0,
@@ -8041,7 +8041,7 @@
     },
     {
         "id": 403,
-        "producto": "BUTILGLICOL X KG",
+        "name": "BUTILGLICOL X KG",
         "tipo_producto_id": 28,
         "descripcion": "",
         "peso": 0,
@@ -8061,7 +8061,7 @@
     },
     {
         "id": 404,
-        "producto": "GLISERINA X LT",
+        "name": "GLISERINA X LT",
         "tipo_producto_id": 28,
         "descripcion": "",
         "peso": 0,
@@ -8081,7 +8081,7 @@
     },
     {
         "id": 405,
-        "producto": "CIACOMEQ SURFACTANTE",
+        "name": "CIACOMEQ SURFACTANTE",
         "tipo_producto_id": 28,
         "descripcion": "",
         "peso": 0,
@@ -8101,7 +8101,7 @@
     },
     {
         "id": 406,
-        "producto": "COCOAMIDA LIQUIDA X KG",
+        "name": "COCOAMIDA LIQUIDA X KG",
         "tipo_producto_id": 28,
         "descripcion": "",
         "peso": 0,
@@ -8121,7 +8121,7 @@
     },
     {
         "id": 407,
-        "producto": "ACIDO SULFONICO LINEAL",
+        "name": "ACIDO SULFONICO LINEAL",
         "tipo_producto_id": 28,
         "descripcion": "",
         "peso": 0,
@@ -8141,7 +8141,7 @@
     },
     {
         "id": 408,
-        "producto": "CIACOGAL X LT",
+        "name": "CIACOGAL X LT",
         "tipo_producto_id": 28,
         "descripcion": "",
         "peso": 0,
@@ -8161,7 +8161,7 @@
     },
     {
         "id": 409,
-        "producto": "SILICONA EMULSIONADA AL 60%",
+        "name": "SILICONA EMULSIONADA AL 60%",
         "tipo_producto_id": 28,
         "descripcion": "",
         "peso": 0,
@@ -8181,7 +8181,7 @@
     },
     {
         "id": 410,
-        "producto": "TRIETANOLAMINA",
+        "name": "TRIETANOLAMINA",
         "tipo_producto_id": 28,
         "descripcion": "",
         "peso": 0,
@@ -8201,7 +8201,7 @@
     },
     {
         "id": 411,
-        "producto": "TRIETANOLAMINA",
+        "name": "TRIETANOLAMINA",
         "tipo_producto_id": 28,
         "descripcion": "",
         "peso": 0,
@@ -8221,7 +8221,7 @@
     },
     {
         "id": 412,
-        "producto": "ALCOHOL USO GENERAL AL 70%",
+        "name": "ALCOHOL USO GENERAL AL 70%",
         "tipo_producto_id": 28,
         "descripcion": "",
         "peso": 0,
@@ -8241,7 +8241,7 @@
     },
     {
         "id": 413,
-        "producto": "C.M.C TIXOTROL",
+        "name": "C.M.C TIXOTROL",
         "tipo_producto_id": 28,
         "descripcion": "",
         "peso": 0,
@@ -8261,7 +8261,7 @@
     },
     {
         "id": 414,
-        "producto": "SAL ALIMENTARIA DE CALIDAD",
+        "name": "SAL ALIMENTARIA DE CALIDAD",
         "tipo_producto_id": 28,
         "descripcion": "",
         "peso": 0,
@@ -8281,7 +8281,7 @@
     },
     {
         "id": 415,
-        "producto": "BLANQUEADOR OPTICO",
+        "name": "BLANQUEADOR OPTICO",
         "tipo_producto_id": 28,
         "descripcion": "",
         "peso": 0,
@@ -8301,7 +8301,7 @@
     },
     {
         "id": 416,
-        "producto": "DIOXIDO DE TITANEO ANATACE",
+        "name": "DIOXIDO DE TITANEO ANATACE",
         "tipo_producto_id": 28,
         "descripcion": "",
         "peso": 0,
@@ -8321,7 +8321,7 @@
     },
     {
         "id": 417,
-        "producto": "NAOH 0.1 N CIMPA",
+        "name": "NAOH 0.1 N CIMPA",
         "tipo_producto_id": 28,
         "descripcion": "",
         "peso": 0,
@@ -8341,7 +8341,7 @@
     },
     {
         "id": 418,
-        "producto": "ACIDO ACETICO GRADO ALIMENTICIO",
+        "name": "ACIDO ACETICO GRADO ALIMENTICIO",
         "tipo_producto_id": 28,
         "descripcion": "",
         "peso": 0,
@@ -8361,7 +8361,7 @@
     },
     {
         "id": 419,
-        "producto": "SODA LIQUIDA 60%",
+        "name": "SODA LIQUIDA 60%",
         "tipo_producto_id": 28,
         "descripcion": "",
         "peso": 0,
@@ -8381,7 +8381,7 @@
     },
     {
         "id": 420,
-        "producto": "AZUCAR",
+        "name": "AZUCAR",
         "tipo_producto_id": 28,
         "descripcion": "",
         "peso": 0,
@@ -8401,7 +8401,7 @@
     },
     {
         "id": 421,
-        "producto": "ALMIDON DE YUCA",
+        "name": "ALMIDON DE YUCA",
         "tipo_producto_id": 28,
         "descripcion": "",
         "peso": 0,
@@ -8421,7 +8421,7 @@
     },
     {
         "id": 422,
-        "producto": "TEST 0-83 GESAMT-STICKSTOFF TN 22",
+        "name": "TEST 0-83 GESAMT-STICKSTOFF TN 22",
         "tipo_producto_id": 28,
         "descripcion": "X 20 sachets",
         "peso": 0,
@@ -8441,7 +8441,7 @@
     },
     {
         "id": 423,
-        "producto": "TEST 0-12 DQO",
+        "name": "TEST 0-12 DQO",
         "tipo_producto_id": 28,
         "descripcion": "X 20 sachets",
         "peso": 0,
@@ -8461,7 +8461,7 @@
     },
     {
         "id": 424,
-        "producto": "TEST 0-98 ALUMINIO",
+        "name": "TEST 0-98 ALUMINIO",
         "tipo_producto_id": 28,
         "descripcion": "X 20 sachets",
         "peso": 0,
@@ -8481,7 +8481,7 @@
     },
     {
         "id": 425,
-        "producto": "TEST 0-40 FLORURO",
+        "name": "TEST 0-40 FLORURO",
         "tipo_producto_id": 28,
         "descripcion": "X 20 sachets",
         "peso": 0,
@@ -8501,7 +8501,7 @@
     },
     {
         "id": 426,
-        "producto": "TEST 0-58 MANGANESIO",
+        "name": "TEST 0-58 MANGANESIO",
         "tipo_producto_id": 28,
         "descripcion": "X 20 sachets",
         "peso": 0,
@@ -8521,7 +8521,7 @@
     },
     {
         "id": 427,
-        "producto": "TEST 0-21 CLORURO",
+        "name": "TEST 0-21 CLORURO",
         "tipo_producto_id": 28,
         "descripcion": "X 20 sachets",
         "peso": 0,
@@ -8541,7 +8541,7 @@
     },
     {
         "id": 428,
-        "producto": "TEST 0-54 COBRE",
+        "name": "TEST 0-54 COBRE",
         "tipo_producto_id": 28,
         "descripcion": "X 20 sachets",
         "peso": 0,
@@ -8561,7 +8561,7 @@
     },
     {
         "id": 429,
-        "producto": "TEST 0-17 CLORO/OZONO",
+        "name": "TEST 0-17 CLORO/OZONO",
         "tipo_producto_id": 28,
         "descripcion": "SACKETS 20",
         "peso": 0,
@@ -8581,7 +8581,7 @@
     },
     {
         "id": 430,
-        "producto": "TEST 0-96 ZINK 4",
+        "name": "TEST 0-96 ZINK 4",
         "tipo_producto_id": 28,
         "descripcion": "X 20 sachets",
         "peso": 0,
@@ -8601,7 +8601,7 @@
     },
     {
         "id": 431,
-        "producto": "TEST 0-64 NITRATO",
+        "name": "TEST 0-64 NITRATO",
         "tipo_producto_id": 28,
         "descripcion": "X 20 sachets",
         "peso": 0,
@@ -8621,7 +8621,7 @@
     },
     {
         "id": 432,
-        "producto": "TEST 0-43 DUREZA",
+        "name": "TEST 0-43 DUREZA",
         "tipo_producto_id": 28,
         "descripcion": "X 20 sachets",
         "peso": 0,
@@ -8641,7 +8641,7 @@
     },
     {
         "id": 433,
-        "producto": "TEST 0-37 HIERRO",
+        "name": "TEST 0-37 HIERRO",
         "tipo_producto_id": 28,
         "descripcion": "",
         "peso": 0,
@@ -8661,7 +8661,7 @@
     },
     {
         "id": 434,
-        "producto": "TEST O-38 BOX A ETANOL",
+        "name": "TEST O-38 BOX A ETANOL",
         "tipo_producto_id": 28,
         "descripcion": "",
         "peso": 0,
@@ -8681,7 +8681,7 @@
     },
     {
         "id": 435,
-        "producto": "TEST DE SOLUCIÓN DE DIGESTIÓN PARA AGUAS LR",
+        "name": "TEST DE SOLUCIÓN DE DIGESTIÓN PARA AGUAS LR",
         "tipo_producto_id": 28,
         "descripcion": "X 25 sachets",
         "peso": 0,
@@ -8701,7 +8701,7 @@
     },
     {
         "id": 436,
-        "producto": "SULFATO DE ALUMINIO",
+        "name": "SULFATO DE ALUMINIO",
         "tipo_producto_id": 28,
         "descripcion": "",
         "peso": 0,
@@ -8721,7 +8721,7 @@
     },
     {
         "id": 437,
-        "producto": "HIDROXIDO DE SODIO 0.1 N",
+        "name": "HIDROXIDO DE SODIO 0.1 N",
         "tipo_producto_id": 28,
         "descripcion": "",
         "peso": 0,
@@ -8741,7 +8741,7 @@
     },
     {
         "id": 438,
-        "producto": "SOLUCION EDTA 1 M",
+        "name": "SOLUCION EDTA 1 M",
         "tipo_producto_id": 28,
         "descripcion": "",
         "peso": 0,
@@ -8761,7 +8761,7 @@
     },
     {
         "id": 439,
-        "producto": "SOLUCION EGTA",
+        "name": "SOLUCION EGTA",
         "tipo_producto_id": 28,
         "descripcion": "",
         "peso": 0,
@@ -8781,7 +8781,7 @@
     },
     {
         "id": 440,
-        "producto": "AMPOLLA SOLUCION ESTANDAR DE COBRE",
+        "name": "AMPOLLA SOLUCION ESTANDAR DE COBRE",
         "tipo_producto_id": 28,
         "descripcion": "X 20 Ampollas",
         "peso": 0,
@@ -8801,7 +8801,7 @@
     },
     {
         "id": 441,
-        "producto": "AZUL LACTOFENOL",
+        "name": "AZUL LACTOFENOL",
         "tipo_producto_id": 28,
         "descripcion": "",
         "peso": 0,
@@ -8821,7 +8821,7 @@
     },
     {
         "id": 442,
-        "producto": "HIDROXIDO DE POTASIO EN ESCAMAS",
+        "name": "HIDROXIDO DE POTASIO EN ESCAMAS",
         "tipo_producto_id": 28,
         "descripcion": "",
         "peso": 0,
@@ -8841,7 +8841,7 @@
     },
     {
         "id": 443,
-        "producto": "HIDROXIDO DE SODIO SOLIDO",
+        "name": "HIDROXIDO DE SODIO SOLIDO",
         "tipo_producto_id": 28,
         "descripcion": "",
         "peso": 0,
@@ -8861,7 +8861,7 @@
     },
     {
         "id": 444,
-        "producto": "SOLUCION ALCALI-YODURO-AZIDA",
+        "name": "SOLUCION ALCALI-YODURO-AZIDA",
         "tipo_producto_id": 28,
         "descripcion": "",
         "peso": 0,
@@ -8881,7 +8881,7 @@
     },
     {
         "id": 445,
-        "producto": "ACIDO SULFURICO CONCENTRADO",
+        "name": "ACIDO SULFURICO CONCENTRADO",
         "tipo_producto_id": 28,
         "descripcion": "",
         "peso": 0,
@@ -8901,7 +8901,7 @@
     },
     {
         "id": 446,
-        "producto": "SOLUCION SULFATO MANGANOSO",
+        "name": "SOLUCION SULFATO MANGANOSO",
         "tipo_producto_id": 28,
         "descripcion": "",
         "peso": 0,
@@ -8921,7 +8921,7 @@
     },
     {
         "id": 447,
-        "producto": "NITRATO DE PLATA 0,0141N",
+        "name": "NITRATO DE PLATA 0,0141N",
         "tipo_producto_id": 28,
         "descripcion": "",
         "peso": 0,
@@ -8941,7 +8941,7 @@
     },
     {
         "id": 448,
-        "producto": "REACTIVO MOLYBDENUM 2",
+        "name": "REACTIVO MOLYBDENUM 2",
         "tipo_producto_id": 28,
         "descripcion": "",
         "peso": 0,
@@ -8961,7 +8961,7 @@
     },
     {
         "id": 449,
-        "producto": "WATER WORKS PEROXIDE",
+        "name": "WATER WORKS PEROXIDE",
         "tipo_producto_id": 28,
         "descripcion": "",
         "peso": 0,
@@ -8981,7 +8981,7 @@
     },
     {
         "id": 450,
-        "producto": "ACETATO DE ETILO",
+        "name": "ACETATO DE ETILO",
         "tipo_producto_id": 28,
         "descripcion": "",
         "peso": 0,
@@ -9001,7 +9001,7 @@
     },
     {
         "id": 451,
-        "producto": "ACETONA",
+        "name": "ACETONA",
         "tipo_producto_id": 28,
         "descripcion": "",
         "peso": 0,
@@ -9021,7 +9021,7 @@
     },
     {
         "id": 452,
-        "producto": "ACIDO ACETICO (GLACIAL) 100%",
+        "name": "ACIDO ACETICO (GLACIAL) 100%",
         "tipo_producto_id": 28,
         "descripcion": "",
         "peso": 0,
@@ -9041,7 +9041,7 @@
     },
     {
         "id": 453,
-        "producto": "CLORURO 2,3,5 INFENIL TETRAZOLIO PARA MICROBIOLOGIA",
+        "name": "CLORURO 2,3,5 INFENIL TETRAZOLIO PARA MICROBIOLOGIA",
         "tipo_producto_id": 28,
         "descripcion": "",
         "peso": 0,
@@ -9061,7 +9061,7 @@
     },
     {
         "id": 454,
-        "producto": "REACTIVO WIJS´ 0.1 MOL /I(0.2N)",
+        "name": "REACTIVO WIJS´ 0.1 MOL /I(0.2N)",
         "tipo_producto_id": 28,
         "descripcion": "",
         "peso": 0,
@@ -9081,7 +9081,7 @@
     },
     {
         "id": 455,
-        "producto": "CYCLOHEXANO",
+        "name": "CYCLOHEXANO",
         "tipo_producto_id": 28,
         "descripcion": "",
         "peso": 0,
@@ -9101,7 +9101,7 @@
     },
     {
         "id": 456,
-        "producto": "FENOLFTALEINA SOLUCION 1%",
+        "name": "FENOLFTALEINA SOLUCION 1%",
         "tipo_producto_id": 28,
         "descripcion": "",
         "peso": 0,
@@ -9121,7 +9121,7 @@
     },
     {
         "id": 457,
-        "producto": "TINTURA DE BINJUI COMPUESTA",
+        "name": "TINTURA DE BINJUI COMPUESTA",
         "tipo_producto_id": 28,
         "descripcion": "",
         "peso": 0,
@@ -9141,7 +9141,7 @@
     },
     {
         "id": 458,
-        "producto": "VIOLETA CRISTAL",
+        "name": "VIOLETA CRISTAL",
         "tipo_producto_id": 28,
         "descripcion": "",
         "peso": 0,
@@ -9161,7 +9161,7 @@
     },
     {
         "id": 459,
-        "producto": "PH BUFFER SOLUCION",
+        "name": "PH BUFFER SOLUCION",
         "tipo_producto_id": 28,
         "descripcion": "",
         "peso": 0,
@@ -9181,7 +9181,7 @@
     },
     {
         "id": 460,
-        "producto": "CLORURO DE MAGNESIO",
+        "name": "CLORURO DE MAGNESIO",
         "tipo_producto_id": 28,
         "descripcion": "",
         "peso": 0,
@@ -9201,7 +9201,7 @@
     },
     {
         "id": 461,
-        "producto": "REACTIVO POTASIO C",
+        "name": "REACTIVO POTASIO C",
         "tipo_producto_id": 28,
         "descripcion": "",
         "peso": 0,
@@ -9221,7 +9221,7 @@
     },
     {
         "id": 462,
-        "producto": "INDICADOR DE PH 4.01",
+        "name": "INDICADOR DE PH 4.01",
         "tipo_producto_id": 28,
         "descripcion": "",
         "peso": 0,
@@ -9241,7 +9241,7 @@
     },
     {
         "id": 463,
-        "producto": "INDICADOR DE PH 700",
+        "name": "INDICADOR DE PH 700",
         "tipo_producto_id": 28,
         "descripcion": "",
         "peso": 0,
@@ -9261,7 +9261,7 @@
     },
     {
         "id": 464,
-        "producto": "INDICADOR DE PH 10.00",
+        "name": "INDICADOR DE PH 10.00",
         "tipo_producto_id": 28,
         "descripcion": "",
         "peso": 0,
@@ -9281,7 +9281,7 @@
     },
     {
         "id": 465,
-        "producto": "POTASIO DIHIDROGENOFOSFATO",
+        "name": "POTASIO DIHIDROGENOFOSFATO",
         "tipo_producto_id": 28,
         "descripcion": "",
         "peso": 0,
@@ -9301,7 +9301,7 @@
     },
     {
         "id": 466,
-        "producto": "GIEMSA´S STAIN",
+        "name": "GIEMSA´S STAIN",
         "tipo_producto_id": 28,
         "descripcion": "",
         "peso": 0,
@@ -9321,7 +9321,7 @@
     },
     {
         "id": 467,
-        "producto": "BUFFER SOLUTION",
+        "name": "BUFFER SOLUTION",
         "tipo_producto_id": 28,
         "descripcion": "",
         "peso": 0,
@@ -9341,7 +9341,7 @@
     },
     {
         "id": 468,
-        "producto": "SOLUCION PARA CALIBRACION DE CONDUCTIVIDAD",
+        "name": "SOLUCION PARA CALIBRACION DE CONDUCTIVIDAD",
         "tipo_producto_id": 28,
         "descripcion": "",
         "peso": 0,
@@ -9361,7 +9361,7 @@
     },
     {
         "id": 469,
-        "producto": "ROJO DE METILO",
+        "name": "ROJO DE METILO",
         "tipo_producto_id": 28,
         "descripcion": "",
         "peso": 0,
@@ -9381,7 +9381,7 @@
     },
     {
         "id": 470,
-        "producto": "ACIDO HIPOCLOROSO",
+        "name": "ACIDO HIPOCLOROSO",
         "tipo_producto_id": 28,
         "descripcion": "",
         "peso": 0,
@@ -9401,7 +9401,7 @@
     },
     {
         "id": 471,
-        "producto": "MOLIDENO DE ESTANDAR",
+        "name": "MOLIDENO DE ESTANDAR",
         "tipo_producto_id": 28,
         "descripcion": "",
         "peso": 0,
@@ -9421,7 +9421,7 @@
     },
     {
         "id": 472,
-        "producto": "INHIBIDOR DE NITRIFICACION",
+        "name": "INHIBIDOR DE NITRIFICACION",
         "tipo_producto_id": 28,
         "descripcion": "",
         "peso": 0,
@@ -9441,7 +9441,7 @@
     },
     {
         "id": 473,
-        "producto": "TRICLOROMETANOL ESTABILIZADO CON ETANOL PURO",
+        "name": "TRICLOROMETANOL ESTABILIZADO CON ETANOL PURO",
         "tipo_producto_id": 28,
         "descripcion": "",
         "peso": 0,
@@ -9461,7 +9461,7 @@
     },
     {
         "id": 474,
-        "producto": "ACIDO BORICO",
+        "name": "ACIDO BORICO",
         "tipo_producto_id": 28,
         "descripcion": "",
         "peso": 0,
@@ -9481,7 +9481,7 @@
     },
     {
         "id": 475,
-        "producto": "YODURO DE POTASIO IODIDE",
+        "name": "YODURO DE POTASIO IODIDE",
         "tipo_producto_id": 28,
         "descripcion": "",
         "peso": 0,
@@ -9501,7 +9501,7 @@
     },
     {
         "id": 476,
-        "producto": "ACIDO BORICO (FINE POWDER)",
+        "name": "ACIDO BORICO (FINE POWDER)",
         "tipo_producto_id": 28,
         "descripcion": "",
         "peso": 0,
@@ -9521,7 +9521,7 @@
     },
     {
         "id": 477,
-        "producto": "YODURO DE POTASIO IODIDE AR",
+        "name": "YODURO DE POTASIO IODIDE AR",
         "tipo_producto_id": 28,
         "descripcion": "",
         "peso": 0,
@@ -9541,7 +9541,7 @@
     },
     {
         "id": 478,
-        "producto": "REACTIVO DE SACHET INDICADOR DE HARDNESS",
+        "name": "REACTIVO DE SACHET INDICADOR DE HARDNESS",
         "tipo_producto_id": 28,
         "descripcion": "",
         "peso": 0,
@@ -9561,7 +9561,7 @@
     },
     {
         "id": 479,
-        "producto": "REACTIVOS DE SACHET POPHYRIN 2",
+        "name": "REACTIVOS DE SACHET POPHYRIN 2",
         "tipo_producto_id": 28,
         "descripcion": "",
         "peso": 0,
@@ -9581,7 +9581,7 @@
     },
     {
         "id": 480,
-        "producto": "REACTIVOS DE SACHET DE NITRATO",
+        "name": "REACTIVOS DE SACHET DE NITRATO",
         "tipo_producto_id": 28,
         "descripcion": "",
         "peso": 0,
@@ -9601,7 +9601,7 @@
     },
     {
         "id": 481,
-        "producto": "REACTIVO DE SACHET CROMO 1",
+        "name": "REACTIVO DE SACHET CROMO 1",
         "tipo_producto_id": 28,
         "descripcion": "",
         "peso": 0,
@@ -9621,7 +9621,7 @@
     },
     {
         "id": 482,
-        "producto": "REACTIVOS DE SACHET CLORO LIBRES",
+        "name": "REACTIVOS DE SACHET CLORO LIBRES",
         "tipo_producto_id": 28,
         "descripcion": "",
         "peso": 0,
@@ -9641,7 +9641,7 @@
     },
     {
         "id": 483,
-        "producto": "AZUL DE MEDITILENO",
+        "name": "AZUL DE MEDITILENO",
         "tipo_producto_id": 28,
         "descripcion": "",
         "peso": 0,
@@ -9661,7 +9661,7 @@
     },
     {
         "id": 484,
-        "producto": "ACEITE DE INMERSION PARA MICROSCOPIA",
+        "name": "ACEITE DE INMERSION PARA MICROSCOPIA",
         "tipo_producto_id": 28,
         "descripcion": "",
         "peso": 0,
@@ -9681,7 +9681,7 @@
     },
     {
         "id": 485,
-        "producto": "ACIDO TRICLOROACEITICO 10%",
+        "name": "ACIDO TRICLOROACEITICO 10%",
         "tipo_producto_id": 28,
         "descripcion": "",
         "peso": 0,
@@ -9701,7 +9701,7 @@
     },
     {
         "id": 486,
-        "producto": "YODO 0.1 N",
+        "name": "YODO 0.1 N",
         "tipo_producto_id": 28,
         "descripcion": "",
         "peso": 0,
@@ -9721,7 +9721,7 @@
     },
     {
         "id": 487,
-        "producto": "POTASIO PERMANGANATO EN SOLUCION AJUSTADO FRENTE A SODIO TIOSULFATO (0,02M)",
+        "name": "POTASIO PERMANGANATO EN SOLUCION AJUSTADO FRENTE A SODIO TIOSULFATO (0,02M)",
         "tipo_producto_id": 28,
         "descripcion": "",
         "peso": 0,
@@ -9741,7 +9741,7 @@
     },
     {
         "id": 488,
-        "producto": "TIO SULFATO DE SODIO EN SOLUCION",
+        "name": "TIO SULFATO DE SODIO EN SOLUCION",
         "tipo_producto_id": 28,
         "descripcion": "",
         "peso": 0,
@@ -9761,7 +9761,7 @@
     },
     {
         "id": 489,
-        "producto": "TIO SULFATO DE SODIO 0.1 MOL /LITROS",
+        "name": "TIO SULFATO DE SODIO 0.1 MOL /LITROS",
         "tipo_producto_id": 28,
         "descripcion": "",
         "peso": 0,
@@ -9781,7 +9781,7 @@
     },
     {
         "id": 490,
-        "producto": "AGUA ESTERIL PARA INYECCCION",
+        "name": "AGUA ESTERIL PARA INYECCCION",
         "tipo_producto_id": 28,
         "descripcion": "",
         "peso": 0,
@@ -9801,7 +9801,7 @@
     },
     {
         "id": 491,
-        "producto": "SULFATO DE PLATA",
+        "name": "SULFATO DE PLATA",
         "tipo_producto_id": 28,
         "descripcion": "",
         "peso": 0,
@@ -9821,7 +9821,7 @@
     },
     {
         "id": 492,
-        "producto": "ACIDO NITRICO 65%",
+        "name": "ACIDO NITRICO 65%",
         "tipo_producto_id": 28,
         "descripcion": "",
         "peso": 0,
@@ -9841,7 +9841,7 @@
     },
     {
         "id": 493,
-        "producto": "REACTIVO DE HIERRO FERRO VER",
+        "name": "REACTIVO DE HIERRO FERRO VER",
         "tipo_producto_id": 28,
         "descripcion": "",
         "peso": 0,
@@ -9861,7 +9861,7 @@
     },
     {
         "id": 494,
-        "producto": "PORPHYRIN 1 REACTIVO",
+        "name": "PORPHYRIN 1 REACTIVO",
         "tipo_producto_id": 28,
         "descripcion": "",
         "peso": 0,
@@ -9881,7 +9881,7 @@
     },
     {
         "id": 495,
-        "producto": "REACTIVO PARA NITRILO",
+        "name": "REACTIVO PARA NITRILO",
         "tipo_producto_id": 28,
         "descripcion": "",
         "peso": 0,
@@ -9901,7 +9901,7 @@
     },
     {
         "id": 496,
-        "producto": "ACIDO REACTIVO DE CLORO TOTAL",
+        "name": "ACIDO REACTIVO DE CLORO TOTAL",
         "tipo_producto_id": 28,
         "descripcion": "",
         "peso": 0,
@@ -9921,7 +9921,7 @@
     },
     {
         "id": 497,
-        "producto": "DIFENILCARBAZONA",
+        "name": "DIFENILCARBAZONA",
         "tipo_producto_id": 28,
         "descripcion": "",
         "peso": 0,
@@ -9941,7 +9941,7 @@
     },
     {
         "id": 498,
-        "producto": "INDICADOR DE VERDE BROMOCRESOL",
+        "name": "INDICADOR DE VERDE BROMOCRESOL",
         "tipo_producto_id": 28,
         "descripcion": "",
         "peso": 0,
@@ -9961,7 +9961,7 @@
     },
     {
         "id": 499,
-        "producto": "POLVO INDICADOR DE AZUL DE BROMOFENOL",
+        "name": "POLVO INDICADOR DE AZUL DE BROMOFENOL",
         "tipo_producto_id": 28,
         "descripcion": "",
         "peso": 0,
@@ -9981,7 +9981,7 @@
     },
     {
         "id": 500,
-        "producto": "INDICADOR DE DUREZA",
+        "name": "INDICADOR DE DUREZA",
         "tipo_producto_id": 28,
         "descripcion": "",
         "peso": 0,
@@ -10001,7 +10001,7 @@
     },
     {
         "id": 501,
-        "producto": "FENOLFTALEINA, POLVO INDICADOR",
+        "name": "FENOLFTALEINA, POLVO INDICADOR",
         "tipo_producto_id": 28,
         "descripcion": "",
         "peso": 0,
@@ -10021,7 +10021,7 @@
     },
     {
         "id": 502,
-        "producto": "REACTIVO CROMO 2",
+        "name": "REACTIVO CROMO 2",
         "tipo_producto_id": 28,
         "descripcion": "",
         "peso": 0,
@@ -10041,7 +10041,7 @@
     },
     {
         "id": 503,
-        "producto": "KIT TURBO STANDAR",
+        "name": "KIT TURBO STANDAR",
         "tipo_producto_id": 28,
         "descripcion": "X 125 MILILITROS",
         "peso": 0,
@@ -10061,7 +10061,7 @@
     },
     {
         "id": 504,
-        "producto": "REACTIVO DE FOSFATO PHOS VER 3",
+        "name": "REACTIVO DE FOSFATO PHOS VER 3",
         "tipo_producto_id": 28,
         "descripcion": "",
         "peso": 0,
@@ -10081,7 +10081,7 @@
     },
     {
         "id": 505,
-        "producto": "REACTIVO DE ACIDO DE CROMO",
+        "name": "REACTIVO DE ACIDO DE CROMO",
         "tipo_producto_id": 28,
         "descripcion": "",
         "peso": 0,
@@ -10101,7 +10101,7 @@
     },
     {
         "id": 506,
-        "producto": "REACTIVO ENMASCARADOR DE COBRE",
+        "name": "REACTIVO ENMASCARADOR DE COBRE",
         "tipo_producto_id": 28,
         "descripcion": "",
         "peso": 0,
@@ -10121,7 +10121,7 @@
     },
     {
         "id": 507,
-        "producto": "REACTIVO DE ZINC",
+        "name": "REACTIVO DE ZINC",
         "tipo_producto_id": 28,
         "descripcion": "",
         "peso": 0,
@@ -10141,7 +10141,7 @@
     },
     {
         "id": 508,
-        "producto": "REACTIVO DE CROMO 3 CHROMAVER 3",
+        "name": "REACTIVO DE CROMO 3 CHROMAVER 3",
         "tipo_producto_id": 28,
         "descripcion": "",
         "peso": 0,
@@ -10161,7 +10161,7 @@
     },
     {
         "id": 509,
-        "producto": "REACTIVO DE OXIGENO DISUELTO 1",
+        "name": "REACTIVO DE OXIGENO DISUELTO 1",
         "tipo_producto_id": 28,
         "descripcion": "",
         "peso": 0,
@@ -10181,7 +10181,7 @@
     },
     {
         "id": 510,
-        "producto": "REACTIVO DE OXIGENO 2",
+        "name": "REACTIVO DE OXIGENO 2",
         "tipo_producto_id": 28,
         "descripcion": "",
         "peso": 0,
@@ -10201,7 +10201,7 @@
     },
     {
         "id": 511,
-        "producto": "SODIO DE SULFATO ANHIDRO",
+        "name": "SODIO DE SULFATO ANHIDRO",
         "tipo_producto_id": 28,
         "descripcion": "",
         "peso": 0,
@@ -10221,7 +10221,7 @@
     },
     {
         "id": 512,
-        "producto": "NUTRITIVO AGAR",
+        "name": "NUTRITIVO AGAR",
         "tipo_producto_id": 28,
         "descripcion": "",
         "peso": 0,
@@ -10241,7 +10241,7 @@
     },
     {
         "id": 513,
-        "producto": "NITRATO SILVER",
+        "name": "NITRATO SILVER",
         "tipo_producto_id": 28,
         "descripcion": "",
         "peso": 0,
@@ -10261,7 +10261,7 @@
     },
     {
         "id": 514,
-        "producto": "MURASHIGE Y SKOOG BASAL MEDIUM WITH VITAMINAS",
+        "name": "MURASHIGE Y SKOOG BASAL MEDIUM WITH VITAMINAS",
         "tipo_producto_id": 28,
         "descripcion": "",
         "peso": 0,
@@ -10281,7 +10281,7 @@
     },
     {
         "id": 515,
-        "producto": "TEST DE OXIGENO. REACTIVO  O2- 1",
+        "name": "TEST DE OXIGENO. REACTIVO  O2- 1",
         "tipo_producto_id": 28,
         "descripcion": "",
         "peso": 0,
@@ -10301,7 +10301,7 @@
     },
     {
         "id": 516,
-        "producto": "TEST DE OXIGENO. REACTIVO 02-2",
+        "name": "TEST DE OXIGENO. REACTIVO 02-2",
         "tipo_producto_id": 28,
         "descripcion": "",
         "peso": 0,
@@ -10321,7 +10321,7 @@
     },
     {
         "id": 517,
-        "producto": "TEST DE OXIGENO. REACTIVO O2- 3",
+        "name": "TEST DE OXIGENO. REACTIVO O2- 3",
         "tipo_producto_id": 28,
         "descripcion": "",
         "peso": 0,
@@ -10341,7 +10341,7 @@
     },
     {
         "id": 518,
-        "producto": "TEST DE OXIGENO. REACTIVO O2-4",
+        "name": "TEST DE OXIGENO. REACTIVO O2-4",
         "tipo_producto_id": 28,
         "descripcion": "",
         "peso": 0,
@@ -10361,7 +10361,7 @@
     },
     {
         "id": 519,
-        "producto": "TEST DE OXIGENO. REACTIVO O2-5",
+        "name": "TEST DE OXIGENO. REACTIVO O2-5",
         "tipo_producto_id": 28,
         "descripcion": "",
         "peso": 0,
@@ -10381,7 +10381,7 @@
     },
     {
         "id": 520,
-        "producto": "E.D.T.A. SOLUCION 0.02 M",
+        "name": "E.D.T.A. SOLUCION 0.02 M",
         "tipo_producto_id": 28,
         "descripcion": "",
         "peso": 0,
@@ -10401,7 +10401,7 @@
     },
     {
         "id": 521,
-        "producto": "E.D.T.A SOLUCION 0, 025 M",
+        "name": "E.D.T.A SOLUCION 0, 025 M",
         "tipo_producto_id": 28,
         "descripcion": "",
         "peso": 0,
@@ -10421,7 +10421,7 @@
     },
     {
         "id": 522,
-        "producto": "CLORURO DE CALCIO ANHIDRO",
+        "name": "CLORURO DE CALCIO ANHIDRO",
         "tipo_producto_id": 28,
         "descripcion": "",
         "peso": 0,
@@ -10441,7 +10441,7 @@
     },
     {
         "id": 523,
-        "producto": "ALMIDON SOLUCION 1 %",
+        "name": "ALMIDON SOLUCION 1 %",
         "tipo_producto_id": 28,
         "descripcion": "",
         "peso": 0,
@@ -10461,7 +10461,7 @@
     },
     {
         "id": 524,
-        "producto": "OXIDO DE ALUMINIO",
+        "name": "OXIDO DE ALUMINIO",
         "tipo_producto_id": 28,
         "descripcion": "",
         "peso": 0,
@@ -10481,7 +10481,7 @@
     },
     {
         "id": 525,
-        "producto": "BATA DE LABORATORIO (AZUL)",
+        "name": "BATA DE LABORATORIO (AZUL)",
         "tipo_producto_id": 28,
         "descripcion": "",
         "peso": 0,
@@ -10501,7 +10501,7 @@
     },
     {
         "id": 526,
-        "producto": "BATA DE LABORATORIO (VERDE)",
+        "name": "BATA DE LABORATORIO (VERDE)",
         "tipo_producto_id": 28,
         "descripcion": "",
         "peso": 0,
@@ -10521,7 +10521,7 @@
     },
     {
         "id": 527,
-        "producto": "BATA DE LABORATORIO (BLACA)",
+        "name": "BATA DE LABORATORIO (BLACA)",
         "tipo_producto_id": 28,
         "descripcion": "",
         "peso": 0,
@@ -10541,7 +10541,7 @@
     },
     {
         "id": 528,
-        "producto": "HODROXIDO DE SODIO 0,01 N",
+        "name": "HODROXIDO DE SODIO 0,01 N",
         "tipo_producto_id": 28,
         "descripcion": "",
         "peso": 0,
@@ -10561,7 +10561,7 @@
     },
     {
         "id": 529,
-        "producto": "HIDROXIDO DE SODIO 0,01 N",
+        "name": "HIDROXIDO DE SODIO 0,01 N",
         "tipo_producto_id": 28,
         "descripcion": "",
         "peso": 0,
@@ -10581,7 +10581,7 @@
     },
     {
         "id": 530,
-        "producto": "EDTA 0,02 M (0,04N)",
+        "name": "EDTA 0,02 M (0,04N)",
         "tipo_producto_id": 28,
         "descripcion": "",
         "peso": 0,
@@ -10601,7 +10601,7 @@
     },
     {
         "id": 531,
-        "producto": "EDTA SOLUCION 0,025 M (0,05N)",
+        "name": "EDTA SOLUCION 0,025 M (0,05N)",
         "tipo_producto_id": 28,
         "descripcion": "",
         "peso": 0,
@@ -10621,7 +10621,7 @@
     },
     {
         "id": 532,
-        "producto": "REACTIVO DE CLORO TOTAL DPD",
+        "name": "REACTIVO DE CLORO TOTAL DPD",
         "tipo_producto_id": 28,
         "descripcion": "",
         "peso": 0,
@@ -10641,7 +10641,7 @@
     },
     {
         "id": 533,
-        "producto": "DPD REACTIVO DE CLORO LIBRE",
+        "name": "DPD REACTIVO DE CLORO LIBRE",
         "tipo_producto_id": 28,
         "descripcion": "",
         "peso": 0,
@@ -10661,7 +10661,7 @@
     },
     {
         "id": 534,
-        "producto": "REACTIVO DE NITRITO NITRIVER 3",
+        "name": "REACTIVO DE NITRITO NITRIVER 3",
         "tipo_producto_id": 28,
         "descripcion": "",
         "peso": 0,
@@ -10681,7 +10681,7 @@
     },
     {
         "id": 535,
-        "producto": "REACTIVO DE MOLINDENO 1",
+        "name": "REACTIVO DE MOLINDENO 1",
         "tipo_producto_id": 28,
         "descripcion": "",
         "peso": 0,
@@ -10701,7 +10701,7 @@
     },
     {
         "id": 536,
-        "producto": "MYO-INOSITOL",
+        "name": "MYO-INOSITOL",
         "tipo_producto_id": 28,
         "descripcion": "4 UNIDADES",
         "peso": 0,
@@ -10721,7 +10721,7 @@
     },
     {
         "id": 537,
-        "producto": "ALCOHOL ETILICO 96% MEDIANO",
+        "name": "ALCOHOL ETILICO 96% MEDIANO",
         "tipo_producto_id": 28,
         "descripcion": "",
         "peso": 0,
@@ -10741,7 +10741,7 @@
     },
     {
         "id": 538,
-        "producto": "CLORURO DE COBRE AMONIACAL",
+        "name": "CLORURO DE COBRE AMONIACAL",
         "tipo_producto_id": 28,
         "descripcion": "NO CUENTA CON ETIQUETA ORIGINAL",
         "peso": 0,
@@ -10761,7 +10761,7 @@
     },
     {
         "id": 539,
-        "producto": "PLATA NITRATO 5%",
+        "name": "PLATA NITRATO 5%",
         "tipo_producto_id": 28,
         "descripcion": "",
         "peso": 0,
@@ -10781,7 +10781,7 @@
     },
     {
         "id": 540,
-        "producto": "PARAFINA LIQUIDA",
+        "name": "PARAFINA LIQUIDA",
         "tipo_producto_id": 28,
         "descripcion": "SIN ETIQUETA ORIGINAL DEL FABRICANTE",
         "peso": 0,
@@ -10801,7 +10801,7 @@
     },
     {
         "id": 541,
-        "producto": "REACTIVO DE TOLLEN",
+        "name": "REACTIVO DE TOLLEN",
         "tipo_producto_id": 28,
         "descripcion": "SIN ETIQUETA ORIGINAL",
         "peso": 0,
@@ -10821,7 +10821,7 @@
     },
     {
         "id": 542,
-        "producto": "HEXANO 100%",
+        "name": "HEXANO 100%",
         "tipo_producto_id": 28,
         "descripcion": "SIN ETIQUETA ORIGINAL",
         "peso": 0,
@@ -10841,7 +10841,7 @@
     },
     {
         "id": 543,
-        "producto": "REACTIVO DE FEHLING B",
+        "name": "REACTIVO DE FEHLING B",
         "tipo_producto_id": 28,
         "descripcion": "NO CUENTA CON ETIQUETA ORIGINAL",
         "peso": 0,
@@ -10861,7 +10861,7 @@
     },
     {
         "id": 544,
-        "producto": "FENOL 99.5%",
+        "name": "FENOL 99.5%",
         "tipo_producto_id": 28,
         "descripcion": "NO CUENTA CON ETIQUETA ORIGINAL",
         "peso": 0,
@@ -10881,7 +10881,7 @@
     },
     {
         "id": 545,
-        "producto": "BENZALDEHIDO",
+        "name": "BENZALDEHIDO",
         "tipo_producto_id": 28,
         "descripcion": "NO CUENTA CON ETIQUETA ORIGINAL",
         "peso": 0,
@@ -10901,7 +10901,7 @@
     },
     {
         "id": 546,
-        "producto": "ACIDO FOSFORICO 85%",
+        "name": "ACIDO FOSFORICO 85%",
         "tipo_producto_id": 28,
         "descripcion": "NO CUENTA CON ETIQUETA ORIGINAL",
         "peso": 0,
@@ -10921,7 +10921,7 @@
     },
     {
         "id": 547,
-        "producto": "INDICADOR UNIVERSAL",
+        "name": "INDICADOR UNIVERSAL",
         "tipo_producto_id": 28,
         "descripcion": "NO CUENTA CON ETIQUETA ORIGINAL",
         "peso": 0,
@@ -10941,7 +10941,7 @@
     },
     {
         "id": 548,
-        "producto": "ACETONA",
+        "name": "ACETONA",
         "tipo_producto_id": 28,
         "descripcion": "NO CUENTA CON ETIQUETA ORIGINAL",
         "peso": 0,
@@ -10961,7 +10961,7 @@
     },
     {
         "id": 549,
-        "producto": "BARIO HIDROXIDO",
+        "name": "BARIO HIDROXIDO",
         "tipo_producto_id": 28,
         "descripcion": "NO CUENTA CON ETIQETA ORIGINAL",
         "peso": 0,
@@ -10981,7 +10981,7 @@
     },
     {
         "id": 550,
-        "producto": "VINAGRE",
+        "name": "VINAGRE",
         "tipo_producto_id": 28,
         "descripcion": "NO CUENTA CON ETIQUETA ORIGINAL",
         "peso": 0,
@@ -11001,7 +11001,7 @@
     },
     {
         "id": 551,
-        "producto": "REACTIVO DE FEHLING A",
+        "name": "REACTIVO DE FEHLING A",
         "tipo_producto_id": 28,
         "descripcion": "NO CUENTA CON ETIQUETA ORIGINAL",
         "peso": 0,
@@ -11021,7 +11021,7 @@
     },
     {
         "id": 552,
-        "producto": "REACTIVO DE BROMO 5% / DICLOROMETADO",
+        "name": "REACTIVO DE BROMO 5% / DICLOROMETADO",
         "tipo_producto_id": 28,
         "descripcion": "NO CUENTA CON ETIQUETA ORIGINAL",
         "peso": 0,
@@ -11041,7 +11041,7 @@
     },
     {
         "id": 553,
-        "producto": "ACIDO ACETICO GLACIAL",
+        "name": "ACIDO ACETICO GLACIAL",
         "tipo_producto_id": 28,
         "descripcion": "NO CUENTA CON ETIQUETA ORIGINAL",
         "peso": 0,
@@ -11061,7 +11061,7 @@
     },
     {
         "id": 554,
-        "producto": "ANHIDRIDO ACETICO",
+        "name": "ANHIDRIDO ACETICO",
         "tipo_producto_id": 28,
         "descripcion": "NO CUENTA CON ETIQUETA ORIGINAL",
         "peso": 0,
@@ -11081,7 +11081,7 @@
     },
     {
         "id": 555,
-        "producto": "EXTRACTO DE LEVADURA",
+        "name": "EXTRACTO DE LEVADURA",
         "tipo_producto_id": 28,
         "descripcion": "NO CUENTA CON ETIQUETA ORIGINAL",
         "peso": 0,
@@ -11101,7 +11101,7 @@
     },
     {
         "id": 556,
-        "producto": "ACIDO SULFURICO",
+        "name": "ACIDO SULFURICO",
         "tipo_producto_id": 28,
         "descripcion": "NO CUENTA CON ETIQUETA ORIGINAL",
         "peso": 0,
@@ -11121,7 +11121,7 @@
     },
     {
         "id": 557,
-        "producto": "ACIDO SALICILICO",
+        "name": "ACIDO SALICILICO",
         "tipo_producto_id": 28,
         "descripcion": "NO CUENTA CON ETIQUETA ORIGINAL",
         "peso": 0,
@@ -11141,7 +11141,7 @@
     },
     {
         "id": 558,
-        "producto": "NITRATO DE SODIO, ENVASE PLASTICO",
+        "name": "NITRATO DE SODIO, ENVASE PLASTICO",
         "tipo_producto_id": 28,
         "descripcion": "NO CUENTA CON ETIQUETA ORIGINAL",
         "peso": 0,
@@ -11161,7 +11161,7 @@
     },
     {
         "id": 559,
-        "producto": "AGAR PAPA DEXTROSA",
+        "name": "AGAR PAPA DEXTROSA",
         "tipo_producto_id": 28,
         "descripcion": "NO CUENTA CON ETIQUETA ORIGINAL",
         "peso": 0,
@@ -11181,7 +11181,7 @@
     },
     {
         "id": 560,
-        "producto": "AGAR NUTRITIVO",
+        "name": "AGAR NUTRITIVO",
         "tipo_producto_id": 28,
         "descripcion": "NO CUENTA CON ETIQUETA ORIGINAL",
         "peso": 0,
@@ -11201,7 +11201,7 @@
     },
     {
         "id": 561,
-        "producto": "INDICADOR ROJO",
+        "name": "INDICADOR ROJO",
         "tipo_producto_id": 28,
         "descripcion": "NO CUENTA CON ETIQUETA ORIGINAL",
         "peso": 0,
@@ -11221,7 +11221,7 @@
     },
     {
         "id": 562,
-        "producto": "D-GLUCOSA ANHIDRO (DEXTROSA) PEQUEÑO",
+        "name": "D-GLUCOSA ANHIDRO (DEXTROSA) PEQUEÑO",
         "tipo_producto_id": 28,
         "descripcion": "NO CUENTA CON ETIQUETA ORIGINAL",
         "peso": 0,
@@ -11241,7 +11241,7 @@
     },
     {
         "id": 563,
-        "producto": "SACAROSA",
+        "name": "SACAROSA",
         "tipo_producto_id": 28,
         "descripcion": "NO CUENTA CON ETIQUETA ORIGINAL",
         "peso": 0,
@@ -11261,7 +11261,7 @@
     },
     {
         "id": 564,
-        "producto": "ACIDO ASCORBICO",
+        "name": "ACIDO ASCORBICO",
         "tipo_producto_id": 28,
         "descripcion": "NO CUENTA CON ETIQUETA ORIGINAL",
         "peso": 0,
@@ -11281,7 +11281,7 @@
     },
     {
         "id": 565,
-        "producto": "D-MALTOSA (DISACARIDO)",
+        "name": "D-MALTOSA (DISACARIDO)",
         "tipo_producto_id": 28,
         "descripcion": "NO CUENTA CON ETIQUETA ORIGINAL",
         "peso": 0,
@@ -11301,7 +11301,7 @@
     },
     {
         "id": 566,
-        "producto": "UREA",
+        "name": "UREA",
         "tipo_producto_id": 28,
         "descripcion": "NO CUENTA CON ETIQUETA ORIGINAL",
         "peso": 0,
@@ -11321,7 +11321,7 @@
     },
     {
         "id": 567,
-        "producto": "CLOROFORMO (TRICLOROMETANO)",
+        "name": "CLOROFORMO (TRICLOROMETANO)",
         "tipo_producto_id": 28,
         "descripcion": "NO CUENTA CON ETOQUETA ORIGINAL",
         "peso": 0,
@@ -11341,7 +11341,7 @@
     },
     {
         "id": 568,
-        "producto": "LACTOSA (DISACARIDO REDUCTOR)",
+        "name": "LACTOSA (DISACARIDO REDUCTOR)",
         "tipo_producto_id": 28,
         "descripcion": "NO CUENTA CON ETIQUETA ORIGINAL",
         "peso": 0,
@@ -11361,7 +11361,7 @@
     },
     {
         "id": 569,
-        "producto": "SODIO BICARBONATO",
+        "name": "SODIO BICARBONATO",
         "tipo_producto_id": 28,
         "descripcion": "NO CUENTA CON ETIQUETA ORIGINAL",
         "peso": 0,
@@ -11381,7 +11381,7 @@
     },
     {
         "id": 570,
-        "producto": "ACEITE DE INMERSION",
+        "name": "ACEITE DE INMERSION",
         "tipo_producto_id": 28,
         "descripcion": "NO CUENTA CON ETIQUETA ORIGINAL",
         "peso": 0,
@@ -11401,7 +11401,7 @@
     },
     {
         "id": 571,
-        "producto": "CASEINA",
+        "name": "CASEINA",
         "tipo_producto_id": 28,
         "descripcion": "NO CUENTA CON ETIQUETA ORIGINAL",
         "peso": 0,
@@ -11421,7 +11421,7 @@
     },
     {
         "id": 572,
-        "producto": "PLOMO METALICO EN PERLAS",
+        "name": "PLOMO METALICO EN PERLAS",
         "tipo_producto_id": 28,
         "descripcion": "NO CUENTA CON ETIQUETA ORIGINAL",
         "peso": 0,
@@ -11441,7 +11441,7 @@
     },
     {
         "id": 573,
-        "producto": "COBRE METALICO EN GRANALLAS",
+        "name": "COBRE METALICO EN GRANALLAS",
         "tipo_producto_id": 28,
         "descripcion": "NO CUENTA CON ETIQUETA ORIGINAL",
         "peso": 0,
@@ -11461,7 +11461,7 @@
     },
     {
         "id": 574,
-        "producto": "YODO SUBLIMADO",
+        "name": "YODO SUBLIMADO",
         "tipo_producto_id": 28,
         "descripcion": "NO C UENTA CON ETIQUETA ORIGINAL",
         "peso": 0,
@@ -11481,7 +11481,7 @@
     },
     {
         "id": 575,
-        "producto": "ALCOHOL ETILICO 96% GRANDE",
+        "name": "ALCOHOL ETILICO 96% GRANDE",
         "tipo_producto_id": 28,
         "descripcion": "NO CUENTA CON ETIQUETA ORIGINAL",
         "peso": 0,
@@ -11501,7 +11501,7 @@
     },
     {
         "id": 576,
-        "producto": "ETILENGLICOL",
+        "name": "ETILENGLICOL",
         "tipo_producto_id": 28,
         "descripcion": "",
         "peso": 0,
@@ -11521,7 +11521,7 @@
     },
     {
         "id": 577,
-        "producto": "TRI SODIO FOSFATO D-HIDRATO",
+        "name": "TRI SODIO FOSFATO D-HIDRATO",
         "tipo_producto_id": 28,
         "descripcion": "NO CUENTA CON ETIQUETA ORIGINAL",
         "peso": 0,
@@ -11541,7 +11541,7 @@
     },
     {
         "id": 578,
-        "producto": "SODIO NITRATO",
+        "name": "SODIO NITRATO",
         "tipo_producto_id": 28,
         "descripcion": "NO CUENTA CON ETIQUETA ORIGINAL",
         "peso": 0,
@@ -11561,7 +11561,7 @@
     },
     {
         "id": 579,
-        "producto": "SODIO CLORURO",
+        "name": "SODIO CLORURO",
         "tipo_producto_id": 28,
         "descripcion": "NO CUENTA CON ETIQUETA ORIGINAL",
         "peso": 0,
@@ -11581,7 +11581,7 @@
     },
     {
         "id": 580,
-        "producto": "ACIDO CITRICO ANHIDRO",
+        "name": "ACIDO CITRICO ANHIDRO",
         "tipo_producto_id": 28,
         "descripcion": "NO CUENTA CON ETIQUETA ORIGINAL",
         "peso": 0,
@@ -11601,7 +11601,7 @@
     },
     {
         "id": 581,
-        "producto": "SODIO HIDROXIDO 0.1M",
+        "name": "SODIO HIDROXIDO 0.1M",
         "tipo_producto_id": 28,
         "descripcion": "NO CUENTA CON ETIQUETA ORIGINAL",
         "peso": 0,
@@ -11621,7 +11621,7 @@
     },
     {
         "id": 582,
-        "producto": "COBRE II SULFATO PENTA-HIDRATO, ENVASE PLASTICO",
+        "name": "COBRE II SULFATO PENTA-HIDRATO, ENVASE PLASTICO",
         "tipo_producto_id": 28,
         "descripcion": "NO CUENTA CON ETIQUETA ORIGINAL",
         "peso": 0,
@@ -11641,7 +11641,7 @@
     },
     {
         "id": 583,
-        "producto": "CARBON ACTIVADO",
+        "name": "CARBON ACTIVADO",
         "tipo_producto_id": 28,
         "descripcion": "NO CUENTA CON ETIQUETA ORIGINAL",
         "peso": 0,
@@ -11661,7 +11661,7 @@
     },
     {
         "id": 584,
-        "producto": "SELENIO METALICO EN POLVO NEGRO GRANULADO",
+        "name": "SELENIO METALICO EN POLVO NEGRO GRANULADO",
         "tipo_producto_id": 28,
         "descripcion": "NO CUENTA CON ETIQUETA ORIGINAL",
         "peso": 0,
@@ -11681,7 +11681,7 @@
     },
     {
         "id": 585,
-        "producto": "ANTIMONIO METALICO EN POLVO",
+        "name": "ANTIMONIO METALICO EN POLVO",
         "tipo_producto_id": 28,
         "descripcion": "NO CEUNTA CON ETIQUETA ORIGINAL",
         "peso": 0,
@@ -11701,7 +11701,7 @@
     },
     {
         "id": 586,
-        "producto": "CALCIO OXIDO",
+        "name": "CALCIO OXIDO",
         "tipo_producto_id": 28,
         "descripcion": "NO CEUNTA CON ETIQUETA ORIGINAL",
         "peso": 0,
@@ -11721,7 +11721,7 @@
     },
     {
         "id": 587,
-        "producto": "ALUMINIO METALICO EN POLVO",
+        "name": "ALUMINIO METALICO EN POLVO",
         "tipo_producto_id": 28,
         "descripcion": "NO CEUNTA CON ETIQUETA ORIGINAL",
         "peso": 0,
@@ -11741,7 +11741,7 @@
     },
     {
         "id": 588,
-        "producto": "ACEITE MINERAL",
+        "name": "ACEITE MINERAL",
         "tipo_producto_id": 28,
         "descripcion": "NO CEUNTA CON ETIQUETA ORIGINAL",
         "peso": 0,
@@ -11761,7 +11761,7 @@
     },
     {
         "id": 589,
-        "producto": "LITIO",
+        "name": "LITIO",
         "tipo_producto_id": 28,
         "descripcion": "NO CEUNTA CON ETIQUETA ORIGINAL",
         "peso": 0,
@@ -11781,7 +11781,7 @@
     },
     {
         "id": 590,
-        "producto": "HIERRO METALICO EN POLVO",
+        "name": "HIERRO METALICO EN POLVO",
         "tipo_producto_id": 28,
         "descripcion": "NO CUENTA CON ETIQUETA ORIGINAL",
         "peso": 0,
@@ -11801,7 +11801,7 @@
     },
     {
         "id": 591,
-        "producto": "D-GLUCOSA ANHIDRO (DEXTROSA) GRANDE",
+        "name": "D-GLUCOSA ANHIDRO (DEXTROSA) GRANDE",
         "tipo_producto_id": 28,
         "descripcion": "NO CUENTA CON ETIQUETA ORIGINAL",
         "peso": 0,
@@ -11821,7 +11821,7 @@
     },
     {
         "id": 592,
-        "producto": "POTASIO NITRATO",
+        "name": "POTASIO NITRATO",
         "tipo_producto_id": 28,
         "descripcion": "NO CUENTA CON ETIQUETA ORIGINAL",
         "peso": 0,
@@ -11841,7 +11841,7 @@
     },
     {
         "id": 593,
-        "producto": "AZUFRE SUBLIMADO",
+        "name": "AZUFRE SUBLIMADO",
         "tipo_producto_id": 28,
         "descripcion": "NO CUENTA CO ETIQUETA ORIGINAL",
         "peso": 0,
@@ -11861,7 +11861,7 @@
     },
     {
         "id": 594,
-        "producto": "ESTAÑO METALICO GRANULAR",
+        "name": "ESTAÑO METALICO GRANULAR",
         "tipo_producto_id": 28,
         "descripcion": "NO CUENTA CON ETIQUETADO",
         "peso": 0,
@@ -11881,7 +11881,7 @@
     },
     {
         "id": 595,
-        "producto": "CALCIO NITRATO TETRAHIDRATADO",
+        "name": "CALCIO NITRATO TETRAHIDRATADO",
         "tipo_producto_id": 28,
         "descripcion": "NO CUENTA CON ETIQUETA ORIGINAL",
         "peso": 0,
@@ -11901,7 +11901,7 @@
     },
     {
         "id": 596,
-        "producto": "GLICEROL (GLICERINA)",
+        "name": "GLICEROL (GLICERINA)",
         "tipo_producto_id": 28,
         "descripcion": "NO CUENTA CON ETIQUETA ORIGINAL",
         "peso": 0,
@@ -11921,7 +11921,7 @@
     },
     {
         "id": 597,
-        "producto": "NIQUEL METALICO GLOBULOS",
+        "name": "NIQUEL METALICO GLOBULOS",
         "tipo_producto_id": 28,
         "descripcion": "NO CUENTA CON ETIQUETA ORIGINAL",
         "peso": 0,
@@ -11941,7 +11941,7 @@
     },
     {
         "id": 598,
-        "producto": "FENOLFTALEINA INDICADOR",
+        "name": "FENOLFTALEINA INDICADOR",
         "tipo_producto_id": 28,
         "descripcion": "NO CUENTA CON ETIQUETA ORIGINAL",
         "peso": 0,
@@ -11961,7 +11961,7 @@
     },
     {
         "id": 599,
-        "producto": "SODIO CARBONATO ANHIDRO",
+        "name": "SODIO CARBONATO ANHIDRO",
         "tipo_producto_id": 28,
         "descripcion": "NO CUENTA CON ETIQUETA ORIGINAL",
         "peso": 0,
@@ -11981,7 +11981,7 @@
     },
     {
         "id": 600,
-        "producto": "LITIO SULFATO MONOHIDRATADO",
+        "name": "LITIO SULFATO MONOHIDRATADO",
         "tipo_producto_id": 28,
         "descripcion": "NO CUENTA CON ETIQUETA ORIGINAL",
         "peso": 0,
@@ -12001,7 +12001,7 @@
     },
     {
         "id": 601,
-        "producto": "TITANIO IV OXIDO",
+        "name": "TITANIO IV OXIDO",
         "tipo_producto_id": 28,
         "descripcion": "NO CUENTA CON ETIQUETA ORIGINAL",
         "peso": 0,
@@ -12021,7 +12021,7 @@
     },
     {
         "id": 602,
-        "producto": "FENOLFTALEINA",
+        "name": "FENOLFTALEINA",
         "tipo_producto_id": 28,
         "descripcion": "",
         "peso": 0,
@@ -12041,7 +12041,7 @@
     },
     {
         "id": 603,
-        "producto": "ESTRONCIO NITRATO",
+        "name": "ESTRONCIO NITRATO",
         "tipo_producto_id": 28,
         "descripcion": "NO CUENTA CON ETIQUETA ORIGINAL",
         "peso": 0,
@@ -12061,7 +12061,7 @@
     },
     {
         "id": 604,
-        "producto": "BARIO NITRATO",
+        "name": "BARIO NITRATO",
         "tipo_producto_id": 28,
         "descripcion": "NO CUENTA CON ETIQUETA ORIGINAL",
         "peso": 0,
@@ -12081,7 +12081,7 @@
     },
     {
         "id": 605,
-        "producto": "POTASIO METALICO",
+        "name": "POTASIO METALICO",
         "tipo_producto_id": 28,
         "descripcion": "",
         "peso": 0,
@@ -12101,7 +12101,7 @@
     },
     {
         "id": 606,
-        "producto": "PLATA METALICA EN POLVO",
+        "name": "PLATA METALICA EN POLVO",
         "tipo_producto_id": 28,
         "descripcion": "NO CUENTA CON ETIQUETA ORIGINAL",
         "peso": 0,
@@ -12121,7 +12121,7 @@
     },
     {
         "id": 607,
-        "producto": "CADNIO METALICO (CD) GRANALLAS",
+        "name": "CADNIO METALICO (CD) GRANALLAS",
         "tipo_producto_id": 28,
         "descripcion": "NO CUENTA CON ETIQUETA ORIGINAL",
         "peso": 0,
@@ -12141,7 +12141,7 @@
     },
     {
         "id": 608,
-        "producto": "ZINC METALICO EN GRANALLAS",
+        "name": "ZINC METALICO EN GRANALLAS",
         "tipo_producto_id": 28,
         "descripcion": "NO CUENTA CON ETIQUETA ORIGINAL",
         "peso": 0,
@@ -12161,7 +12161,7 @@
     },
     {
         "id": 609,
-        "producto": "PAPEL ALUMINIO",
+        "name": "PAPEL ALUMINIO",
         "tipo_producto_id": 28,
         "descripcion": "X 18 METROS",
         "peso": 0,
@@ -12181,7 +12181,7 @@
     },
     {
         "id": 610,
-        "producto": "PAPEL TORNA SOL",
+        "name": "PAPEL TORNA SOL",
         "tipo_producto_id": 28,
         "descripcion": "ROJO-AZUL",
         "peso": 0,
@@ -12201,7 +12201,7 @@
     },
     {
         "id": 611,
-        "producto": "PERAS",
+        "name": "PERAS",
         "tipo_producto_id": 28,
         "descripcion": "",
         "peso": 0,
@@ -12221,7 +12221,7 @@
     },
     {
         "id": 612,
-        "producto": "PARAFILM",
+        "name": "PARAFILM",
         "tipo_producto_id": 28,
         "descripcion": "",
         "peso": 0,
@@ -12241,7 +12241,7 @@
     },
     {
         "id": 613,
-        "producto": "PAPEL FILTRO",
+        "name": "PAPEL FILTRO",
         "tipo_producto_id": 28,
         "descripcion": "X 102 UNIDADES",
         "peso": 0,
@@ -12261,7 +12261,7 @@
     },
     {
         "id": 614,
-        "producto": "GRADILLA",
+        "name": "GRADILLA",
         "tipo_producto_id": 28,
         "descripcion": "",
         "peso": 0,
@@ -12281,7 +12281,7 @@
     },
     {
         "id": 615,
-        "producto": "ESPATULA",
+        "name": "ESPATULA",
         "tipo_producto_id": 28,
         "descripcion": "",
         "peso": 0,
@@ -12301,7 +12301,7 @@
     },
     {
         "id": 616,
-        "producto": "PINZA METALICA",
+        "name": "PINZA METALICA",
         "tipo_producto_id": 28,
         "descripcion": "",
         "peso": 0,
@@ -12321,7 +12321,7 @@
     },
     {
         "id": 617,
-        "producto": "PIPETEADOR",
+        "name": "PIPETEADOR",
         "tipo_producto_id": 28,
         "descripcion": "10 ML",
         "peso": 0,
@@ -12341,7 +12341,7 @@
     },
     {
         "id": 618,
-        "producto": "MALLAS DE ASBESTO",
+        "name": "MALLAS DE ASBESTO",
         "tipo_producto_id": 28,
         "descripcion": "",
         "peso": 0,
@@ -12361,7 +12361,7 @@
     },
     {
         "id": 619,
-        "producto": "TRIPODES",
+        "name": "TRIPODES",
         "tipo_producto_id": 28,
         "descripcion": "",
         "peso": 0,
@@ -12381,7 +12381,7 @@
     },
     {
         "id": 620,
-        "producto": "BEAKER 250 ML",
+        "name": "BEAKER 250 ML",
         "tipo_producto_id": 28,
         "descripcion": "250 ML",
         "peso": 0,
@@ -12401,7 +12401,7 @@
     },
     {
         "id": 621,
-        "producto": "TUBO DE ENSAYO",
+        "name": "TUBO DE ENSAYO",
         "tipo_producto_id": 28,
         "descripcion": "100 UNIDADES- PARTIERON 2 UNIDADES UNIAMAZONIA  (TAPA ROSCA)",
         "peso": 0,
@@ -12421,7 +12421,7 @@
     },
     {
         "id": 622,
-        "producto": "EMBUDO DE DECANTACION",
+        "name": "EMBUDO DE DECANTACION",
         "tipo_producto_id": 28,
         "descripcion": "2 DE 100 ML-2 DE 250 ML",
         "peso": 0,
@@ -12441,7 +12441,7 @@
     },
     {
         "id": 623,
-        "producto": "PIPETA",
+        "name": "PIPETA",
         "tipo_producto_id": 28,
         "descripcion": "10 ML. (1 LLEGO PARTIDA)",
         "peso": 0,
@@ -12461,7 +12461,7 @@
     },
     {
         "id": 624,
-        "producto": "GOTEROS PLASCTICOS",
+        "name": "GOTEROS PLASCTICOS",
         "tipo_producto_id": 28,
         "descripcion": "3 ML-2 ML",
         "peso": 0,
@@ -12481,7 +12481,7 @@
     },
     {
         "id": 625,
-        "producto": "CAJAS PETRI MINI",
+        "name": "CAJAS PETRI MINI",
         "tipo_producto_id": 28,
         "descripcion": "",
         "peso": 0,
@@ -12501,7 +12501,7 @@
     },
     {
         "id": 626,
-        "producto": "AGITADOR",
+        "name": "AGITADOR",
         "tipo_producto_id": 28,
         "descripcion": "AGITADORES DE VIDRIO",
         "peso": 0,
@@ -12521,7 +12521,7 @@
     },
     {
         "id": 627,
-        "producto": "BEAKER DE 1000 ML",
+        "name": "BEAKER DE 1000 ML",
         "tipo_producto_id": 28,
         "descripcion": "",
         "peso": 0,
@@ -12541,7 +12541,7 @@
     },
     {
         "id": 628,
-        "producto": "BALONES DE DESTILACION",
+        "name": "BALONES DE DESTILACION",
         "tipo_producto_id": 28,
         "descripcion": "",
         "peso": 0,
@@ -12561,7 +12561,7 @@
     },
     {
         "id": 629,
-        "producto": "TUBO DE ENSAYO CON TAPON",
+        "name": "TUBO DE ENSAYO CON TAPON",
         "tipo_producto_id": 28,
         "descripcion": "",
         "peso": 0,
@@ -12581,7 +12581,7 @@
     },
     {
         "id": 630,
-        "producto": "PROBETAS",
+        "name": "PROBETAS",
         "tipo_producto_id": 28,
         "descripcion": "",
         "peso": 0,
@@ -12601,7 +12601,7 @@
     },
     {
         "id": 631,
-        "producto": "BEAKER DE 100 ML",
+        "name": "BEAKER DE 100 ML",
         "tipo_producto_id": 28,
         "descripcion": "",
         "peso": 0,
@@ -12621,7 +12621,7 @@
     },
     {
         "id": 632,
-        "producto": "PIPETA VOLUMETRICA",
+        "name": "PIPETA VOLUMETRICA",
         "tipo_producto_id": 28,
         "descripcion": "",
         "peso": 0,
@@ -12641,7 +12641,7 @@
     },
     {
         "id": 633,
-        "producto": "CAJA PETRI",
+        "name": "CAJA PETRI",
         "tipo_producto_id": 28,
         "descripcion": "",
         "peso": 0,
@@ -12661,7 +12661,7 @@
     },
     {
         "id": 634,
-        "producto": "PARAFILM",
+        "name": "PARAFILM",
         "tipo_producto_id": 28,
         "descripcion": "",
         "peso": 0,
@@ -12681,7 +12681,7 @@
     },
     {
         "id": 635,
-        "producto": "PINZA BAYONETA",
+        "name": "PINZA BAYONETA",
         "tipo_producto_id": 28,
         "descripcion": "",
         "peso": 0,
@@ -12701,7 +12701,7 @@
     },
     {
         "id": 636,
-        "producto": "HIDROXIDOD E SODIO",
+        "name": "HIDROXIDOD E SODIO",
         "tipo_producto_id": 28,
         "descripcion": "",
         "peso": 0,
@@ -12721,7 +12721,7 @@
     },
     {
         "id": 637,
-        "producto": "HIPOCLORITO DE SODIO 15%",
+        "name": "HIPOCLORITO DE SODIO 15%",
         "tipo_producto_id": 28,
         "descripcion": "",
         "peso": 0,
@@ -12741,7 +12741,7 @@
     },
     {
         "id": 638,
-        "producto": "RED DE NIEBLA",
+        "name": "RED DE NIEBLA",
         "tipo_producto_id": 28,
         "descripcion": "CON VARILLAS",
         "peso": 0,
@@ -12761,7 +12761,7 @@
     },
     {
         "id": 639,
-        "producto": "CONDENSADOR",
+        "name": "CONDENSADOR",
         "tipo_producto_id": 28,
         "descripcion": "",
         "peso": 0,
@@ -12781,7 +12781,7 @@
     },
     {
         "id": 640,
-        "producto": "CINTA INDICADORA DE ESTERILIZACION",
+        "name": "CINTA INDICADORA DE ESTERILIZACION",
         "tipo_producto_id": 28,
         "descripcion": "3 METROS",
         "peso": 0,
@@ -12801,7 +12801,7 @@
     },
     {
         "id": 641,
-        "producto": "TIRAS INDICADORAS DE PH",
+        "name": "TIRAS INDICADORAS DE PH",
         "tipo_producto_id": 28,
         "descripcion": "100 TEST",
         "peso": 0,
@@ -12821,7 +12821,7 @@
     },
     {
         "id": 642,
-        "producto": "ETHANOL 94 AL 96 %",
+        "name": "ETHANOL 94 AL 96 %",
         "tipo_producto_id": 28,
         "descripcion": "8 UNIDADES X 4 LITROS",
         "peso": 0,
@@ -12841,7 +12841,7 @@
     },
     {
         "id": 643,
-        "producto": "SOLUCION DE HIDROXIDO DE SODIO 1 MOL",
+        "name": "SOLUCION DE HIDROXIDO DE SODIO 1 MOL",
         "tipo_producto_id": 28,
         "descripcion": "",
         "peso": 0,
@@ -12861,7 +12861,7 @@
     },
     {
         "id": 644,
-        "producto": "MAGNESIO DE CINTA",
+        "name": "MAGNESIO DE CINTA",
         "tipo_producto_id": 28,
         "descripcion": "",
         "peso": 0,
@@ -12881,7 +12881,7 @@
     },
     {
         "id": 645,
-        "producto": "FORMALDHIDO 37%",
+        "name": "FORMALDHIDO 37%",
         "tipo_producto_id": 28,
         "descripcion": "NO CUENTA CON ETIQUETA ORIGINAL",
         "peso": 0,
@@ -12901,7 +12901,7 @@
     },
     {
         "id": 646,
-        "producto": "ACRILAMIDA PARA SINTESIS",
+        "name": "ACRILAMIDA PARA SINTESIS",
         "tipo_producto_id": 28,
         "descripcion": "NO CUENTA CON ETIQUETA ORIGINAL",
         "peso": 0,
@@ -12921,7 +12921,7 @@
     },
     {
         "id": 647,
-        "producto": "ACIDO CLORHIDRICO  FUMANTE 0,1 MOL",
+        "name": "ACIDO CLORHIDRICO  FUMANTE 0,1 MOL",
         "tipo_producto_id": 28,
         "descripcion": "NO CUANTA CON ETIQUETA ORIGINAL",
         "peso": 0,
@@ -12941,7 +12941,7 @@
     },
     {
         "id": 648,
-        "producto": "TEST POLVO INDICADOR DE FENOLFTALEINA",
+        "name": "TEST POLVO INDICADOR DE FENOLFTALEINA",
         "tipo_producto_id": 28,
         "descripcion": "100 UNIDADES",
         "peso": 0,
@@ -12961,7 +12961,7 @@
     },
     {
         "id": 649,
-        "producto": "AGAR PATATA GLUCOSA",
+        "name": "AGAR PATATA GLUCOSA",
         "tipo_producto_id": 28,
         "descripcion": "",
         "peso": 0,
@@ -12981,7 +12981,7 @@
     },
     {
         "id": 650,
-        "producto": "HIDROGENO PEROXIDO",
+        "name": "HIDROGENO PEROXIDO",
         "tipo_producto_id": 28,
         "descripcion": "SIN ETIQUETA ORIGINAL",
         "peso": 0,
@@ -13001,7 +13001,7 @@
     },
     {
         "id": 651,
-        "producto": "FORMALDEHIDO 37% (METANA)",
+        "name": "FORMALDEHIDO 37% (METANA)",
         "tipo_producto_id": 28,
         "descripcion": "SIN ETIQUETA ORIGINAL",
         "peso": 0,
@@ -13021,7 +13021,7 @@
     },
     {
         "id": 652,
-        "producto": "COBRE (II) OXIDO",
+        "name": "COBRE (II) OXIDO",
         "tipo_producto_id": 28,
         "descripcion": "SIN ETIQUETA ORIGINAL",
         "peso": 0,
@@ -13041,7 +13041,7 @@
     },
     {
         "id": 653,
-        "producto": "CALCIO CARBURO",
+        "name": "CALCIO CARBURO",
         "tipo_producto_id": 28,
         "descripcion": "",
         "peso": 0,
@@ -13061,7 +13061,7 @@
     },
     {
         "id": 654,
-        "producto": "COBRE II SULFATO PENTA-HIDRATO, ENVASE VIDRIO",
+        "name": "COBRE II SULFATO PENTA-HIDRATO, ENVASE VIDRIO",
         "tipo_producto_id": 28,
         "descripcion": "",
         "peso": 0,
@@ -13081,7 +13081,7 @@
     },
     {
         "id": 655,
-        "producto": "ANARANJADO DE METILO",
+        "name": "ANARANJADO DE METILO",
         "tipo_producto_id": 28,
         "descripcion": "",
         "peso": 0,
@@ -13101,7 +13101,7 @@
     },
     {
         "id": 656,
-        "producto": "SOLUCION DE CLORURO DE POTASIO",
+        "name": "SOLUCION DE CLORURO DE POTASIO",
         "tipo_producto_id": 28,
         "descripcion": "",
         "peso": 0,
@@ -13121,7 +13121,7 @@
     },
     {
         "id": 657,
-        "producto": "AGAR DE PAPA Y DEXTROSA",
+        "name": "AGAR DE PAPA Y DEXTROSA",
         "tipo_producto_id": 28,
         "descripcion": "",
         "peso": 0,
@@ -13141,7 +13141,7 @@
     },
     {
         "id": 658,
-        "producto": "ACIDO SULFURICO",
+        "name": "ACIDO SULFURICO",
         "tipo_producto_id": 28,
         "descripcion": "",
         "peso": 0,
@@ -13161,7 +13161,7 @@
     },
     {
         "id": 659,
-        "producto": "SOLUCION DE HIDROXIDO DE SODIO",
+        "name": "SOLUCION DE HIDROXIDO DE SODIO",
         "tipo_producto_id": 28,
         "descripcion": "1 LITRO CADA UNO",
         "peso": 0,
@@ -13181,7 +13181,7 @@
     },
     {
         "id": 660,
-        "producto": "VINAGRE BLANCO",
+        "name": "VINAGRE BLANCO",
         "tipo_producto_id": 28,
         "descripcion": "1 LITRO CADA UNO",
         "peso": 0,
@@ -13201,7 +13201,7 @@
     },
     {
         "id": 661,
-        "producto": "PROBETA DE 50 ML",
+        "name": "PROBETA DE 50 ML",
         "tipo_producto_id": 28,
         "descripcion": "",
         "peso": 0,
@@ -13221,7 +13221,7 @@
     },
     {
         "id": 662,
-        "producto": "BURETA 50 ML",
+        "name": "BURETA 50 ML",
         "tipo_producto_id": 28,
         "descripcion": "",
         "peso": 0,
@@ -13241,7 +13241,7 @@
     },
     {
         "id": 663,
-        "producto": "CALIBRADOR PIE DE REY",
+        "name": "CALIBRADOR PIE DE REY",
         "tipo_producto_id": 28,
         "descripcion": "MATERIAL EN ACERO INOXIDABLE",
         "peso": 0,
@@ -13261,7 +13261,7 @@
     },
     {
         "id": 664,
-        "producto": "VASO TULIPÁN",
+        "name": "VASO TULIPÁN",
         "tipo_producto_id": 28,
         "descripcion": "VIDRIO TRANSPARENTE EN FORMA DE TULIPÁN CON CAPACIDAD DE 350-450 ML",
         "peso": 0,
@@ -13281,7 +13281,7 @@
     },
     {
         "id": 665,
-        "producto": "COPA MARTINI",
+        "name": "COPA MARTINI",
         "tipo_producto_id": 28,
         "descripcion": "VIDRIO TRANSPARENTE DE 150 - 250 ML",
         "peso": 0,
@@ -13301,7 +13301,7 @@
     },
     {
         "id": 666,
-        "producto": "COPA MARTINI",
+        "name": "COPA MARTINI",
         "tipo_producto_id": 28,
         "descripcion": "VIDRIO TRASNPARENTE CON CAPACIDAD DE 250 ML",
         "peso": 0,
@@ -13321,7 +13321,7 @@
     },
     {
         "id": 667,
-        "producto": "JARRO GALERIE",
+        "name": "JARRO GALERIE",
         "tipo_producto_id": 28,
         "descripcion": "VIDRIO TEMPLADO",
         "peso": 0,
@@ -13341,7 +13341,7 @@
     },
     {
         "id": 668,
-        "producto": "FRASCO DE VIDRIO",
+        "name": "FRASCO DE VIDRIO",
         "tipo_producto_id": 28,
         "descripcion": "VIDRIO TRANSPARENTE RECICLABLE, TAPA COLOR DORODO CON ENROSQUE, CON UNA CAPACIDAD DE 30 ML",
         "peso": 0,
@@ -13361,7 +13361,7 @@
     },
     {
         "id": 669,
-        "producto": "FRASCO DE VIDRIO",
+        "name": "FRASCO DE VIDRIO",
         "tipo_producto_id": 28,
         "descripcion": "VIDRIO TRANSPARENTE (INCOLORO) TIPO ROSCA CON TAPA AZUL Y UNA CAPACIDAD DE 22 ML",
         "peso": 0,
@@ -13381,7 +13381,7 @@
     },
     {
         "id": 670,
-        "producto": "TASA DE CAFÉ O TÉ",
+        "name": "TASA DE CAFÉ O TÉ",
         "tipo_producto_id": 28,
         "descripcion": "PORCELANA DE LOZA CON CAPACIDAD DE 150-250 ML",
         "peso": 0,
@@ -13401,7 +13401,7 @@
     },
     {
         "id": 671,
-        "producto": "PLATO PARA TE ACTUALITE BLACO",
+        "name": "PLATO PARA TE ACTUALITE BLACO",
         "tipo_producto_id": 28,
         "descripcion": "PORCELANA CON DIAMETRO DE 16,3 CM",
         "peso": 0,
@@ -13421,7 +13421,7 @@
     },
     {
         "id": 672,
-        "producto": "PLATO CAPUCCINO ACTUALITE BLANCO",
+        "name": "PLATO CAPUCCINO ACTUALITE BLANCO",
         "tipo_producto_id": 28,
         "descripcion": "PORCELANA CON DIAMETRO DE 16,3 CM",
         "peso": 0,
@@ -13441,7 +13441,7 @@
     },
     {
         "id": 673,
-        "producto": "CEPILLO DE LIMPIEZA (PEQUEÑO)",
+        "name": "CEPILLO DE LIMPIEZA (PEQUEÑO)",
         "tipo_producto_id": 28,
         "descripcion": "MATERIAL DE PLASTICO CON UNA SECCIÓN DE RANURAS U ANILLOS",
         "peso": 0,
@@ -13461,7 +13461,7 @@
     },
     {
         "id": 674,
-        "producto": "BOTELLA DE VIDRIO WOOSY",
+        "name": "BOTELLA DE VIDRIO WOOSY",
         "tipo_producto_id": 28,
         "descripcion": "VIDRIO DE SILIZE SODO CALCIO, TAPA DE PLASTICO AZUL CON UNA CAPACIDAD DE 60 ML",
         "peso": 0,
@@ -13481,7 +13481,7 @@
     },
     {
         "id": 675,
-        "producto": "TARRO DE VIDRIO ESTILO MASON",
+        "name": "TARRO DE VIDRIO ESTILO MASON",
         "tipo_producto_id": 28,
         "descripcion": "VIDRIO SÍLICE SODO CALCIO CON UNA CAPACIDAD DE 80 ML",
         "peso": 0,
@@ -13501,7 +13501,7 @@
     },
     {
         "id": 676,
-        "producto": "TARRO DE MUESTRA DE VIDRIO",
+        "name": "TARRO DE MUESTRA DE VIDRIO",
         "tipo_producto_id": 28,
         "descripcion": "VIDRIO BOROSILICATO, CON TAPA DORADO CON UNA CAPACIDAD DE 10-15 ML",
         "peso": 0,
@@ -13521,7 +13521,7 @@
     },
     {
         "id": 677,
-        "producto": "COCTELERA DE ACERO ENOXIDABLE",
+        "name": "COCTELERA DE ACERO ENOXIDABLE",
         "tipo_producto_id": 28,
         "descripcion": "ES DE ACERO INOXIDABLE CON CAPACIDAD DE 500-750 ML",
         "peso": 0,
@@ -13541,7 +13541,7 @@
     },
     {
         "id": 678,
-        "producto": "COPA MEDIDORA",
+        "name": "COPA MEDIDORA",
         "tipo_producto_id": 28,
         "descripcion": "COPA MEDIDORA DE ONZAS EN CÓCTELES Y\n                 BEBIDAS CON UNA CAPACIDAD DE 30 ML (1 OZ) POR LA PARTE MAS\n                  GRANDE- 20 ML (0,68 OZ) POR LA PARTE MAS PEQUEÑA",
         "peso": 0,
@@ -13561,7 +13561,7 @@
     },
     {
         "id": 679,
-        "producto": "ESPOLVOREADOR",
+        "name": "ESPOLVOREADOR",
         "tipo_producto_id": 28,
         "descripcion": "ESPOLVOREADOR  DE ACERO INOXIDABLE PARA CACAO, AZÚCAR,\n                 GLASS O CANELA CON UNA CAPACIDAD DE 10 OZ (APROX 295 ML)",
         "peso": 0,
@@ -13581,7 +13581,7 @@
     },
     {
         "id": 680,
-        "producto": "JARRA PARA ESPUMAR",
+        "name": "JARRA PARA ESPUMAR",
         "tipo_producto_id": 28,
         "descripcion": "MATERIAL DE ACERO INOXIDABLE CON UNA CAPACIDAD DE 600 ML (20 OZ)",
         "peso": 0,
@@ -13601,7 +13601,7 @@
     },
     {
         "id": 681,
-        "producto": "JARRA PARA ESPUMAR",
+        "name": "JARRA PARA ESPUMAR",
         "tipo_producto_id": 28,
         "descripcion": "MATERIAL DE ACERO INOXIDABLE CON UNA CAPACIDAD DE 350 ML (12 OZ)",
         "peso": 0,
@@ -13621,7 +13621,7 @@
     },
     {
         "id": 682,
-        "producto": "BROCHA DE COCINA",
+        "name": "BROCHA DE COCINA",
         "tipo_producto_id": 28,
         "descripcion": "BROCHA DE COCINA CON UNA ESTRUCTURA QUE CONSTA DE MANGO,\n                 CABEZA Y CERDAS DE PLASTICO RESISTENTE Y FIBRAS DE SILICONA O MATERIAL SINTÉTICO",
         "peso": 0,
@@ -13641,7 +13641,7 @@
     },
     {
         "id": 683,
-        "producto": "MAZO METÁLICO",
+        "name": "MAZO METÁLICO",
         "tipo_producto_id": 28,
         "descripcion": "MATERIAL EN ACERO INOXIDABLE O TEMPLADO,\n                 COMPACTADOR DE CAFÉ MOLIDO CON UN DIAMETRO DE 57 MM",
         "peso": 0,
@@ -13661,7 +13661,7 @@
     },
     {
         "id": 684,
-        "producto": "AZAFATE",
+        "name": "AZAFATE",
         "tipo_producto_id": 28,
         "descripcion": "ACERO INOXIDABLE CUADRADO, BARRA DE GOMA EN EL CENTRO,\n                 DIMENCIONES APROPIADAS PARA LA BARRA DE CAFÉ, BARRA 10 CM CON CAPACIDAD DE 1-2 LT",
         "peso": 0,
@@ -13681,7 +13681,7 @@
     },
     {
         "id": 685,
-        "producto": "PINCEL LATTE ART",
+        "name": "PINCEL LATTE ART",
         "tipo_producto_id": 28,
         "descripcion": "HERRAMIENTA MANUAL COMPUESTA POR UN MANGO ROJO,\n                 CON UN EXTREMO ESFÉRICO METÁLICO Y OTOR EXTREMO PUNTIAGUDO UTILIZADO PARA LA LECHE,\n                 CON UNA LONGITUD DE 10 A 15 CM",
         "peso": 0,
@@ -13701,7 +13701,7 @@
     },
     {
         "id": 686,
-        "producto": "ORGANIZADOR DE MATERIALES DE LABORATORIO",
+        "name": "ORGANIZADOR DE MATERIALES DE LABORATORIO",
         "tipo_producto_id": 28,
         "descripcion": "ALMACENA Y ORGANIZA HERRAMIENTAS MANUALES, MATERIAL DE PLÁSTICO RÍGIDO",
         "peso": 0,
@@ -13721,7 +13721,7 @@
     },
     {
         "id": 687,
-        "producto": "TAPA PRENSADORA",
+        "name": "TAPA PRENSADORA",
         "tipo_producto_id": 28,
         "descripcion": "MATERIAL FABRICADOEN ACERO INOXIDABLE, PRESENTA ORIFICIOS ALREDEDOR DE SUS PAREDES Y CUENTA CON UNA TAPA EQUIPADA CON MANIJA PARA FACILITAR SU MANIPULACIÓN",
         "peso": 0,
@@ -13741,7 +13741,7 @@
     },
     {
         "id": 688,
-        "producto": "PRENSADORA CON TAPA",
+        "name": "PRENSADORA CON TAPA",
         "tipo_producto_id": 28,
         "descripcion": "MATERIAL DE ACORO INOXIDABLE CON ORIFICIOS DISTRIBUIDOS EN LA FUPERFICIE\n                 Y EN EL FONDO CON SU RESPECTIVA TAPA DE BASE CIRCULAR",
         "peso": 0,
@@ -13761,7 +13761,7 @@
     },
     {
         "id": 689,
-        "producto": "MOLDE RECTANGULAR",
+        "name": "MOLDE RECTANGULAR",
         "tipo_producto_id": 28,
         "descripcion": "MATERIAL EN ACERO INOXIDABLE, MOLDEADOR PARA QUESO",
         "peso": 0,
@@ -13781,7 +13781,7 @@
     },
     {
         "id": 690,
-        "producto": "FILTRO PARA LECHERÍA",
+        "name": "FILTRO PARA LECHERÍA",
         "tipo_producto_id": 28,
         "descripcion": "FILTRO DE ALUMINIO CON DOS MALLAS (TAMIZ) REEMPLAZABLE,\n                 ARO DE SUJETACIÓN Y PAPEL FILTRO.",
         "peso": 0,
@@ -13801,7 +13801,7 @@
     },
     {
         "id": 691,
-        "producto": "GUANTES INDUSTRIAL",
+        "name": "GUANTES INDUSTRIAL",
         "tipo_producto_id": 28,
         "descripcion": "GUANTES DE MATERIAL DE LATEX NATURAL CON ANTIBACTERIAL Y ANTIALÉRGICOS,\n                 CALIBRE 35, TALLA 10.",
         "peso": 0,
@@ -13821,7 +13821,7 @@
     },
     {
         "id": 692,
-        "producto": "GUANTES INDUSTRIAL",
+        "name": "GUANTES INDUSTRIAL",
         "tipo_producto_id": 28,
         "descripcion": "GUANTES DE MATERIAL DE LATEX NATURAL\n                 CON ANTIBACTERIAL Y ANTIALÉRGICOS, CALIBRE 35, TALLA 9.",
         "peso": 0,
@@ -13841,7 +13841,7 @@
     },
     {
         "id": 693,
-        "producto": "GUANTES INDUSTRIAL",
+        "name": "GUANTES INDUSTRIAL",
         "tipo_producto_id": 28,
         "descripcion": "GUANTES DE MATERIAL DE LATEX NATURAL\n                 CON ANTIBACTERIAL Y ANTIALÉRGICOS, CALIBRE 35, TALLA 8 1/2.",
         "peso": 0,
@@ -13861,7 +13861,7 @@
     },
     {
         "id": 694,
-        "producto": "BOLSA PARA BASURA",
+        "name": "BOLSA PARA BASURA",
         "tipo_producto_id": 28,
         "descripcion": "BOLSA OXO-BIODEGRADABLE TAMAÑO GRANDE\n                 CON MEDIDAS DE 65X90 CM, 9 ROLLO X 10 UNIDADES CADA UNO.",
         "peso": 0,
@@ -13881,7 +13881,7 @@
     },
     {
         "id": 695,
-        "producto": "BOLSA DE BASURA",
+        "name": "BOLSA DE BASURA",
         "tipo_producto_id": 28,
         "descripcion": "BOLSA DE COLOR GRIS, DIVIDA EN DOS ROLLOS DE 50 MAS 27 UNIDAD",
         "peso": 0,
@@ -13901,7 +13901,7 @@
     },
     {
         "id": 696,
-        "producto": "BOLSA DE BASURA GRANDE",
+        "name": "BOLSA DE BASURA GRANDE",
         "tipo_producto_id": 28,
         "descripcion": "BOLSA GRANDE VERDE",
         "peso": 0,
@@ -13921,7 +13921,7 @@
     },
     {
         "id": 697,
-        "producto": "BOLSAS DE BASURA",
+        "name": "BOLSAS DE BASURA",
         "tipo_producto_id": 28,
         "descripcion": "BOLSA COLOR ROJA",
         "peso": 0,
@@ -13941,7 +13941,7 @@
     },
     {
         "id": 698,
-        "producto": "BOLSA DE BASURA",
+        "name": "BOLSA DE BASURA",
         "tipo_producto_id": 28,
         "descripcion": "BOLSA COLOR NEGRA, 8 PAQUETES x 6 UNIDADES MAS 26 UNIDADES",
         "peso": 0,
@@ -13961,7 +13961,7 @@
     },
     {
         "id": 699,
-        "producto": "BOLSA DE BASURA CON MANIJAS",
+        "name": "BOLSA DE BASURA CON MANIJAS",
         "tipo_producto_id": 28,
         "descripcion": "BOLSA COLOR NEGRA CON MANIJAS EN ROLLO",
         "peso": 0,
@@ -13981,7 +13981,7 @@
     },
     {
         "id": 700,
-        "producto": "FIBRA PARA LAVAR",
+        "name": "FIBRA PARA LAVAR",
         "tipo_producto_id": 28,
         "descripcion": "FIBRA CLASICA DE POLIÉSTER CON UN TAMAÑO DE 140MM X 100MM X 7 MM",
         "peso": 0,
@@ -14001,7 +14001,7 @@
     },
     {
         "id": 701,
-        "producto": "ESPONJA DE COCINA",
+        "name": "ESPONJA DE COCINA",
         "tipo_producto_id": 28,
         "descripcion": "ESPONJA DOBLE USO, CON UNA BASE DE COLOR AMARILLO Y SUPERFICIE VERDE",
         "peso": 0,
@@ -14021,7 +14021,7 @@
     },
     {
         "id": 702,
-        "producto": "PAPEL DE ALIMINIO",
+        "name": "PAPEL DE ALIMINIO",
         "tipo_producto_id": 28,
         "descripcion": "PAPEL DE ALUMINIO DE 100 METROS, 329 FT X 12 IN",
         "peso": 0,
@@ -14041,7 +14041,7 @@
     },
     {
         "id": 703,
-        "producto": "VINIPEL",
+        "name": "VINIPEL",
         "tipo_producto_id": 28,
         "descripcion": "VINIPEL DE 17 METROS",
         "peso": 0,
@@ -14061,7 +14061,7 @@
     },
     {
         "id": 704,
-        "producto": "PAÑOS DE LIMPIEZA",
+        "name": "PAÑOS DE LIMPIEZA",
         "tipo_producto_id": 28,
         "descripcion": "ROLLO DE 36 METROS, DEL CUAL SE OBTIENEN 88 PAÑOS,\n                 CADA UNO CON MEDIDAS DE 27,8 CM X 41 CM",
         "peso": 0,
@@ -14081,7 +14081,7 @@
     },
     {
         "id": 705,
-        "producto": "TOALLAS MULTIUSO",
+        "name": "TOALLAS MULTIUSO",
         "tipo_producto_id": 28,
         "descripcion": "TOLLAS COLOR NATURAL DE 150 METROS;\n                 CADA PAQUETE CONSTA DE DOS ROLLOS DE HOJA DOBLE, CON UN ANCHO DE ROLLO DE 18,8 CM.",
         "peso": 0,
@@ -14101,7 +14101,7 @@
     },
     {
         "id": 706,
-        "producto": "JABÓN LÍQUIDO",
+        "name": "JABÓN LÍQUIDO",
         "tipo_producto_id": 28,
         "descripcion": "JABÓN PARA MANOS Y CUERPO ANTIBACTERIAL, CANTIDAD DE 1000 ML.",
         "peso": 0,
@@ -14121,7 +14121,7 @@
     },
     {
         "id": 707,
-        "producto": "DELANTAL DE VARISMO",
+        "name": "DELANTAL DE VARISMO",
         "tipo_producto_id": 28,
         "descripcion": "DELANTAL BLANCO CON DOS BOLSILLOS EN LA PARTE DELANTERA",
         "peso": 0,
@@ -14141,7 +14141,7 @@
     },
     {
         "id": 708,
-        "producto": "TAZÓN METÁLICO",
+        "name": "TAZÓN METÁLICO",
         "tipo_producto_id": 28,
         "descripcion": "MATERIAL DE ACERO INOXIDABLE",
         "peso": 0,
@@ -14161,7 +14161,7 @@
     },
     {
         "id": 709,
-        "producto": "PALA DE COCINA",
+        "name": "PALA DE COCINA",
         "tipo_producto_id": 28,
         "descripcion": "MATERIAL DE ACERO INOXIDABLE, SE USA PARA SERVIR,\n                 TRASLADAR O DICIFICAR INGREDIENTES SÓLIDOS",
         "peso": 0,
@@ -14181,7 +14181,7 @@
     },
     {
         "id": 710,
-        "producto": "EMBUDO DE COCINA",
+        "name": "EMBUDO DE COCINA",
         "tipo_producto_id": 28,
         "descripcion": "EMBUDO METÁLICO EN ACERO INOXIDABLE PARA TRASVASAR LÍQUIDOS O INGREDIENTES SECOS",
         "peso": 0,
@@ -14201,7 +14201,7 @@
     },
     {
         "id": 711,
-        "producto": "TERMÓMETRO DE COCINA",
+        "name": "TERMÓMETRO DE COCINA",
         "tipo_producto_id": 28,
         "descripcion": "FABRICADO EN ACERO INOXIDABLE,\n                 COMPUESTO POR UNA CARCASA, VARILLA, BORDE Y CARÁTULA DE VIDRIO",
         "peso": 0,
@@ -14221,7 +14221,7 @@
     },
     {
         "id": 712,
-        "producto": "CUCHILLO DE COCINA PROFECIONAL",
+        "name": "CUCHILLO DE COCINA PROFECIONAL",
         "tipo_producto_id": 28,
         "descripcion": "LA HOJA ES DE MATERIAL DE ACERO INOXIDABLE Y\n                 EL MANGO ES DE PLÁSTICO RESISTENTE DE COLOR BLANCO Y NEGRO, SE USA PARA CORTAR,\n                 TROCEAR, PICAR Y FILETEAR",
         "peso": 0,
@@ -14241,7 +14241,7 @@
     },
     {
         "id": 713,
-        "producto": "PELADOR DE COCINA",
+        "name": "PELADOR DE COCINA",
         "tipo_producto_id": 28,
         "descripcion": "LA CUCHILLA ESTA FABRICADA EN ACERO INOXIDABLE,\n                 EL MANGO ES DE PLÁSTICO RESISTENTE, SE UTILIZA PARA OELAR LA PIEL DE LAS VERDURAS Y FRUTAS",
         "peso": 0,
@@ -14261,7 +14261,7 @@
     },
     {
         "id": 714,
-        "producto": "CUCHILLO DE SIERRA GRANDE",
+        "name": "CUCHILLO DE SIERRA GRANDE",
         "tipo_producto_id": 28,
         "descripcion": "HOJA DE ACERO INOXIDABLE, MANGO DE PLÁSTICO COLOR NEGRO,\n                 USO PARA CORTAR CORTEZAS DURAS Y CENTROS BLANDOS",
         "peso": 0,
@@ -14281,7 +14281,7 @@
     },
     {
         "id": 715,
-        "producto": "CUCHILLO CARNICERO",
+        "name": "CUCHILLO CARNICERO",
         "tipo_producto_id": 28,
         "descripcion": "HOJA DE ACERO INOXIDABLE, MANGO DE POLIPROPILENO,\n                 SIRVE PARA CORTAR, DESHUESAR Y FILETEAR GRANDES PUEZAS DE CARNE",
         "peso": 0,
@@ -14301,7 +14301,7 @@
     },
     {
         "id": 716,
-        "producto": "ESPÁTULA DE SILICONA",
+        "name": "ESPÁTULA DE SILICONA",
         "tipo_producto_id": 28,
         "descripcion": "MATERIAL SILICONA DE COLOR ROJO",
         "peso": 0,
@@ -14321,7 +14321,7 @@
     },
     {
         "id": 717,
-        "producto": "ESPÁTULA GRANDE",
+        "name": "ESPÁTULA GRANDE",
         "tipo_producto_id": 28,
         "descripcion": "ESPÁTULA CON CABEZA COLOR BLANCA,\n                 FABRICADA EN SILICONA FLEXIBLE, Y MANGO DE PLÁSTICO COLOR ROJO.",
         "peso": 0,
@@ -14341,7 +14341,7 @@
     },
     {
         "id": 718,
-        "producto": "ESPÁTULA PEQUEÑA",
+        "name": "ESPÁTULA PEQUEÑA",
         "tipo_producto_id": 28,
         "descripcion": "ESPÁTULA CON CABEZA COLOR BLANCA,\n                 FABRICADA EN SILICONA FLEXIBLE, Y MANGO DE PLÁSTICO COLOR ROJO.",
         "peso": 0,
@@ -14361,7 +14361,7 @@
     },
     {
         "id": 719,
-        "producto": "CUCHILLO PARA DESHUESAR",
+        "name": "CUCHILLO PARA DESHUESAR",
         "tipo_producto_id": 28,
         "descripcion": "HOJA DE ACERO INOXIDABLE,\n                 Y MANGO DE POLIPROPILENO BLANCO, SU USO PRINCIPALMENTE PARA SEPARAR LA CARNE DEL HUESO.",
         "peso": 0,
@@ -14381,7 +14381,7 @@
     },
     {
         "id": 720,
-        "producto": "CUCHILLO DE COCINA MULTIUSO",
+        "name": "CUCHILLO DE COCINA MULTIUSO",
         "tipo_producto_id": 28,
         "descripcion": "HOJA DE ACERO INOXIDABLE, Y EL MANGO DE POLIPROPILENO",
         "peso": 0,
@@ -14401,7 +14401,7 @@
     },
     {
         "id": 721,
-        "producto": "CUCHILLO DE SIERRA PEQUEÑO",
+        "name": "CUCHILLO DE SIERRA PEQUEÑO",
         "tipo_producto_id": 28,
         "descripcion": "HOJA DE ACERO INOXIDABLE, Y MANGO DE PLÁSTICO COLOR NEGRO,\n                 USO PARA CORTAR CORTEZAS DURAS Y CENTROS BLANDOS",
         "peso": 0,
@@ -14421,7 +14421,7 @@
     },
     {
         "id": 722,
-        "producto": "CUCHILLO PUNTILLA",
+        "name": "CUCHILLO PUNTILLA",
         "tipo_producto_id": 28,
         "descripcion": "MATERIAL DE LA HOJA EN ACERO INOXIDABLE,\n                 Y EL MANGO EN POLIPROPILENO, DOS EN COLOR NEGRO Y UNO EN COLOR BLANCO.",
         "peso": 0,
@@ -14441,7 +14441,7 @@
     },
     {
         "id": 723,
-        "producto": "CUCHILLO DE CHEF",
+        "name": "CUCHILLO DE CHEF",
         "tipo_producto_id": 28,
         "descripcion": "MATERIAL DE LA HOJA EN ACERO INOXIDABLE, Y EL MANGO EN POLIPROPILENO BLANCO.",
         "peso": 0,
@@ -14461,7 +14461,7 @@
     },
     {
         "id": 724,
-        "producto": "ESPÁTULA REPOSTERA",
+        "name": "ESPÁTULA REPOSTERA",
         "tipo_producto_id": 28,
         "descripcion": "MATERIAL DE LA CABEZA SILICONA FLEXIBLE COLOR GRIS, Y EL MANGO PLÁSTICO BLANCO.",
         "peso": 0,
@@ -14481,7 +14481,7 @@
     },
     {
         "id": 725,
-        "producto": "ESPÁTULA METÁLICA",
+        "name": "ESPÁTULA METÁLICA",
         "tipo_producto_id": 28,
         "descripcion": "MATERIAL DE LA HOJA ACERO INOXIDABLE, Y EL MANGO EN POLIPROPILENO COLOR ROJO.",
         "peso": 0,
@@ -14501,7 +14501,7 @@
     },
     {
         "id": 726,
-        "producto": "RALLADOR MANUAL DE COCINA",
+        "name": "RALLADOR MANUAL DE COCINA",
         "tipo_producto_id": 28,
         "descripcion": "EL CUERPO ES FABRICADO EN ALUMINIO, LAS MANIJAS EN METAL.",
         "peso": 0,
@@ -14521,7 +14521,7 @@
     },
     {
         "id": 727,
-        "producto": "TABLA DE PICAR",
+        "name": "TABLA DE PICAR",
         "tipo_producto_id": 28,
         "descripcion": "MATERIAL DE POLIPROPILENO BLANCO",
         "peso": 0,
@@ -14541,7 +14541,7 @@
     },
     {
         "id": 728,
-        "producto": "TABLA DE PICAR",
+        "name": "TABLA DE PICAR",
         "tipo_producto_id": 28,
         "descripcion": "MATERIAL DE POLIPROPILENO ROJO",
         "peso": 0,
@@ -14561,7 +14561,7 @@
     },
     {
         "id": 729,
-        "producto": "TABLA DE PICAR GRANDE",
+        "name": "TABLA DE PICAR GRANDE",
         "tipo_producto_id": 28,
         "descripcion": "MATERIAL DE POLIPROPILENO COLOR MORADO Y VERDE.",
         "peso": 0,
@@ -14581,7 +14581,7 @@
     },
     {
         "id": 730,
-        "producto": "BANDEJA METÁLICA",
+        "name": "BANDEJA METÁLICA",
         "tipo_producto_id": 28,
         "descripcion": "FABRICADO EN ALUMINIO, PARA HORNEAR GALLETAS, PANES, PASTELES Y OTROS ALIMENTOS",
         "peso": 0,
@@ -14601,7 +14601,7 @@
     },
     {
         "id": 731,
-        "producto": "BOTELLA PLÁSTICA",
+        "name": "BOTELLA PLÁSTICA",
         "tipo_producto_id": 28,
         "descripcion": "ENVASE COMÚN PARA CONTENER LÍQUIDOS COMO LECHE,\n                 JUGOS, AGUA, Y PRODUCTOS SIMILARES, CON UNA CAPACIDAD DE 250 ML.",
         "peso": 0,
@@ -14621,7 +14621,7 @@
     },
     {
         "id": 732,
-        "producto": "ENVASE PLÁSTICO DE YOGURT",
+        "name": "ENVASE PLÁSTICO DE YOGURT",
         "tipo_producto_id": 28,
         "descripcion": "ENVASE PLÁSTICO CON TAPA DE ROSCA Y ASA,\n                 PARA ENVASAR BEBIDAS LÁCTEAS, CON CAPACIDAD DE 250 ML.",
         "peso": 0,
@@ -14641,7 +14641,7 @@
     },
     {
         "id": 733,
-        "producto": "ENVASE PLÁSTICO CUADRADO",
+        "name": "ENVASE PLÁSTICO CUADRADO",
         "tipo_producto_id": 28,
         "descripcion": "RECIPIENTE DE PLÁSTICO CON TAPA DE\n                 ENRROSQUE PARA ENVASAR BEBIDAS, CON UNA CAPACIDAD DE 230 ML.",
         "peso": 0,
@@ -14661,7 +14661,7 @@
     },
     {
         "id": 734,
-        "producto": "ENVASE PLÁSTICO DE YOGURT",
+        "name": "ENVASE PLÁSTICO DE YOGURT",
         "tipo_producto_id": 28,
         "descripcion": "ENVASE PLÁSTICO DE DISEÑO\n                  CUADRADO CON ASA Y TAPA DE ENRROSQUE, CAPACIDAD DE 1 LITRO.",
         "peso": 0,
@@ -14681,7 +14681,7 @@
     },
     {
         "id": 735,
-        "producto": "BOLSA DOYPACK",
+        "name": "BOLSA DOYPACK",
         "tipo_producto_id": 28,
         "descripcion": "MATERIAL DE AULIMINIO METALIZADO, Y UNA TAPA EN ROSCA, CON UNA CAPACIDAD DE 200 ML.",
         "peso": 0,
@@ -14701,7 +14701,7 @@
     },
     {
         "id": 736,
-        "producto": "TERMÓMETRO DIGITAL ECO TEMP",
+        "name": "TERMÓMETRO DIGITAL ECO TEMP",
         "tipo_producto_id": 28,
         "descripcion": "TERMÓMETRO DIGITAL CON SONDA\n                  DE PENETRACIÓN, MATERIAL DE PLÁSTICO Y LA SONDA DE ACERO INOXIDABL,\n                  EL CABLE DE SILICONA MODELO ETI 810-950, RANGO DE TEMPERATURA DE -49.9 °C A 199.9 °C.",
         "peso": 0,
@@ -14721,7 +14721,7 @@
     },
     {
         "id": 737,
-        "producto": "BOMBA DE PIPETA",
+        "name": "BOMBA DE PIPETA",
         "tipo_producto_id": 28,
         "descripcion": "MATERIAL DE PLÁSTICO ROJO, CAPACIDAD DE 25 ML,\n                 SE UA PARA SUCCIONAR Y DIPENSAR LÍQUIDOS CON PRECISÓN.",
         "peso": 0,
@@ -14741,7 +14741,7 @@
     },
     {
         "id": 738,
-        "producto": "TERMOMETRO DE BARILLA PARA BARBACOA",
+        "name": "TERMOMETRO DE BARILLA PARA BARBACOA",
         "tipo_producto_id": 28,
         "descripcion": "LA VARILLA (SONDA) ESTA HECHA DE ACERO INOXIDABLE,\n                 EL CUERPO Y EL MANGO SON DE MATERIAL PLÁSTICO, RANGO DE TEMPERATURA DESDE -50°C HASTA 300°C.",
         "peso": 0,
@@ -14761,7 +14761,7 @@
     },
     {
         "id": 739,
-        "producto": "ACIDIMETRO",
+        "name": "ACIDIMETRO",
         "tipo_producto_id": 28,
         "descripcion": "LA BURETA ESTA FABRICADA DE VIDRIO BORORSILICATO,\n                 EL FRASCO ES DE PLÁSTICO, CON UNA CAPACIDAD DE 10 ML.",
         "peso": 0,
@@ -14781,7 +14781,7 @@
     },
     {
         "id": 740,
-        "producto": "PROBETA GRADUADA",
+        "name": "PROBETA GRADUADA",
         "tipo_producto_id": 28,
         "descripcion": "MATERIAL EN VIDRIO SODA-CÁLCICO, CON CAPACIDAD DE 25 ML.",
         "peso": 0,
@@ -14801,7 +14801,7 @@
     },
     {
         "id": 741,
-        "producto": "PROBETA GRADUADA",
+        "name": "PROBETA GRADUADA",
         "tipo_producto_id": 28,
         "descripcion": "FABRICADO EN BOROSILICATO, CON CAPACIDAD DE 10 ML (0,1 ML).",
         "peso": 0,
@@ -14821,7 +14821,7 @@
     },
     {
         "id": 742,
-        "producto": "PROBETA GRADUADA",
+        "name": "PROBETA GRADUADA",
         "tipo_producto_id": 28,
         "descripcion": "FABRICADO EN BOROSILICATO, CON CAPACIDAD DE 1 ML.",
         "peso": 0,
@@ -14841,7 +14841,7 @@
     },
     {
         "id": 743,
-        "producto": "PROBETA GRADUADA",
+        "name": "PROBETA GRADUADA",
         "tipo_producto_id": 28,
         "descripcion": "FABRICADO EN BOROSILICATO, CON CAPACIDAD DE 10 ML.",
         "peso": 0,
@@ -14861,7 +14861,7 @@
     },
     {
         "id": 744,
-        "producto": "PROBETA GRADUADA",
+        "name": "PROBETA GRADUADA",
         "tipo_producto_id": 28,
         "descripcion": "FABRICADO EN BOROSILICATO, CON CAPACIDAD DE 5 ML.",
         "peso": 0,
@@ -14881,7 +14881,7 @@
     },
     {
         "id": 745,
-        "producto": "PROBETA GRADUADA",
+        "name": "PROBETA GRADUADA",
         "tipo_producto_id": 28,
         "descripcion": "FABRICADA EN VIDRIO BOROSILICATO 3.3, CON UNA CAPACIDAD DE 250 ML.",
         "peso": 0,
@@ -14901,7 +14901,7 @@
     },
     {
         "id": 746,
-        "producto": "GRADILLA PARA TUBOS DE ENSAYO",
+        "name": "GRADILLA PARA TUBOS DE ENSAYO",
         "tipo_producto_id": 28,
         "descripcion": "MATERIAL DE PLÁSTICO RESISTENTE, CON CAPACIDAD PARA 30 TUBOS DE ENSAYO",
         "peso": 0,
@@ -14921,7 +14921,7 @@
     },
     {
         "id": 747,
-        "producto": "GRADILLA PARA TUBOS DE ENSAYO",
+        "name": "GRADILLA PARA TUBOS DE ENSAYO",
         "tipo_producto_id": 28,
         "descripcion": "MATERIAL DE PLÁSTICO, CON CAPACIDAD DE 6 TUBOS DE ENSAYO.",
         "peso": 0,
@@ -14941,7 +14941,7 @@
     },
     {
         "id": 748,
-        "producto": "TUBO DE ENSAYO",
+        "name": "TUBO DE ENSAYO",
         "tipo_producto_id": 28,
         "descripcion": "FABRICADO EN VIDRIO BOROSILICATO,\n                 SE USA PARA CONTENER O MEZCLAR SUSTANCIAS QUÍMICAS, CON UNA CAPACIDAD DE 6-8 ML.",
         "peso": 0,
@@ -14961,7 +14961,7 @@
     },
     {
         "id": 749,
-        "producto": "NEUTRALIZANTES",
+        "name": "NEUTRALIZANTES",
         "tipo_producto_id": 28,
         "descripcion": "PRUEBA DE DETECCIÓN DE NEUTRALIZANTES, CON CAPACIDAD DE 100 CENTÍMETROS CÚBICOS",
         "peso": 0,
@@ -14981,7 +14981,7 @@
     },
     {
         "id": 750,
-        "producto": "FENOLFTALEINA",
+        "name": "FENOLFTALEINA",
         "tipo_producto_id": 28,
         "descripcion": "CAPACIDAD DE 60 ML.",
         "peso": 0,
@@ -15001,7 +15001,7 @@
     },
     {
         "id": 751,
-        "producto": "FENOLFTALEINA",
+        "name": "FENOLFTALEINA",
         "tipo_producto_id": 28,
         "descripcion": "CAPACIDAD DE 60 ML, SOLO PARA USO PRÁCTICO.",
         "peso": 0,
@@ -15021,7 +15021,7 @@
     },
     {
         "id": 752,
-        "producto": "HIDRÓXIDO DE SODIO",
+        "name": "HIDRÓXIDO DE SODIO",
         "tipo_producto_id": 28,
         "descripcion": "HIDRÓXIDO DE SODIO CON AGUA DESMINERALIZADA,\n                 CON UNA CAPACIDAD DE 1 LITRO, SOLO PARA USO PRÁCTICO.",
         "peso": 0,
@@ -15041,7 +15041,7 @@
     },
     {
         "id": 753,
-        "producto": "TIRAS DE PRUEBA DE PERÓXIDO",
+        "name": "TIRAS DE PRUEBA DE PERÓXIDO",
         "tipo_producto_id": 28,
         "descripcion": "TIRAS REACTIVAS DISEÑADAS PARA MEDIR\n                 LA CONCENTRACIÓN DE PERÓXIDO DE HIDRÓGENO,\n                 CON UNA CANTIDAD DE 50 TIRASREACTIVAS PARA ANÁLISIS INDIVIDUAL.",
         "peso": 0,
@@ -15061,7 +15061,7 @@
     },
     {
         "id": 754,
-        "producto": "VASO DE PRECIPITADO GRADUADO",
+        "name": "VASO DE PRECIPITADO GRADUADO",
         "tipo_producto_id": 28,
         "descripcion": "FABRICADO EN POLIPROPILENO CON UNA CAPACIDAD DE 50 ML.",
         "peso": 0,
@@ -15081,7 +15081,7 @@
     },
     {
         "id": 755,
-        "producto": "MATRAZ ERLENMEYER",
+        "name": "MATRAZ ERLENMEYER",
         "tipo_producto_id": 28,
         "descripcion": "FABRICADO EN VIDRIO DE BOROSILICATO, CON CAPACIDAD DE 250 ML.",
         "peso": 0,
@@ -15101,7 +15101,7 @@
     },
     {
         "id": 756,
-        "producto": "PROBETA GRADUADA",
+        "name": "PROBETA GRADUADA",
         "tipo_producto_id": 28,
         "descripcion": "FABRICADO EN BOROSILICATO, CON CAPACIDAD DE 1000 ML.",
         "peso": 0,
@@ -15121,7 +15121,7 @@
     },
     {
         "id": 757,
-        "producto": "LACTODENSIMETRO",
+        "name": "LACTODENSIMETRO",
         "tipo_producto_id": 28,
         "descripcion": "FABRICADO EN VIDRIO CON PLOMO EN LA PARTE INFERIOR, CON UN RANGO DE 15°C.",
         "peso": 0,
@@ -15141,7 +15141,7 @@
     },
     {
         "id": 758,
-        "producto": "ICOPOR",
+        "name": "ICOPOR",
         "tipo_producto_id": 28,
         "descripcion": "CAJA ISOTÉRMICA DE POLIESTIRENO EXPANDIDO.",
         "peso": 0,
@@ -15161,7 +15161,7 @@
     },
     {
         "id": 759,
-        "producto": "TAPA DE ENRROSQUE",
+        "name": "TAPA DE ENRROSQUE",
         "tipo_producto_id": 28,
         "descripcion": "TAPA AZUL PARA TARRO DE YOGURY DE 1 LITRO",
         "peso": 0,
@@ -15181,7 +15181,7 @@
     },
     {
         "id": 760,
-        "producto": "LECHE ENTERA",
+        "name": "LECHE ENTERA",
         "tipo_producto_id": 28,
         "descripcion": "CANTIDAD 1100 ML, APROX 6 PORCIONES, INGRESO EL DIA 24/09/2025.",
         "peso": 0,
@@ -15201,7 +15201,7 @@
     },
     {
         "id": 761,
-        "producto": "LECHE EN POLVO ENTERA",
+        "name": "LECHE EN POLVO ENTERA",
         "tipo_producto_id": 28,
         "descripcion": "CONT. NETO 900G, APROX 36 PORCIONES, DÍA DE LLEGADA DEL PRODUCTO 24/09/2025.",
         "peso": 0,
@@ -15221,7 +15221,7 @@
     },
     {
         "id": 762,
-        "producto": "AZUCAR EXTRAFINA",
+        "name": "AZUCAR EXTRAFINA",
         "tipo_producto_id": 28,
         "descripcion": "BULTO DE 25 KG DIVIDIDO EN UNIDADES DE 1 KG DE APROX 20 PORCIONES,\n                 INGRESO EL DÍA 24/09/2025.",
         "peso": 0,
@@ -15241,7 +15241,7 @@
     },
     {
         "id": 763,
-        "producto": "CLORO",
+        "name": "CLORO",
         "tipo_producto_id": 28,
         "descripcion": "CLORO 5 EN 1, CONT. NETO 3,8 L, ESTE PRODUCTO LLEGO EL DÍA 24/09/2025.",
         "peso": 0,
@@ -15261,7 +15261,7 @@
     },
     {
         "id": 764,
-        "producto": "ALCOHOL",
+        "name": "ALCOHOL",
         "tipo_producto_id": 28,
         "descripcion": "ALCOHOL ANTISÉPTICO AL 70°, CANTIDAD DE 3,7 L,\n                 ESTE PRODUCTO LLEGO EL DÍA 24/09/2025.",
         "peso": 0,
@@ -15281,7 +15281,7 @@
     },
     {
         "id": 765,
-        "producto": "GUANTES DE NITRILO",
+        "name": "GUANTES DE NITRILO",
         "tipo_producto_id": 28,
         "descripcion": "20 CAJAS DE 100 UNIDADES",
         "peso": 0,
@@ -15301,7 +15301,7 @@
     },
     {
         "id": 766,
-        "producto": "PAPEL DE ARROZ",
+        "name": "PAPEL DE ARROZ",
         "tipo_producto_id": 28,
         "descripcion": "UNIDADES DE 100 HOJAS",
         "peso": 0,
@@ -15321,7 +15321,7 @@
     },
     {
         "id": 767,
-        "producto": "GUANTES DE LATEX",
+        "name": "GUANTES DE LATEX",
         "tipo_producto_id": 28,
         "descripcion": "CAJAS DE 100 UNIDADES",
         "peso": 0,
@@ -15341,7 +15341,7 @@
     },
     {
         "id": 768,
-        "producto": "GERINJAS",
+        "name": "GERINJAS",
         "tipo_producto_id": 28,
         "descripcion": "100 X 5 ML-100 X 10 ML",
         "peso": 0,
@@ -15361,7 +15361,7 @@
     },
     {
         "id": 769,
-        "producto": "TAPA PLÁSTICA",
+        "name": "TAPA PLÁSTICA",
         "tipo_producto_id": 28,
         "descripcion": "TAPA DE POLIETILENO ROJO, PARA ENVASE PLÁSTICO.",
         "peso": 0,
@@ -15381,7 +15381,7 @@
     },
     {
         "id": 770,
-        "producto": "TAPAS PLÁSTICA DE ENRROSQUE",
+        "name": "TAPAS PLÁSTICA DE ENRROSQUE",
         "tipo_producto_id": 28,
         "descripcion": "TAPA DE POLIETILENO ROJA CON ENRROSQUE",
         "peso": 0,
@@ -15401,7 +15401,7 @@
     },
     {
         "id": 771,
-        "producto": "TAPA PLÁSTICA DE ENRROSQUE",
+        "name": "TAPA PLÁSTICA DE ENRROSQUE",
         "tipo_producto_id": 28,
         "descripcion": "TAPA EN POLIETILENO BLANCO CON ENRROSQUE",
         "peso": 0,
@@ -15421,7 +15421,7 @@
     },
     {
         "id": 772,
-        "producto": "TAPA PLÁSTICA CON ENRROSQUE",
+        "name": "TAPA PLÁSTICA CON ENRROSQUE",
         "tipo_producto_id": 28,
         "descripcion": "TAPA DE POLIETILENO COLOR VERDE, CON ENRROSQUE.",
         "peso": 0,
@@ -15441,7 +15441,7 @@
     },
     {
         "id": 773,
-        "producto": "TAPA PLÁSTICA CON ENRROSQUE",
+        "name": "TAPA PLÁSTICA CON ENRROSQUE",
         "tipo_producto_id": 28,
         "descripcion": "TAPA EN POLIETILENO DE COLOR MORADO, CON ENRROSQUE.",
         "peso": 0,
@@ -15461,7 +15461,7 @@
     },
     {
         "id": 774,
-        "producto": "TAPA PLÁSTICA CON ENRROSQUE",
+        "name": "TAPA PLÁSTICA CON ENRROSQUE",
         "tipo_producto_id": 28,
         "descripcion": "TAPA DE POLIETILENO COLOR NARANJADO, CON ENRROSQUE.",
         "peso": 0,
@@ -15481,7 +15481,7 @@
     },
     {
         "id": 775,
-        "producto": "TAPA METÁLICA",
+        "name": "TAPA METÁLICA",
         "tipo_producto_id": 28,
         "descripcion": "TAPA METÁLICA COLOR DORADO, TAMAÑO PEQUEÑO",
         "peso": 0,
@@ -15501,7 +15501,7 @@
     },
     {
         "id": 776,
-        "producto": "TAPA METÁLICA",
+        "name": "TAPA METÁLICA",
         "tipo_producto_id": 28,
         "descripcion": "TAPA METÁLICA COLOR DORADO, TAMAÑO MEDIANO PARA ENRROSCAR.",
         "peso": 0,
@@ -15521,7 +15521,7 @@
     },
     {
         "id": 777,
-        "producto": "MANTECA DE CACAO",
+        "name": "MANTECA DE CACAO",
         "tipo_producto_id": 28,
         "descripcion": "COCOA BUTTER CON UNA CANTIDAD DE 1 KG.",
         "peso": 0,
@@ -15541,7 +15541,7 @@
     },
     {
         "id": 778,
-        "producto": "CAJA ORGANIZADORA",
+        "name": "CAJA ORGANIZADORA",
         "tipo_producto_id": 28,
         "descripcion": "CAJA ORGANIZADORA SIN MANIJA 10, MATERIAL EN PLÁSTICO RESISTENTE",
         "peso": 0,
@@ -15561,7 +15561,7 @@
     },
     {
         "id": 779,
-        "producto": "TAPA METÁLICA",
+        "name": "TAPA METÁLICA",
         "tipo_producto_id": 28,
         "descripcion": "TAPA METÁLICA DORADA, MATERIAL EN ALUMINIO, TAMAÑO MEDIANO.",
         "peso": 0,
@@ -15581,7 +15581,7 @@
     },
     {
         "id": 780,
-        "producto": "TAPA METÁLICA",
+        "name": "TAPA METÁLICA",
         "tipo_producto_id": 28,
         "descripcion": "TAPA METÁLICA DORADA TAMAÑO GRANDE, MATERIAL DE ALUMINIO.",
         "peso": 0,
@@ -15601,7 +15601,7 @@
     },
     {
         "id": 781,
-        "producto": "ETHREL",
+        "name": "ETHREL",
         "tipo_producto_id": 28,
         "descripcion": "REGULADOR FISIOLÓGICO, CONTENIDO NETO 1 LITRO",
         "peso": 0,
@@ -15621,7 +15621,7 @@
     },
     {
         "id": 782,
-        "producto": "FUENTE DE CHOCOLATE EN CASCADA",
+        "name": "FUENTE DE CHOCOLATE EN CASCADA",
         "tipo_producto_id": 28,
         "descripcion": "FABRICADO EN ACERO INOXIDABLE Y PLÁSTICO RESISTENTE AL CALOR,\n                 CAPACIDAD DE 32 ONZAS, (APROX 900 ML), HASTA DOS LIBRAS CHOCOLATE.",
         "peso": 0,
@@ -15641,7 +15641,7 @@
     },
     {
         "id": 783,
-        "producto": "EXTRACTOR DE ZUMOS",
+        "name": "EXTRACTOR DE ZUMOS",
         "tipo_producto_id": 28,
         "descripcion": "MATERIAL DE ACERO INOXIDABLE Y PLÁSTICOS RESISTENTES, CAPACIDAD DE 1 A 2 LITROS.",
         "peso": 0,
@@ -15661,7 +15661,7 @@
     },
     {
         "id": 784,
-        "producto": "FRASCO DE VIDRIO",
+        "name": "FRASCO DE VIDRIO",
         "tipo_producto_id": 28,
         "descripcion": "MATERIAL DE VIDRIO TRANSPARENTE CON TAPA DORADA DE METAL,\n                 CAPACIDAD DE 180 ML, USO COMÚN PARA MERMELADAS, MIEL O DULCES.",
         "peso": 0,
@@ -15681,7 +15681,7 @@
     },
     {
         "id": 785,
-        "producto": "LECHE ENTERA",
+        "name": "LECHE ENTERA",
         "tipo_producto_id": 28,
         "descripcion": "CAPACIDAD DE 1100 ML CON 5.5 PORCIONES APROX, LLEGO EN OCTUBRE DEL 2025.",
         "peso": 0,
@@ -15701,7 +15701,7 @@
     },
     {
         "id": 786,
-        "producto": "GRINDSTED PECTIN RS 461 (RAPIDA)",
+        "name": "GRINDSTED PECTIN RS 461 (RAPIDA)",
         "tipo_producto_id": 28,
         "descripcion": "INSUMO PARA LA INDUSTRIA ALIMENTARIA, CON UNA CANTIDAD DE 1 KG,\n                 DEBE CONSERVARSE EN UN LUGAR FRESCO Y SECO, LLEGO EN OCTUBRE DEL 2025.",
         "peso": 0,
@@ -15721,7 +15721,7 @@
     },
     {
         "id": 787,
-        "producto": "BOLSA PARA BASURA",
+        "name": "BOLSA PARA BASURA",
         "tipo_producto_id": 28,
         "descripcion": "BOLSA BIODEGRADABLES, CONTENIDO 5 ROLLOS DE 10 UNIDADES, DE TAMAÑO 70 X 90 CMS.",
         "peso": 0,
@@ -15741,7 +15741,7 @@
     },
     {
         "id": 788,
-        "producto": "BOLSA PARA EMPACAR AL VACÍO",
+        "name": "BOLSA PARA EMPACAR AL VACÍO",
         "tipo_producto_id": 28,
         "descripcion": "BOLSA TRANSPARENTE CON UN TAMAÑO DE 15 X 16 CM,\n                 DOS PAQUETES LLEGARON EN OCTUBRE DEL 2025.",
         "peso": 0,
@@ -15761,7 +15761,7 @@
     },
     {
         "id": 789,
-        "producto": "BOLSA PARA EMPACAR AL VACÍO",
+        "name": "BOLSA PARA EMPACAR AL VACÍO",
         "tipo_producto_id": 28,
         "descripcion": "BOLSA TRANSPARENTE CON UN TAMAÑO DE 18 X 25 CM,\n                DOS PAQUETES LLEGARON EN OCTUBRE DEL 2025.",
         "peso": 0,
@@ -15781,7 +15781,7 @@
     },
     {
         "id": 790,
-        "producto": "BOLSA PARA EMPAQUE",
+        "name": "BOLSA PARA EMPAQUE",
         "tipo_producto_id": 28,
         "descripcion": "BOLSA DE PAPEL KRAFT, CON UNA PARTE VISIBLE EN PLÁSTICO PARA VER SU CONTENIDO,\n                 TAMAÑO GRANDE, LLEGO EN OCTUBRE DEL 2025.",
         "peso": 0,
@@ -15801,7 +15801,7 @@
     },
     {
         "id": 791,
-        "producto": "BOLSA PARA EMPAQUE",
+        "name": "BOLSA PARA EMPAQUE",
         "tipo_producto_id": 28,
         "descripcion": "BOLSA DE PAPEL KRAFT, CON UNA PARTE VISIBLE PARA OBSERVAR SU CONTENIDO,\n                 DE TAMAÑO PEQUEÑO, LLEGO EN OCTUBRE DEL 2025.",
         "peso": 0,
@@ -15821,7 +15821,7 @@
     },
     {
         "id": 792,
-        "producto": "CIRUELAS DESIDRATADAS",
+        "name": "CIRUELAS DESIDRATADAS",
         "tipo_producto_id": 28,
         "descripcion": "CIRUELA DESIDRATADA CON UN CONTENIDO DE 0,625 KG CADA BOLSITA,\n                 PARA UN TOTAL DE 10 KG, LLEGO EN OCTUBRE DEL 2025.",
         "peso": 0,
@@ -15841,7 +15841,7 @@
     },
     {
         "id": 793,
-        "producto": "BOLSA DE PLÁSTICO CON CIERRE",
+        "name": "BOLSA DE PLÁSTICO CON CIERRE",
         "tipo_producto_id": 28,
         "descripcion": "BOLSA TRANSPARENTECO CIERRE TIPO ZIPPER, CON UN TAMAÑO DE 16 X 24.",
         "peso": 0,
@@ -15861,7 +15861,7 @@
     },
     {
         "id": 794,
-        "producto": "BOLSA PARA EMPACAR AL VACÍO",
+        "name": "BOLSA PARA EMPACAR AL VACÍO",
         "tipo_producto_id": 28,
         "descripcion": "BOLSA TRANSPARENTE, CON UN TAMAÑO DE 15 X 25 CM, PAQUETES DE 100.",
         "peso": 0,
@@ -15881,7 +15881,7 @@
     },
     {
         "id": 795,
-        "producto": "BOLSA PARA EMPACAR AL VACÍO",
+        "name": "BOLSA PARA EMPACAR AL VACÍO",
         "tipo_producto_id": 28,
         "descripcion": "BOLSA TRANSPARENTE CON UN TAMAÑO DE 20 X 30 CM.",
         "peso": 0,
@@ -15901,7 +15901,7 @@
     },
     {
         "id": 796,
-        "producto": "BOLSA DOYPACK",
+        "name": "BOLSA DOYPACK",
         "tipo_producto_id": 28,
         "descripcion": "BOLSA METALIZADA CON BOQUILLA DE 250 GRAMOS.",
         "peso": 0,
@@ -15921,7 +15921,7 @@
     },
     {
         "id": 797,
-        "producto": "BOLSA CON CIERRE HERMETICO",
+        "name": "BOLSA CON CIERRE HERMETICO",
         "tipo_producto_id": 28,
         "descripcion": "BOLSA TRANSPARENTE CON CIERRE HERMETICO DE COLOR AZUL 60 X 40 CM.",
         "peso": 0,
@@ -15941,7 +15941,7 @@
     },
     {
         "id": 798,
-        "producto": "BOLSA KRAFT",
+        "name": "BOLSA KRAFT",
         "tipo_producto_id": 28,
         "descripcion": "BOLSA HERMETICA DE TAMAÑO10X15 CM.",
         "peso": 0,
@@ -15961,7 +15961,7 @@
     },
     {
         "id": 799,
-        "producto": "FRASCO CON PUNTA",
+        "name": "FRASCO CON PUNTA",
         "tipo_producto_id": 28,
         "descripcion": "FRASCO CON PUNTA DOSIFICADORA, CON UNA CAPACIDAD DE 250 ML.",
         "peso": 0,
@@ -15981,7 +15981,7 @@
     },
     {
         "id": 800,
-        "producto": "ROLLO DE PLÁSTICO",
+        "name": "ROLLO DE PLÁSTICO",
         "tipo_producto_id": 28,
         "descripcion": "PLÁSTICO TRANSPARENTE CON 50 METROS APROX.",
         "peso": 0,
@@ -16001,7 +16001,7 @@
     },
     {
         "id": 801,
-        "producto": "FRASCO PLÁSTICO",
+        "name": "FRASCO PLÁSTICO",
         "tipo_producto_id": 28,
         "descripcion": "BOTELLAS PLÁSTICA CON TAPA VERDE,\n                 USADA COMÚNMENTE PARA MUESTRAS, CON CAPACIDAD DE 250 ML.",
         "peso": 0,
@@ -16021,7 +16021,7 @@
     },
     {
         "id": 802,
-        "producto": "BOLSA PARA EMPACAR AL VACÍO",
+        "name": "BOLSA PARA EMPACAR AL VACÍO",
         "tipo_producto_id": 28,
         "descripcion": "BOLSA TRANSPARENTE CON UN TAMAÑO DE 15X18.",
         "peso": 0,
@@ -16041,7 +16041,7 @@
     },
     {
         "id": 803,
-        "producto": "BOLSA PARA EMPACAR AL VACÍO",
+        "name": "BOLSA PARA EMPACAR AL VACÍO",
         "tipo_producto_id": 28,
         "descripcion": "BOLSA TRANSPARENTE CON TAMAÑO 15 X 19 CM.",
         "peso": 0,
@@ -16061,7 +16061,7 @@
     },
     {
         "id": 804,
-        "producto": "BOLSA PARA EMPACAR AL VACÍO",
+        "name": "BOLSA PARA EMPACAR AL VACÍO",
         "tipo_producto_id": 28,
         "descripcion": "BOLSA TRANSPARENTE CON TAMAÑO DE 18 X 25 CM.",
         "peso": 0,
@@ -16081,7 +16081,7 @@
     },
     {
         "id": 805,
-        "producto": "SODIO HIDRÓCIDO EN SOLUCIÓN",
+        "name": "SODIO HIDRÓCIDO EN SOLUCIÓN",
         "tipo_producto_id": 28,
         "descripcion": "FRASCO DE 1 LITRO, CON UNA CONCENTRACIÓN DE 0.1 MOL/L, LLEGO EN OCTUBRE DEL 2025.",
         "peso": 0,
@@ -16101,7 +16101,7 @@
     },
     {
         "id": 806,
-        "producto": "SALVADO",
+        "name": "SALVADO",
         "tipo_producto_id": 28,
         "descripcion": "SALVADO DE TRIGO NATURAL, CONTENIDO NETO 450 G CON 45 PORCIONES APROX.",
         "peso": 0,
@@ -16121,7 +16121,7 @@
     },
     {
         "id": 807,
-        "producto": "LECTINA DE SOYA SOLEC",
+        "name": "LECTINA DE SOYA SOLEC",
         "tipo_producto_id": 28,
         "descripcion": "PARA LA INDUSTRIA ALIMENTARIA, CONTENIDO 3,8 KG, INSUMO VENCIDO.",
         "peso": 0,
@@ -16141,7 +16141,7 @@
     },
     {
         "id": 808,
-        "producto": "VINAGRE BLANCO",
+        "name": "VINAGRE BLANCO",
         "tipo_producto_id": 28,
         "descripcion": "VINAGRE BLANCO PARA PREPARACIONES GASTRONÓMICAS,\n                 CON UN CONTENIDO DE 3800 ML, PRODUCTO VENCIDO.",
         "peso": 0,

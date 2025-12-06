@@ -54,7 +54,7 @@
                         @forelse ($proveedores as $proveedor)
                             <tr>
                                 <td>{{ $loop->iteration }}</td>
-                                <td>{{ $proveedor->proveedor }}</td>
+                                <td>{{ $proveedor->name }}</td>
                                 <td>{{ $proveedor->nit ?? 'N/A' }}</td>
                                 <td>{{ $proveedor->email ?? 'N/A' }}</td>
                                 <td>{{ $proveedor->telefono ?? 'N/A' }}</td>

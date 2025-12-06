@@ -44,7 +44,7 @@ class CarritoService
 
             if ($producto->cantidad < $cantidad) {
                 $erroresStock[] = [
-                    'producto' => $producto->producto,
+                    'producto' => $producto->name,
                     'solicitado' => $cantidad,
                     'disponible' => $producto->cantidad
                 ];
@@ -83,7 +83,7 @@ class CarritoService
             'message' => 'Cantidad válida',
             'producto' => [
                 'id' => $producto->id,
-                'nombre' => $producto->producto,
+                'nombre' => $producto->name,
                 'stock' => $producto->cantidad
             ]
         ];
@@ -111,7 +111,7 @@ class CarritoService
             if ($producto) {
                 $productos->push([
                     'id' => $producto->id,
-                    'nombre' => $producto->producto,
+                    'nombre' => $producto->name,
                     'codigo' => $producto->codigo_barras,
                     'imagen' => $producto->imagen,
                     'stock' => $producto->cantidad,

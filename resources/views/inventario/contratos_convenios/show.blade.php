@@ -104,7 +104,7 @@
                                             <th class="py-3">Proveedor</th>
                                             <td class="py-3">
                                                 <i class="fas fa-truck mr-1"></i>
-                                                {{ $contratoConvenio->proveedor->proveedor ?? 'N/A' }}
+                                                {{ $contratoConvenio->name->name ?? 'N/A' }}
                                             </td>
                                         </tr>
                                         <tr>
