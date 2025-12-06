@@ -6,7 +6,6 @@ namespace App\Inventario\Services\Aprobacion;
 
 use App\Models\Inventario\DetalleOrden;
 use App\Models\Inventario\Orden;
-use App\Models\Parametro;
 use App\Exceptions\AprobacionException;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Notification;

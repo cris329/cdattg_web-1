@@ -230,9 +230,9 @@ class OrdenService
 
     /**
      * Obtiene estado EN ESPERA
-     * Uso directo del modelo Tema/Parametro (clase externa, sin SOLID)
+     * Retorna ParametroTema porque estado_orden_id en DetalleOrden referencia a parametros_temas
      *
-     * @return Parametro
+     * @return \App\Models\ParametroTema
      * @throws OrdenException
      */
     public function obtenerEstadoEnEspera()
@@ -242,16 +242,23 @@ class OrdenService
             throw new OrdenException("Tema 'ESTADOS DE ORDEN' no encontrado.");
         }
 
-        $estado = $tema->parametros()
-            ->where('name', self::STATUS_EN_ESPERA)
-            ->wherePivot('status', 1)
-            ->first();
-
-        if (!$estado) {
-            throw new OrdenException("Estado 'EN ESPERA' no encontrado. Verifique los parámetros del sistema.");
+        // Buscar el parámetro primero
+        $parametro = \App\Models\Parametro::where('name', self::STATUS_EN_ESPERA)->first();
+        if (!$parametro) {
+            throw new OrdenException("Parámetro 'EN ESPERA' no encontrado.");
         }
 
-        return $estado;
+        // Buscar el ParametroTema que relaciona el parámetro con el tema
+        $parametroTema = \App\Models\ParametroTema::where('tema_id', $tema->id)
+            ->where('parametro_id', $parametro->id)
+            ->where('status', 1)
+            ->first();
+
+        if (!$parametroTema) {
+            throw new OrdenException("Estado 'EN ESPERA' no encontrado en 'ESTADOS DE ORDEN'. Verifique los parámetros del sistema.");
+        }
+
+        return $parametroTema;
     }
 
     /**

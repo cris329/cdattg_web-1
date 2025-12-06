@@ -166,7 +166,8 @@ class OrdenRepository implements OrdenRepositoryInterface
             'orden.tipoOrden.parametro',
             'orden.userCreate',
             'producto',
-            'estadoOrden.parametro'
+            'estadoOrden.parametro',
+            'aprobacion'
         ])
         ->where('estado_orden_id', $estadoEnEsperaId)
         ->whereDoesntHave('aprobacion')
