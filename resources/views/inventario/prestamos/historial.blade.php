@@ -84,7 +84,7 @@
                                                         <i class="fas fa-undo"></i> Devolver
                                                     </a>
                                                 @endif
-                                                <a href="{{ route('inventario.ordenes.show', $detalle->orden->id) }}"
+                                                <a href="{{ route('inventario.ordenes.show', ['orden' => $detalle->orden->id, 'ref' => url()->current()]) }}"
                                                    class="btn btn-sm btn-info">
                                                     <i class="fas fa-eye"></i> Ver Orden
                                                 </a>

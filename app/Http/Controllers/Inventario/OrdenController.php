@@ -224,6 +224,10 @@ class OrdenController extends Controller
             abort(404);
         }
 
-        return view('inventario.ordenes.show', compact('orden'));
+        $backUrl = request()->get('ref') 
+            ?? url()->previous() 
+            ?? route('inventario.ordenes.index');
+
+        return view('inventario.ordenes.show', compact('orden', 'backUrl'));
     }
 }

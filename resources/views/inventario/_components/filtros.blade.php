@@ -133,7 +133,7 @@
                                                 </span>
                                             </td>
                                             <td>
-                                                <a href="{{ route('inventario.ordenes.show', $orden->id) }}"
+                                                <a href="{{ route('inventario.ordenes.show', ['orden' => $orden->id, 'ref' => url()->current()]) }}"
                                                    class="btn btn-sm btn-info"
                                                    title="Ver detalles">
                                                     <i class="fas fa-eye"></i>

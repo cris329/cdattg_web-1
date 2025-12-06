@@ -105,7 +105,7 @@
                                     </span>
                                 </td>
                                 <td class="text-center">
-                                    <a href="{{ route('inventario.ordenes.show', $orden) }}"
+                                    <a href="{{ route('inventario.ordenes.show', ['orden' => $orden, 'ref' => url()->current()]) }}"
                                        class="btn btn-sm btn-info"
                                        title="Ver detalles">
                                         <i class="fas fa-eye"></i>

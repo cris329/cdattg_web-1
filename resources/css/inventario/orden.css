@@ -1,9 +1,10 @@
 /* ============================================
    VISTA SHOW DE ORDEN - DISEÑO MODERNO
+   IMPORTANTE: Todos los estilos están scopeados a body.inventario-module para no afectar el resto de la app
    ============================================ */
 
 /* Card Principal */
-.orden-show-card .card {
+body.inventario-module .orden-show-card .card {
     border: none;
     border-radius: 15px;
     box-shadow: 0 5px 20px rgba(243, 242, 242, 0.1);
@@ -11,7 +12,7 @@
 }
 
 /* Header del Card con Gradiente */
-.orden-show-card .card-header {
+body.inventario-module .orden-show-card .card-header {
     background: linear-gradient(135deg, #1f4a2d 0%, #163820 100%);
     color: #ffffff;
     padding: 1.5rem 2rem;
@@ -19,7 +20,7 @@
     position: relative;
 }
 
-.orden-show-card .card-header::before {
+body.inventario-module .orden-show-card .card-header::before {
     content: '';
     position: absolute;
     top: 0;
@@ -31,7 +32,7 @@
     opacity: 0.3;
 }
 
-.orden-show-card .card-title {
+body.inventario-module .orden-show-card .card-title {
     font-size: 1.5rem;
     font-weight: 700;
     margin: 0;
@@ -42,18 +43,18 @@
     z-index: 1;
 }
 
-.orden-show-card .card-title i {
+body.inventario-module .orden-show-card .card-title i {
     font-size: 1.75rem;
 }
 
 /* Body del Card */
-.orden-show-card .card-body {
+body.inventario-module .orden-show-card .card-body {
     padding: 2rem;
     background: linear-gradient(to bottom, #f8f9fa 0%, #ffffff 100%);
 }
 
 /* Grupo de Información */
-.orden-show-card .info-group {
+body.inventario-module .orden-show-card .info-group {
     margin-bottom: 1.25rem;
     padding: 0.75rem 1rem;
     background: white;
@@ -63,12 +64,12 @@
     transition: all 0.3s ease;
 }
 
-.orden-show-card .info-group:hover {
+body.inventario-module .orden-show-card .info-group:hover {
     box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
     transform: translateX(5px);
 }
 
-.orden-show-card .info-group label {
+body.inventario-module .orden-show-card .info-group label {
     font-weight: 700;
     color: #495057;
     margin-right: 0.75rem;
@@ -79,20 +80,20 @@
     font-size: 0.95rem;
 }
 
-.orden-show-card .info-group label i {
+body.inventario-module .orden-show-card .info-group label i {
     color: #66ea83;
     font-size: 1rem;
     transition: all 0.3s ease;
 }
 
-.orden-show-card .info-group span {
+body.inventario-module .orden-show-card .info-group span {
     color: #242627b6;
     font-size: 0.95rem;
     font-weight: 500;
 }
 
 /* Caja de Descripción */
-.orden-show-card .description-box {
+body.inventario-module .orden-show-card .description-box {
     background: linear-gradient(135deg, #f8f9fa 0%, #e9ecef 100%);
     padding: 1.5rem;
     border-radius: 12px;
@@ -101,7 +102,7 @@
     box-shadow: 0 3px 6px rgba(0, 0, 0, 0.08);
 }
 
-.orden-show-card .description-box label {
+body.inventario-module .orden-show-card .description-box label {
     font-weight: 700;
     font-size: 1.1rem;
     color: #495057;
@@ -111,12 +112,12 @@
     margin-bottom: 1rem;
 }
 
-.orden-show-card .description-box label i {
+body.inventario-module .orden-show-card .description-box label i {
     color: #66eaa1;
     font-size: 1.25rem;
 }
 
-.orden-show-card .description-box p {
+body.inventario-module .orden-show-card .description-box p {
     margin-bottom: 0;
     color: #495057;
     line-height: 1.8;
@@ -130,13 +131,13 @@
 }
 
 /* Sección de Productos */
-.orden-show-card .products-section {
+body.inventario-module .orden-show-card .products-section {
     border-top: 3px solid #66ea92;
     padding-top: 2rem;
     margin-top: 2rem;
 }
 
-.orden-show-card .products-section h4 {
+body.inventario-module .orden-show-card .products-section h4 {
     font-size: 1.4rem;
     font-weight: 700;
     color: #495057;
@@ -146,12 +147,12 @@
     gap: 0.75rem;
 }
 
-.orden-show-card .products-section h4 i {
+body.inventario-module .orden-show-card .products-section h4 i {
     color: #66eaa1;
     font-size: 1.5rem;
 }
 
-.orden-show-card .products-section h4::after {
+body.inventario-module .orden-show-card .products-section h4::after {
     content: '';
     flex: 1;
     height: 2px;
@@ -160,23 +161,23 @@
 }
 
 /* Tabla de Productos Mejorada */
-.orden-show-card .table-responsive {
+body.inventario-module .orden-show-card .table-responsive {
     border-radius: 10px;
     overflow: hidden;
     box-shadow: 0 3px 10px rgba(0, 0, 0, 0.1);
 }
 
-.orden-show-card .table {
+body.inventario-module .orden-show-card .table {
     margin-bottom: 0;
     background: white;
 }
 
-.orden-show-card .table thead {
+body.inventario-module .orden-show-card .table thead {
     background: linear-gradient(135deg, #28714e 0%, #31c666 100%);
     color: white;
 }
 
-.orden-show-card .table thead th {
+body.inventario-module .orden-show-card .table thead th {
     border: none;
     padding: 1rem;
     font-weight: 600;
@@ -185,12 +186,12 @@
     letter-spacing: 0.5px;
 }
 
-.orden-show-card .table tbody tr {
+body.inventario-module .orden-show-card .table tbody tr {
     transition: all 0.3s ease;
     border-bottom: 1px solid #e9ecef;
 }
 
-.orden-show-card .table tbody tr:hover {
+body.inventario-module .orden-show-card .table tbody tr:hover {
     background: linear-gradient(to right, #f8f9fa, #ffffff);
     transform: scale(1.01);
     box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
@@ -203,12 +204,12 @@
     color: #495057;
 }
 
-.orden-show-card .table tbody tr:last-child {
+body.inventario-module .orden-show-card .table tbody tr:last-child {
     border-bottom: none;
 }
 
 /* Badges Mejorados */
-.orden-show-card .badge {
+body.inventario-module .orden-show-card .badge {
     padding: 0.5rem 1rem;
     font-size: 0.85rem;
     font-weight: 600;
@@ -219,30 +220,30 @@
     box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
 }
 
-.orden-show-card .badge-secondary {
+body.inventario-module .orden-show-card .badge-secondary {
     background: linear-gradient(135deg, #00bc8c 0%, #2c8f1c 100%);
 }
 
-.orden-show-card .badge-warning {
+body.inventario-module .orden-show-card .badge-warning {
     background: linear-gradient(135deg, #ffc107 0%, #ff9800 100%);
     color: #000;
     animation: pulse 2s infinite;
 }
 
-.orden-show-card .badge-success {
+body.inventario-module .orden-show-card .badge-success {
     background: linear-gradient(135deg, #28a745 0%, #20c997 100%);
 }
 
-.orden-show-card .badge-danger {
+body.inventario-module .orden-show-card .badge-danger {
     background: linear-gradient(135deg, #dc3545 0%, #c82333 100%);
 }
 
-.orden-show-card .badge-info {
+body.inventario-module .orden-show-card .badge-info {
     background: linear-gradient(135deg, #17a2b8 0%, #138496 100%);
 }
 
 /* Botones en la Tabla */
-.orden-show-card .btn-sm {
+body.inventario-module .orden-show-card .btn-sm {
     padding: 0.5rem 1rem;
     font-weight: 600;
     border-radius: 8px;
@@ -253,29 +254,29 @@
     font-size: 0.875rem;
 }
 
-.orden-show-card .btn-sm:hover {
+body.inventario-module .orden-show-card .btn-sm:hover {
     transform: translateY(-2px);
     box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
 }
 
-.orden-show-card .btn-info {
+body.inventario-module .orden-show-card .btn-info {
     background: linear-gradient(135deg, #17b865 0%, #13963c 100%);
     border: none;
 }
 
-.orden-show-card .btn-info:hover {
+body.inventario-module .orden-show-card .btn-info:hover {
     background: linear-gradient(135deg, #13964e 0%, #118b25 100%);
 }
 
 /* Footer del Card */
-.orden-show-card .card-footer {
+body.inventario-module .orden-show-card .card-footer {
     background: #f8f9fa;
     border-top: 2px solid #e9ecef;
     padding: 1.5rem 2rem;
     border-radius: 0 0 15px 15px;
 }
 
-.orden-show-card .card-footer .btn {
+body.inventario-module .orden-show-card .card-footer .btn {
     padding: 0.75rem 2rem;
     font-weight: 600;
     border-radius: 10px;
@@ -286,26 +287,26 @@
     font-size: 1rem;
 }
 
-.orden-show-card .card-footer .btn-secondary {
+body.inventario-module .orden-show-card .card-footer .btn-secondary {
     background: linear-gradient(135deg, #6c757d 0%, #5a6268 100%);
     border: none;
 }
 
-.orden-show-card .card-footer .btn-secondary:hover {
+body.inventario-module .orden-show-card .card-footer .btn-secondary:hover {
     background: linear-gradient(135deg, #5a6268 0%, #4e555b 100%);
     transform: translateY(-2px);
     box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
 }
 
 /* Tabla Vacía */
-.orden-show-card .table tbody td[colspan] {
+body.inventario-module .orden-show-card .table tbody td[colspan] {
     text-align: center;
     padding: 3rem;
     color: #6c757d;
     font-size: 1.1rem;
 }
 
-.orden-show-card .table tbody td[colspan] i {
+body.inventario-module .orden-show-card .table tbody td[colspan] i {
     font-size: 3rem;
     color: #dee2e6;
     display: block;
@@ -313,7 +314,7 @@
 }
 
 /* Divisor Visual */
-.orden-show-card .divider {
+body.inventario-module .orden-show-card .divider {
     height: 2px;
     background: linear-gradient(to right, transparent, #27a357, transparent);
     margin: 2rem 0;
@@ -321,12 +322,12 @@
 }
 
 /* Grid de Información Responsivo */
-.orden-show-card .row {
+body.inventario-module .orden-show-card .row {
     margin-left: -0.75rem;
     margin-right: -0.75rem;
 }
 
-.orden-show-card .row > [class*="col-"] {
+body.inventario-module .orden-show-card .row > [class*="col-"] {
     padding-left: 0.75rem;
     padding-right: 0.75rem;
 }
@@ -343,78 +344,78 @@
     }
 }
 
-.orden-show-card .info-group,
-.orden-show-card .description-box,
-.orden-show-card .products-section {
+body.inventario-module .orden-show-card .info-group,
+body.inventario-module .orden-show-card .description-box,
+body.inventario-module .orden-show-card .products-section {
     animation: fadeInUp 0.5s ease-out;
 }
 
 /* Scrollbar Personalizado para Descripción */
-.orden-show-card .description-box p::-webkit-scrollbar {
+body.inventario-module .orden-show-card .description-box p::-webkit-scrollbar {
     width: 8px;
 }
 
-.orden-show-card .description-box p::-webkit-scrollbar-track {
+body.inventario-module .orden-show-card .description-box p::-webkit-scrollbar-track {
     background: #f1f1f1;
     border-radius: 4px;
 }
 
-.orden-show-card .description-box p::-webkit-scrollbar-thumb {
+body.inventario-module .orden-show-card .description-box p::-webkit-scrollbar-thumb {
     background: linear-gradient(to bottom, #66ea7c, #19a54c);
     border-radius: 4px;
 }
 
-.orden-show-card .description-box p::-webkit-scrollbar-thumb:hover {
+body.inventario-module .orden-show-card .description-box p::-webkit-scrollbar-thumb:hover {
     background: linear-gradient(to bottom, #4ba271, #66ea9b);
 }
 
 /* Estados de Aprobación con Información */
-.orden-show-card .estado-info {
+body.inventario-module .orden-show-card .estado-info {
     display: flex;
     flex-direction: column;
     align-items: center;
     gap: 0.5rem;
 }
 
-.orden-show-card .estado-info .badge {
+body.inventario-module .orden-show-card .estado-info .badge {
     margin-bottom: 0.25rem;
 }
 
-.orden-show-card .estado-info small {
+body.inventario-module .orden-show-card .estado-info small {
     color: #6c757d;
     font-size: 0.75rem;
 }
 
 /* Responsive */
 @media (max-width: 768px) {
-    .orden-show-card .card-body {
+    body.inventario-module .orden-show-card .card-body {
         padding: 1.25rem;
     }
     
-    .orden-show-card .card-header,
-    .orden-show-card .card-footer {
+    body.inventario-module .orden-show-card .card-header,
+    body.inventario-module .orden-show-card .card-footer {
         padding: 1rem 1.25rem;
     }
     
-    .orden-show-card .info-group {
+    body.inventario-module .orden-show-card .info-group {
         padding: 0.5rem 0.75rem;
     }
     
-    .orden-show-card .description-box {
+    body.inventario-module .orden-show-card .description-box {
         padding: 1rem;
     }
     
-    .orden-show-card .table {
+    body.inventario-module .orden-show-card .table {
         font-size: 0.85rem;
     }
     
-    .orden-show-card .table thead th,
-    .orden-show-card .table tbody td {
+    body.inventario-module .orden-show-card .table thead th,
+    body.inventario-module .orden-show-card .table tbody td {
         padding: 0.75rem 0.5rem;
     }
 }
 
-.orden-show-card .info-group:hover label i {
+body.inventario-module .orden-show-card .info-group:hover label i {
     transform: scale(1.2) rotate(5deg);
     color: #37b258;
 }

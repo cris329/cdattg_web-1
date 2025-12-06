@@ -91,13 +91,13 @@
                                                 in_array($datosTipo, ['orden_aprobada', 'orden_rechazada'], true)
                                                 && isset($datos['orden_id'])
                                             ) {
-                                                $accionUrl = route('inventario.ordenes.show', ['orden' => $datos['orden_id']]);
+                                                $accionUrl = route('inventario.ordenes.show', ['orden' => $datos['orden_id'], 'ref' => url()->current()]);
                                             } elseif ($datosTipo === 'nueva_orden') {
                                                 $accionUrl = isset($datos['orden_id'])
                                                     ? route('inventario.aprobaciones.pendientes') . '?orden=' . $datos['orden_id']
                                                     : route('inventario.aprobaciones.pendientes');
                                             } elseif (isset($datos['orden_id'])) {
-                                                $accionUrl = route('inventario.ordenes.show', ['orden' => $datos['orden_id']]);
+                                                $accionUrl = route('inventario.ordenes.show', ['orden' => $datos['orden_id'], 'ref' => url()->current()]);
                                             }
                                         @endphp
                                         

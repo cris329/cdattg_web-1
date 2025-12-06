@@ -207,7 +207,7 @@
                     </div>
 
                     <div class="card-footer text-right">
-                        <a href="{{ url()->previous() }}" class="btn btn-secondary">
+                        <a href="{{ $backUrl ?? route('inventario.ordenes.index') }}" class="btn btn-secondary">
                             <i class="fas fa-arrow-left"></i> Volver
                         </a>
                     </div>
@@ -260,7 +260,7 @@
 @include('inventario._components.common-footer')
 
 @push('css')
-    {{-- @vite(['resources/css/inventario/orden.css']) --}}
+    @vite(['resources/css/inventario/orden.css'])
 @endpush
 
 @push('scripts')
