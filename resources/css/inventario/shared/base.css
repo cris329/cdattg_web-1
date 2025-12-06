@@ -25,11 +25,11 @@ body.inventario-module .bg-light {
 }
 
 body.inventario-module .text-muted {
-    color: #fdfdfd !important;
+    color: #fdfdfd10 !important;
 }
 
 body.inventario-module .text-dark {
-    color: #fdfdfd !important;
+    color: #fdfdfd13 !important;
 }
 
 .select2-container--bootstrap4 .select2-selection {

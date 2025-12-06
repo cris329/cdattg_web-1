@@ -309,7 +309,7 @@ class CarritoControllerTest extends TestCase
         $response->assertJsonStructure([
             'success',
             'productos' => [
-                '*' => ['id', 'nombre', 'cantidad', 'codigo_barras'],
+                '*' => ['id', 'name', 'cantidad', 'codigo_barras'],
             ],
         ]);
     }

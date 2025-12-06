@@ -152,7 +152,7 @@ class ProductoServiceTest extends TestCase
         $productoMock = $this->crearProductoMock();
 
         $datos = [
-            'producto' => self::PRODUCTO_ACTUALIZADO,
+            'name' => self::PRODUCTO_ACTUALIZADO,
             'cantidad' => self::CANTIDAD_ACTUALIZADA,
         ];
 
@@ -187,7 +187,7 @@ class ProductoServiceTest extends TestCase
 
         $imagen = UploadedFile::fake()->image('producto.jpg');
         $datos = [
-            'producto' => self::PRODUCTO_ACTUALIZADO,
+            'name' => self::PRODUCTO_ACTUALIZADO,
             'imagen' => $imagen,
         ];
 
