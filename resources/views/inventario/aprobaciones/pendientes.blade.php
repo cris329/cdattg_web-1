@@ -2,9 +2,7 @@
 
 @section('title', 'Aprobaciones Pendientes')
 
-@section('css')
-    <link href="{{ asset('css/parametros.css') }}" rel="stylesheet">
-@endsection
+@include('inventario._components.common-css')
 
 @section('content_header')
     <x-page-header
@@ -18,12 +16,10 @@
         ]"
     />
 @endsection
-@push('css')
-    {{-- CSS para aprobaciones --}}
-    {{-- @vite([
-        'resources/css/inventario/shared/base.css',
+@push('css')     
+    @vite([
         'resources/css/inventario/modal-orden.css'
-    ]) --}}
+    ]) 
 @endpush
 
 @section('content')
@@ -361,7 +357,7 @@
 
 @push('js')
 <!-- Script de aprobaciones -->
-{{-- @vite(['resources/js/inventario/aprobaciones.js']) --}}
+@vite(['resources/js/inventario/aprobaciones.js'])
 @endpush
 
 
