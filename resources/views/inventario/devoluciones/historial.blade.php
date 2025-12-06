@@ -1,19 +1,19 @@
 @extends('inventario.layouts.base')
 
-@section('title', 'Registrar Devolución')
+@section('title', 'Historial de Devoluciones')
 
 @include('inventario._components.common-css')
 
 @section('content_header')
     <x-page-header
-        icon="fas fa-undo"
-        title="Registrar Devolución"
-        subtitle="Devolver productos prestados"
+        icon="fas fa-history"
+        title="Historial de Devoluciones"
+        subtitle="Registro completo de todas las devoluciones"
         :breadcrumb="[
             ['label' => 'Inicio', 'url' => '#'],
             ['label' => 'Inventario', 'active' => true],
             ['label' => 'Devoluciones', 'url' => route('inventario.devoluciones.index')],
-            ['label' => 'Registrar', 'active' => true]
+            ['label' => 'Historial', 'active' => true]
         ]"
     />
 @endsection
@@ -21,157 +21,113 @@
 @section('content')
     <section class="content mt-4">
         <div class="container-fluid">
-            @if(session('success'))
-                <div class="alert alert-success alert-dismissible fade show" role="alert">
-                    {{ session('success') }}
-                    <button type="button" class="close" data-dismiss="alert" aria-label="Close">
-                        <span aria-hidden="true">&times;</span>
-                    </button>
-                </div>
-            @endif
-
-            @if(session('error'))
-                <div class="alert alert-danger alert-dismissible fade show" role="alert">
-                    {{ session('error') }}
-                    <button type="button" class="close" data-dismiss="alert" aria-label="Close">
-                        <span aria-hidden="true">&times;</span>
-                    </button>
-                </div>
-            @endif
+            @include('components.session-alerts')
 
             <div class="row">
-                <div class="col-lg-8 mx-auto">
-            <div class="card">
-                <div class="card-header">
-                    <h5 class="card-title mb-0">Información del Préstamo</h5>
-                </div>
-                <div class="card-body">
-                    <div class="row mb-4">
-                        <div class="col-md-6">
-                            <h6>Producto</h6>
-                            <p class="mb-0"><strong>{{ $detalleOrden->producto->producto }}</strong></p>
-                            <small class="text-muted">{{ $detalleOrden->producto->descripcion }}</small>
+                <div class="col-12">
+                    <div class="card">
+                        <div class="card-header">
+                            <h5 class="card-title mb-0">Historial Completo de Devoluciones</h5>
                         </div>
-                        <div class="col-md-6">
-                            <h6>Orden #{{ $detalleOrden->orden->id }}</h6>
-                            <p class="mb-0">
-                                Fecha préstamo:
-                                {{ $detalleOrden->orden->fecha_prestamo ? $detalleOrden->orden->fecha_prestamo->format('d/m/Y') : 'N/A' }}
-                            </p>
-                            @if($detalleOrden->orden->fecha_devolucion)
-                                <p class="mb-0">
-                                    Fecha devolución esperada:
-                                    {{ $detalleOrden->orden->fecha_devolucion->format('d/m/Y') }}
-                                </p>
+                        <div class="card-body">
+                            @if($devoluciones && $devoluciones->count() > 0)
+                                <div class="table-responsive">
+                                    <table class="table table-striped table-hover">
+                                        <caption id="devoluciones-historial-description" class="sr-only">
+                                            Listado de devoluciones con información de producto, cantidad devuelta, fecha de devolución, observaciones y acciones disponibles.
+                                        </caption>
+                                        <thead>
+                                            <tr>
+                                                <th>Producto</th>
+                                                <th>Orden</th>
+                                                <th>Cantidad Devuelta</th>
+                                                <th>Fecha Devolución</th>
+                                                <th>Observaciones</th>
+                                                <th>Estado</th>
+                                                <th>Acciones</th>
+                                            </tr>
+                                        </thead>
+                                        <tbody>
+                                            @foreach($devoluciones as $devolucion)
+                                                <tr>
+                                                    <td>
+                                                        <strong>{{ $devolucion->detalleOrden->producto->producto ?? 'N/A' }}</strong>
+                                                        @if($devolucion->detalleOrden && $devolucion->detalleOrden->producto)
+                                                            <br>
+                                                            <small class="text-muted">{{ $devolucion->detalleOrden->producto->descripcion ?? '' }}</small>
+                                                        @endif
+                                                    </td>
+                                                    <td>
+                                                        #{{ $devolucion->detalleOrden->orden->id ?? 'N/A' }}
+                                                    </td>
+                                                    <td>
+                                                        <span class="badge badge-info">
+                                                            {{ $devolucion->cantidad_devuelta }}
+                                                        </span>
+                                                    </td>
+                                                    <td>
+                                                        {{ $devolucion->created_at ? $devolucion->created_at->format('d/m/Y H:i') : 'Sin fecha' }}
+                                                    </td>
+                                                    <td>
+                                                        @if($devolucion->observaciones)
+                                                            <small class="text-muted">{{ Str::limit($devolucion->observaciones, 50) }}</small>
+                                                        @else
+                                                            <span class="text-muted">-</span>
+                                                        @endif
+                                                    </td>
+                                                    <td>
+                                                        @if($devolucion->cierra_sin_stock)
+                                                            <span class="badge badge-warning">
+                                                                <i class="fas fa-exclamation-triangle"></i> Cierre sin stock
+                                                            </span>
+                                                        @else
+                                                            <span class="badge badge-success">
+                                                                <i class="fas fa-check"></i> Stock restaurado
+                                                            </span>
+                                                        @endif
+                                                    </td>
+                                                    <td>
+                                                        <a
+                                                            href="{{ route('inventario.devoluciones.show', $devolucion->id) }}"
+                                                            class="btn btn-sm btn-info"
+                                                            title="Ver detalles"
+                                                        >
+                                                            <i class="fas fa-eye"></i>
+                                                        </a>
+                                                        @if($devolucion->detalleOrden && $devolucion->detalleOrden->orden)
+                                                            <a
+                                                                href="{{ route('inventario.ordenes.show', $devolucion->detalleOrden->orden->id) }}"
+                                                                class="btn btn-sm btn-secondary"
+                                                                title="Ver orden"
+                                                            >
+                                                                <i class="fas fa-file-invoice"></i>
+                                                            </a>
+                                                        @endif
+                                                    </td>
+                                                </tr>
+                                            @endforeach
+                                        </tbody>
+                                    </table>
+                                </div>
+
+                                @if($devoluciones instanceof \Illuminate\Contracts\Pagination\LengthAwarePaginator)
+                                    <div class="d-flex justify-content-center mt-3">
+                                        {{ $devoluciones->links() }}
+                                    </div>
+                                @endif
+                            @else
+                                <div class="text-center py-5">
+                                    <i class="fas fa-inbox fa-4x text-muted mb-3"></i>
+                                    <h5>No hay devoluciones registradas</h5>
+                                    <p class="text-muted">Aún no se han registrado devoluciones en el sistema.</p>
+                                </div>
                             @endif
                         </div>
                     </div>
-
-                    <div class="row mb-4">
-                        <div class="col-md-4">
-                            <div class="card bg-light">
-                                <div class="card-body text-center">
-                                    <h6>Cantidad Prestada</h6>
-                                    <h3 class="text-primary">{{ $detalleOrden->cantidad }}</h3>
-                                </div>
-                            </div>
-                        </div>
-                            <div class="col-md-4">
-                                <div class="card bg-warning">
-                                <div class="card-body text-center">
-                                    <h6>Ya Devuelto</h6>
-                                    <h3 class="text-white">{{ $detalleOrden->getCantidadDevuelta() }}</h3>
-                                </div>
-                            </div>
-                        </div>
-                            <div class="col-md-4">
-                                <div class="card bg-danger">
-                                <div class="card-body text-center">
-                                    <h6>Pendiente</h6>
-                                    <h3 class="text-white">{{ $detalleOrden->getCantidadPendiente() }}</h3>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-
-                    <form action="{{ route('inventario.devoluciones.store') }}" method="POST">
-                        @csrf
-                        <input type="hidden" name="detalle_orden_id" value="{{ $detalleOrden->id }}">
-
-                        <div class="row">
-                            <div class="col-md-6">
-                                <div class="form-group">
-                                    <label for="cantidad_devuelta">Cantidad a Devolver *</label>
-                                    <input type="number"
-                                           class="form-control @error('cantidad_devuelta') is-invalid @enderror"
-                                           id="cantidad_devuelta"
-                                           name="cantidad_devuelta"
-                                           value="{{ old('cantidad_devuelta', $detalleOrden->getCantidadPendiente()) }}"
-                                           min="0"
-                                           max="{{ $detalleOrden->getCantidadPendiente() }}"
-                                           required>
-                                    @error('cantidad_devuelta')
-                                        <div class="invalid-feedback">{{ $message }}</div>
-                                    @enderror
-                                    <small class="form-text text-muted">
-                                        Máximo: {{ $detalleOrden->getCantidadPendiente() }} unidades. Usa 0 si el consumible se utilizó totalmente.
-                                    </small>
-                                </div>
-                            </div>
-                            <div class="col-md-6">
-                                <div class="form-group">
-                                    <label for="observaciones">Observaciones</label>
-                                    <textarea
-                                        class="form-control @error('observaciones') is-invalid @enderror"
-                                        id="observaciones"
-                                        name="observaciones"
-                                        rows="3"
-                                        placeholder="Observaciones sobre la devolución..."
-                                    >{{ old('observaciones') }}</textarea>
-                                    @error('observaciones')
-                                        <div class="invalid-feedback">{{ $message }}</div>
-                                    @enderror
-                                    <small class="form-text text-muted">
-                                        Justifica aquí cuando registres la devolución en cero por consumo total.
-                                    </small>
-                                </div>
-                            </div>
-                        </div>
-
-                        <div class="row mt-4">
-                            <div class="col-12">
-                                <div class="alert alert-info">
-                                    <i class="fas fa-info-circle"></i>
-                                    <strong>Nota:</strong> El stock solo se restaurará cuando registres cantidades mayores a cero. Si el consumible se usó por completo, registra cantidad 0 y explica el motivo.
-                                </div>
-                            </div>
-                        </div>
-
-                        <div class="row">
-                            <div class="col-12">
-                                <button
-                                    type="submit"
-                                    class="btn btn-primary"
-                                >
-                                    <i class="fas fa-save"></i> Registrar Devolución
-                                </button>
-                                <a
-                                    href="{{ route('inventario.devoluciones.index') }}"
-                                    class="btn btn-secondary"
-                                >
-                                    <i class="fas fa-times"></i> Cancelar
-                                </a>
-                            </div>
-                        </div>
-                    </form>
                 </div>
             </div>
         </div>
-    </div>
-        </div>
     </section>
-   {{-- Alertas --}}
-    {{-- Notificaciones manejadas globalmente por sweetalert2-notifications --}}
-    
-    {{-- Footer SENA --}}
+@endsection
+
 @include('inventario._components.common-footer')

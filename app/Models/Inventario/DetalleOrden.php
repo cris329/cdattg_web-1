@@ -103,4 +103,21 @@ class DetalleOrden extends Model
 
         return $pendiente > 0 ? $pendiente : 0;
     }
+
+    // Verificar si el préstamo está vencido
+    public function Vencido() : bool
+    {
+        // Si ya está completamente devuelto, no está vencido
+        if ($this->estaCompletamenteDevuelto()) {
+            return false;
+        }
+
+        // Verificar si tiene fecha de devolución esperada
+        if (!$this->orden || !$this->orden->fecha_devolucion) {
+            return false;
+        }
+
+        // Verificar si la fecha de devolución ya pasó
+        return $this->orden->fecha_devolucion->isPast();
+    }
 }

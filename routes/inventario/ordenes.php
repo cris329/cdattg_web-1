@@ -4,15 +4,15 @@ use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\Inventario\OrdenController;
 use App\Http\Controllers\Inventario\AprobacionController;
 
-// Rutas para órdenes del inventario (préstamos y salidas)
+// Rutas para órdenes del inventario
 Route::prefix('inventario')
     ->name('inventario.')
     ->group(function () {
-        // Vista de préstamos y salidas (GET) - Formulario de solicitud
+        // Vista de préstamos y salidas
         Route::get('ordenes/prestamos-salidas', [OrdenController::class, 'prestamosSalidas'])
             ->name('prestamos-salidas');
             
-        // Procesar préstamo/salida (POST)
+        // Procesar préstamo/salida
         Route::post('ordenes/prestamos-salidas', [OrdenController::class, 'storePrestamos'])
             ->name('prestamos-salidas.store');
         
@@ -34,7 +34,7 @@ Route::prefix('inventario')
         Route::delete($ordenRoute, [OrdenController::class, 'destroy'])
             ->name('ordenes.destroy');
 
-        // Rutas para aprobaciones (solo superadministrador)
+        // Rutas para aprobaciones
         Route::middleware(['can:APROBAR ORDEN'])->group(function () {
             // Ver solicitudes pendientes
             Route::get('aprobaciones/pendientes', [AprobacionController::class, 'pendientes'])

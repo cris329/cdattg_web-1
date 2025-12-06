@@ -4,21 +4,26 @@
 
 @include('inventario._components.common-css')
 
-@section('content')
-<div class="container-fluid">
-    @include('inventario._components.page-header', [
-        'title' => 'Historial de Mis Préstamos',
-        'subtitle' => 'Registro completo de todos tus préstamos',
-        'breadcrumb' => [
+@section('content_header')
+    <x-page-header
+        icon="fas fa-history"
+        title="Historial de Mis Préstamos"
+        subtitle="Registro completo de todos tus préstamos"
+        :breadcrumb="[
             ['label' => 'Inicio', 'url' => '#'],
             ['label' => 'Inventario', 'active' => true],
-            ['label' => 'Historial Prestamos', 'active' => true]
-        ]
-    ])
+            ['label' => 'Préstamos', 'url' => route('inventario.prestamos.mis')],
+            ['label' => 'Historial', 'active' => true]
+        ]"
+    />
+@endsection
 
-    @include('inventario._components.alerts')
+@section('content')
+    <section class="content mt-4">
+        <div class="container-fluid">
+            @include('components.session-alerts')
 
-    <div class="row">
+            <div class="row">
         <div class="col-12">
             <div class="card">
                 <div class="card-header">
@@ -110,16 +115,10 @@
                 </div>
             </div>
         </div>
-    </div>
-</div>
-
-    {{-- Notificaciones manejadas globalmente por sweetalert2-notifications --}}
+    </section>
 @endsection
 
-@section('footer')
-    {{-- Footer SENA --}}
 @include('inventario._components.common-footer')
-@endsection
 
 
 
