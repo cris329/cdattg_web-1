@@ -106,9 +106,11 @@ class OrdenController extends Controller
     public function completadas(): View
     {
         try {
-            $estadoAprobada = $this->service->obtenerEstadoAprobada();
+            // Obtener estado APROBADA desde AprobacionService (mismo que rechazadas)
+            $aprobacionService = app(\App\Inventario\Services\Aprobacion\AprobacionService::class);
+            $estadoAprobada = $aprobacionService->obtenerEstadoAprobada();
             $ordenes = $this->repository->obtenerCompletadas($estadoAprobada->id);
-        } catch (OrdenException $e) {
+        } catch (\Exception $e) {
             $ordenes = collect();
         }
 
