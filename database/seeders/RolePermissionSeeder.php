@@ -39,6 +39,7 @@ class RolePermissionSeeder extends Seeder
             'visitante' => Role::firstOrCreate(['name' => 'VISITANTE']),
             'aprendiz' => Role::firstOrCreate(['name' => 'APRENDIZ']),
             'aspirante' => Role::firstOrCreate(['name' => 'ASPIRANTE']),
+            'proveedor' => Role::firstOrCreate(['name' => 'PROVEEDOR']),
         ];
     }
 
@@ -91,6 +92,9 @@ class RolePermissionSeeder extends Seeder
 
         // APRENDIZ
         $roles['aprendiz']->syncPermissions($this->getPermisosAprendiz());
+
+        // PROVEEDOR
+        $roles['proveedor']->syncPermissions($this->getPermisosProveedor());
     }
 
     // ==========================================
@@ -548,5 +552,16 @@ class RolePermissionSeeder extends Seeder
     private function getPermisosAprendiz(): array
     {
         return $this->getPermisosVisitante();
+    }
+
+    /**
+     * Permisos para el rol PROVEEDOR
+     */
+    private function getPermisosProveedor(): array
+    {
+        return [
+            self::PERMISO_VER_PERFIL,
+            self::PERMISO_EDITAR_PERSONA,
+        ];
     }
 }

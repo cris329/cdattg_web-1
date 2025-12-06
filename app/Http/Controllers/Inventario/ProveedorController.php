@@ -57,6 +57,11 @@ class ProveedorController extends Controller
         $departamentos = Departamento::orderBy('departamento')->get();
         $municipios = Municipio::with('departamento')->get();
         $personas = Persona::where('status', 1)
+            ->whereHas('user', function ($query) {
+                $query->whereHas('roles', function ($roleQuery) {
+                    $roleQuery->where('name', 'PROVEEDOR');
+                });
+            })
             ->orderBy('primer_nombre')
             ->orderBy('primer_apellido')
             ->get();
@@ -74,10 +79,25 @@ class ProveedorController extends Controller
         $paises = Pais::where('status', 1)->orderBy('pais')->get();
         $departamentos = Departamento::orderBy('departamento')->get();
         $municipios = Municipio::with('departamento')->get();
+        
+        // Obtener personas con rol PROVEEDOR, incluyendo la persona actualmente asignada si existe
         $personas = Persona::where('status', 1)
+            ->where(function ($query) use ($proveedor) {
+                $query->whereHas('user', function ($userQuery) {
+                    $userQuery->whereHas('roles', function ($roleQuery) {
+                        $roleQuery->where('name', 'PROVEEDOR');
+                    });
+                });
+                
+                // Incluir la persona actualmente asignada al proveedor (si existe)
+                if ($proveedor->persona_id) {
+                    $query->orWhere('id', $proveedor->persona_id);
+                }
+            })
             ->orderBy('primer_nombre')
             ->orderBy('primer_apellido')
             ->get();
+            
         return view('inventario.proveedores.edit', compact('proveedor', 'paises', 'departamentos', 'municipios', 'personas'));
     }
 

@@ -146,7 +146,7 @@
                                                 id="persona_id"
                                                 name="persona_id"
                                             >
-                                                <option value="">Seleccione una persona</option>
+                                                <option value="">Seleccione una persona como contacto</option>
                                                 @foreach($personas as $persona)
                                                     <option value="{{ $persona->id }}" {{ old('persona_id') == $persona->id ? 'selected' : '' }}>
                                                         {{ $persona->nombre_completo }} 
@@ -160,7 +160,14 @@
                                                 @endforeach
                                             </select>
                                             <small class="form-text text-muted">
-                                                Seleccione una persona registrada en el sistema como contacto del proveedor.
+                                                <i class="fas fa-info-circle mr-1"></i>
+                                                Solo se muestran personas que tienen el rol <strong>PROVEEDOR</strong> asignado en el sistema.
+                                                @if($personas->isEmpty())
+                                                    <span class="text-warning d-block mt-1">
+                                                        <i class="fas fa-exclamation-triangle mr-1"></i>
+                                                        No hay personas con rol PROVEEDOR disponibles. Asigne el rol PROVEEDOR a una persona primero.
+                                                    </span>
+                                                @endif
                                             </small>
                                             @error('persona_id')
                                                 <div class="invalid-feedback">{{ $message }}</div>
