@@ -240,9 +240,6 @@ class ProductoController extends Controller
             'sort_by' => $filtros['sort_by']
         ]);
 
-        // Enriquecer productos con marcas y categorías (SRP)
-        $this->enrichmentService->enriquecerConMarcasYCategorias($productos);
-
         $tiposProductos = $this->repository->obtenerTiposProductos();
 
         return view('inventario.productos.card', compact('productos', 'tiposProductos'));

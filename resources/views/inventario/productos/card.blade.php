@@ -122,52 +122,21 @@
                                 </span>
                             </div>
                             <div class="card-body d-flex flex-column">
-                                {{-- Categoría y marca --}}
-                                <div class="mb-2">
-                                    @if($producto->tipoProducto && $producto->tipoProducto->parametro)
-                                        <small class="text-muted d-block">
-                                            <i class="fas fa-box-open"></i> {{ $producto->tipoProducto->parametro->name }}
-                                        </small>
-                                    @endif
-                                    <small class="text-muted">
-                                        <i class="fas fa-tag"></i> {{ $producto->categoria->name ?? 'Sin categoría' }}
-                                    </small>
-                                    @if($producto->marca)
-                                        <br>
-                                        <small class="text-muted">
-                                            <i class="fas fa-copyright"></i> {{ $producto->marca->name }}
-                                        </small>
-                                    @endif
-                                </div>
-
                                 {{-- Nombre del producto --}}
-                                <h5 class="card-title font-weight-bold mb-2">
+                                <h5 class="card-title font-weight-bold mb-3 text-center">
                                     {{ Str::limit($producto->name, 50) }}
                                 </h5>
 
-                                {{-- Descripción --}}
-                                <p class="card-text text-muted small flex-grow-1">
-                                    {{ Str::limit($producto->descripcion, 80) ?? 'Sin descripción disponible' }}
-                                </p>
-
                                 {{-- Código de barras --}}
-                                <div class="mb-2">
-                                    <small class="text-muted">
-                                        <i class="fas fa-barcode"></i>
-                                        <span class="badge badge-secondary">{{ $producto->codigo_barras }}</span>
+                                <div class="mb-3 text-center">
+                                    <small class="text-muted d-block mb-1">
+                                        <i class="fas fa-barcode"></i> Código
                                     </small>
-                                </div>
-
-                                {{-- Stock disponible --}}
-                                <div class="mb-3">
-                                    <strong>Stock: </strong>
-                                    <span class="badge badge-{{ $stockClass }}">
-                                        {{ $producto->cantidad }} unidades
-                                    </span>
+                                    <span class="badge badge-secondary badge-lg">{{ $producto->codigo_barras ?? 'N/A' }}</span>
                                 </div>
 
                                 {{-- Acciones --}}
-                                <fieldset class="btn-group d-flex border-0 p-0 m-0">
+                                <fieldset class="btn-group d-flex border-0 p-0 m-0 mt-auto">
                                     <legend class="sr-only">Acciones del producto {{ $producto->name }}</legend>
                                     <button type="button"
                                             class="btn btn-sm btn-info btn-view-details w-50"
@@ -300,6 +269,10 @@
     {{-- Alertas --}}
     {{-- Notificaciones manejadas globalmente por sweetalert2-notifications --}}
 @endsection
+
+@push('css')
+    @vite(['resources/css/inventario/card.css'])
+@endpush
 
 @section('js')
     @vite(['resources/js/inventario/card.js'])

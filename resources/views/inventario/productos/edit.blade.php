@@ -92,19 +92,19 @@
                                 <div class="row">
                                     <div class="col-md-6">
                                         <div class="form-group-modern">
-                                            <label for="producto">
+                                            <label for="name">
                                                 <i class="fas fa-tag"></i>
                                                 Nombre del Producto
                                                 <span class="text-danger">*</span>
                                             </label>
                                             <input type="text"
-                                                   class="form-control-modern @error('producto') is-invalid @enderror"
-                                                   id="producto"
-                                                   name="producto"
+                                                   class="form-control-modern @error('name') is-invalid @enderror"
+                                                   id="name"
+                                                   name="name"
                                                    value="{{ old('name', $producto->name) }}"
                                                    placeholder="Ej: Laptop Dell XPS 15"
                                                    required>
-                                            @error('producto')
+                                            @error('name')
                                                 <div class="invalid-feedback">{{ $message }}</div>
                                             @enderror
                                         </div>
@@ -115,7 +115,6 @@
                                             <label for="codigo_barras">
                                                 <i class="fas fa-barcode"></i>
                                                 Código de Barras
-                                                <span class="text-danger">*</span>
                                             </label>
                                             <div class="input-group">
                                                 <input type="text"
@@ -141,12 +140,14 @@
                                             <label for="descripcion">
                                                 <i class="fas fa-align-left"></i>
                                                 Descripción
+                                                <span class="text-danger">*</span>
                                             </label>
                                             <textarea class="form-control-modern @error('descripcion') is-invalid @enderror"
                                                       id="descripcion"
                                                       name="descripcion"
                                                       rows="3"
-                                                      placeholder="Ingrese una descripción detallada">{{ old('descripcion', $producto->descripcion) }}</textarea>
+                                                      placeholder="Ingrese una descripción detallada"
+                                                      required>{{ old('descripcion', $producto->descripcion) }}</textarea>
                                             @error('descripcion')
                                                 <div class="invalid-feedback">{{ $message }}</div>
                                             @enderror
@@ -473,8 +474,7 @@
 @endsection
 
 @push('js')
-    <script src="https://unpkg.com/html5-qrcode@2.3.8/html5-qrcode.min.js"
-            integrity="sha384-2wCJ6wnJxI6f2MTNL7kFXCW6nwHEVzjLVRGXwjLJPFQkWdYZG6df0tq6HJk7B4KP"
+    <script src="https://cdn.jsdelivr.net/npm/html5-qrcode@2.3.8/html5-qrcode.min.js"
             crossorigin="anonymous"></script>
     @vite('resources/js/inventario/imagen.js')
     <script src="https://cdn.jsdelivr.net/npm/jsbarcode@3.11.6/dist/JsBarcode.all.min.js"

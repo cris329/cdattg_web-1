@@ -73,18 +73,37 @@
 .product-image-container {
     position: relative;
     width: 100%;
-    height: 200px;
+    height: 220px;
+    min-height: 220px;
+    max-height: 220px;
     overflow: hidden;
     background: linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%);
-    display: flex;
-    align-items: center;
-    justify-content: center;
+    display: block;
+    margin: 0;
+    padding: 0;
+    flex-shrink: 0;
 }
 
-.product-image {
-    width: 100%;
-    height: 100%;
-    object-fit: cover;
+.product-image-container img,
+.product-image-container .product-image,
+.product-image-container .card-img-top,
+.product-image-container .card-img-top.product-image {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100% !important;
+    height: 100% !important;
+    max-width: 100% !important;
+    max-height: 100% !important;
+    min-width: 100% !important;
+    min-height: 100% !important;
+    object-fit: cover !important;
+    object-position: center !important;
+    display: block !important;
+    margin: 0 !important;
+    padding: 0 !important;
+    border: none !important;
+    border-radius: 0 !important;
     transition: transform var(--transition-speed) ease;
 }
 
@@ -141,10 +160,17 @@
     line-height: 1.4;
     color: #333;
     margin-bottom: 0.75rem;
-    min-height: 2.8rem;
+    min-height: auto;
     display: -webkit-box;
     -webkit-box-orient: vertical;
+    -webkit-line-clamp: 2;
     overflow: hidden;
+    text-overflow: ellipsis;
+}
+
+.badge-lg {
+    font-size: 0.9rem;
+    padding: 6px 12px;
 }
 
 .card-text {
@@ -273,7 +299,9 @@
 /* Tablets */
 @media (max-width: 992px) {
     .product-image-container {
-        height: 180px;
+        height: 200px;
+        min-height: 200px;
+        max-height: 200px;
     }
 
     .card-title {
@@ -288,7 +316,9 @@
 /* Móviles */
 @media (max-width: 768px) {
     .product-image-container {
-        height: 200px;
+        height: 180px;
+        min-height: 180px;
+        max-height: 180px;
     }
 
     .card-body {

@@ -99,12 +99,15 @@ class ProductoRepository implements ProductoRepositoryInterface
      */
     public function obtenerParaCatalogo(array $filtros = []): LengthAwarePaginator
     {
-        $query = Producto::with([
-            'tipoProducto.parametro',
-            'unidadMedida.parametro',
-            'estado.parametro',
-            'contratoConvenio',
-            'ambiente'
+        $query = Producto::select([
+            'id',
+            'name',
+            'codigo_barras',
+            'cantidad',
+            'imagen',
+            'tipo_producto_id',
+            'estado_producto_id',
+            'created_at'
         ])->where('cantidad', '>', 0);
 
         if (!empty($filtros['search'])) {
@@ -119,7 +122,7 @@ class ProductoRepository implements ProductoRepositoryInterface
             $query->where('estado_producto_id', '!=', $filtros['estado_agotado_id']);
         }
 
-        $sortBy = $filtros['sort_by'] ?? 'name';
+        $sortBy = $filtros['sort_by'] ?? 'newest';
         switch ($sortBy) {
             case 'stock-asc':
                 $query->orderBy('cantidad', 'asc');
@@ -127,11 +130,12 @@ class ProductoRepository implements ProductoRepositoryInterface
             case 'stock-desc':
                 $query->orderBy('cantidad', 'desc');
                 break;
-            case 'newest':
-                $query->orderBy('created_at', 'desc');
-                break;
-            default:
+            case 'name':
                 $query->orderBy('name', 'asc');
+                break;
+            case 'newest':
+            default:
+                $query->orderBy('created_at', 'desc');
                 break;
         }
 

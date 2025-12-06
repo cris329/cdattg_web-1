@@ -100,7 +100,7 @@
                             <li>
                                 <i class="fas fa-cubes"></i>
                                 <strong>Tipo:</strong>
-                                <span>{{ $producto->tipoProducto->parametro->name ?? 'N/A' }}</span>
+                                <span>{{ $producto->tipoProducto?->parametro?->name ?? 'N/A' }}</span>
                             </li>
 
                             <li>
@@ -112,7 +112,7 @@
                             <li>
                                 <i class="fas fa-weight"></i>
                                 <strong>Magnitud:</strong>
-                                <span>{{ $producto->peso }} {{ $producto->unidadMedida->parametro->name ?? '' }}</span>
+                                <span>{{ $producto->peso }} {{ $producto->unidadMedida?->parametro?->name ?? '' }}</span>
                             </li>
 
                             <li>
@@ -136,8 +136,8 @@
                                 <i class="fas fa-check-circle"></i>
                                 <strong>Estado:</strong>
                                 <span
-                                    class="badge-modern {{ $producto->estado->parametro->name === 'DISPONIBLE' ? 'badge-success' : 'badge-warning' }}">
-                                    {{ $producto->estado->parametro->name ?? 'N/A' }}
+                                    class="badge-modern {{ ($producto->estado?->parametro?->name ?? '') === 'DISPONIBLE' ? 'badge-success' : 'badge-warning' }}">
+                                    {{ $producto->estado?->parametro?->name ?? 'N/A' }}
                                 </span>
                             </li>
 
@@ -173,27 +173,27 @@
                             <li>
                                 <i class="fas fa-truck"></i>
                                 <strong>Proveedor:</strong>
-                                <span>{{ $producto->name->name ?? 'N/A' }}</span>
+                                <span>{{ $producto->proveedor->name ?? 'N/A' }}</span>
                             </li>
 
 
                             <li>
                                 <i class="fas fa-calendar-times"></i>
                                 <strong>Fecha de Vencimiento:</strong>
-                                <span>{{ $producto->fecha_vencimiento ? $producto->fecha_vencimiento->format('d/m/Y') : 'Sin fecha' }}</span>
+                                <span>{{ optional($producto->fecha_vencimiento)->format('d/m/Y') ?? 'Sin fecha' }}</span>
                             </li>
 
                             <li>
                                 <i class="fas fa-calendar-plus"></i>
                                 <strong>Fecha de Registro:</strong>
-                                <span>{{ $producto->created_at->format('d/m/Y H:i') }}</span>
+                                <span>{{ optional($producto->created_at)->format('d/m/Y H:i') ?? 'N/A' }}</span>
                             </li>
 
-                            @if ($producto->updated_at != $producto->created_at)
+                            @if ($producto->updated_at && $producto->created_at && $producto->updated_at != $producto->created_at)
                                 <li>
                                     <i class="fas fa-calendar-edit"></i>
                                     <strong>Última Actualización:</strong>
-                                    <span>{{ $producto->updated_at->format('d/m/Y H:i') }}</span>
+                                    <span>{{ optional($producto->updated_at)->format('d/m/Y H:i') ?? 'N/A' }}</span>
                                 </li>
                             @endif
 
@@ -231,14 +231,14 @@
                             <div>
                                 <div class="stat-card-label">Registro</div>
                                 <div class="stat-card-value" style="font-size: 1.25rem;">
-                                    {{ $producto->created_at->diffForHumans() }}
+                                    {{ optional($producto->created_at)->diffForHumans() ?? 'N/A' }}
                                 </div>
                             </div>
                         </div>
                     </div>
 
                     <div
-                        class="stat-card stat-{{ $producto->estado->parametro->name === 'DISPONIBLE' ? 'success' : 'warning' }}">
+                        class="stat-card stat-{{ ($producto->estado?->parametro?->name ?? '') === 'DISPONIBLE' ? 'success' : 'warning' }}">
                         <div class="stat-card-header">
                             <div class="stat-card-icon">
                                 <i class="fas fa-toggle-on"></i>
@@ -246,7 +246,7 @@
                             <div>
                                 <div class="stat-card-label">Estado</div>
                                 <div class="stat-card-value" style="font-size: 1rem;">
-                                    {{ $producto->estado->parametro->name ?? 'N/A' }}
+                                    {{ $producto->estado?->parametro?->name ?? 'N/A' }}
                                 </div>
                             </div>
                         </div>
