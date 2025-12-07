@@ -22,12 +22,14 @@ class StoreAspiranteRequest extends FormRequest
      */
     public function rules(): array
     {
-        return [
+        $programaId = $this->route('programa') ?? $this->route('complementarioId');
+        
+        $rules = [
             'numero_documento' => [
                 'required',
                 'string',
                 'max:191',
-                Rule::exists('personas', 'numero_documento'),
+                // No validar existencia aquí, dejar que el servicio lo maneje para retornar mensaje personalizado
             ],
             'observaciones' => [
                 'nullable',
@@ -35,6 +37,27 @@ class StoreAspiranteRequest extends FormRequest
                 'max:500',
             ],
         ];
+
+        // Solo agregar validación de inscripción duplicada si hay un programa en la ruta
+        if ($programaId !== null) {
+            $rules['numero_documento'][] = function ($attribute, $value, $fail) use ($programaId) {
+                $persona = \App\Models\Persona::where('numero_documento', $value)->first();
+                if (!$persona) {
+                    // No validar existencia aquí, dejar que el servicio lo maneje
+                    return;
+                }
+
+                $existeInscripcion = \App\Models\Complementarios\AspiranteComplementario::where('persona_id', $persona->id)
+                    ->where('complementario_id', $programaId)
+                    ->exists();
+
+                if ($existeInscripcion) {
+                    $fail('La persona con este número de documento ya se encuentra inscrita en este programa complementario.');
+                }
+            };
+        }
+        
+        return $rules;
     }
 
     /**
