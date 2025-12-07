@@ -18,10 +18,8 @@ class RechazarAspiranteRequest extends FormRequest
 
     /**
      * Get the validation rules that apply to the request.
-     * 
      * Este Form Request valida los datos para rechazar un aspirante.
      * Implementa el caso de uso RF-ASP-004: Rechazar Aspirante.
-     * 
      * Nota: Actualmente el rechazo no requiere datos del request,
      * pero este Form Request está preparado para futuras mejoras
      * como agregar motivo de rechazo o comentarios.
