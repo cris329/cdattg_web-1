@@ -30,6 +30,12 @@ class InscripcionComplementarioControllerTest extends TestCase
     {
         parent::setUp();
         
+        // Desactivar CSRF para tests
+        $this->withoutMiddleware([
+            \Illuminate\Foundation\Http\Middleware\VerifyCsrfToken::class,
+            \App\Http\Middleware\VerifyCsrfToken::class,
+        ]);
+        
         $this->seedComplementariosDatabaseIfNeeded();
         
         Storage::fake('google');
