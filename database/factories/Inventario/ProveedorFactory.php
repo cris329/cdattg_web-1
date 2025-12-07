@@ -89,7 +89,7 @@ class ProveedorFactory extends Factory
         }
 
         return [
-            'proveedor' => $proveedor,
+            'name' => $proveedor,
             'nit' => $nit,
             'email' => strtolower('contacto' . rand(100, 999) . '@' . str_replace(' ', '', strtolower($empresas[array_rand($empresas)])) . '.com'),
             'telefono' => '60' . rand(10000000, 99999999),

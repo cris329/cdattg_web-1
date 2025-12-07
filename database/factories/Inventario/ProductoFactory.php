@@ -109,7 +109,7 @@ class ProductoFactory extends Factory
         ];
 
         return [
-            'producto' => $producto,
+            'name' => $producto,
             'tipo_producto_id' => $tipoProductoId,
             'descripcion' => $descripciones[array_rand($descripciones)],
             'peso' => round(rand(50, 250000) / 100, 2),

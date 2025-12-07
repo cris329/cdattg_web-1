@@ -808,11 +808,8 @@ async function showProductDetails(productId) {
         const html = await response.text();
         contentDiv.innerHTML = html;
         
-<<<<<<< HEAD
-=======
         // Mostrar el modal DESPUÉS de cargar el contenido
         console.log('Contenido cargado, abriendo modal...');
->>>>>>> 0647aacc2ee5467694cee2f11bcb21f0597bcb9b
         showModal('productDetailModal');
         
         // Verificar que se abrió
