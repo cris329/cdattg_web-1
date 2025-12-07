@@ -106,6 +106,28 @@ class ComplementarioOfertadoFactory extends Factory
         $ambienteId = Ambiente::where('status', 1)->inRandomOrder()->value('id');
         // Si no hay ambientes, usar null (permitir que sea nullable si la migración lo permite)
 
+        // Obtener estado_id parametrizado
+        $estadoId = null;
+        try {
+            // Buscar el tema ESTADO_PROGRAMA_COMPLEMENTARIO
+            $temaEstado = \App\Models\Tema::where('name', 'ESTADO_PROGRAMA_COMPLEMENTARIO')->first();
+            
+            if ($temaEstado) {
+                // Obtener un ParametroTema aleatorio de este tema
+                $estadoId = \App\Models\ParametroTema::where('tema_id', $temaEstado->id)
+                    ->inRandomOrder()
+                    ->value('id');
+            }
+        } catch (\Exception $e) {
+            // Si hay error, continuar con null
+        }
+        
+        // Si no se encontró estado parametrizado, usar null (la migración lo manejará)
+        if (!$estadoId) {
+            // Intentar obtener cualquier ParametroTema como fallback
+            $estadoId = \App\Models\ParametroTema::inRandomOrder()->value('id');
+        }
+
         return [
             'codigo' => 'COMP' . str_pad($this->faker->unique()->numberBetween(1, 9999), 4, '0', STR_PAD_LEFT),
             'nombre' => $nombre,
@@ -113,7 +135,7 @@ class ComplementarioOfertadoFactory extends Factory
             'requisitos_ingreso' => $this->faker->paragraph(2),
             'duracion' => $this->faker->numberBetween(30, 120),
             'cupos' => $this->faker->numberBetween(10, 50),
-            'estado' => $this->faker->randomElement([0, 1, 2]),
+            'estado_id' => $estadoId,
             'modalidad_id' => $modalidadId,
             'jornada_id' => $jornadaId,
             'ambiente_id' => $ambienteId, // nullable según la migración
@@ -125,9 +147,12 @@ class ComplementarioOfertadoFactory extends Factory
      */
     public function sinOferta(): static
     {
-        return $this->state(fn (array $attributes) => [
-            'estado' => 0,
-        ]);
+        return $this->state(function (array $attributes) {
+            $estadoId = $this->getEstadoIdByName('Sin Oferta');
+            return [
+                'estado_id' => $estadoId,
+            ];
+        });
     }
 
     /**
@@ -135,9 +160,12 @@ class ComplementarioOfertadoFactory extends Factory
      */
     public function conOferta(): static
     {
-        return $this->state(fn (array $attributes) => [
-            'estado' => 1,
-        ]);
+        return $this->state(function (array $attributes) {
+            $estadoId = $this->getEstadoIdByName('Con Oferta');
+            return [
+                'estado_id' => $estadoId,
+            ];
+        });
     }
 
     /**
@@ -145,9 +173,40 @@ class ComplementarioOfertadoFactory extends Factory
      */
     public function cuposLlenos(): static
     {
-        return $this->state(fn (array $attributes) => [
-            'estado' => 2,
-        ]);
+        return $this->state(function (array $attributes) {
+            $estadoId = $this->getEstadoIdByName('Cupos Llenos');
+            return [
+                'estado_id' => $estadoId,
+            ];
+        });
+    }
+
+    /**
+     * Helper para obtener el ID de ParametroTema por nombre de estado
+     */
+    private function getEstadoIdByName(string $nombreEstado): ?int
+    {
+        try {
+            $temaEstado = \App\Models\Tema::where('name', 'ESTADO_PROGRAMA_COMPLEMENTARIO')->first();
+            
+            if ($temaEstado) {
+                $parametro = \App\Models\Parametro::where('name', $nombreEstado)->first();
+                
+                if ($parametro) {
+                    $parametroTema = \App\Models\ParametroTema::where('tema_id', $temaEstado->id)
+                        ->where('parametro_id', $parametro->id)
+                        ->first();
+                    
+                    if ($parametroTema) {
+                        return $parametroTema->id;
+                    }
+                }
+            }
+        } catch (\Exception $e) {
+            // Si hay error, retornar null
+        }
+        
+        return null;
     }
 
     /**
@@ -155,10 +214,13 @@ class ComplementarioOfertadoFactory extends Factory
      */
     public function conCupos(int $cupos = null): static
     {
-        return $this->state(fn (array $attributes) => [
-            'cupos' => $cupos ?? $this->faker->numberBetween(20, 50),
-            'estado' => 1,
-        ]);
+        return $this->state(function (array $attributes) use ($cupos) {
+            $estadoId = $this->getEstadoIdByName('Con Oferta');
+            return [
+                'cupos' => $cupos ?? $this->faker->numberBetween(20, 50),
+                'estado_id' => $estadoId,
+            ];
+        });
     }
 
     /**
@@ -171,5 +233,3 @@ class ComplementarioOfertadoFactory extends Factory
         ]);
     }
 }
-
-

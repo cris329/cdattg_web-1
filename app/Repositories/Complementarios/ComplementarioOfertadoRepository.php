@@ -8,6 +8,50 @@ use Illuminate\Database\Eloquent\Collection;
 class ComplementarioOfertadoRepository
 {
     /**
+     * Mapeo de valores legacy (0,1,2) a nombres de estado para búsqueda
+     */
+    private function getEstadoNombreByLegacyValue(int $estadoLegacy): string
+    {
+        return match ($estadoLegacy) {
+            0 => 'Sin Oferta',
+            1 => 'Con Oferta',
+            2 => 'Cupos Llenos',
+            default => 'Sin Oferta',
+        };
+    }
+
+    /**
+     * Obtener el estado_id correspondiente a un valor legacy
+     */
+    private function getEstadoIdByLegacyValue(int $estadoLegacy): ?int
+    {
+        $nombreEstado = $this->getEstadoNombreByLegacyValue($estadoLegacy);
+        
+        // Buscar el ParametroTema correspondiente al estado
+        try {
+            $temaEstado = \App\Models\Tema::where('name', 'ESTADO_PROGRAMA_COMPLEMENTARIO')->first();
+            
+            if ($temaEstado) {
+                $parametro = \App\Models\Parametro::where('name', $nombreEstado)->first();
+                
+                if ($parametro) {
+                    $parametroTema = \App\Models\ParametroTema::where('tema_id', $temaEstado->id)
+                        ->where('parametro_id', $parametro->id)
+                        ->first();
+                    
+                    if ($parametroTema) {
+                        return $parametroTema->id;
+                    }
+                }
+            }
+        } catch (\Exception $e) {
+            // Si hay error, retornar null
+        }
+        
+        return null;
+    }
+
+    /**
      * Obtener todos los programas con relaciones
      */
     public function getAll(array $relations = []): Collection
@@ -16,12 +60,19 @@ class ComplementarioOfertadoRepository
     }
 
     /**
-     * Obtener programas por estado
+     * Obtener programas por estado (compatibilidad con valores legacy 0,1,2)
      */
     public function getByEstado(int $estado, array $relations = []): Collection
     {
+        $estadoId = $this->getEstadoIdByLegacyValue($estado);
+        
+        if (!$estadoId) {
+            // Si no se encuentra el estado_id, retornar colección vacía
+            return new Collection();
+        }
+        
         return ComplementarioOfertado::with($relations)
-            ->where('estado', $estado)
+            ->where('estado_id', $estadoId)
             ->get();
     }
 
@@ -88,7 +139,13 @@ class ComplementarioOfertadoRepository
      */
     public function countActivos(): int
     {
-        return ComplementarioOfertado::where('estado', 1)->count();
+        $estadoId = $this->getEstadoIdByLegacyValue(1);
+        
+        if (!$estadoId) {
+            return 0;
+        }
+        
+        return ComplementarioOfertado::where('estado_id', $estadoId)->count();
     }
 
     /**
@@ -96,11 +153,15 @@ class ComplementarioOfertadoRepository
      */
     public function getEstadisticas(): array
     {
+        $sinOfertaId = $this->getEstadoIdByLegacyValue(0);
+        $activosId = $this->getEstadoIdByLegacyValue(1);
+        $cuposLlenosId = $this->getEstadoIdByLegacyValue(2);
+        
         return [
             'total' => ComplementarioOfertado::count(),
-            'activos' => $this->countActivos(),
-            'sin_oferta' => ComplementarioOfertado::where('estado', 0)->count(),
-            'cupos_llenos' => ComplementarioOfertado::where('estado', 2)->count(),
+            'activos' => $activosId ? ComplementarioOfertado::where('estado_id', $activosId)->count() : 0,
+            'sin_oferta' => $sinOfertaId ? ComplementarioOfertado::where('estado_id', $sinOfertaId)->count() : 0,
+            'cupos_llenos' => $cuposLlenosId ? ComplementarioOfertado::where('estado_id', $cuposLlenosId)->count() : 0,
         ];
     }
 
@@ -115,7 +176,7 @@ class ComplementarioOfertadoRepository
                 complementarios_ofertados.nombre,
                 complementarios_ofertados.duracion,
                 complementarios_ofertados.cupos,
-                complementarios_ofertados.estado,
+                complementarios_ofertados.estado_id,
                 complementarios_ofertados.modalidad_id,
                 complementarios_ofertados.jornada_id,
                 complementarios_ofertados.ambiente_id,
@@ -134,7 +195,7 @@ class ComplementarioOfertadoRepository
                 'complementarios_ofertados.nombre',
                 'complementarios_ofertados.duracion',
                 'complementarios_ofertados.cupos',
-                'complementarios_ofertados.estado',
+                'complementarios_ofertados.estado_id',
                 'complementarios_ofertados.modalidad_id',
                 'complementarios_ofertados.jornada_id',
                 'complementarios_ofertados.ambiente_id',

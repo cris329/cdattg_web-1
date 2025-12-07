@@ -34,7 +34,7 @@ class ComplementarioOfertado extends Model
         'requisitos_ingreso',
         'duracion',
         'cupos',
-        'estado',
+        'estado_id',
         'modalidad_id',
         'jornada_id',
         'ambiente_id',
@@ -53,6 +53,14 @@ class ComplementarioOfertado extends Model
     public function ambiente()
     {
         return $this->belongsTo(Ambiente::class, 'ambiente_id');
+    }
+
+    /**
+     * Relación con el estado parametrizado del programa complementario
+     */
+    public function estado()
+    {
+        return $this->belongsTo(ParametroTema::class, 'estado_id');
     }
 
     public function diasFormacion()
@@ -108,22 +116,70 @@ class ComplementarioOfertado extends Model
          ->withPivot('user_create_id', 'user_edit_id');
     }
 
+    /**
+     * Accessor para compatibilidad hacia atrás con código que espera el campo 'estado'
+     * Devuelve el valor numérico legacy basado en el nombre del parámetro
+     * Nota: Para evitar referencia circular, no usamos $this->estado
+     */
+    public function getEstadoAttribute()
+    {
+        // Obtener el estado_id directamente del atributo
+        $estadoId = $this->attributes['estado_id'] ?? null;
+        
+        if (!$estadoId) {
+            return 0; // Valor por defecto: Sin Oferta
+        }
+        
+        // Intentar obtener el nombre del parámetro a través de la relación
+        try {
+            $estado = $this->estado()->with('parametro')->first();
+            if ($estado && $estado->parametro) {
+                $nombre = $estado->parametro->name;
+                
+                return match ($nombre) {
+                    'Sin Oferta' => 0,
+                    'Con Oferta' => 1,
+                    'Cupos Llenos' => 2,
+                    default => 0,
+                };
+            }
+        } catch (\Exception $e) {
+            // Si hay error, retornar valor por defecto
+        }
+        
+        return 0;
+    }
+
     public function getEstadoLabelAttribute()
     {
-        return match ($this->estado) {
-            0 => 'Sin Oferta',
-            1 => 'Con Oferta',
-            2 => 'Cupos Llenos',
-            default => 'Desconocido',
-        };
+        // Obtener el estado_id directamente del atributo
+        $estadoId = $this->attributes['estado_id'] ?? null;
+        
+        if (!$estadoId) {
+            return 'Desconocido';
+        }
+        
+        // Intentar obtener el nombre del parámetro a través de la relación
+        try {
+            $estado = $this->estado()->with('parametro')->first();
+            if ($estado && $estado->parametro) {
+                return $estado->parametro->name;
+            }
+        } catch (\Exception $e) {
+            // Si hay error, retornar valor por defecto
+        }
+        
+        return 'Desconocido';
     }
 
     public function getBadgeClassAttribute()
     {
-        return match ($this->estado) {
-            0 => 'bg-success',
-            1 => 'bg-warning',
-            2 => 'bg-danger',
+        $estadoNombre = $this->estado_label;
+        
+        return match ($estadoNombre) {
+            'Sin Oferta' => 'bg-success',
+            'Con Oferta' => 'bg-warning',
+            'Cupos Llenos' => 'bg-danger',
             default => 'bg-secondary',
         };
     }
