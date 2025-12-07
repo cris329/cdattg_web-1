@@ -380,18 +380,16 @@ class AspiranteManagementServiceTest extends TestCase
         $programa->setAttribute('id', 1);
 
         $persona = new Persona();
-        $persona->setAttribute('id', 1);
-        $persona->setAttribute('primer_nombre', 'Juan');
-        $persona->setAttribute('primer_apellido', 'Pérez');
-        $persona->setAttribute('numero_documento', self::TEST_NUMERO_DOCUMENTO);
-        
-        // Asegurar que los atributos estén disponibles directamente
-        $persona->primer_nombre = 'Juan';
-        $persona->primer_apellido = 'Pérez';
-        $persona->numero_documento = self::TEST_NUMERO_DOCUMENTO;
+        $persona->setRawAttributes([
+            'id' => 1,
+            'primer_nombre' => 'Juan',
+            'primer_apellido' => 'Pérez',
+            'numero_documento' => self::TEST_NUMERO_DOCUMENTO,
+        ]);
+        $persona->syncOriginal();
 
-        // Crear un mock parcial del aspirante para poder mockear el método load()
-        $aspirante = Mockery::mock(AspiranteComplementario::class)->makePartial();
+        // Crear una instancia real del modelo para que funcione correctamente con Collection::where()
+        $aspirante = new AspiranteComplementario();
         $aspirante->setRawAttributes([
             'id' => 1,
             'persona_id' => 1,
@@ -401,36 +399,11 @@ class AspiranteManagementServiceTest extends TestCase
         ]);
         
         // Establecer la relación persona usando setRelation
+        // Esto marca la relación como cargada automáticamente
         $aspirante->setRelation('persona', $persona);
         
-        // Asegurar que el modelo tenga los atributos correctos para ->where('id', 1)
+        // Sincronizar atributos originales
         $aspirante->syncOriginal();
-        
-        // Asegurar que el aspirante tenga el id correcto
-        $aspirante->id = 1;
-        
-        // Mockear relationLoaded para que retorne false inicialmente (para que el servicio intente cargar)
-        // pero luego true cuando se verifique después de cargar
-        $aspirante->shouldReceive('relationLoaded')
-            ->with('persona')
-            ->andReturn(false, true);
-        
-        // Mockear load para que establezca la relación
-        $aspirante->shouldReceive('load')
-            ->with('persona')
-            ->andReturn($aspirante);
-        
-        // Asegurar que cuando se acceda a ->persona, retorne el objeto persona
-        // El mock parcial debería permitir el acceso directo a la relación establecida con setRelation
-        // pero también mockeamos getAttribute como respaldo
-        $aspirante->shouldReceive('getAttribute')
-            ->with('persona')
-            ->andReturn($persona);
-        
-        // Asegurar que __get también funcione
-        $aspirante->shouldReceive('__get')
-            ->with('persona')
-            ->andReturn($persona);
 
         $collection = new EloquentCollection([$aspirante]);
 
