@@ -119,7 +119,7 @@
                                 <tbody>
                                     @forelse($productosMasSolicitados as $producto)
                                     <tr>
-                                        <td>{{ $producto['nombre'] }}</td>
+                                        <td>{{ $producto['name'] }}</td>
                                         <td>
                                             @php
                                                 $maxSolicitudes = collect($productosMasSolicitados)->max('solicitudes') ?: 1;

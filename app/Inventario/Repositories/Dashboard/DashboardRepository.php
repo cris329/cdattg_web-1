@@ -100,14 +100,14 @@ class DashboardRepository
     {
         $productos = DB::table('detalle_ordenes')
             ->join('productos', 'detalle_ordenes.producto_id', '=', 'productos.id')
-            ->select('productos.producto as nombre', DB::raw('SUM(detalle_ordenes.cantidad) as solicitudes'))
-            ->groupBy('productos.id', 'productos.producto')
+            ->select('productos.name as nombre', DB::raw('SUM(detalle_ordenes.cantidad) as solicitudes'))
+            ->groupBy('productos.id', 'productos.name')
             ->orderBy('solicitudes', 'desc')
             ->limit($limite)
             ->get()
             ->map(function ($item) {
                 return [
-                    'nombre' => $item->nombre,
+                    'name' => $item->nombre,
                     'solicitudes' => (int) $item->solicitudes,
                 ];
             })
@@ -149,7 +149,7 @@ class DashboardRepository
             ->leftJoin('parametros_temas as estado_pt', 'productos.estado_producto_id', '=', 'estado_pt.id')
             ->leftJoin('parametros as estado_p', 'estado_pt.parametro_id', '=', 'estado_p.id')
             ->select(
-                'productos.producto',
+                'productos.name',
                 'productos.cantidad',
                 'estado_p.name as estado_nombre',
                 'productos.created_at'
@@ -159,7 +159,7 @@ class DashboardRepository
             ->get()
             ->map(function ($producto) {
                 return [
-                    'producto' => $producto->name,
+                    'name' => $producto->name,
                     'cantidad' => (int) $producto->cantidad,
                     'estado' => $producto->estado_nombre ? [
                         'parametro' => [
