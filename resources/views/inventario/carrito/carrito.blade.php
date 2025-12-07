@@ -247,11 +247,7 @@
 
 @push('css')
     {{-- base.css se carga desde common-css.blade.php --}}
-    <style>
-        .sticky-top {
-            z-index: 1020;
-        }
-    </style>
+    @vite(['resources/css/inventario/carrito.css'])
 @endpush
 
 @push('js')

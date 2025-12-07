@@ -203,7 +203,7 @@
 .sticky-top {
     position: sticky;
     top: 20px;
-    z-index: 1020;
+    z-index: 1020 !important;
 }
 
 .badge-lg {
@@ -591,4 +591,57 @@ button,
 .btn,
 a {
     transition: all var(--transition-speed) ease;
+}
+
+/* ========================================
+   Títulos en Content Header
+   ======================================== */
+body.inventario-module .content-header h1,
+body.inventario-module .content-header div h1,
+body.inventario-module .content-header h1.text-dark,
+body.inventario-module .content-header div h1.text-dark {
+    color: #ffffff !important;
+    text-shadow: 0 2px 4px rgba(0, 0, 0, 0.5);
+    font-weight: 600;
+}
+
+/* Asegurar que los iconos NO hereden el color blanco del h1 */
+body.inventario-module .content-header h1 > i,
+body.inventario-module .content-header div h1 > i {
+    color: #007bff !important;
+}
+
+body.inventario-module .content-header .text-dark,
+body.inventario-module .content-header div .text-dark {
+    color: #ffffff !important;
+    text-shadow: 0 1px 3px rgba(0, 0, 0, 0.4);
+}
+
+body.inventario-module .content-header .text-muted,
+body.inventario-module .content-header div .text-muted {
+    color: #e8e8e8 !important;
+    text-shadow: 0 1px 2px rgba(0, 0, 0, 0.4);
+}
+
+/* Iconos en títulos - color azul */
+body.inventario-module .content-header h1 i.fas,
+body.inventario-module .content-header h1 i.fa,
+body.inventario-module .content-header h1 .fas,
+body.inventario-module .content-header h1 .fa,
+body.inventario-module .content-header div h1 i.fas,
+body.inventario-module .content-header div h1 i.fa,
+body.inventario-module .content-header div h1 .fas,
+body.inventario-module .content-header div h1 .fa,
+body.inventario-module .content-header h1.text-dark i.fas,
+body.inventario-module .content-header h1.text-dark i.fa,
+body.inventario-module .content-header h1.text-dark .fas,
+body.inventario-module .content-header h1.text-dark .fa,
+body.inventario-module .content-header div h1.text-dark i.fas,
+body.inventario-module .content-header div h1.text-dark i.fa,
+body.inventario-module .content-header div h1.text-dark .fas,
+body.inventario-module .content-header div h1.text-dark .fa,
+body.inventario-module .content-wrapper .content-header h1 i,
+body.inventario-module .content-wrapper .content-header div h1 i {
+    color: #007bff !important;
+    text-shadow: none !important;
 }

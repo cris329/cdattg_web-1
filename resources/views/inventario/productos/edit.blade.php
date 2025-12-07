@@ -2,13 +2,10 @@
 
 @section('title', 'Editar Producto')
 
-@section('css')
-    <link href="{{ asset('css/parametros.css') }}" rel="stylesheet">
-@endsection
+@include('inventario._components.common-css')
 
 @push('css')
     @vite([
-        'resources/css/inventario/shared/base.css',
         'resources/css/inventario/inventario.css',
         'resources/css/inventario/imagen.css',
     ])

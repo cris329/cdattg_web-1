@@ -1,8 +1,5 @@
 {{-- Componente reutilizable para CSS común del módulo de inventario --}}
-@section('css')
-    <link href="{{ asset('css/parametros.css') }}" rel="stylesheet">
-@endsection
-
+{{-- El módulo de inventario NO usa parametros.css para evitar conflictos de estilos --}}
 @push('css')
     @vite(['resources/css/inventario/shared/base.css'])
 @endpush

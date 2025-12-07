@@ -1,37 +1,121 @@
 /* Estilos base compartidos para todas las vistas del inventario (shared) */
 /* IMPORTANTE: Todos los estilos están scopeados a .inventario-module para no afectar el resto de la app */
 
-/* Fondo general solo para inventario */
+/* ============================================
+   FONDO Y LAYOUT BASE
+   ============================================ */
 body.inventario-module {
     background: linear-gradient(to bottom, #CACCCE, #CACCCE);
     margin: 0;
     min-height: 100vh;
 }
 
-body.inventario-module h1 {
-    color: #fdfdfd !important;
+body.inventario-module .content-wrapper {
+    background: linear-gradient(to bottom, 
+        #000627 0%, 
+        #5E6771 50%, 
+        #CACCCE 100%
+    );
+    padding: 60px 20px 20px;
+    min-height: 100vh;
 }
 
-body.inventario-module p {
-    color: #fdfdfd !important;
+body.inventario-module .row {
+    margin-left: 0 !important;
+    margin-right: 0 !important;
 }
 
-body.inventario-module li {
-    color: #fdfdfd !important;
+/* ============================================
+   TÍTULOS Y CONTENT-HEADER
+   ============================================ */
+/* Títulos en content-header - para vistas que usan x-page-header */
+body.inventario-module .content-header.dashboard-header h1,
+body.inventario-module .content-header.dashboard-header .h1,
+body.inventario-module .content-header.dashboard-header .h2,
+body.inventario-module .content-header.dashboard-header .h3 {
+    color: #ffffff !important;
+    text-shadow: 0 2px 4px rgba(0, 0, 0, 0.5);
+    font-weight: 600;
 }
 
-body.inventario-module .bg-light {
-    background-color: #72cd79 !important;
+/* Clases de texto en content-header - para x-page-header */
+body.inventario-module .content-header.dashboard-header .text-dark,
+body.inventario-module .content-header.dashboard-header .text-gray-800 {
+    color: #ffffff !important;
+    text-shadow: 0 1px 3px rgba(0, 0, 0, 0.4);
 }
 
-body.inventario-module .text-muted {
-    color: #fdfdfd10 !important;
+body.inventario-module .content-header .text-muted {
+    color: #e8e8e8 !important;
+    text-shadow: 0 1px 2px rgba(0, 0, 0, 0.4);
 }
 
-body.inventario-module .text-dark {
-    color: #fdfdfd13 !important;
+body.inventario-module .content-header p {
+    color: #e8e8e8 !important;
+    text-shadow: 0 1px 2px rgba(0, 0, 0, 0.3);
 }
 
+body.inventario-module .content-header small {
+    color: #d8d8d8 !important;
+    text-shadow: 0 1px 2px rgba(0, 0, 0, 0.3);
+}
+
+/* Dashboard-header específico */
+body.inventario-module .dashboard-header {
+    background-color: #54545418 !important;
+    color: #ffffff !important;
+}
+
+/* ============================================
+   NAVBAR
+   ============================================ */
+body.inventario-module .main-header.navbar { 
+    background-color: #00041D !important;
+}
+
+body.inventario-module .main-header.navbar .nav-link,
+body.inventario-module .main-header.navbar .navbar-brand,
+body.inventario-module .main-header.navbar .user-menu .nav-link,
+body.inventario-module .main-header.navbar .nav-item i {
+    color: #ffffff !important;
+}
+
+body.inventario-module .main-header.navbar .nav-link:hover {
+    color: #30d668 !important; 
+}
+
+@media (max-width: 768px) {
+    body.inventario-module .main-header.navbar {
+        padding-left: 1rem;
+        padding-right: 1rem;
+    }
+}
+
+/* ============================================
+   FOOTER
+   ============================================ */
+body.inventario-module .main-footer {
+    margin-left: 0 !important;
+    width: 100%;
+    padding-left: 0;
+    padding-right: 0;
+}
+
+body.inventario-module .main-footer > .container-fluid {
+    padding-left: 260px;
+    padding-right: 30px;
+}
+
+@media (max-width: 991.98px) {
+    body.inventario-module .main-footer > .container-fluid {
+        padding-left: 1.5rem;
+        padding-right: 1.5rem;
+    }
+}
+
+/* ============================================
+   SELECT2
+   ============================================ */
 .select2-container--bootstrap4 .select2-selection {
     background-color: #ffffff !important;
     color: #343a40 !important;
@@ -65,169 +149,29 @@ body.inventario-module .text-dark {
     background-color: #545454 !important;
     color: #ffffff !important;
 }
-.dashboard-header
-{
-    background-color: #54545418 !important;
-    color: #ffffff !important;
-}
 
-[class*=sidebar-dark-] .nav-treeview>.nav-item>.nav-link.active, [class*=sidebar-dark-] .nav-treeview>.nav-item>.nav-link.active:focus, [class*=sidebar-dark-] .nav-treeview>.nav-item>.nav-link.active:hover
-{
+/* ============================================
+   SIDEBAR
+   ============================================ */
+[class*=sidebar-dark-] .nav-treeview>.nav-item>.nav-link.active,
+[class*=sidebar-dark-] .nav-treeview>.nav-item>.nav-link.active:focus,
+[class*=sidebar-dark-] .nav-treeview>.nav-item>.nav-link.active:hover {
     background-color: #0056b3 !important;
     color: #ffffff !important;
 }
 
-body.inventario-module .text-gray-800 {
-    color: #f2f3f4 !important;
+/* ============================================
+   ESTILOS GENERALES DEL CONTENIDO
+   ============================================ */
+body.inventario-module li {
+    color: #fdfdfd !important;
 }
 
-body.inventario-module #municipio_id {
-    padding: .375rem .75rem !important;
-}
-
-/* Fondo específico solo para el módulo de inventario */
-body.inventario-module .content-wrapper {
-  background: linear-gradient(to bottom, 
-    #000627 0%, 
-    #5E6771 50%, 
-    #CACCCE 100%
-  );
-  padding: 60px 20px 20px;
-  min-height: 100vh;
-}
-
-body.inventario-module .main-footer {
-    margin-left: 0 !important;
-    width: 100%;
-    padding-left: 0;
-    padding-right: 0;
-}
-
-body.inventario-module .main-footer > .container-fluid {
-    padding-left: 260px;
-    padding-right: 30px;
-}
-
-@media (max-width: 991.98px) {
-    body.inventario-module .main-footer > .container-fluid {
-        padding-left: 1.5rem;
-        padding-right: 1.5rem;
-    }
-}
-
-/* Estilos del navbar solo para inventario */
-body.inventario-module .main-header.navbar { 
-    background-color: #00041D !important;
-}
-
-body.inventario-module .main-header.navbar .nav-link {
-    color: #ffffff !important;
-}
-
-body.inventario-module .main-header.navbar .nav-link:hover {
-    color: #30d668 !important; 
-}
-
-body.inventario-module .main-header.navbar .navbar-brand {
-    color: #ffffff !important;
-}
-
-body.inventario-module .main-header.navbar .user-menu .nav-link {
-    color: #ffffff !important;
-}
-
-body.inventario-module .main-header.navbar .nav-item i {
-    color: #ffffff !important;
-}
-
-body.inventario-module .row {
-    margin-left: 0 !important;
-    margin-right: 0 !important;
-}
-
-body.inventario-module #razon {
-    color: #343a40 !important;
-}
-
-body.inventario-module #producto {
-    width: 95% !important;
-}
-
-body.inventario-module #categoria_id {
-    width: 95% !important;
-}
-
-body.inventario-module #unidad_medida_id {
-    width: 95% !important;
-}
-
-body.inventario-module #marca_id {
-    width: 95% !important;
-}
-
-body.inventario-module #grupo-programa-formacion {
-   width:  220px !important;
-}
-
-body.inventario-module #tipo_producto_id {
-    width: 95% !important;
-}
-
-body.inventario-module #estado_producto_id {
-    width: 95% !important;
-}
-
-body.inventario-module #codigo_barras {
-    width: 80% !important;
-}
-
-body.inventario-module #descripcion {
-    width: 95% !important;
-}
-
-body.inventario-module #ambiente_id {
-    width: 95% !important;
-}
-
-body.inventario-module #proveedor_id {
-    width: 95% !important;
-}
-
-body.inventario-module #contrato_convenio_id {
-    width: 95% !important;
-}
-
-body.inventario-module #fecha_vencimiento {
-    width: 95% !important;
-}
-
-body.inventario-module #detalle {
-    text-align: center !important;
-}
-
-body.inventario-module #estadisticas-generales {
-    margin-top: 18px !important;
-    padding: 15px 12px !important;
-    background-color: #535c6800 !important;
-    border-radius: 12px;
-    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
-    color: #fdfdfd;
-
-}
-
-body.inventario-module #icono-volver {
-    margin-right: 6px !important;
-    color: #e0e8e3 !important;
-}
-
-/* Estilos responsivos del navbar solo para inventario */
-@media (max-width: 768px) {
-    body.inventario-module .main-header.navbar {
-        padding-left: 1rem;
-        padding-right: 1rem;
-    }
+body.inventario-module .bg-light {
+    background-color: #72cd79 !important;
 }
 
 body.inventario-module .modal-body p {
     color: #343a40 !important;
 }
+
