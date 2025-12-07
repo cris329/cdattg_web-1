@@ -22,12 +22,20 @@ let originalPaginationHTML = '';
  */
 function showModal(elementId) {
     const element = document.getElementById(elementId);
-    if (!element) return;
+    if (!element) {
+        console.error('Modal no encontrado:', elementId);
+        return;
+    }
     
     if (element instanceof HTMLDialogElement) {
+        // Para dialog elements, usar showModal() que maneja el display automáticamente
         element.showModal();
+        // Asegurar que se muestre
+        element.style.display = 'flex';
+        element.style.setProperty('display', 'flex', 'important');
     } else {
         element.style.display = 'flex';
+        element.style.setProperty('display', 'flex', 'important');
     }
 }
 
@@ -37,8 +45,9 @@ function closeProductModal() {
     
     if (modal instanceof HTMLDialogElement) {
         modal.close();
+        modal.removeAttribute('open');
     } else {
-        modal.style.setProperty('display', 'none');
+        modal.style.display = 'none';
     }
 }
 
@@ -104,6 +113,9 @@ function setupCardInitialization() {
     if (!productsGrid) {
         return; // No estamos en la página del catálogo
     }
+
+    // Asegurar que el modal esté cerrado al inicializar
+    closeProductModal();
 
     // Pequeño delay para asegurar que el DOM esté completamente renderizado
     setTimeout(() => {
@@ -743,6 +755,7 @@ function setupProductActions() {
         if (target.classList.contains('btn-view-details')) {
             const productId = target.dataset.id || target.getAttribute('data-id');
             if (productId) {
+                console.log('Abriendo detalles del producto:', productId);
                 showProductDetails(productId);
             } else {
                 console.error('No se encontró productId en el botón de detalles');
@@ -817,7 +830,19 @@ async function showProductDetails(productId) {
         contentDiv.innerHTML = html;
         
         // Mostrar el modal DESPUÉS de cargar el contenido
+        console.log('Contenido cargado, abriendo modal...');
         showModal('productDetailModal');
+        
+        // Verificar que se abrió
+        setTimeout(() => {
+            const modal = document.getElementById('productDetailModal');
+            if (modal && modal.style.display !== 'flex' && !modal.hasAttribute('open')) {
+                console.warn('Modal no se abrió correctamente, forzando apertura...');
+                modal.showModal();
+                modal.style.display = 'flex';
+                modal.setAttribute('open', '');
+            }
+        }, 100);
         
     } catch (error) {
         console.error('Error:', error);

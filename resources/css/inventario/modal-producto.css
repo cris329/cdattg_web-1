@@ -1,8 +1,8 @@
 /* Modal de Producto - Estilos Limpios */
 
-/* Contenedor del modal */
+/* Contenedor del modal (dialog element) */
 #productDetailModal {
-    animation: fadeInModal 0.3s ease-in-out;
+    /* El modal se controla desde JavaScript, no desde CSS */
 }
 
 @keyframes fadeInModal {
@@ -10,99 +10,80 @@
     to { opacity: 1; }
 }
 
-/* Tarjeta del modal */
-#productDetailModal > div {
-    animation: slideInUp 0.4s ease-out;
+/* Contenedor del contenido del modal */
+#product-detail-modal-content {
     padding: 0;
-    background: linear-gradient(to bottom, #2d5016 0%, #3d6b1f 100%);
-    border-radius: 12px;
+    background: white;
+    border-radius: 8px;
     overflow: hidden;
-    box-shadow: 0 10px 40px rgba(0, 0, 0, 0.3);
+    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.3);
+    position: relative;
+    margin: auto;
 }
 
-@keyframes slideInUp {
-    from {
-        transform: translateY(30px);
-        opacity: 0;
-    }
-    to {
-        transform: translateY(0);
-        opacity: 1;
-    }
-}
-#descripcion {
-    color: #555 !important;
-
-}
 /* Contenedor de imagen */
 .modal-img-container {
     text-align: center;
-    margin-bottom: 0;
+    margin-bottom: 15px;
     background: white;
-    padding: 20px;
-    border-bottom: 3px solid #28a745;
+    padding: 10px;
 }
 
 .modal-img {
     max-height: 200px;
     object-fit: contain;
-    transition: transform 0.3s ease;
-}
-
-.modal-img:hover {
-    transform: scale(1.05);
 }
 
 /* Div interno - contenedor de contenido */
-#productDetailModal > div > div:first-child {
-    padding: 30px;
+#product-detail-content {
+    padding: 20px;
     background: white;
 }
 
 /* Título */
 .modal-title {
-    color: #2d5016;
+    color: #333;
     font-weight: bold;
-    margin: 0 0 20px 0;
-    font-size: 22px;
-    text-transform: uppercase;
-    border-bottom: 2px solid #28a745;
-    padding-bottom: 10px;
+    margin: 0 0 15px 0;
+    font-size: 18px;
     text-align: left;
 }
 
-/* Tabla */
+#descripcion {
+    color: #555;
+}
+
+/* Tabla - Diseño simple original */
 .modal-table {
     width: 100%;
     border-collapse: collapse;
-    margin-bottom: 20px;
+    margin-bottom: 15px;
     font-size: 14px;
-    background: white;
 }
 
-.modal-table tr {
+.modal-table thead th {
+    padding: 8px;
+    text-align: left;
+    font-weight: bold;
+    border-bottom: 1px solid #ddd;
+}
+
+.modal-table tbody tr {
     border-bottom: 1px solid #e0e0e0;
-    transition: background-color 0.2s ease;
 }
 
-.modal-table tr:last-child {
+.modal-table tbody tr:last-child {
     border-bottom: none;
 }
 
-.modal-table tr:hover {
-    background-color: #f5f5f5;
-}
-
 .modal-table td {
-    padding: 12px;
+    padding: 8px;
     text-align: left;
 }
 
-.modal-table tr td:first-child {
+.modal-table tbody tr td:first-child {
     font-weight: bold;
-    color: #2d5016;
-    width: 35%;
-    background-color: #f0f8f0;
+    width: 40%;
 }
 
 /* Badges */
@@ -215,12 +196,12 @@
 
 /* Responsive */
 @media (max-width: 768px) {
-    #productDetailModal > div {
+    #product-detail-modal-content {
         width: 95% !important;
         max-width: 95% !important;
     }
 
-    #productDetailModal > div > div:first-child {
+    #product-detail-content {
         padding: 20px;
     }
 
@@ -240,7 +221,7 @@
 }
 
 @media (max-width: 480px) {
-    #productDetailModal > div > div:first-child {
+    #product-detail-content {
         padding: 15px;
     }
 

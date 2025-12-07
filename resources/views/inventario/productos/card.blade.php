@@ -127,12 +127,10 @@
                                     {{ Str::limit($producto->name, 50) }}
                                 </h5>
 
-                                {{-- Código de barras --}}
+                                {{-- Stock --}}
                                 <div class="mb-3 text-center">
-                                    <small class="text-muted d-block mb-1">
-                                        <i class="fas fa-barcode"></i> Código
-                                    </small>
-                                    <span class="badge badge-secondary badge-lg">{{ $producto->codigo_barras ?? 'N/A' }}</span>
+                                    <span class="stock-label-text" style="color: #000000;">Stock: </span>
+                                    <span class="badge badge-success">{{ $producto->cantidad }} unidades</span>
                                 </div>
 
                                 {{-- Acciones --}}
@@ -271,7 +269,10 @@
 @endsection
 
 @push('css')
-    @vite(['resources/css/inventario/card.css'])
+    @vite([
+        'resources/css/inventario/card.css',
+        'resources/css/inventario/modal-producto.css'
+    ])
 @endpush
 
 @section('js')
