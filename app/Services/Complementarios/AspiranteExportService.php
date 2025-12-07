@@ -84,7 +84,7 @@ class AspiranteExportService
 
             // Crear directorio temporal y PDF
             $tempDir = $this->documentoService->createTempDirectory();
-            $pdf = new Fpdi();
+            $pdf = $this->crearFpdi();
 
             // Procesar documentos
             $resultados = $this->aspiranteComplementarioService->procesarDescargaDocumentos($aspirantes, $pdf, $tempDir);
@@ -301,6 +301,15 @@ class AspiranteExportService
         $texto = iconv('UTF-8', 'ASCII//TRANSLIT', $texto);
         $texto = preg_replace('/[^a-zA-Z0-9\s]/', '', $texto);
         return trim($texto);
+    }
+
+    /**
+     * Crear instancia de Fpdi
+     * Método protegido para facilitar el testing
+     */
+    protected function crearFpdi(): Fpdi
+    {
+        return new Fpdi();
     }
 
     /**

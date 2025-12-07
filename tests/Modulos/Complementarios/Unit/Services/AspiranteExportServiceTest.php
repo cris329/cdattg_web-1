@@ -17,6 +17,7 @@ use Illuminate\Foundation\Testing\DatabaseTransactions;
 use Mockery;
 use PHPUnit\Framework\Attributes\Test;
 use Tests\TestCase;
+use setasign\Fpdi\Fpdi;
 
 class AspiranteExportServiceTest extends TestCase
 {
@@ -170,6 +171,9 @@ class AspiranteExportServiceTest extends TestCase
         file_put_contents($tempFile, 'PDF content');
         $archivosTemporales = [$tempFile];
 
+        $pdfMock = Mockery::mock(Fpdi::class);
+        $pdfMock->shouldIgnoreMissing();
+
         $this->programaRepositoryMock->shouldReceive('findWithRelations')
             ->once()
             ->with($complementarioId)
@@ -184,8 +188,20 @@ class AspiranteExportServiceTest extends TestCase
             ->once()
             ->andReturn($tempDir);
 
+        $serviceMock = Mockery::mock(AspiranteExportService::class, [
+            $this->aspiranteRepositoryMock,
+            $this->programaRepositoryMock,
+            $this->aspiranteComplementarioServiceMock,
+            $this->documentoServiceMock
+        ])->makePartial();
+        $serviceMock->shouldAllowMockingProtectedMethods();
+        $serviceMock->shouldReceive('crearFpdi')
+            ->once()
+            ->andReturn($pdfMock);
+
         $this->aspiranteComplementarioServiceMock->shouldReceive('procesarDescargaDocumentos')
             ->once()
+            ->with($aspirantes, $pdfMock, $tempDir)
             ->andReturn([
                 'archivos_agregados' => 1,
                 'archivos_temporales' => $archivosTemporales,
@@ -193,9 +209,10 @@ class AspiranteExportServiceTest extends TestCase
 
         $this->aspiranteComplementarioServiceMock->shouldReceive('generarArchivoPDF')
             ->once()
+            ->with($programa, $pdfMock, $tempDir, $archivosTemporales)
             ->andReturn(new \Symfony\Component\HttpFoundation\BinaryFileResponse($tempFile));
 
-        $response = $this->service->descargarCedulas($complementarioId);
+        $response = $serviceMock->descargarCedulas($complementarioId);
 
         $this->assertInstanceOf(\Symfony\Component\HttpFoundation\BinaryFileResponse::class, $response);
 
@@ -262,6 +279,9 @@ class AspiranteExportServiceTest extends TestCase
         $tempDir = sys_get_temp_dir();
         $archivosTemporales = [];
 
+        $pdfMock = Mockery::mock(Fpdi::class);
+        $pdfMock->shouldIgnoreMissing();
+
         $this->programaRepositoryMock->shouldReceive('findWithRelations')
             ->once()
             ->with($complementarioId)
@@ -276,8 +296,20 @@ class AspiranteExportServiceTest extends TestCase
             ->once()
             ->andReturn($tempDir);
 
+        $serviceMock = Mockery::mock(AspiranteExportService::class, [
+            $this->aspiranteRepositoryMock,
+            $this->programaRepositoryMock,
+            $this->aspiranteComplementarioServiceMock,
+            $this->documentoServiceMock
+        ])->makePartial();
+        $serviceMock->shouldAllowMockingProtectedMethods();
+        $serviceMock->shouldReceive('crearFpdi')
+            ->once()
+            ->andReturn($pdfMock);
+
         $this->aspiranteComplementarioServiceMock->shouldReceive('procesarDescargaDocumentos')
             ->once()
+            ->with($aspirantes, $pdfMock, $tempDir)
             ->andReturn([
                 'archivos_agregados' => 0,
                 'archivos_temporales' => $archivosTemporales,
@@ -289,7 +321,7 @@ class AspiranteExportServiceTest extends TestCase
 
         $this->expectException(DescargaDocumentosException::class);
 
-        $this->service->descargarCedulas($complementarioId);
+        $serviceMock->descargarCedulas($complementarioId);
     }
 
     #[Test]
@@ -349,6 +381,9 @@ class AspiranteExportServiceTest extends TestCase
 
         $tempDir = sys_get_temp_dir();
 
+        $pdfMock = Mockery::mock(Fpdi::class);
+        $pdfMock->shouldIgnoreMissing();
+
         $this->programaRepositoryMock->shouldReceive('findWithRelations')
             ->once()
             ->with($complementarioId)
@@ -363,14 +398,26 @@ class AspiranteExportServiceTest extends TestCase
             ->once()
             ->andReturn($tempDir);
 
+        $serviceMock = Mockery::mock(AspiranteExportService::class, [
+            $this->aspiranteRepositoryMock,
+            $this->programaRepositoryMock,
+            $this->aspiranteComplementarioServiceMock,
+            $this->documentoServiceMock
+        ])->makePartial();
+        $serviceMock->shouldAllowMockingProtectedMethods();
+        $serviceMock->shouldReceive('crearFpdi')
+            ->once()
+            ->andReturn($pdfMock);
+
         $this->aspiranteComplementarioServiceMock->shouldReceive('procesarDescargaDocumentos')
             ->once()
+            ->with($aspirantes, $pdfMock, $tempDir)
             ->andThrow(new \Exception('Error procesando documentos'));
 
         $this->expectException(\Exception::class);
         $this->expectExceptionMessage('Error procesando documentos');
 
-        $this->service->descargarCedulas($complementarioId);
+        $serviceMock->descargarCedulas($complementarioId);
     }
 
     #[Test]
