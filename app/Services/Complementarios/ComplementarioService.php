@@ -65,6 +65,14 @@ class ComplementarioService
     }
 
     /**
+     * Convertir valor legacy de estado (0,1,2) a estado_id (ID de ParametroTema)
+     */
+    public function convertirEstadoLegacyAEstadoId(int $estadoLegacy): ?int
+    {
+        return $this->programaRepository->getEstadoIdByLegacyValue($estadoLegacy);
+    }
+
+    /**
      * Enriquecer un programa con datos auxiliares para la vista.
      */
     public function enriquecerPrograma(ComplementarioOfertado $programa): ComplementarioOfertado

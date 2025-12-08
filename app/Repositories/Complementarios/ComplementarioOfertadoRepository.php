@@ -23,7 +23,7 @@ class ComplementarioOfertadoRepository
     /**
      * Obtener el estado_id correspondiente a un valor legacy
      */
-    private function getEstadoIdByLegacyValue(int $estadoLegacy): ?int
+    public function getEstadoIdByLegacyValue(int $estadoLegacy): ?int
     {
         $nombreEstado = $this->getEstadoNombreByLegacyValue($estadoLegacy);
         

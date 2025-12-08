@@ -248,18 +248,27 @@ class ProgramaComplementarioController extends Controller
      */
     private function extractProgramaAtributos(array $payload): array
     {
-        return collect($payload)->only([
+        $atributos = collect($payload)->only([
             'codigo',
             'nombre',
             'justificacion',
             'requisitos_ingreso',
             'duracion',
             'cupos',
-            'estado',
             'modalidad_id',
             'jornada_id',
             'ambiente_id',
         ])->toArray();
+
+        // Convertir estado legacy (0,1,2) a estado_id (ID de ParametroTema)
+        if (isset($payload['estado'])) {
+            $estadoId = $this->complementarioService->convertirEstadoLegacyAEstadoId((int) $payload['estado']);
+            if ($estadoId) {
+                $atributos['estado_id'] = $estadoId;
+            }
+        }
+
+        return $atributos;
     }
 
     /**
