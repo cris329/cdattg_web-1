@@ -39,8 +39,6 @@ class ComplementarioOfertado extends Model
         'modalidad_id',
         'jornada_id',
         'ambiente_id',
-        'user_create_id',
-        'user_edit_id',
     ];
 
     public function modalidad()

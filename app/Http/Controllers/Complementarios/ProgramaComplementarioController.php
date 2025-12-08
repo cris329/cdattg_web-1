@@ -195,8 +195,8 @@ class ProgramaComplementarioController extends Controller
 
         DB::transaction(function () use ($payload) {
             $atributos = $this->extractProgramaAtributos($payload);
-            $atributos['user_create_id'] = Auth::id();
-            $atributos['user_edit_id'] = Auth::id();
+            // NOTA: Las columnas user_create_id y user_edit_id no existen en la tabla
+            // Se han removido para evitar el error SQL
 
             $programa = ComplementarioOfertado::create($atributos);
 
@@ -223,7 +223,8 @@ class ProgramaComplementarioController extends Controller
 
         DB::transaction(function () use ($programa, $payload) {
             $atributos = $this->extractProgramaAtributos($payload);
-            $atributos['user_edit_id'] = Auth::id();
+            // NOTA: La columna user_edit_id no existe en la tabla
+            // Se ha removido para evitar el error SQL
 
             $programa->update($atributos);
 
