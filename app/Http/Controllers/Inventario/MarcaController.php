@@ -6,7 +6,6 @@ namespace App\Http\Controllers\Inventario;
 
 use App\Inventario\Interfaces\Repositories\Marca\MarcaRepositoryInterface;
 use App\Inventario\Services\Marca\MarcaService;
-use App\Models\Inventario\Marca;
 use App\Models\Parametro;
 use App\Exceptions\MarcaException;
 use Illuminate\Http\Request;

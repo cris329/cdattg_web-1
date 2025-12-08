@@ -167,7 +167,7 @@
                                                 <option value="">Seleccionar programa disponibles</option>
                                                 @forelse($programas as $programa)
                                                     <option value="{{ $programa->nombre }}" {{ old('programa_formacion') == $programa->nombre ? 'selected' : '' }}>
-                                                        {{ $programa->codigo }} - {{ $programa->nombre }} 
+                                                        {{ $programa->codigo }} - {{ $programa->nombre }}
                                                     </option>
                                                 @empty
                                                     <option value="" disabled>No hay programas activos disponibles</option>

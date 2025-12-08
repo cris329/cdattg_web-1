@@ -6,7 +6,7 @@
 <!-- Estilos personalizados para notificaciones -->
 @vite([
         'resources/css/inventario/notificaciones.css'
-    ]) 
+    ])
 @endsection
 
 @section('content_header')

@@ -156,7 +156,7 @@ class AppServiceProvider extends ServiceProvider
 
         // Registrar driver de Google Drive
         try {
-            Storage::extend('google', function ($app, $config) {
+            Storage::extend('google', function ($config) {
                 $options = [];
 
                 if (!empty($config['teamDriveId'] ?? null)) {

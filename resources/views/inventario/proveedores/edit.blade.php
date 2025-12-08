@@ -153,7 +153,7 @@
                                                 <option value="">Seleccione una persona como contacto</option>
                                                 @foreach($personas as $persona)
                                                     <option value="{{ $persona->id }}" {{ old('persona_id', $proveedor->persona_id) == $persona->id ? 'selected' : '' }}>
-                                                        {{ $persona->nombre_completo }} 
+                                                        {{ $persona->nombre_completo }}
                                                         @if($persona->numero_documento)
                                                             - {{ $persona->numero_documento }}
                                                         @endif

@@ -161,7 +161,7 @@
                                                 @if($proveedor->persona)
                                                     <div class="p-3 border rounded">
                                                         <div class="mb-2">
-                                                            <strong><i class="fas fa-user mr-1"></i>Nombre Completo:</strong> 
+                                                            <strong><i class="fas fa-user mr-1"></i>Nombre Completo:</strong>
                                                             {{ $proveedor->persona->nombre_completo }}
                                                         </div>
                                                         @if($proveedor->persona->numero_documento)

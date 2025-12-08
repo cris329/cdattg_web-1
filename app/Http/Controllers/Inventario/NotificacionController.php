@@ -13,6 +13,9 @@ use App\Http\Controllers\Controller;
 
 class NotificacionController extends Controller
 {
+    private const NOTIFICACION_NO_ENCONTRADA = 'Notificación no encontrada';
+    private const ERROR_ELIMINAR = 'Error al eliminar notificación: ';
+
     protected UserNotificationService $service;
 
     public function __construct(UserNotificationService $service)
@@ -58,7 +61,7 @@ class NotificacionController extends Controller
 
             return response()->json([
                 'success' => false,
-                'message' => 'Notificación no encontrada'
+                'message' => self::NOTIFICACION_NO_ENCONTRADA
             ], 404);
         } catch (\Exception $e) {
             return response()->json([
@@ -100,15 +103,15 @@ class NotificacionController extends Controller
                 return back()->with('success', 'Notificación eliminada exitosamente');
             }
 
-            abort(404, 'Notificación no encontrada');
+            abort(404, self::NOTIFICACION_NO_ENCONTRADA);
         } catch (\Illuminate\Database\Eloquent\ModelNotFoundException $e) {
             // Si el usuario no existe, también es 404
-            abort(404, 'Notificación no encontrada');
+            abort(404, self::NOTIFICACION_NO_ENCONTRADA);
         } catch (\Symfony\Component\HttpKernel\Exception\HttpException $e) {
             // Re-lanzar excepciones HTTP (como abort(404)) sin capturarlas
             throw $e;
         } catch (\Exception $e) {
-            return back()->with('error', 'Error al eliminar notificación: ' . $e->getMessage());
+            return back()->with('error', self::ERROR_ELIMINAR . $e->getMessage());
         }
     }
 

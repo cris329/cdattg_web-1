@@ -226,8 +226,8 @@ class OrdenController extends Controller
             abort(404);
         }
 
-        $backUrl = request()->get('ref') 
-            ?? url()->previous() 
+        $backUrl = request()->get('ref')
+            ?? url()->previous()
             ?? route('inventario.ordenes.index');
 
         return view('inventario.ordenes.show', compact('orden', 'backUrl'));

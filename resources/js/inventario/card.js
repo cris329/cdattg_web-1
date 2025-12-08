@@ -162,7 +162,7 @@ function setupNavigationListener() {
     }
 
     document.addEventListener('click', function(event) {
-        const link = event.target.closest('a[wire\\:navigate], a[data-wire-navigate]');
+        const link = event.target.closest(String.raw`a[wire\:navigate], a[data-wire-navigate]`);
         if (link && link.href) {
             const href = link.href.toLowerCase();
             if (href.includes('productos') && href.includes('catalogo')) {
@@ -372,9 +372,9 @@ function applyFilters() {
             url.searchParams.delete('sort_by');
         }
 
-        window.location.href = url.toString();
-    } catch (error) {
-        const baseUrl = window.location.origin + window.location.pathname;
+        globalThis.location.href = url.toString();
+    } catch {
+        const baseUrl = globalThis.location.origin + globalThis.location.pathname;
         const params = new URLSearchParams();
         
         if (searchTerm) params.set('search', searchTerm);
@@ -382,7 +382,7 @@ function applyFilters() {
         if (sortBy && sortBy !== 'name') params.set('sort_by', sortBy);
         
         const queryString = params.toString();
-        window.location.href = queryString ? `${baseUrl}?${queryString}` : baseUrl;
+        globalThis.location.href = queryString ? `${baseUrl}?${queryString}` : baseUrl;
     }
 }
 
@@ -720,46 +720,54 @@ function setupProductActions() {
         productActionsHandler = null;
     }
 
-    productActionsHandler = function(event) {
-        if (event.defaultPrevented) {
-            return;
-        }
-
-        let target = event.target;
-        
+    // Helper: Encontrar el botón objetivo en el árbol DOM
+    const findTargetButton = (element) => {
+        let target = element;
         while (target && target !== productsGrid) {
-            if (target.classList && 
-                (target.classList.contains('btn-view-details') || 
-                 target.classList.contains('btn-add-to-cart'))) {
-                break;
+            if (target.classList?.contains('btn-view-details') || 
+                target.classList?.contains('btn-add-to-cart')) {
+                return target;
             }
             target = target.parentElement;
         }
+        return null;
+    };
 
-        if (!target || target === productsGrid || !target.classList) {
-            return;
+    // Helper: Manejar vista de detalles
+    const handleViewDetails = (button) => {
+        const productId = button.dataset?.id ?? button.getAttribute('data-id');
+        if (productId) {
+            console.log('Abriendo detalles del producto:', productId);
+            showProductDetails(productId);
         }
+    };
+
+    // Helper: Manejar agregar al carrito
+    const handleAddToCart = (button) => {
+        const productId = button.dataset?.id ?? button.getAttribute('data-id');
+        const productName = button.dataset?.name ?? button.getAttribute('data-name');
+        const productStockStr = button.dataset?.stock ?? button.getAttribute('data-stock');
+        const productStock = Number.parseInt(productStockStr, 10);
+        
+        if (productId && productName && !Number.isNaN(productStock)) {
+            addToCart(productId, productName, productStock);
+        }
+    };
+
+    productActionsHandler = function(event) {
+        if (event.defaultPrevented) return;
+
+        const target = findTargetButton(event.target);
+        if (!target) return;
 
         event.preventDefault();
         event.stopPropagation();
         event.stopImmediatePropagation();
 
         if (target.classList.contains('btn-view-details')) {
-            const productId = target.dataset.id || target.getAttribute('data-id');
-            if (productId) {
-                console.log('Abriendo detalles del producto:', productId);
-                showProductDetails(productId);
-            }
-        } 
-        else if (target.classList.contains('btn-add-to-cart')) {
-            const productId = target.dataset.id || target.getAttribute('data-id');
-            const productName = target.dataset.name || target.getAttribute('data-name');
-            const productStockStr = target.dataset.stock || target.getAttribute('data-stock');
-            const productStock = Number.parseInt(productStockStr, 10);
-            
-            if (productId && productName && !isNaN(productStock)) {
-                addToCart(productId, productName, productStock);
-            }
+            handleViewDetails(target);
+        } else if (target.classList.contains('btn-add-to-cart')) {
+            handleAddToCart(target);
         }
     };
 
