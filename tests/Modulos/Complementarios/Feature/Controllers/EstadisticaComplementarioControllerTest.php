@@ -40,7 +40,9 @@ class EstadisticaComplementarioControllerTest extends TestCase
         $response->assertViewIs('complementarios.estadisticas');
         $response->assertViewHas('departamentos');
         $response->assertViewHas('municipios');
-        $response->assertViewHas('estadisticas');
+        // Las estadísticas ahora las obtiene el componente Livewire, no el controlador
+        // Verificamos que la vista se renderiza correctamente
+        $response->assertSee('Estadísticas', false);
     }
 
     #[Test]
