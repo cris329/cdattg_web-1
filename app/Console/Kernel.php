@@ -20,6 +20,12 @@ class Kernel extends ConsoleKernel
             ->timezone('America/Bogota')
             ->withoutOverlapping()
             ->runInBackground();
+
+        // Verificar préstamos próximos a vencer y enviar recordatorios
+        $schedule->job(new \App\Jobs\VerificarPrestamosProximosJob)
+            ->dailyAt('00:00')
+            ->timezone('America/Bogota')
+            ->withoutOverlapping();
     }
 
     /**
