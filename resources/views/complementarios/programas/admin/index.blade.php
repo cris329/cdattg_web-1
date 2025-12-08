@@ -618,35 +618,55 @@
                     cancelButtonColor: '#6c757d',
                     confirmButtonText: 'Sí, eliminar',
                     cancelButtonText: 'Cancelar',
-                    reverseButtons: true
+                    reverseButtons: true,
+                    showLoaderOnConfirm: true,
+                    preConfirm: () => {
+                        const url = routes.destroy.replace(':id', id);
+                        return axios.delete(url)
+                            .then(response => response.data)
+                            .catch(error => {
+                                if (error.response) {
+                                    // El servidor respondió con un código de error
+                                    throw new Error(error.response.data.message || 'Error del servidor');
+                                } else if (error.request) {
+                                    // La solicitud fue hecha pero no se recibió respuesta
+                                    throw new Error('No se recibió respuesta del servidor');
+                                } else {
+                                    // Algo pasó al configurar la solicitud
+                                    throw new Error('Error al configurar la solicitud');
+                                }
+                            });
+                    },
+                    allowOutsideClick: () => !Swal.isLoading()
                 }).then(result => {
-                    if (!result.isConfirmed) {
-                        return;
+                    if (result.isConfirmed) {
+                        if (result.value.success) {
+                            Swal.fire({
+                                title: '¡Eliminado!',
+                                text: result.value.message,
+                                icon: 'success',
+                                confirmButtonText: 'Aceptar'
+                            }).then(() => {
+                                window.location.reload();
+                            });
+                        } else {
+                            // Mostrar error sin recargar la página
+                            Swal.fire({
+                                title: 'No se puede eliminar',
+                                text: result.value.message,
+                                icon: 'error',
+                                confirmButtonText: 'Entendido',
+                                showCancelButton: false
+                            });
+                        }
                     }
-
-                    const url = routes.destroy.replace(':id', id);
-
-                    axios.delete(url)
-                        .then(response => {
-                            if (response.data.success) {
-                                Swal.fire('Eliminado', response.data.message, 'success')
-                                    .then(() => window.location.reload());
-                            } else {
-                                Swal.fire(
-                                    'Error',
-                                    response.data.message ??
-                                    'No se pudo eliminar el programa.',
-                                    'error'
-                                );
-                            }
-                        })
-                        .catch(() => {
-                            Swal.fire(
-                                'Error',
-                                'Ocurrió un problema al eliminar el programa.',
-                                'error'
-                            );
-                        });
+                }).catch(error => {
+                    Swal.fire({
+                        title: 'Error',
+                        text: error.message || 'Ocurrió un problema al eliminar el programa.',
+                        icon: 'error',
+                        confirmButtonText: 'Entendido'
+                    });
                 });
             });
 

@@ -60,32 +60,24 @@
     @if($delete && $deleteUrl)
         @if($deletePermission)
             @can($deletePermission)
-                <form action="{{ $deleteUrl }}" 
-                      method="POST" 
-                      class="d-inline formulario-eliminar">
-                    @csrf
-                    @method('DELETE')
-                    <button type="submit" 
-                            class="btn btn-light btn-sm" 
-                            data-toggle="tooltip" 
-                            title="{{ $deleteTitle }}">
-                        <i class="fas fa-trash text-danger"></i>
-                    </button>
-                </form>
-            @endcan
-        @else
-            <form action="{{ $deleteUrl }}" 
-                  method="POST" 
-                  class="d-inline formulario-eliminar">
-                @csrf
-                @method('DELETE')
-                <button type="submit" 
+                <button type="button" 
                         class="btn btn-light btn-sm" 
                         data-toggle="tooltip" 
-                        title="{{ $deleteTitle }}">
+                        title="{{ $deleteTitle }}"
+                        data-action="delete"
+                        data-id="{{ $modelId }}">
                     <i class="fas fa-trash text-danger"></i>
                 </button>
-            </form>
+            @endcan
+        @else
+            <button type="button" 
+                    class="btn btn-light btn-sm" 
+                    data-toggle="tooltip" 
+                    title="{{ $deleteTitle }}"
+                    data-action="delete"
+                    data-id="{{ $modelId }}">
+                <i class="fas fa-trash text-danger"></i>
+            </button>
         @endif
     @endif
 
