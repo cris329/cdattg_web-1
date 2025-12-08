@@ -88,5 +88,3 @@ class ValidarSofiaRequest extends FormRequest
         ];
     }
 }
-
-
