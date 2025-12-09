@@ -182,8 +182,11 @@ class NotificacionControllerTest extends TestCase
 
         $response = $this->delete(route(self::ROUTE_DELETE, $notificacionId));
 
-        $response->assertRedirect();
-        $response->assertSessionHas('success');
+        $response->assertStatus(200);
+        $response->assertJson([
+            'success' => true,
+            'message' => 'Notificación eliminada exitosamente'
+        ]);
 
         // Verificar que la notificación fue eliminada
         $this->assertDatabaseMissing('notificaciones', [

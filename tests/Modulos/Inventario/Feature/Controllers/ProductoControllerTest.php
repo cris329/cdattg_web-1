@@ -123,6 +123,11 @@ class ProductoControllerTest extends TestCase
 
         $response->assertStatus(200);
         $response->assertViewIs(self::VIEW_CREATE);
+        $response->assertViewHas('tiposProductos');
+        $response->assertViewHas('unidadesMedida');
+        $response->assertViewHas('estados');
+        $response->assertViewHas('categorias');
+        $response->assertViewHas('marcas');
     }
 
     #[Test]
@@ -283,6 +288,11 @@ class ProductoControllerTest extends TestCase
 
         $response->assertStatus(200);
         $response->assertViewHas('producto');
+        $response->assertViewHas('tiposProductos');
+        $response->assertViewHas('unidadesMedida');
+        $response->assertViewHas('estados');
+        $response->assertViewHas('categorias');
+        $response->assertViewHas('marcas');
     }
 
     #[Test]
