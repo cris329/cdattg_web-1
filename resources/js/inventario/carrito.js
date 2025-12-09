@@ -644,18 +644,10 @@ async function submitOrder() {
         // Guardar datos en sessionStorage para pasar a la siguiente vista
         sessionStorage.setItem('carrito_data', JSON.stringify(orderData));
 
-        // Vaciar carrito local y actualizar UI antes de salir
-        cart = [];
-        productsDetails = {};
-        localStorage.removeItem(STORAGE_KEY);
-        localStorage.removeItem(DRAFT_KEY);
-        saveCart();
-        showEmptyCart();
-        updateCartSummary();
-        
+        // No vaciar el carrito aquí: debe mantenerse hasta que se cree la solicitud
         // Redirigir a la vista de préstamo/salida
         globalThis.location.href = '/inventario/ordenes/prestamos-salidas?desde_carrito=true';
-        
+
     } catch (error) {
         console.error('Error:', error);
         Swal.fire({

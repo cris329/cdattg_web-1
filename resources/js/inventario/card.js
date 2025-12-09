@@ -888,7 +888,8 @@ async function showProductDetails(productId) {
  * Agregar producto al carrito
  */
 function addToCart(productId, productName, productStock) {
-    const existingItem = cart.find(item => item.id === productId);
+    const normalizedId = String(productId);
+    const existingItem = cart.find(item => String(item.id) === normalizedId);
 
     if (existingItem) {
         if (existingItem.quantity >= productStock) {
@@ -898,7 +899,7 @@ function addToCart(productId, productName, productStock) {
         existingItem.quantity++;
     } else {
         cart.push({
-            id: productId,
+            id: normalizedId,
             name: productName,
             quantity: 1,
             maxStock: productStock
