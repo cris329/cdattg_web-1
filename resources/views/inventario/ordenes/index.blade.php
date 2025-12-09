@@ -9,6 +9,7 @@
         icon="fas fa-list"
         title="Gestión de Órdenes"
         subtitle="Administra las órdenes del inventario"
+        iconBackground="bg-info"
         :breadcrumb="[
             ['label' => 'Inicio', 'url' => '#'],
             ['label' => 'Inventario', 'active' => true],
@@ -120,11 +121,16 @@
                                 </td>
                             </tr>
                         @empty
-                            <x-table-empty
-                                colspan="9"
-                                message="No hay órdenes registradas"
-                                icon="fas fa-list"
-                            />
+                            <tr>
+                                <td colspan="9">
+                                    @include('inventario._components.empty-state', [
+                                        'icon' => 'fas fa-list',
+                                        'iconColor' => 'text-info',
+                                        'title' => 'No hay órdenes registradas',
+                                        'description' => 'Todavía no se han generado órdenes en este módulo.'
+                                    ])
+                                </td>
+                            </tr>
                         @endforelse
                     </x-data-table>
                     <div class="float-left pt-2">

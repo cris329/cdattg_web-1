@@ -9,6 +9,7 @@
         icon="fas fa-check-circle"
         title="Órdenes Aprobadas"
         subtitle="Órdenes completadas y aprobadas"
+        iconBackground="bg-success"
         :breadcrumb="[
             ['label' => 'Inicio', 'url' => '#'],
             ['label' => 'Inventario', 'active' => true],

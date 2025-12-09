@@ -1,26 +1,16 @@
-{{--
-    Componente: Estado vacío
-    Props:
-    - $message (string): Mensaje a mostrar
-    - $icon (string): Clase del icono
-    - $actionRoute (string): Ruta del botón de acción
-    - $actionText (string): Texto del botón
---}}
 @props([
-    'message' => 'No hay elementos para mostrar',
+    'title' => 'No hay elementos para mostrar',
+    'description' => 'No existen registros que coincidan con los criterios actuales.',
     'icon' => 'fas fa-box-open',
-    'actionRoute' => null,
-    'actionText' => 'Crear nuevo'
+    'iconSize' => '4rem',
+    'iconColor' => 'text-muted',
+    'titleColor' => 'text-muted',
+    'descriptionColor' => 'text-muted'
 ])
 
 <div class="empty-state text-center py-5">
-    <i class="{{ $icon }} fa-3x text-muted mb-3"></i>
-    <h4 class="text-muted">{{ $message }}</h4>
-    
-    @if($actionRoute)
-        <a href="{{ $actionRoute }}" class="btn btn-primary mt-3">
-            <i class="fas fa-plus"></i> {{ $actionText }}
-        </a>
-    @endif
+    <i class="{{ $icon }} {{ $iconColor }} mb-3" style="font-size: {{ $iconSize }};"></i>
+    <h5 class="{{ $titleColor }}">{{ $title }}</h5>
+    <p class="{{ $descriptionColor }} mb-0">{{ $description }}</p>
 </div>
 

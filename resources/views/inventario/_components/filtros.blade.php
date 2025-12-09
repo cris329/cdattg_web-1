@@ -60,6 +60,37 @@
             </div>
 
             {{-- Tabla de Órdenes --}}
+            @php
+                $emptyStates = [
+                    'EN ESPERA' => [
+                        'icon' => 'fas fa-hourglass-half',
+                        'iconColor' => 'text-warning',
+                        'title' => 'No hay órdenes pendientes',
+                        'description' => 'Todas las solicitudes han sido procesadas o no hay nuevas órdenes por aprobar.'
+                    ],
+                    'APROBADA' => [
+                        'icon' => 'fas fa-check-circle',
+                        'iconColor' => 'text-success',
+                        'title' => 'No hay órdenes aprobadas',
+                        'description' => 'Todavía no se han cerrado solicitudes exitosamente.'
+                    ],
+                    'RECHAZADA' => [
+                        'icon' => 'fas fa-times-circle',
+                        'iconColor' => 'text-danger',
+                        'title' => 'No hay órdenes rechazadas',
+                        'description' => 'No se han registrado cancelaciones o rechazos.'
+                    ],
+                    'DEFAULT' => [
+                        'icon' => 'fas fa-list',
+                        'iconColor' => 'text-secondary',
+                        'title' => 'No hay órdenes para mostrar',
+                        'description' => 'Aún no existen órdenes que cumplan los filtros seleccionados.'
+                    ]
+                ];
+
+                $stateKey = strtoupper($estado ?? 'DEFAULT');
+                $emptyState = $emptyStates[$stateKey] ?? $emptyStates['DEFAULT'];
+            @endphp
             <div class="card">
                 <div class="card-header with-border">
                     <h3 class="card-title">
@@ -90,7 +121,7 @@
                                     </tr>
                                 </thead>
                                 <tbody>
-                                    @forelse($ordenes as $orden)
+                                    @foreach($ordenes as $orden)
                                         @php
                                             $tipoNombre = $orden->tipoOrden->parametro->name ?? 'N/A';
                                             $tipoClass = $tipoNombre === 'PRÉSTAMO' ? 'info' : 'warning';
@@ -147,14 +178,7 @@
                                                 @endif
                                             </td>
                                         </tr>
-                                    @empty
-                                        <tr>
-                                            <td colspan="8" class="text-center text-muted py-4">
-                                                <i class="fas fa-inbox fa-2x mb-2"></i>
-                                                <p>No hay órdenes que coincidan con los filtros</p>
-                                            </td>
-                                        </tr>
-                                    @endforelse
+                                    @endforeach
                                 </tbody>
                             </table>
                         </div>
@@ -166,10 +190,7 @@
                             </div>
                         @endif
                     @else
-                        <div class="alert alert-info text-center">
-                            <i class="fas fa-info-circle"></i>
-                            No hay órdenes para mostrar
-                        </div>
+                        @include('inventario._components.empty-state', $emptyState)
                     @endif
                 </div>
             </div>
