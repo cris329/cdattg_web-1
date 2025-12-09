@@ -51,6 +51,7 @@ export default defineConfig({
                 'inventario_imagen': 'resources/js/inventario/imagen.js',
                 'inventario_notificaciones': 'resources/js/inventario/notificaciones.js',
                 'inventario_solicitud': 'resources/js/inventario/solicitud.js',
+                'inventario_select-marca': 'resources/js/inventario/select-marca.js',
                 // Complementarios files
                 'estadisticas_complementarios': 'resources/js/complementarios/estadisticas.js',
                 'aspirantes_programa': 'resources/js/complementarios/aspirantes/programa.js',

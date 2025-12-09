@@ -207,24 +207,24 @@
 
                                     <div class="col-md-6">
                                         <div class="form-group-modern">
-                                            <label for="marca_id">
-                                                <i class="fas fa-copyright"></i>
+                                            <label for="marca_nombre">
+                                                <i class="fas fa-folder"></i>
                                                 Marca
                                                 <span class="text-danger">*</span>
                                             </label>
-                                            <select
-                                                class="form-control-modern @error('marca_id') is-invalid @enderror"
-                                                id="marca_id"
-                                                name="marca_id"
-                                                required
+                                            <input
+                                                type="text"
+                                                id="marca_nombre"
+                                                class="form-control-modern mb-2"
+                                                placeholder="Escribe la marca"
+                                                data-marcas='@json(
+                                                    $marcas->map(fn($m) => [
+                                                        "id" => $m->parametro->id,
+                                                        "name" => $m->parametro->name,
+                                                    ])
+                                                )'
                                             >
-                                                <option value="">Seleccionar marca</option>
-                                                @foreach($marcas as $marca)
-                                                    <option value="{{ $marca->parametro->id }}" {{ old('marca_id') == $marca->parametro->id ? 'selected' : '' }}>
-                                                        {{ $marca->parametro->name }}
-                                                    </option>
-                                                @endforeach
-                                            </select>
+                                            <input type="hidden" id="marca_id" name="marca_id" value="{{ old('marca_id') }}">
                                             @error('marca_id')
                                                 <div class="invalid-feedback">{{ $message }}</div>
                                             @enderror
@@ -475,6 +475,7 @@
 @endsection
 
 @push('css')
+    {{-- Estilos base de inventario --}}
     @vite([
         'resources/css/inventario/shared/base.css',
         'resources/css/inventario/inventario.css',
@@ -486,18 +487,9 @@
     <script src="https://cdn.jsdelivr.net/npm/html5-qrcode@2.3.8/html5-qrcode.min.js"
             integrity="sha384-VZQkKBeVH3AU5b8KP5hJNF8FLg4Gx8FzIW7YF2JqLvKgVOp8YKjJpBxHBLrp3z+i"
             crossorigin="anonymous"></script>
-    @vite(['resources/js/inventario/imagen.js', 'resources/js/inventario/fecha-vencimiento.js'])
-    <script>
-        // Preview de imagen
-        document.getElementById('imagen').addEventListener('change', function(e) {
-            const file = e.target.files[0];
-            if (file) {
-                const reader = new FileReader();
-                reader.onload = function(e) {
-                    document.getElementById('preview').src = e.target.result;
-                }
-                reader.readAsDataURL(file);
-            }
-        });
-    </script>
+    @vite([
+        'resources/js/inventario/imagen.js',
+        'resources/js/inventario/fecha-vencimiento.js',
+        'resources/js/inventario/select-marca.js',
+    ])
 @endpush
