@@ -67,67 +67,9 @@ class FichaCaracterizacionFactory extends Factory
         }
 
         // Crear dependencias y programa directamente
-        $user = User::query()->inRandomOrder()->first();
-        if (! $user) {
-            $user = User::factory()->create();
-        }
-
-        $redConocimiento = RedConocimiento::query()->inRandomOrder()->first();
-        if (! $redConocimiento) {
-            $regional = Regional::query()->inRandomOrder()->first();
-            if (! $regional) {
-                $regional = Regional::factory()->create();
-            }
-            $redConocimiento = RedConocimiento::factory()->create([
-                'regionals_id' => $regional->id,
-                'user_create_id' => $user->id,
-                'user_edit_id' => $user->id,
-            ]);
-        }
-
-        // Buscar o crear parametro_tema para nivel de formación
-        // El tema_id 6 corresponde a "NIVELES DE FORMACION"
-        $nivelFormacionParametroTema = null;
-        if (Schema::hasTable('parametros_temas') && Schema::hasTable('temas') && Schema::hasTable('parametros')) {
-            // Buscar o crear el tema "NIVELES DE FORMACION"
-            $temaNiveles = Tema::query()->where('name', 'NIVELES DE FORMACION')->first();
-            if (! $temaNiveles) {
-                $temaNiveles = Tema::query()->create([
-                    'name' => 'NIVELES DE FORMACION',
-                    'status' => 1,
-                    'user_create_id' => $user->id,
-                    'user_edit_id' => $user->id,
-                ]);
-            }
-
-            // Buscar o crear un parámetro de nivel de formación
-            $parametroNivel = Parametro::query()
-                ->whereIn('name', ['TÉCNICO', 'TECNÓLOGO', 'AUXILIAR', 'OPERARIO'])
-                ->first();
-            if (! $parametroNivel) {
-                $parametroNivel = Parametro::query()->create([
-                    'name' => 'TÉCNICO',
-                    'status' => 1,
-                    'user_create_id' => $user->id,
-                    'user_edit_id' => $user->id,
-                ]);
-            }
-
-            // Buscar o crear el parametro_tema
-            $nivelFormacionParametroTema = ParametroTema::query()
-                ->where('tema_id', $temaNiveles->id)
-                ->where('parametro_id', $parametroNivel->id)
-                ->first();
-            if (! $nivelFormacionParametroTema) {
-                $nivelFormacionParametroTema = ParametroTema::query()->create([
-                    'tema_id' => $temaNiveles->id,
-                    'parametro_id' => $parametroNivel->id,
-                    'status' => 1,
-                    'user_create_id' => $user->id,
-                    'user_edit_id' => $user->id,
-                ]);
-            }
-        }
+        $user = $this->obtenerOcrearUsuario();
+        $redConocimiento = $this->obtenerOcrearRedConocimiento($user);
+        $nivelFormacionParametroTema = $this->obtenerOcrearNivelFormacionParametroTema($user);
 
         // Crear el programa directamente con los IDs verificados
         if (! $nivelFormacionParametroTema) {
@@ -207,26 +149,11 @@ class FichaCaracterizacionFactory extends Factory
      */
     private function obtenerAmbienteId(): ?int
     {
-        if (!Schema::hasTable('ambientes')) {
-            return null;
-        }
-
-        try {
-            $ambienteId = Ambiente::query()->inRandomOrder()->value('id');
-            if ($ambienteId) {
-                return $ambienteId;
-            }
-            
-            $ambiente = Ambiente::factory()->create();
-            return $ambiente->id;
-        } catch (\Exception $e) {
-            try {
-                $ambiente = Ambiente::factory()->create();
-                return $ambiente->id;
-            } catch (\Exception $e2) {
-                return null;
-            }
-        }
+        return $this->obtenerOcrearId(
+            'ambientes',
+            fn() => Ambiente::query()->inRandomOrder()->value('id'),
+            fn() => Ambiente::factory()->create()->id
+        );
     }
 
     /**
@@ -244,26 +171,11 @@ class FichaCaracterizacionFactory extends Factory
      */
     private function obtenerSedeId(): ?int
     {
-        if (!Schema::hasTable('sedes')) {
-            return null;
-        }
-
-        try {
-            $sedeId = Sede::query()->inRandomOrder()->value('id');
-            if ($sedeId) {
-                return $sedeId;
-            }
-            
-            $sede = Sede::factory()->create();
-            return $sede->id;
-        } catch (\Exception $e) {
-            try {
-                $sede = Sede::factory()->create();
-                return $sede->id;
-            } catch (\Exception $e2) {
-                return null;
-            }
-        }
+        return $this->obtenerOcrearId(
+            'sedes',
+            fn() => Sede::query()->inRandomOrder()->value('id'),
+            fn() => Sede::factory()->create()->id
+        );
     }
 
     /**
@@ -271,26 +183,40 @@ class FichaCaracterizacionFactory extends Factory
      */
     private function obtenerJornadaId(): ?int
     {
-        if (!Schema::hasTable('jornadas_formacion')) {
+        return $this->obtenerOcrearId(
+            'jornadas_formacion',
+            fn() => JornadaFormacion::query()->inRandomOrder()->value('id'),
+            fn() => JornadaFormacion::factory()->create()->id
+        );
+    }
+
+    /**
+     * Helper genérico para obtener o crear un ID
+     */
+    private function obtenerOcrearId(string $tableName, callable $obtenerFn, callable $crearFn): ?int
+    {
+        if (!Schema::hasTable($tableName)) {
             return null;
         }
 
+        $result = null;
+        
         try {
-            $jornadaId = JornadaFormacion::query()->inRandomOrder()->value('id');
-            if ($jornadaId) {
-                return $jornadaId;
+            $id = $obtenerFn();
+            if ($id) {
+                $result = $id;
+            } else {
+                $result = $crearFn();
             }
-            
-            $jornada = JornadaFormacion::factory()->create();
-            return $jornada->id;
         } catch (\Exception $e) {
             try {
-                $jornada = JornadaFormacion::factory()->create();
-                return $jornada->id;
+                $result = $crearFn();
             } catch (\Exception $e2) {
-                return null;
+                $result = null;
             }
         }
+        
+        return $result;
     }
 
     /**
@@ -304,13 +230,92 @@ class FichaCaracterizacionFactory extends Factory
 
         try {
             $userId = User::query()->inRandomOrder()->value('id');
-            if ($userId) {
-                return $userId;
-            }
-            
-            return User::factory()->create()->id;
+            return $userId ?: User::factory()->create()->id;
         } catch (\Exception $e) {
             return User::factory()->create()->id;
         }
+    }
+
+    /**
+     * Obtiene o crea un usuario
+     */
+    private function obtenerOcrearUsuario(): User
+    {
+        $user = User::query()->inRandomOrder()->first();
+        return $user ?: User::factory()->create();
+    }
+
+    /**
+     * Obtiene o crea una red de conocimiento
+     */
+    private function obtenerOcrearRedConocimiento(User $user): RedConocimiento
+    {
+        $redConocimiento = RedConocimiento::query()->inRandomOrder()->first();
+        if ($redConocimiento) {
+            return $redConocimiento;
+        }
+
+        $regional = Regional::query()->inRandomOrder()->first();
+        if (! $regional) {
+            $regional = Regional::factory()->create();
+        }
+
+        return RedConocimiento::factory()->create([
+            'regionals_id' => $regional->id,
+            'user_create_id' => $user->id,
+            'user_edit_id' => $user->id,
+        ]);
+    }
+
+    /**
+     * Obtiene o crea un parametro_tema para nivel de formación
+     */
+    private function obtenerOcrearNivelFormacionParametroTema(User $user): ?ParametroTema
+    {
+        if (!Schema::hasTable('parametros_temas') || !Schema::hasTable('temas') || !Schema::hasTable('parametros')) {
+            return null;
+        }
+
+        // Buscar o crear el tema "NIVELES DE FORMACION"
+        $temaNiveles = Tema::query()->where('name', 'NIVELES DE FORMACION')->first();
+        if (! $temaNiveles) {
+            $temaNiveles = Tema::query()->create([
+                'name' => 'NIVELES DE FORMACION',
+                'status' => 1,
+                'user_create_id' => $user->id,
+                'user_edit_id' => $user->id,
+            ]);
+        }
+
+        // Buscar o crear un parámetro de nivel de formación
+        $parametroNivel = Parametro::query()
+            ->whereIn('name', ['TÉCNICO', 'TECNÓLOGO', 'AUXILIAR', 'OPERARIO'])
+            ->first();
+        if (! $parametroNivel) {
+            $parametroNivel = Parametro::query()->create([
+                'name' => 'TÉCNICO',
+                'status' => 1,
+                'user_create_id' => $user->id,
+                'user_edit_id' => $user->id,
+            ]);
+        }
+
+        // Buscar o crear el parametro_tema
+        $nivelFormacionParametroTema = ParametroTema::query()
+            ->where('tema_id', $temaNiveles->id)
+            ->where('parametro_id', $parametroNivel->id)
+            ->first();
+
+        if (! $nivelFormacionParametroTema) {
+            $nivelFormacionParametroTema = ParametroTema::query()->create([
+                'tema_id' => $temaNiveles->id,
+                'parametro_id' => $parametroNivel->id,
+                'status' => 1,
+                'user_create_id' => $user->id,
+                'user_edit_id' => $user->id,
+            ]);
+        }
+
+        return $nivelFormacionParametroTema;
     }
 }
