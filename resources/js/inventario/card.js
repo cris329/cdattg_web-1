@@ -84,6 +84,7 @@ function agregarAlCarritoDesdeModal(productId, productName, productStock) {
             }
         }
     } catch (error) {
+        console.error('agregarAlCarritoDesdeModal: no se agregó el producto', error);
         alert('Error al agregar al carrito. Por favor intente de nuevo.');
     }
 }
@@ -178,11 +179,9 @@ function setupNavigationListener() {
 
     document.addEventListener('click', function(event) {
         const link = event.target.closest(String.raw`a[wire\:navigate], a[data-wire-navigate]`);
-        if (link && link.href) {
-            const href = link.href.toLowerCase();
-            if (href.includes('productos') && href.includes('catalogo')) {
-                handleNavigation();
-            }
+        const href = link?.href?.toLowerCase();
+        if (href?.includes('productos') && href?.includes('catalogo')) {
+            handleNavigation();
         }
     }, true);
 
@@ -371,48 +370,64 @@ function setupSortFilter() {
 /**
  * Aplicar filtros mediante redirección con parámetros GET
  */
-function applyFilters() {
+function collectFilterValues() {
     const searchInput = document.getElementById('search-product');
     const typeSelect = document.getElementById('filter-type');
     const sortSelect = document.getElementById('sort-by');
-    
+
     const searchTerm = searchInput?.value.trim() || '';
     const typeId = typeSelect?.value || '';
     const sortBy = sortSelect?.value || 'name';
 
+    return { searchTerm, typeId, sortBy };
+}
+
+function buildFilterEntries({ searchTerm, typeId, sortBy }) {
+    const sortValue = sortBy === 'name' ? '' : sortBy;
+    return [
+        { key: 'search', value: searchTerm },
+        { key: 'tipo_producto_id', value: typeId },
+        { key: 'sort_by', value: sortValue }
+    ];
+}
+
+function updateSearchParam(params, key, value) {
+    if (value) {
+        params.set(key, value);
+        return;
+    }
+
+    params.delete(key);
+}
+
+function buildFallbackUrl(baseUrl, entries) {
+    const params = new URLSearchParams();
+    for (const { key, value } of entries) {
+        if (value) {
+            params.set(key, value);
+        }
+    }
+
+    const queryString = params.toString();
+    return queryString ? `${baseUrl}?${queryString}` : baseUrl;
+}
+
+function applyFilters() {
+    const filterValues = collectFilterValues();
+    const filterEntries = buildFilterEntries(filterValues);
+
     try {
         const url = new URL(globalThis.location.href);
         url.searchParams.delete('page');
-
-        if (searchTerm) {
-            url.searchParams.set('search', searchTerm);
-        } else {
-            url.searchParams.delete('search');
-        }
-
-        if (typeId) {
-            url.searchParams.set('tipo_producto_id', typeId);
-        } else {
-            url.searchParams.delete('tipo_producto_id');
-        }
-
-        if (sortBy && sortBy !== 'name') {
-            url.searchParams.set('sort_by', sortBy);
-        } else {
-            url.searchParams.delete('sort_by');
+        for (const entry of filterEntries) {
+            updateSearchParam(url.searchParams, entry.key, entry.value);
         }
 
         globalThis.location.href = url.toString();
-    } catch {
+    } catch (error) {
+        console.error('applyFilters: error actualizando la URL', error);
         const baseUrl = globalThis.location.origin + globalThis.location.pathname;
-        const params = new URLSearchParams();
-        
-        if (searchTerm) params.set('search', searchTerm);
-        if (typeId) params.set('tipo_producto_id', typeId);
-        if (sortBy && sortBy !== 'name') params.set('sort_by', sortBy);
-        
-        const queryString = params.toString();
-        globalThis.location.href = queryString ? `${baseUrl}?${queryString}` : baseUrl;
+        globalThis.location.href = buildFallbackUrl(baseUrl, filterEntries);
     }
 }
 
