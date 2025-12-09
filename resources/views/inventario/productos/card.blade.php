@@ -268,6 +268,16 @@
     {{-- Notificaciones manejadas globalmente por sweetalert2-notifications --}}
 @endsection
 
+@push('js')
+    @if(session('clear_cart'))
+        <script>
+            localStorage.removeItem('inventario_carrito');
+            localStorage.removeItem('inventario_draft');
+            sessionStorage.removeItem('carrito_data');
+        </script>
+    @endif
+@endpush
+
 @push('css')
     @vite([
         'resources/css/inventario/card.css',
