@@ -59,14 +59,14 @@ trait SeedsComplementariosDatabase
     private function shouldSkipSeedingInDevelopment(): bool
     {
         try {
-            $temaGeneroExists = Schema::hasTable('temas') && 
+            $temaGeneroExists = Schema::hasTable('temas') &&
                 \App\Models\Tema::where('id', 3)->exists();
-            
+
             $parametroTemaExists = Schema::hasTable('parametros_temas') &&
                 \App\Models\ParametroTema::where('tema_id', 3)
                     ->whereIn('parametro_id', [9, 10, 11])
                     ->exists();
-            
+
             return $temaGeneroExists && $parametroTemaExists;
         } catch (\Exception $e) {
             return false;
@@ -88,7 +88,7 @@ trait SeedsComplementariosDatabase
                 $seeded = true;
             } catch (\Illuminate\Database\QueryException $e) {
                 if ($this->isDeadlockException($e)) {
-                    $retryCount = $this->handleDeadlockRetry($e, $retryCount, $maxRetries);
+                    $retryCount = $this->handleDeadlockRetry($retryCount, $maxRetries);
                 } else {
                     throw $e;
                 }
@@ -132,7 +132,7 @@ trait SeedsComplementariosDatabase
      */
     private function isDeadlockException(\Illuminate\Database\QueryException $e): bool
     {
-        return str_contains($e->getMessage(), 'database is locked') || 
+        return str_contains($e->getMessage(), 'database is locked') ||
                str_contains($e->getMessage(), 'deadlock') ||
                str_contains($e->getMessage(), 'locked');
     }
@@ -140,15 +140,15 @@ trait SeedsComplementariosDatabase
     /**
      * Maneja el reintento para deadlocks.
      */
-    private function handleDeadlockRetry(\Illuminate\Database\QueryException $e, int $retryCount, int $maxRetries): int
+    private function handleDeadlockRetry(int $retryCount, int $maxRetries): int
     {
         \Illuminate\Support\Facades\DB::rollBack();
-        
+
         $retryCount++;
         if ($retryCount < $maxRetries) {
             usleep(500000 * $retryCount);
         }
-        
+
         return $retryCount;
     }
 }
