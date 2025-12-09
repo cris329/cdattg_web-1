@@ -466,6 +466,9 @@
 @endsection
 
 @section('js')
+    <!-- Cargar Axios desde CDN -->
+    <script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
+    
     <!-- Datos del servidor para JavaScript -->
     <script type="application/json" id="modalidades-data">
         @json($modalidades)
