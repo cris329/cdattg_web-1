@@ -41,17 +41,17 @@
                                 <div class="row">
                                     <div class="col-md-6">
                                         <div class="form-group">
-                                            <label for="proveedor">Nombre del Proveedor <span class="text-danger">*</span></label>
+                                            <label for="name">Nombre del Proveedor <span class="text-danger">*</span></label>
                                             <input
                                                 type="text"
-                                                class="form-control @error('proveedor') is-invalid @enderror"
-                                                id="proveedor"
-                                                name="proveedor"
-                                                value="{{ old('proveedor') }}"
+                                                class="form-control @error('name') is-invalid @enderror"
+                                                id="name"
+                                                name="name"
+                                                value="{{ old('name') }}"
                                                 placeholder="Ingrese el nombre del proveedor"
                                                 required
                                             >
-                                            @error('proveedor')
+                                            @error('name')
                                                 <div class="invalid-feedback">{{ $message }}</div>
                                             @enderror
                                         </div>

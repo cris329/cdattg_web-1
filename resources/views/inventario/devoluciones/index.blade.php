@@ -102,11 +102,12 @@
                                     </div>
                                 @endif
                             @else
-                                <div class="text-center py-5">
-                                    <i class="fas fa-check-circle fa-4x text-muted mb-3"></i>
-                                    <h5>No hay préstamos pendientes</h5>
-                                    <p class="text-muted">Todos los préstamos han sido devueltos completamente.</p>
-                                </div>
+                                @include('inventario._components.empty-state', [
+                                    'icon' => 'fas fa-check-circle',
+                                    'iconColor' => 'text-success',
+                                    'title' => 'No hay préstamos pendientes',
+                                    'description' => 'Todos los préstamos han sido devueltos completamente.'
+                                ])
                             @endif
                         </div>
                     </div>

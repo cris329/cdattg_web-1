@@ -9,6 +9,7 @@
         icon="fas fa-times-circle"
         title="Órdenes Rechazadas"
         subtitle="Órdenes rechazadas o canceladas"
+        iconBackground="bg-danger"
         :breadcrumb="[
             ['label' => 'Inicio', 'url' => '#'],
             ['label' => 'Inventario', 'active' => true],

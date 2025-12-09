@@ -115,7 +115,7 @@
                     @else
                         @include('inventario._components.empty-state', [
                             'title' => 'No tienes historial de préstamos',
-                            'message' => 'Aún no has realizado ningún préstamo.',
+                            'description' => 'Aún no has realizado ningún préstamo.',
                             'icon' => 'fas fa-history'
                         ])
                     @endif
