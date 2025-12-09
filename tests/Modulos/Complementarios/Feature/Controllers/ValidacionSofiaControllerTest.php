@@ -9,6 +9,7 @@ use App\Models\Persona;
 use App\Models\Complementarios\SofiaValidationProgress;
 use App\Models\User;
 use App\Jobs\Complementarios\ValidarSofiaJob;
+use App\Services\Complementarios\Sofia\SofiaParametrosHelper;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Support\Facades\Queue;
 use PHPUnit\Framework\Attributes\Test;
@@ -33,6 +34,31 @@ class ValidacionSofiaControllerTest extends TestCase
 
         $this->seedComplementariosDatabaseIfNeeded();
 
+        // Asegurar que los parámetros de Sofía existan
+        SofiaParametrosHelper::clearCache();
+        
+        // Forzar la creación de parámetros si no existen
+        if (!\App\Models\Parametro::where('name', 'NO REGISTRADO')->exists()) {
+            SofiaParametrosHelper::crearParametrosSiNoExisten();
+        }
+        
+        SofiaParametrosHelper::clearCache();
+        
+        // Verificar que los parámetros existan
+        $noRegistradoId = SofiaParametrosHelper::getNoRegistradoId();
+        $requiereCambioId = SofiaParametrosHelper::getRequiereCambioId();
+        $pendingId = SofiaParametrosHelper::getPendingId();
+        
+        // Si aún no existen, hay un problema
+        if (!$noRegistradoId || !$requiereCambioId || !$pendingId) {
+            throw new \RuntimeException(
+                'Los parámetros de Sofía no se pudieron crear. ' .
+                "NO REGISTRADO: " . ($noRegistradoId ?? 'null') . ", " .
+                "REQUIERE CAMBIO: " . ($requiereCambioId ?? 'null') . ", " .
+                "PENDING: " . ($pendingId ?? 'null')
+            );
+        }
+        
         $this->user = User::factory()->create();
         Queue::fake();
     }
@@ -44,8 +70,17 @@ class ValidacionSofiaControllerTest extends TestCase
 
         $programa = ComplementarioOfertado::factory()->create();
 
-        $persona1 = Persona::factory()->create(['estado_sofia' => 0]);
-        $persona2 = Persona::factory()->create(['estado_sofia' => 2]);
+        // Asegurar que los parámetros existan antes de usarlos
+        SofiaParametrosHelper::clearCache();
+        $noRegistradoId = SofiaParametrosHelper::getNoRegistradoId();
+        $requiereCambioId = SofiaParametrosHelper::getRequiereCambioId();
+        
+        // Verificar que los IDs no sean null
+        $this->assertNotNull($noRegistradoId, 'El parámetro NO REGISTRADO debe existir');
+        $this->assertNotNull($requiereCambioId, 'El parámetro REQUIERE CAMBIO debe existir');
+        
+        $persona1 = Persona::factory()->create(['estado_sofia' => $noRegistradoId]);
+        $persona2 = Persona::factory()->create(['estado_sofia' => $requiereCambioId]);
 
         AspiranteComplementario::factory()->create([
             'persona_id' => $persona1->id,
@@ -72,10 +107,11 @@ class ValidacionSofiaControllerTest extends TestCase
 
         Queue::assertPushed(ValidarSofiaJob::class);
 
+        $pendingId = SofiaParametrosHelper::getPendingId();
         $this->assertDatabaseHas('sofia_validation_progress', [
             'complementario_id' => $programa->id,
             'user_id' => $this->user->id,
-            'status' => 'pending',
+            'status' => $pendingId,
         ]);
     }
 
@@ -86,8 +122,9 @@ class ValidacionSofiaControllerTest extends TestCase
 
         $programa = ComplementarioOfertado::factory()->create();
 
-        // Crear aspirantes pero todos ya validados (estado_sofia = 1)
-        $persona = Persona::factory()->create(['estado_sofia' => 1]);
+        // Crear aspirantes pero todos ya validados
+        $registradoId = SofiaParametrosHelper::getRegistradoId();
+        $persona = Persona::factory()->create(['estado_sofia' => $registradoId]);
         AspiranteComplementario::factory()->create([
             'persona_id' => $persona->id,
             'complementario_id' => $programa->id,
@@ -111,7 +148,9 @@ class ValidacionSofiaControllerTest extends TestCase
 
         $programa = ComplementarioOfertado::factory()->create();
 
-        $persona = Persona::factory()->create(['estado_sofia' => 0]);
+        $noRegistradoId = SofiaParametrosHelper::getNoRegistradoId();
+        $processingId = SofiaParametrosHelper::getProcessingId();
+        $persona = Persona::factory()->create(['estado_sofia' => $noRegistradoId]);
         AspiranteComplementario::factory()->create([
             'persona_id' => $persona->id,
             'complementario_id' => $programa->id,
@@ -120,7 +159,7 @@ class ValidacionSofiaControllerTest extends TestCase
         // Crear validación en progreso
         SofiaValidationProgress::factory()->create([
             'complementario_id' => $programa->id,
-            'status' => 'processing',
+            'status' => $processingId,
         ]);
 
         $response = $this->post(route('programas-complementarios.validar-sofia', $programa->id));
@@ -156,9 +195,10 @@ class ValidacionSofiaControllerTest extends TestCase
         $this->actingAs($this->user);
 
         $programa = ComplementarioOfertado::factory()->create();
+        $processingId = SofiaParametrosHelper::getProcessingId();
         $progress = SofiaValidationProgress::factory()->create([
             'complementario_id' => $programa->id,
-            'status' => 'processing',
+            'status' => $processingId,
             'total_aspirantes' => 10,
             'processed_aspirantes' => 5,
             'successful_validations' => 4,
@@ -190,7 +230,8 @@ class ValidacionSofiaControllerTest extends TestCase
 
         $responseData = $response->json();
         $this->assertEquals($progress->id, $responseData['progress']['id']);
-        $this->assertEquals('processing', $responseData['progress']['status']);
+        $processingId = SofiaParametrosHelper::getProcessingId();
+        $this->assertEquals($processingId, $responseData['progress']['status']);
         $this->assertEquals(10, $responseData['progress']['total_aspirantes']);
         $this->assertEquals(5, $responseData['progress']['processed_aspirantes']);
     }
@@ -219,8 +260,10 @@ class ValidacionSofiaControllerTest extends TestCase
 
         $programa = ComplementarioOfertado::factory()->create();
 
-        $persona1 = Persona::factory()->create(['estado_sofia' => 0]);
-        $persona2 = Persona::factory()->create(['estado_sofia' => 2]);
+        $noRegistradoId = SofiaParametrosHelper::getNoRegistradoId();
+        $requiereCambioId = SofiaParametrosHelper::getRequiereCambioId();
+        $persona1 = Persona::factory()->create(['estado_sofia' => $noRegistradoId]);
+        $persona2 = Persona::factory()->create(['estado_sofia' => $requiereCambioId]);
 
         AspiranteComplementario::factory()->create([
             'persona_id' => $persona1->id,
@@ -239,7 +282,7 @@ class ValidacionSofiaControllerTest extends TestCase
         $this->assertDatabaseHas('sofia_validation_progress', [
             'complementario_id' => $programa->id,
             'user_id' => $this->user->id,
-            'status' => 'pending',
+            'status' => SofiaParametrosHelper::getPendingId(),
             'total_aspirantes' => 2,
             'processed_aspirantes' => 0,
             'successful_validations' => 0,
@@ -254,7 +297,8 @@ class ValidacionSofiaControllerTest extends TestCase
 
         $programa = ComplementarioOfertado::factory()->create();
 
-        $persona = Persona::factory()->create(['estado_sofia' => 0]);
+        $noRegistradoId = SofiaParametrosHelper::getNoRegistradoId();
+        $persona = Persona::factory()->create(['estado_sofia' => $noRegistradoId]);
         AspiranteComplementario::factory()->create([
             'persona_id' => $persona->id,
             'complementario_id' => $programa->id,
@@ -272,7 +316,8 @@ class ValidacionSofiaControllerTest extends TestCase
 
         $programa = ComplementarioOfertado::factory()->create();
 
-        $persona = Persona::factory()->create(['estado_sofia' => 0]);
+        $noRegistradoId = SofiaParametrosHelper::getNoRegistradoId();
+        $persona = Persona::factory()->create(['estado_sofia' => $noRegistradoId]);
         AspiranteComplementario::factory()->create([
             'persona_id' => $persona->id,
             'complementario_id' => $programa->id,
@@ -281,7 +326,7 @@ class ValidacionSofiaControllerTest extends TestCase
         // Crear validación pending
         SofiaValidationProgress::factory()->create([
             'complementario_id' => $programa->id,
-            'status' => 'pending',
+            'status' => SofiaParametrosHelper::getPendingId(),
         ]);
 
         $response = $this->post(route('programas-complementarios.validar-sofia', $programa->id));
@@ -303,7 +348,7 @@ class ValidacionSofiaControllerTest extends TestCase
         $programa = ComplementarioOfertado::factory()->create();
         $progress = SofiaValidationProgress::factory()->create([
             'complementario_id' => $programa->id,
-            'status' => 'completed',
+            'status' => SofiaParametrosHelper::getCompletedId(),
             'total_aspirantes' => 10,
             'processed_aspirantes' => 10,
             'successful_validations' => 8,
@@ -319,7 +364,8 @@ class ValidacionSofiaControllerTest extends TestCase
         ]);
         
         $responseData = $response->json();
-        $this->assertEquals('completed', $responseData['progress']['status']);
+        $completedId = SofiaParametrosHelper::getCompletedId();
+        $this->assertEquals($completedId, $responseData['progress']['status']);
         $this->assertEquals(10, $responseData['progress']['processed_aspirantes']);
         $this->assertNotNull($responseData['progress']['completed_at']);
     }
@@ -332,7 +378,7 @@ class ValidacionSofiaControllerTest extends TestCase
         $programa = ComplementarioOfertado::factory()->create();
         $progress = SofiaValidationProgress::factory()->create([
             'complementario_id' => $programa->id,
-            'status' => 'failed',
+            'status' => SofiaParametrosHelper::getFailedId(),
             'total_aspirantes' => 5,
             'processed_aspirantes' => 3,
             'errors' => ['Error de conexión'],
@@ -346,7 +392,8 @@ class ValidacionSofiaControllerTest extends TestCase
         ]);
         
         $responseData = $response->json();
-        $this->assertEquals('failed', $responseData['progress']['status']);
+        $failedId = SofiaParametrosHelper::getFailedId();
+        $this->assertEquals($failedId, $responseData['progress']['status']);
         $this->assertNotEmpty($responseData['progress']['errors']);
     }
 
@@ -357,12 +404,15 @@ class ValidacionSofiaControllerTest extends TestCase
 
         $programa = ComplementarioOfertado::factory()->create();
 
-        // Aspirantes que necesitan validación (estado_sofia 0 o 2)
-        $persona1 = Persona::factory()->create(['estado_sofia' => 0]);
-        $persona2 = Persona::factory()->create(['estado_sofia' => 2]);
+        // Aspirantes que necesitan validación (NO REGISTRADO o REQUIERE CAMBIO)
+        $noRegistradoId = SofiaParametrosHelper::getNoRegistradoId();
+        $requiereCambioId = SofiaParametrosHelper::getRequiereCambioId();
+        $persona1 = Persona::factory()->create(['estado_sofia' => $noRegistradoId]);
+        $persona2 = Persona::factory()->create(['estado_sofia' => $requiereCambioId]);
         
-        // Aspirante ya validado (estado_sofia 1)
-        $persona3 = Persona::factory()->create(['estado_sofia' => 1]);
+        // Aspirante ya validado
+        $registradoId = SofiaParametrosHelper::getRegistradoId();
+        $persona3 = Persona::factory()->create(['estado_sofia' => $registradoId]);
 
         AspiranteComplementario::factory()->create([
             'persona_id' => $persona1->id,
@@ -411,9 +461,11 @@ class ValidacionSofiaControllerTest extends TestCase
 
         $programa = ComplementarioOfertado::factory()->create();
 
-        $persona1 = Persona::factory()->create(['estado_sofia' => 0]);
-        $persona2 = Persona::factory()->create(['estado_sofia' => 2]);
-        $persona3 = Persona::factory()->create(['estado_sofia' => 0]);
+        $noRegistradoId = SofiaParametrosHelper::getNoRegistradoId();
+        $requiereCambioId = SofiaParametrosHelper::getRequiereCambioId();
+        $persona1 = Persona::factory()->create(['estado_sofia' => $noRegistradoId]);
+        $persona2 = Persona::factory()->create(['estado_sofia' => $requiereCambioId]);
+        $persona3 = Persona::factory()->create(['estado_sofia' => $noRegistradoId]);
 
         AspiranteComplementario::factory()->create([
             'persona_id' => $persona1->id,
@@ -433,7 +485,7 @@ class ValidacionSofiaControllerTest extends TestCase
         $this->assertDatabaseHas('sofia_validation_progress', [
             'complementario_id' => $programa->id,
             'user_id' => $this->user->id,
-            'status' => 'pending',
+            'status' => SofiaParametrosHelper::getPendingId(),
             'total_aspirantes' => 3,
             'processed_aspirantes' => 0,
             'successful_validations' => 0,
@@ -448,7 +500,8 @@ class ValidacionSofiaControllerTest extends TestCase
 
         $programa = ComplementarioOfertado::factory()->create();
 
-        $persona = Persona::factory()->create(['estado_sofia' => 0]);
+        $noRegistradoId = SofiaParametrosHelper::getNoRegistradoId();
+        $persona = Persona::factory()->create(['estado_sofia' => $noRegistradoId]);
         AspiranteComplementario::factory()->create([
             'persona_id' => $persona->id,
             'complementario_id' => $programa->id,
