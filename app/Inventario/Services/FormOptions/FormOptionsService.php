@@ -5,10 +5,14 @@ declare(strict_types=1);
 namespace App\Inventario\Services\FormOptions;
 
 use App\Inventario\Interfaces\Services\FormOptionsServiceInterface;
-use App\Models\Tema;
+use App\Inventario\Interfaces\Repositories\ParametroTema\ParametroTemaRepositoryInterface;
 
 class FormOptionsService implements FormOptionsServiceInterface
 {
+    public function __construct(
+        protected ParametroTemaRepositoryInterface $parametroTemaRepository
+    ) {}
+
     /**
      * Obtiene todas las opciones para formularios de productos
      *
@@ -47,7 +51,7 @@ class FormOptionsService implements FormOptionsServiceInterface
      */
     public function obtenerTiposProducto()
     {
-        return $this->obtenerParametrosPorTema(
+        return $this->parametroTemaRepository->obtenerPorTema(
             config('inventario.temas.tipos_producto', 'TIPOS DE PRODUCTO')
         );
     }
@@ -59,7 +63,7 @@ class FormOptionsService implements FormOptionsServiceInterface
      */
     public function obtenerUnidadesMedida()
     {
-        return $this->obtenerParametrosPorTema(
+        return $this->parametroTemaRepository->obtenerPorTema(
             config('inventario.temas.unidades_medida', 'UNIDADES DE MEDIDA')
         );
     }
@@ -72,7 +76,7 @@ class FormOptionsService implements FormOptionsServiceInterface
      */
     public function obtenerEstados(string $tema)
     {
-        return $this->obtenerParametrosPorTema($tema);
+        return $this->parametroTemaRepository->obtenerPorTema($tema);
     }
 
     /**
@@ -81,7 +85,7 @@ class FormOptionsService implements FormOptionsServiceInterface
      */
     public function obtenerCategorias()
     {
-        return $this->obtenerParametrosPorTema(
+        return $this->parametroTemaRepository->obtenerPorTema(
             config('inventario.temas.categorias', 'CATEGORIAS')
         );
     }
@@ -92,7 +96,7 @@ class FormOptionsService implements FormOptionsServiceInterface
      */
     public function obtenerMarcas()
     {
-        return $this->obtenerParametrosPorTema(
+        return $this->parametroTemaRepository->obtenerPorTema(
             config('inventario.temas.marcas', 'MARCAS')
         );
     }
@@ -103,7 +107,7 @@ class FormOptionsService implements FormOptionsServiceInterface
      */
     public function obtenerTiposOrden()
     {
-        return $this->obtenerParametrosPorTema(
+        return $this->parametroTemaRepository->obtenerPorTema(
             config('inventario.temas.tipos_orden', 'TIPOS DE ORDEN')
         );
     }
@@ -114,7 +118,7 @@ class FormOptionsService implements FormOptionsServiceInterface
      */
     public function obtenerEstadosOrden()
     {
-        return $this->obtenerParametrosPorTema(
+        return $this->parametroTemaRepository->obtenerPorTema(
             config('inventario.temas.estados_orden', 'ESTADOS DE ORDEN')
         );
     }
@@ -141,56 +145,7 @@ class FormOptionsService implements FormOptionsServiceInterface
     {
         $temaEstados = $temaEstados ?? config('inventario.temas.estados_orden', 'ESTADOS DE ORDEN');
 
-        $tema = Tema::where('name', $temaEstados)->first();
-
-        if (!$tema) {
-            return null;
-        }
-
-        // Buscar el parámetro primero
-        $parametro = \App\Models\Parametro::where('name', $nombreEstado)->first();
-        
-        if (!$parametro) {
-            return null;
-        }
-
-        // Buscar el ParametroTema que relaciona el parámetro con el tema
-        return \App\Models\ParametroTema::where('tema_id', $tema->id)
-            ->where('parametro_id', $parametro->id)
-            ->where('status', 1)
-            ->first();
+        return $this->parametroTemaRepository->obtenerEstadoPorNombre($nombreEstado, $temaEstados);
     }
-
-    /**
-     * Obtiene parámetros por tema
-     * @param string $nombreTema
-     * @return \Illuminate\Support\Collection
-     */
-    private function obtenerParametrosPorTema(string $nombreTema)
-    {
-        $tema = Tema::where('name', $nombreTema)->first();
-
-        if (!$tema) {
-            return collect([]);
-        }
-
-        return $tema->parametros()
-            ->wherePivot('status', 1)
-            ->get()
-            ->map(function ($parametro) {
-                $objeto = new \stdClass();
-                $objeto->id = $parametro->id;
-                $objeto->name = $parametro->name;
-                $objeto->status = $parametro->status;
-                // Crear objeto parametro con los datos necesarios para evitar problemas de serialización
-                $objetoParametro = new \stdClass();
-                $objetoParametro->id = $parametro->id;
-                $objetoParametro->name = $parametro->name;
-                $objetoParametro->status = $parametro->status;
-                $objeto->parametro = $objetoParametro;
-                return $objeto;
-            });
-    }
-
 }
 

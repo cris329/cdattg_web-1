@@ -64,6 +64,11 @@ class AppServiceProvider extends ServiceProvider
             \App\Inventario\Repositories\Orden\DetalleOrdenRepository::class
         );
 
+        $this->app->bind(
+            \App\Inventario\Interfaces\Repositories\ParametroTema\ParametroTemaRepositoryInterface::class,
+            \App\Inventario\Repositories\ParametroTema\ParametroTemaRepository::class
+        );
+
         // Bindings de servicios de Inventario (SOLID - DIP)
         $this->app->bind(
             \App\Inventario\Interfaces\Services\UserRepositoryInterface::class,
