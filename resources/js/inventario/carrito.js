@@ -187,25 +187,9 @@ function setupNavigationListener() {
     }, 500);
 
     // Observar cambios en el DOM que puedan indicar navegación
-    const domObserver = new MutationObserver((mutations) => {
-        const hasSignificantChanges = mutations.some(mutation => {
-            return mutation.addedNodes.length > 0 || 
-                   mutation.removedNodes.length > 0;
-        });
-
-        if (hasSignificantChanges && isCartPage()) {
-            // Verificar si el contenedor del carrito está presente
-            const cartContainer = document.getElementById('cart-items-container');
-            if (cartContainer) {
-                handleNavigation();
-            }
-        }
-    });
-
-    // Observar cambios en el body
-    domObserver.observe(document.body, {
-        childList: true,
-        subtree: true
+    // Deshabilitado en carrito para evitar re-renderizados constantes y parpadeos en los botones
+    const domObserver = new MutationObserver(() => {
+        // Intencionalmente vacío
     });
 
     // Limpiar intervalo cuando se descargue la página
