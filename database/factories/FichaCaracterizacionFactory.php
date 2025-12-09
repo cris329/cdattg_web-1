@@ -199,20 +199,24 @@ class FichaCaracterizacionFactory extends Factory
             return null;
         }
 
+        $result = null;
+        
         try {
             $id = $obtenerFn();
             if ($id) {
-                return $id;
+                $result = $id;
+            } else {
+                $result = $crearFn();
             }
-            
-            return $crearFn();
         } catch (\Exception $e) {
             try {
-                return $crearFn();
+                $result = $crearFn();
             } catch (\Exception $e2) {
-                return null;
+                $result = null;
             }
         }
+        
+        return $result;
     }
 
     /**

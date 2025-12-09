@@ -22,91 +22,133 @@ trait SeedsComplementariosDatabase
      */
     protected function seedComplementariosDatabaseIfNeeded(): void
     {
-        // En cualquier entorno que no sea producción, verificar si los datos base existen
-        // Si no existen o están incompletos, ejecutar seeders
-        if (app()->environment('production')) {
-            // En producción, solo ejecutar si no hay datos
-            try {
-                if (Schema::hasTable('parametros') && \App\Models\Parametro::count() > 0) {
-                    return;
-                }
-            } catch (\Exception $e) {
-                // Si hay error, ejecutar seeders
-            }
-        } else {
-            // En desarrollo/testing, verificar datos críticos
-            try {
-                // Verificar si tema_id=3 existe (GENERO)
-                $temaGeneroExists = Schema::hasTable('temas') && 
-                    \App\Models\Tema::where('id', 3)->exists();
-                
-                // Verificar si hay parametros_temas para genero
-                $parametroTemaExists = Schema::hasTable('parametros_temas') &&
-                    \App\Models\ParametroTema::where('tema_id', 3)
-                        ->whereIn('parametro_id', [9, 10, 11])
-                        ->exists();
-                
-                if ($temaGeneroExists && $parametroTemaExists) {
-                    // Datos críticos existen, no ejecutar seeders
-                    return;
-                }
-            } catch (\Exception $e) {
-                // Si hay error, ejecutar seeders
-            }
+        if ($this->shouldSkipSeeding()) {
+            return;
         }
-        // Ejecutar seeders con manejo robusto de deadlocks para SQLite
-        // SQLite no maneja bien la concurrencia, así que usamos un enfoque más conservador
+
+        $this->executeSeedersWithRetry();
+    }
+
+    /**
+     * Determina si se debe omitir el seeding basado en el entorno y datos existentes.
+     */
+    private function shouldSkipSeeding(): bool
+    {
+        if (app()->environment('production')) {
+            return $this->shouldSkipSeedingInProduction();
+        }
+
+        return $this->shouldSkipSeedingInDevelopment();
+    }
+
+    /**
+     * Verifica si se debe omitir el seeding en entorno de producción.
+     */
+    private function shouldSkipSeedingInProduction(): bool
+    {
+        try {
+            return Schema::hasTable('parametros') && \App\Models\Parametro::count() > 0;
+        } catch (\Exception $e) {
+            return false;
+        }
+    }
+
+    /**
+     * Verifica si se debe omitir el seeding en entorno de desarrollo/testing.
+     */
+    private function shouldSkipSeedingInDevelopment(): bool
+    {
+        try {
+            $temaGeneroExists = Schema::hasTable('temas') && 
+                \App\Models\Tema::where('id', 3)->exists();
+            
+            $parametroTemaExists = Schema::hasTable('parametros_temas') &&
+                \App\Models\ParametroTema::where('tema_id', 3)
+                    ->whereIn('parametro_id', [9, 10, 11])
+                    ->exists();
+            
+            return $temaGeneroExists && $parametroTemaExists;
+        } catch (\Exception $e) {
+            return false;
+        }
+    }
+
+    /**
+     * Ejecuta los seeders con manejo de reintentos para deadlocks.
+     */
+    private function executeSeedersWithRetry(): void
+    {
         $maxRetries = 3;
         $retryCount = 0;
         $seeded = false;
-        
+
         while ($retryCount < $maxRetries && !$seeded) {
             try {
-                \Illuminate\Support\Facades\DB::beginTransaction();
-                
-                $this->seed([
-                    \Database\Seeders\RolePermissionSeeder::class,
-                    \Database\Seeders\ParametroSeeder::class,
-                    \Database\Seeders\TemaSeeder::class,
-                    \Database\Seeders\PaisSeeder::class,
-                    \Database\Seeders\DepartamentoSeeder::class,
-                    \Database\Seeders\MunicipioSeeder::class,
-                    \Database\Seeders\PersonaSeeder::class,
-                    \Database\Seeders\UsersSeeder::class,
-                    \Database\Seeders\RegionalSeeder::class,
-                    \Database\Seeders\CentroFormacionSeeder::class,
-                    \Database\Seeders\SedeSeeder::class,
-                    \Database\Seeders\BloqueSeeder::class,
-                    \Database\Seeders\PisoSeeder::class,
-                    \Database\Seeders\AmbienteSeeder::class,
-                    \Database\Seeders\JornadaFormacionSeeder::class,
-                ]);
-                
-                \Illuminate\Support\Facades\DB::commit();
+                $this->executeSeedersTransaction();
                 $seeded = true;
             } catch (\Illuminate\Database\QueryException $e) {
-                \Illuminate\Support\Facades\DB::rollBack();
-                
-                // Si hay un deadlock, esperar y reintentar
-                if (str_contains($e->getMessage(), 'database is locked') || 
-                    str_contains($e->getMessage(), 'deadlock') ||
-                    str_contains($e->getMessage(), 'locked')) {
-                    $retryCount++;
-                    if ($retryCount < $maxRetries) {
-                        usleep(500000 * $retryCount); // Esperar progresivamente más tiempo
-                    } else {
-                        // Si falla después de todos los reintentos, continuar sin seeders
-                        // Los tests que los necesiten fallarán, pero al menos no bloquearemos todo
-                        break;
-                    }
+                if ($this->isDeadlockException($e)) {
+                    $retryCount = $this->handleDeadlockRetry($e, $retryCount, $maxRetries);
                 } else {
                     throw $e;
                 }
             } catch (\Exception $e) {
                 \Illuminate\Support\Facades\DB::rollBack();
-                // Para otros errores, no reintentar
                 break;
             }
         }
+    }
+
+    /**
+     * Ejecuta los seeders dentro de una transacción.
+     */
+    private function executeSeedersTransaction(): void
+    {
+        \Illuminate\Support\Facades\DB::beginTransaction();
+
+        $this->seed([
+            \Database\Seeders\RolePermissionSeeder::class,
+            \Database\Seeders\ParametroSeeder::class,
+            \Database\Seeders\TemaSeeder::class,
+            \Database\Seeders\PaisSeeder::class,
+            \Database\Seeders\DepartamentoSeeder::class,
+            \Database\Seeders\MunicipioSeeder::class,
+            \Database\Seeders\PersonaSeeder::class,
+            \Database\Seeders\UsersSeeder::class,
+            \Database\Seeders\RegionalSeeder::class,
+            \Database\Seeders\CentroFormacionSeeder::class,
+            \Database\Seeders\SedeSeeder::class,
+            \Database\Seeders\BloqueSeeder::class,
+            \Database\Seeders\PisoSeeder::class,
+            \Database\Seeders\AmbienteSeeder::class,
+            \Database\Seeders\JornadaFormacionSeeder::class,
+        ]);
+
+        \Illuminate\Support\Facades\DB::commit();
+    }
+
+    /**
+     * Verifica si una excepción es un deadlock.
+     */
+    private function isDeadlockException(\Illuminate\Database\QueryException $e): bool
+    {
+        return str_contains($e->getMessage(), 'database is locked') || 
+               str_contains($e->getMessage(), 'deadlock') ||
+               str_contains($e->getMessage(), 'locked');
+    }
+
+    /**
+     * Maneja el reintento para deadlocks.
+     */
+    private function handleDeadlockRetry(\Illuminate\Database\QueryException $e, int $retryCount, int $maxRetries): int
+    {
+        \Illuminate\Support\Facades\DB::rollBack();
+        
+        $retryCount++;
+        if ($retryCount < $maxRetries) {
+            usleep(500000 * $retryCount);
+        }
+        
+        return $retryCount;
     }
 }

@@ -60,9 +60,9 @@
     @if($delete && $deleteUrl)
         @if($deletePermission)
             @can($deletePermission)
-                <button type="button" 
-                        class="btn btn-light btn-sm" 
-                        data-toggle="tooltip" 
+                <button type="button"
+                        class="btn btn-light btn-sm"
+                        data-toggle="tooltip"
                         title="{{ $deleteTitle }}"
                         data-action="delete"
                         data-id="{{ $modelId }}">
@@ -70,9 +70,9 @@
                 </button>
             @endcan
         @else
-            <button type="button" 
-                    class="btn btn-light btn-sm" 
-                    data-toggle="tooltip" 
+            <button type="button"
+                    class="btn btn-light btn-sm"
+                    data-toggle="tooltip"
                     title="{{ $deleteTitle }}"
                     data-action="delete"
                     data-id="{{ $modelId }}">
