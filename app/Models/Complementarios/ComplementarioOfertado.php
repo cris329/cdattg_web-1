@@ -178,9 +178,9 @@ class ComplementarioOfertado extends Model
         $estadoNombre = $this->estado_label;
         
         return match ($estadoNombre) {
-            'Sin Oferta' => 'bg-success',
-            'Con Oferta' => 'bg-warning',
-            'Cupos Llenos' => 'bg-danger',
+            'SIN OFERTA' => 'bg-success',
+            'CON OFERTA' => 'bg-warning',
+            'CUPOS LLENOS' => 'bg-danger',
             default => 'bg-secondary',
         };
     }

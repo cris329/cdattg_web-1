@@ -78,8 +78,8 @@ class ComplementarioService
     public function enriquecerPrograma(ComplementarioOfertado $programa): ComplementarioOfertado
     {
         $programa->icono = $this->getIconoForPrograma($programa->nombre);
-        $programa->badge_class = $this->getBadgeClassForEstado($programa->estado);
-        $programa->estado_label = $this->getEstadoLabel($programa->estado);
+        // Usar los accessors del modelo que ya manejan el nuevo sistema de estados
+        // $programa->badge_class y $programa->estado_label ya están definidos en el modelo
         $programa->modalidad_nombre = $programa->modalidad->parametro->name ?? null;
         $programa->jornada_nombre = $programa->jornada->jornada ?? null;
 
