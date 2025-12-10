@@ -49,7 +49,7 @@ class TemaSeeder extends Seeder
             [
                 'id'       => 1,
                 'name'     => 'ESTADOS',
-                'paramIds' => [1, 2],
+                'paramIds' => [1, 2, 277, 278, 279],
             ],
             [
                 'id'       => 2,

@@ -20,6 +20,9 @@ class ParametroSeeder extends Seeder
         'estados' => [
             1 => 'ACTIVO',
             2 => 'INACTIVO',
+            277 => 'SIN OFERTA',
+            278 => 'CON OFERTA',
+            279 => 'CUPOS LLENOS',
         ],
         'tipos_documento' => [
             3 => 'CÉDULA DE CIUDADANÍA',
