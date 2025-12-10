@@ -93,7 +93,7 @@ class SofiaValidationService
         return AspiranteComplementario::with('persona')
             ->where('complementario_id', $complementarioId)
             ->whereHas('persona', function($query) {
-                $query->whereIn('estado_sofia', [0, 2]);
+                $query->whereIn('estado_sofia', [277, 279]); // NO REGISTRADO (277) o REQUIERE CAMBIO (279)
             })
             ->get();
     }
@@ -141,9 +141,9 @@ class SofiaValidationService
     private function getAuditResult(int $estado): string
     {
         return match($estado) {
-            1 => 'exitoso',
-            0 => 'advertencia',
-            2 => 'exitoso',
+            278 => 'exitoso', // REGISTRADO
+            277 => 'advertencia', // NO REGISTRADO
+            279 => 'exitoso', // REQUIERE CAMBIO
             default => 'advertencia'
         };
     }
@@ -154,7 +154,8 @@ class SofiaValidationService
     private function updateProgress(?SofiaValidationProgress $progress, int $nuevoEstado): void
     {
         if ($progress) {
-            $isSuccessful = in_array($nuevoEstado, [0, 1, 2], true);
+            // Cualquier estado válido (277, 278, 279) se considera exitoso
+            $isSuccessful = in_array($nuevoEstado, [277, 278, 279], true);
             $progress->incrementProcessed($isSuccessful);
         }
     }

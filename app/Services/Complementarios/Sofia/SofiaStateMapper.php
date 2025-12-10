@@ -6,9 +6,10 @@ use Illuminate\Support\Facades\Log;
 
 class SofiaStateMapper
 {
-    private const ESTADO_NO_REGISTRADO = 0;
-    private const ESTADO_REGISTRADO = 1;
-    private const ESTADO_REQUIERE_CAMBIO = 2;
+    // IDs de parámetros según ParametroSeeder
+    private const ESTADO_NO_REGISTRADO = 277;
+    private const ESTADO_REGISTRADO = 278;
+    private const ESTADO_REQUIERE_CAMBIO = 279;
 
     private const RESULTADO_ERROR = 'ERROR';
     private const RESULTADO_YA_EXISTE = 'YA_EXISTE';
@@ -38,7 +39,7 @@ class SofiaStateMapper
      * Mapear resultado de validación a estado Sofia
      *
      * @param string $resultado Resultado de la validación
-     * @return int Estado Sofia (0: No registrado, 1: Registrado, 2: Requiere cambio)
+     * @return int Estado Sofia (277: No registrado, 278: Registrado, 279: Requiere cambio)
      */
     public function mapToState(string $resultado): int
     {

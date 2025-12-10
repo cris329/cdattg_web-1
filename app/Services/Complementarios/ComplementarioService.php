@@ -79,7 +79,17 @@ class ComplementarioService
     {
         $programa->icono = $this->getIconoForPrograma($programa->nombre);
         $programa->badge_class = $this->getBadgeClassForEstado($programa->estado);
-        $programa->estado_label = $this->getEstadoLabel($programa->estado);
+        
+        // Usar el accessor del modelo si la relación estado está cargada, 
+        // de lo contrario calcular basándose en el accessor estado
+        if ($programa->relationLoaded('estado') && $programa->estado) {
+            // El accessor estado_label del modelo ya maneja la relación cargada
+            $programa->estado_label = $programa->estado_label;
+        } else {
+            // Fallback: calcular basándose en el accessor estado
+            $programa->estado_label = $this->getEstadoLabel($programa->estado);
+        }
+        
         $programa->modalidad_nombre = $programa->modalidad->parametro->name ?? null;
         $programa->jornada_nombre = $programa->jornada->jornada ?? null;
 

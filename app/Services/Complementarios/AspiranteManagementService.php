@@ -79,7 +79,7 @@ class AspiranteManagementService
         if (!app()->environment('testing')) {
             try {
                 $existingProgress = \App\Models\Complementarios\SofiaValidationProgress::where('complementario_id', $programaId)
-                    ->whereIn('status', ['pending', 'processing'])
+                    ->whereIn('status', [284, 285]) // PENDING (284) o PROCESSING (285)
                     ->first();
             } catch (\Exception $e) {
                 // Si hay un error, continuar sin progreso

@@ -61,7 +61,7 @@ class AspiranteComplementarioRepository
             ->where('estado', '!=', 4) // Excluir rechazados
             ->whereHas('persona', function ($query) {
                 $query->where('condocumento', 1)
-                      ->where('estado_sofia', '!=', 0); // Excluir no registrados en SenasofiaPlus
+                      ->where('estado_sofia', '!=', 277); // Excluir no registrados en SenasofiaPlus (277 = NO REGISTRADO)
             })
             ->get()
             ->sortBy(function ($aspirante) {
@@ -88,7 +88,7 @@ class AspiranteComplementarioRepository
         $noRegistradosSofia = AspiranteComplementario::where('complementario_id', $programaId)
             ->where('estado', '!=', 4)
             ->whereHas('persona', function ($query) {
-                $query->where('estado_sofia', 0);
+                $query->where('estado_sofia', 277); // NO REGISTRADO = 277
             })
             ->count();
 
@@ -96,7 +96,7 @@ class AspiranteComplementarioRepository
             ->where('estado', '!=', 4)
             ->whereHas('persona', function ($query) {
                 $query->where('condocumento', 1)
-                      ->where('estado_sofia', '!=', 0);
+                      ->where('estado_sofia', '!=', 277); // Excluir NO REGISTRADO (277)
             })
             ->count();
 
