@@ -22,7 +22,6 @@ class ValidarSofiaRequest extends FormRequest
      */
     public function rules(): array
     {
-        $complementarioId = $this->route('complementarioId') ?? $this->route('programa');
 
         return [
             'complementario_id' => [

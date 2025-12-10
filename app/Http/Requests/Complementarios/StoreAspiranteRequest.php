@@ -40,7 +40,7 @@ class StoreAspiranteRequest extends FormRequest
 
         // Solo agregar validación de inscripción duplicada si hay un programa en la ruta
         if ($programaId !== null) {
-            $rules['numero_documento'][] = function ($attribute, $value, $fail) use ($programaId) {
+            $rules['numero_documento'][] = function ($value, $fail) use ($programaId) {
                 $persona = \App\Models\Persona::where('numero_documento', $value)->first();
                 if (!$persona) {
                     // No validar existencia aquí, dejar que el servicio lo maneje
