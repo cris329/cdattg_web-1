@@ -49,7 +49,7 @@ class TemaSeeder extends Seeder
             [
                 'id'       => 1,
                 'name'     => 'ESTADOS',
-                'paramIds' => [1, 2, 277, 278, 279],
+                'paramIds' => array_merge(range(1, 2), range(288, 290)),
             ],
             [
                 'id'       => 2,
