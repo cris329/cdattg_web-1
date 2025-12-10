@@ -9,6 +9,7 @@ use App\Inventario\Services\Orden\OrdenService;
 use App\Inventario\Interfaces\Repositories\Orden\OrdenRepositoryInterface;
 use App\Inventario\Interfaces\Repositories\Orden\DetalleOrdenRepositoryInterface;
 use App\Inventario\Interfaces\Repositories\Producto\ProductoRepositoryInterface;
+use App\Inventario\Interfaces\Repositories\ParametroTema\ParametroTemaRepositoryInterface;
 use App\Inventario\Interfaces\Services\NotificationServiceInterface;
 use App\Inventario\Interfaces\Services\TransactionServiceInterface;
 use App\Inventario\Interfaces\Services\StockValidatorServiceInterface;
@@ -27,6 +28,7 @@ class OrdenServiceTest extends TestCase
     protected $mockOrdenRepository;
     protected $mockDetalleOrdenRepository;
     protected $mockProductoRepository;
+    protected $mockParametroTemaRepository;
     protected $mockNotificationService;
     protected $mockTransactionService;
     protected $mockStockValidator;
@@ -39,6 +41,7 @@ class OrdenServiceTest extends TestCase
         $this->mockOrdenRepository = Mockery::mock(OrdenRepositoryInterface::class);
         $this->mockDetalleOrdenRepository = Mockery::mock(DetalleOrdenRepositoryInterface::class);
         $this->mockProductoRepository = Mockery::mock(ProductoRepositoryInterface::class);
+        $this->mockParametroTemaRepository = Mockery::mock(ParametroTemaRepositoryInterface::class);
         $this->mockNotificationService = Mockery::mock(NotificationServiceInterface::class);
         $this->mockTransactionService = Mockery::mock(TransactionServiceInterface::class);
         $this->mockStockValidator = Mockery::mock(StockValidatorServiceInterface::class);
@@ -48,6 +51,7 @@ class OrdenServiceTest extends TestCase
             $this->mockOrdenRepository,
             $this->mockDetalleOrdenRepository,
             $this->mockProductoRepository,
+            $this->mockParametroTemaRepository,
             $this->mockNotificationService,
             $this->mockTransactionService,
             $this->mockStockValidator

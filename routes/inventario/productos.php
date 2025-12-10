@@ -11,7 +11,7 @@ Route::prefix('inventario')
         Route::get('productos/catalogo', [ProductoController::class, 'catalogo'])
             ->name('productos.catalogo');
 
-        Route::get('productos/index', [ProductoController::class, 'index'])
+        Route::get('productos', [ProductoController::class, 'index'])
             ->name('productos.index');
         
         Route::get('productos/buscar', [ProductoController::class, 'buscar'])
@@ -24,7 +24,7 @@ Route::prefix('inventario')
             ->name('productos.exportar-pdf');
         
 
-        Route::resource('productos', ProductoController::class);
+        Route::resource('productos', ProductoController::class)->except(['index']);
         
         Route::get('productos/detalles/{id}', [ProductoController::class, 'detalles'])
             ->name('productos.detalles');

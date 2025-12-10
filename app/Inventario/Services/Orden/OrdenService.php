@@ -9,9 +9,11 @@ use App\Models\Inventario\DetalleOrden;
 use App\Inventario\Interfaces\Repositories\Orden\OrdenRepositoryInterface;
 use App\Inventario\Interfaces\Repositories\Orden\DetalleOrdenRepositoryInterface;
 use App\Inventario\Interfaces\Repositories\Producto\ProductoRepositoryInterface;
+use App\Inventario\Interfaces\Repositories\ParametroTema\ParametroTemaRepositoryInterface;
 use App\Inventario\Interfaces\Services\NotificationServiceInterface;
 use App\Inventario\Interfaces\Services\TransactionServiceInterface;
 use App\Inventario\Interfaces\Services\StockValidatorServiceInterface;
+use App\Models\ParametroTema;
 use App\Models\Tema;
 use App\Models\Parametro;
 use App\Exceptions\OrdenException;
@@ -26,6 +28,7 @@ class OrdenService
     protected OrdenRepositoryInterface $ordenRepository;
     protected DetalleOrdenRepositoryInterface $detalleOrdenRepository;
     protected ProductoRepositoryInterface $productoRepository;
+    protected ParametroTemaRepositoryInterface $parametroTemaRepository;
     protected NotificationServiceInterface $notificationService;
     protected TransactionServiceInterface $transactionService;
     protected StockValidatorServiceInterface $stockValidator;
@@ -34,6 +37,7 @@ class OrdenService
         OrdenRepositoryInterface $ordenRepository,
         DetalleOrdenRepositoryInterface $detalleOrdenRepository,
         ProductoRepositoryInterface $productoRepository,
+        ParametroTemaRepositoryInterface $parametroTemaRepository,
         NotificationServiceInterface $notificationService,
         TransactionServiceInterface $transactionService,
         StockValidatorServiceInterface $stockValidator
@@ -41,6 +45,7 @@ class OrdenService
         $this->ordenRepository = $ordenRepository;
         $this->detalleOrdenRepository = $detalleOrdenRepository;
         $this->productoRepository = $productoRepository;
+        $this->parametroTemaRepository = $parametroTemaRepository;
         $this->notificationService = $notificationService;
         $this->transactionService = $transactionService;
         $this->stockValidator = $stockValidator;
@@ -198,14 +203,13 @@ class OrdenService
     }
 
     /**
-     * Obtiene parámetro de tipo de orden
-     * Uso directo del modelo Tema/Parametro (clase externa, sin SOLID)
+     * Obtiene el tipo de orden como ParametroTema válido
      *
      * @param string $codigo
-     * @return Parametro
+     * @return ParametroTema
      * @throws OrdenException
      */
-    public function obtenerParametroTipoOrden(string $codigo)
+    public function obtenerParametroTipoOrden(string $codigo): ParametroTema
     {
         $tema = Tema::where('name', 'TIPOS DE ORDEN')->first();
         if (!$tema) {
@@ -225,7 +229,13 @@ class OrdenService
             throw new OrdenException("Tipo de orden '{$codigo}' no encontrado. Verifique los parámetros del sistema.");
         }
 
-        return $parametro;
+        $parametroTema = $this->parametroTemaRepository->obtenerPorTemaYParametro($tema->id, $parametro->id);
+
+        if (!$parametroTema) {
+            throw new OrdenException("Tipo de orden '{$codigo}' no está asociado correctamente al tema 'TIPOS DE ORDEN'.");
+        }
+
+        return $parametroTema;
     }
 
     /**
@@ -237,22 +247,7 @@ class OrdenService
      */
     public function obtenerEstadoEnEspera()
     {
-        $tema = Tema::where('name', self::THEME_ORDER_STATES)->first();
-        if (!$tema) {
-            throw new OrdenException("Tema 'ESTADOS DE ORDEN' no encontrado.");
-        }
-
-        // Buscar el parámetro primero
-        $parametro = \App\Models\Parametro::where('name', self::STATUS_EN_ESPERA)->first();
-        if (!$parametro) {
-            throw new OrdenException("Parámetro 'EN ESPERA' no encontrado.");
-        }
-
-        // Buscar el ParametroTema que relaciona el parámetro con el tema
-        $parametroTema = \App\Models\ParametroTema::where('tema_id', $tema->id)
-            ->where('parametro_id', $parametro->id)
-            ->where('status', 1)
-            ->first();
+        $parametroTema = $this->parametroTemaRepository->obtenerEstadoPorNombre(self::STATUS_EN_ESPERA, self::THEME_ORDER_STATES);
 
         if (!$parametroTema) {
             throw new OrdenException("Estado 'EN ESPERA' no encontrado en 'ESTADOS DE ORDEN'. Verifique los parámetros del sistema.");
