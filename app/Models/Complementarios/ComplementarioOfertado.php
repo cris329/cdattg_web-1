@@ -41,6 +41,13 @@ class ComplementarioOfertado extends Model
         'ambiente_id',
     ];
 
+    /**
+     * Valores por defecto para los atributos
+     */
+    protected $attributes = [
+        'estado_id' => 3, // ID de parametros_temas para "Sin Oferta" (parametro_id = 277)
+    ];
+
     public function modalidad()
     {
         return $this->belongsTo(ParametroTema::class, 'modalidad_id');
@@ -133,32 +140,15 @@ class ComplementarioOfertado extends Model
         
         // Intentar obtener el nombre del parámetro a través de la relación
         try {
-            $nombre = null;
-            
-            // Primero intentar usar la relación ya cargada
-            if ($this->relationLoaded('estado') && $this->estado) {
-                // Cargar el parámetro si no está cargado
-                if (!$this->estado->relationLoaded('parametro')) {
-                    $this->estado->load('parametro');
-                }
-                if ($this->estado->parametro) {
-                    $nombre = $this->estado->parametro->name;
-                }
-            }
-            
-            // Si la relación no está cargada, hacer una consulta
-            if (!$nombre) {
-                $estado = $this->estado()->with('parametro')->first();
-                if ($estado && $estado->parametro) {
-                    $nombre = $estado->parametro->name;
-                }
-            }
-            
-            if ($nombre) {
+            // Usar una consulta directa para evitar referencia circular
+            $parametroTema = \App\Models\ParametroTema::with('parametro')->find($estadoId);
+            if ($parametroTema && $parametroTema->parametro) {
+                $nombre = strtoupper(trim($parametroTema->parametro->name));
+                
                 return match ($nombre) {
-                    'Sin Oferta' => 0,
-                    'Con Oferta' => 1,
-                    'Cupos Llenos' => 2,
+                    'SIN OFERTA' => 0,
+                    'CON OFERTA' => 1,
+                    'CUPOS LLENOS' => 2,
                     default => 0,
                 };
             }
@@ -208,9 +198,9 @@ class ComplementarioOfertado extends Model
         $estadoNombre = $this->estado_label;
         
         return match ($estadoNombre) {
-            'Sin Oferta' => 'bg-success',
-            'Con Oferta' => 'bg-warning',
-            'Cupos Llenos' => 'bg-danger',
+            'SIN OFERTA' => 'bg-success',
+            'CON OFERTA' => 'bg-warning',
+            'CUPOS LLENOS' => 'bg-danger',
             default => 'bg-secondary',
         };
     }

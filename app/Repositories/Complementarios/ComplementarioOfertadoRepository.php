@@ -27,12 +27,18 @@ class ComplementarioOfertadoRepository
     {
         $nombreEstado = $this->getEstadoNombreByLegacyValue($estadoLegacy);
         
-        // Buscar el ParametroTema correspondiente al estado
+        // Buscar el ParametroTema correspondiente al estado en el tema ESTADOS (ID 1)
         try {
-            $temaEstado = \App\Models\Tema::where('name', 'ESTADO_PROGRAMA_COMPLEMENTARIO')->first();
+            $temaEstado = \App\Models\Tema::find(1); // Tema "ESTADOS"
             
             if ($temaEstado) {
-                $parametro = \App\Models\Parametro::where('name', $nombreEstado)->first();
+                // Buscar parámetro por nombre (los estados están en mayúsculas en la BD)
+                $parametro = \App\Models\Parametro::where('name', strtoupper($nombreEstado))->first();
+                
+                if (!$parametro) {
+                    // Intentar con el nombre exacto
+                    $parametro = \App\Models\Parametro::where('name', $nombreEstado)->first();
+                }
                 
                 if ($parametro) {
                     $parametroTema = \App\Models\ParametroTema::where('tema_id', $temaEstado->id)
