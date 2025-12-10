@@ -74,10 +74,10 @@ class SofiaValidationProgress extends Model
     public function getStatusLabelAttribute()
     {
         return match($this->status) {
-            'pending' => 'Pendiente',
-            'processing' => 'Procesando',
-            'completed' => 'Completado',
-            'failed' => 'Fallido',
+            284 => 'Pendiente', // PENDING
+            285 => 'Procesando', // PROCESSING
+            286 => 'Completado', // COMPLETED
+            287 => 'Fallido', // FAILED
             default => 'Desconocido'
         };
     }
@@ -88,7 +88,7 @@ class SofiaValidationProgress extends Model
     public function markAsStarted()
     {
         $this->update([
-            'status' => 'processing',
+            'status' => 285, // PROCESSING = 285 según ParametroSeeder
             'started_at' => now(),
         ]);
     }
@@ -99,7 +99,7 @@ class SofiaValidationProgress extends Model
     public function markAsCompleted()
     {
         $this->update([
-            'status' => 'completed',
+            'status' => 286, // COMPLETED = 286 según ParametroSeeder
             'completed_at' => now(),
         ]);
     }
@@ -110,7 +110,7 @@ class SofiaValidationProgress extends Model
     public function markAsFailed($errors = [])
     {
         $this->update([
-            'status' => 'failed',
+            'status' => 287, // FAILED = 287 según ParametroSeeder
             'errors' => $errors,
             'completed_at' => now(),
         ]);

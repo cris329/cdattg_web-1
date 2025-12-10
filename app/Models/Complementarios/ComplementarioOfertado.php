@@ -133,10 +133,28 @@ class ComplementarioOfertado extends Model
         
         // Intentar obtener el nombre del parámetro a través de la relación
         try {
-            $estado = $this->estado()->with('parametro')->first();
-            if ($estado && $estado->parametro) {
-                $nombre = $estado->parametro->name;
-                
+            $nombre = null;
+            
+            // Primero intentar usar la relación ya cargada
+            if ($this->relationLoaded('estado') && $this->estado) {
+                // Cargar el parámetro si no está cargado
+                if (!$this->estado->relationLoaded('parametro')) {
+                    $this->estado->load('parametro');
+                }
+                if ($this->estado->parametro) {
+                    $nombre = $this->estado->parametro->name;
+                }
+            }
+            
+            // Si la relación no está cargada, hacer una consulta
+            if (!$nombre) {
+                $estado = $this->estado()->with('parametro')->first();
+                if ($estado && $estado->parametro) {
+                    $nombre = $estado->parametro->name;
+                }
+            }
+            
+            if ($nombre) {
                 return match ($nombre) {
                     'Sin Oferta' => 0,
                     'Con Oferta' => 1,
@@ -162,6 +180,18 @@ class ComplementarioOfertado extends Model
         
         // Intentar obtener el nombre del parámetro a través de la relación
         try {
+            // Primero intentar usar la relación ya cargada
+            if ($this->relationLoaded('estado') && $this->estado) {
+                // Cargar el parámetro si no está cargado
+                if (!$this->estado->relationLoaded('parametro')) {
+                    $this->estado->load('parametro');
+                }
+                if ($this->estado->parametro) {
+                    return $this->estado->parametro->name;
+                }
+            }
+            
+            // Si la relación no está cargada, hacer una consulta
             $estado = $this->estado()->with('parametro')->first();
             if ($estado && $estado->parametro) {
                 return $estado->parametro->name;
