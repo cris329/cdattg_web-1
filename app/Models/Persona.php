@@ -308,33 +308,19 @@ class Persona extends Model
      */
     public function getEstadoSofiaLabelAttribute()
     {
-        if (!$this->estado_sofia) {
-            return 'Desconocido';
-        }
-
-        $parametro = $this->estadoSofiaParametro;
+        $label = 'Desconocido';
         
-        if (!$parametro) {
-            return 'Desconocido';
+        if ($this->estado_sofia && 
+            ($parametro = $this->estadoSofiaParametro) &&
+            ($temaEstados = Tema::where('name', 'ESTADOS SOFIA')->first()) &&
+            ($parametroTema = ParametroTema::where('tema_id', $temaEstados->id)
+                ->where('parametro_id', $parametro->id)
+                ->where('status', 1)
+                ->first())) {
+            $label = $parametro->name;
         }
-
-        // Verificar que el parámetro esté relacionado con el tema "ESTADOS SOFIA"
-        $temaEstados = Tema::where('name', 'ESTADOS SOFIA')->first();
         
-        if (!$temaEstados) {
-            return 'Desconocido';
-        }
-
-        $parametroTema = ParametroTema::where('tema_id', $temaEstados->id)
-            ->where('parametro_id', $parametro->id)
-            ->where('status', 1)
-            ->first();
-
-        if (!$parametroTema) {
-            return 'Desconocido';
-        }
-
-        return $parametro->name;
+        return $label;
     }
 
     /**
@@ -345,38 +331,24 @@ class Persona extends Model
      */
     public function getEstadoSofiaBadgeClassAttribute()
     {
-        if (!$this->estado_sofia) {
-            return 'bg-dark';
-        }
-
-        $parametro = $this->estadoSofiaParametro;
+        $badgeClass = 'bg-dark';
         
-        if (!$parametro) {
-            return 'bg-dark';
+        if ($this->estado_sofia && 
+            ($parametro = $this->estadoSofiaParametro) &&
+            ($temaEstados = Tema::where('name', 'ESTADOS SOFIA')->first()) &&
+            ($parametroTema = ParametroTema::where('tema_id', $temaEstados->id)
+                ->where('parametro_id', $parametro->id)
+                ->where('status', 1)
+                ->first())) {
+            $badgeClass = match (strtoupper($parametro->name)) {
+                'NO REGISTRADO' => 'bg-danger',
+                'REGISTRADO' => 'bg-success',
+                'REQUIERE CAMBIO' => 'bg-warning',
+                default => 'bg-dark'
+            };
         }
-
-        $temaEstados = Tema::where('name', 'ESTADOS SOFIA')->first();
         
-        if (!$temaEstados) {
-            return 'bg-dark';
-        }
-
-        $parametroTema = ParametroTema::where('tema_id', $temaEstados->id)
-            ->where('parametro_id', $parametro->id)
-            ->where('status', 1)
-            ->first();
-
-        if (!$parametroTema) {
-            return 'bg-dark';
-        }
-
-        // Mapear el nombre del parámetro a la clase CSS
-        return match (strtoupper($parametro->name)) {
-            'NO REGISTRADO' => 'bg-danger',
-            'REGISTRADO' => 'bg-success',
-            'REQUIERE CAMBIO' => 'bg-warning',
-            default => 'bg-dark'
-        };
+        return $badgeClass;
     }
 
     public function userCreatedBy()

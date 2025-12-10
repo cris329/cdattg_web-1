@@ -12,7 +12,7 @@ class AspiranteComplementarioObserver
 {
     /**
      * Handle the AspiranteComplementario "created" event.
-     * 
+     *
      * Cuando se crea un nuevo aspirante (ya sea por inscripción nueva o agregando existente),
      * verifica si el complementario ha alcanzado su límite de cupos. Si es así, crea
      * automáticamente un nuevo complementario con las mismas características.
@@ -23,7 +23,7 @@ class AspiranteComplementarioObserver
             // Recargar el complementario desde la base de datos para tener datos frescos
             // Esto asegura que funcione tanto para inscripciones nuevas como para agregar existentes
             $complementario = ComplementarioOfertado::find($aspirante->complementario_id);
-            
+
             if (!$complementario) {
                 Log::warning('No se pudo cargar el complementario para el aspirante', [
                     'aspirante_id' => $aspirante->id,
@@ -58,7 +58,7 @@ class AspiranteComplementarioObserver
                 DB::transaction(function () use ($complementario, $totalAspirantes) {
                     // Recargar el complementario dentro de la transacción para evitar problemas de concurrencia
                     $complementarioActualizado = ComplementarioOfertado::lockForUpdate()->find($complementario->id);
-                    
+
                     if (!$complementarioActualizado) {
                         throw new \Exception('No se pudo bloquear el complementario para actualización');
                     }
@@ -101,7 +101,7 @@ class AspiranteComplementarioObserver
 
     /**
      * Crear un nuevo complementario basado en uno existente
-     * 
+     *
      * @param ComplementarioOfertado $complementarioOriginal
      * @return ComplementarioOfertado
      */
@@ -134,7 +134,7 @@ class AspiranteComplementarioObserver
 
     /**
      * Copiar todas las relaciones del complementario original al nuevo
-     * 
+     *
      * @param ComplementarioOfertado $original
      * @param ComplementarioOfertado $nuevo
      */
@@ -207,10 +207,10 @@ class AspiranteComplementarioObserver
 
     /**
      * Generar un código único para el nuevo complementario
-     * 
+     *
      * Si el código original es COMP0001, genera COMP0001-2, COMP0001-3, etc.
      * Si ya existe un código con sufijo, incrementa el número.
-     * 
+     *
      * @param string $codigoOriginal
      * @return string
      */

@@ -133,18 +133,18 @@ class ComplementarioOfertado extends Model
     {
         // Obtener el estado_id directamente del atributo
         $estadoId = $this->attributes['estado_id'] ?? null;
-        
+
         if (!$estadoId) {
             return 0; // Valor por defecto: Sin Oferta
         }
-        
+
         // Intentar obtener el nombre del parámetro a través de la relación
         try {
             // Usar una consulta directa para evitar referencia circular
             $parametroTema = \App\Models\ParametroTema::with('parametro')->find($estadoId);
             if ($parametroTema && $parametroTema->parametro) {
                 $nombre = strtoupper(trim($parametroTema->parametro->name));
-                
+
                 return match ($nombre) {
                     'SIN OFERTA' => 0,
                     'CON OFERTA' => 1,
@@ -155,7 +155,7 @@ class ComplementarioOfertado extends Model
         } catch (\Exception $e) {
             // Si hay error, retornar valor por defecto
         }
-        
+
         return 0;
     }
 
@@ -163,11 +163,13 @@ class ComplementarioOfertado extends Model
     {
         // Obtener el estado_id directamente del atributo
         $estadoId = $this->attributes['estado_id'] ?? null;
-        
+
         if (!$estadoId) {
             return 'Desconocido';
         }
-        
+
+        $label = 'Desconocido';
+
         // Intentar obtener el nombre del parámetro a través de la relación
         try {
             // Primero intentar usar la relación ya cargada
@@ -177,26 +179,26 @@ class ComplementarioOfertado extends Model
                     $this->estado->load('parametro');
                 }
                 if ($this->estado->parametro) {
-                    return $this->estado->parametro->name;
+                    $label = $this->estado->parametro->name;
+                }
+            } else {
+                // Si la relación no está cargada, hacer una consulta
+                $estado = $this->estado()->with('parametro')->first();
+                if ($estado && $estado->parametro) {
+                    $label = $estado->parametro->name;
                 }
             }
-            
-            // Si la relación no está cargada, hacer una consulta
-            $estado = $this->estado()->with('parametro')->first();
-            if ($estado && $estado->parametro) {
-                return $estado->parametro->name;
-            }
         } catch (\Exception $e) {
-            // Si hay error, retornar valor por defecto
+            // Si hay error, mantener el valor por defecto
         }
-        
-        return 'Desconocido';
+
+        return $label;
     }
 
     public function getBadgeClassAttribute()
     {
         $estadoNombre = $this->estado_label;
-        
+
         return match ($estadoNombre) {
             'SIN OFERTA' => 'bg-success',
             'CON OFERTA' => 'bg-warning',
@@ -221,10 +223,10 @@ class ComplementarioOfertado extends Model
 
     /**
      * Calcular tasa de aceptación de aspirantes
-     * 
+     *
      * Este accessor calcula la tasa de aceptación basándose en los atributos
      * total_aspirantes y aceptados que pueden venir de consultas agregadas.
-     * 
+     *
      * @return float Tasa de aceptación en porcentaje (0-100)
      */
     public function getTasaAceptacionAttribute(): float
