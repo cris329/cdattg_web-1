@@ -12,6 +12,7 @@ use App\Inventario\Interfaces\Services\StockValidatorServiceInterface;
 use App\Inventario\Services\ProductoEnrichment\ProductoEnrichmentService;
 use App\Inventario\Services\FormData\FormDataService;
 use App\Exceptions\OrdenException;
+use Picqer\Barcode\BarcodeGeneratorPNG;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\View\View;
@@ -354,7 +355,7 @@ class ProductoController extends Controller
     }
 
     /**
-     * Vista imprimible de la etiqueta con código de barras SENA (JS en cliente)
+     * Vista imprimible de la etiqueta con código de barras
      */
     public function etiqueta(string $id): View
     {
@@ -363,7 +364,25 @@ class ProductoController extends Controller
         if (!$producto) {
             abort(404);
         }
-        return view('inventario.productos.etiqueta', compact('producto'));
+
+        $barcodeImage = null;
+
+        if (!empty($producto->codigo_barras)) {
+            $generator = new BarcodeGeneratorPNG();
+            $binary = $generator->getBarcode(
+                (string) $producto->codigo_barras,
+                $generator::TYPE_CODE_128,
+                2,
+                60
+            );
+
+            $barcodeImage = 'data:image/png;base64,' . base64_encode($binary);
+        }
+
+        return view('inventario.productos.etiqueta', [
+            'producto' => $producto,
+            'barcodeImage' => $barcodeImage,
+        ]);
     }
 }
 
