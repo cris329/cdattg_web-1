@@ -420,8 +420,8 @@ class PersonaController extends Controller
         $requiresFiltering = $searchValue || $estadoAplicado;
         $recordsFiltered = $requiresFiltering ? (clone $filteredQuery)->count() : $recordsTotal;
 
-        $registradosSofiaTotal = (clone $baseQuery)->where('estado_sofia', 1)->count();
-        $registradosSofiaFiltrados = (clone $filteredQuery)->where('estado_sofia', 1)->count();
+        $registradosSofiaTotal = (clone $baseQuery)->where('estado_sofia', 278)->count(); // 278 = REGISTRADO
+        $registradosSofiaFiltrados = (clone $filteredQuery)->where('estado_sofia', 278)->count(); // 278 = REGISTRADO
 
         $columns = [
             0 => 'id',

@@ -57,7 +57,7 @@ class ValidarSofiaRequest extends FormRequest
             $aspirantesCount = \App\Models\Complementarios\AspiranteComplementario::with('persona')
                 ->where('complementario_id', $complementarioId)
                 ->whereHas('persona', function ($query) {
-                    $query->whereIn('estado_sofia', [0, 2]);
+                    $query->whereIn('estado_sofia', [277, 279]); // NO REGISTRADO (277) o REQUIERE CAMBIO (279)
                 })
                 ->count();
 
@@ -68,7 +68,7 @@ class ValidarSofiaRequest extends FormRequest
 
             // Verificar si ya hay una validación en progreso
             $existingProgress = \App\Models\Complementarios\SofiaValidationProgress::where('complementario_id', $complementarioId)
-                ->whereIn('status', ['pending', 'processing'])
+                ->whereIn('status', [284, 285]) // PENDING (284) o PROCESSING (285)
                 ->first();
 
             if ($existingProgress) {

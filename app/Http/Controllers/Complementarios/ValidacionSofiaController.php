@@ -78,7 +78,7 @@ class ValidacionSofiaController extends Controller
         $count = AspiranteComplementario::with('persona')
             ->where('complementario_id', $complementarioId)
             ->whereHas('persona', function ($query) {
-                $query->whereIn('estado_sofia', [0, 2]);
+                $query->whereIn('estado_sofia', [277, 279]); // NO REGISTRADO (277) o REQUIERE CAMBIO (279)
             })
             ->count();
 
@@ -107,7 +107,7 @@ class ValidacionSofiaController extends Controller
     private function checkExistingProgress($complementarioId): ?\Illuminate\Http\JsonResponse
     {
         $existingProgress = SofiaValidationProgress::where('complementario_id', $complementarioId)
-            ->whereIn('status', ['pending', 'processing'])
+            ->whereIn('status', [284, 285]) // PENDING (284) o PROCESSING (285)
             ->first();
 
         if ($existingProgress) {
@@ -131,7 +131,7 @@ class ValidacionSofiaController extends Controller
         $progress = SofiaValidationProgress::create([
             'complementario_id' => $complementarioId,
             'user_id' => auth()->id(),
-            'status' => 'pending',
+            'status' => 284, // PENDING = 284 según ParametroSeeder
             'total_aspirantes' => $aspirantesCount,
             'processed_aspirantes' => 0,
             'successful_validations' => 0,
@@ -152,8 +152,7 @@ class ValidacionSofiaController extends Controller
     private function dispatchValidationJob($complementarioId, int $progressId): void
     {
         ValidarSofiaJob::dispatch($complementarioId, auth()->id(), $progressId)
-            ->onQueue('sofia-validation')
-            ->delay(now()->addSeconds(2));
+            ->onQueue('sofia-validation');
 
         Log::info("Job despachado a la cola", [
             'job_class' => ValidarSofiaJob::class,

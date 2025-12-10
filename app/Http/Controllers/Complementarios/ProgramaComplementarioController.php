@@ -109,7 +109,7 @@ class ProgramaComplementarioController extends Controller
      */
     public function show(ComplementarioOfertado $programa): View
     {
-        $programa->load(['modalidad.parametro', 'jornada', 'diasFormacion', 'ambiente.piso', 'competencias', 'raps']);
+        $programa->load(['modalidad.parametro', 'jornada', 'diasFormacion', 'ambiente.piso', 'competencias', 'raps', 'estado.parametro']);
         $programa = $this->complementarioService->enriquecerPrograma($programa);
 
         return view(
