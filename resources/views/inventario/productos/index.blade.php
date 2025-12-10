@@ -29,7 +29,7 @@
                         permission="CREAR PRODUCTO"
                     />
 
-                    {{-- Filtros adicionales (mismo estilo que en el catálogo) --}}
+                    {{-- Filtros adicionales --}}
                     <div class="row mb-3 mt-3">
                         <div class="col-12">
                             <div class="card">
@@ -130,7 +130,7 @@
                         searchPlaceholder="Buscar producto..."
                         searchValue="{{ request('search') }}"
                         :columns="[
-                            ['label' => '#', 'width' => '3%'],
+                            ['label' => 'Id', 'width' => '3%'],
                             ['label' => 'Producto', 'width' => '20%'],
                             ['label' => 'Código', 'width' => '14%'],
                             ['label' => 'Categoría', 'width' => '10%'],
@@ -146,7 +146,7 @@
                     >
                         @forelse ($productos as $producto)
                             <tr>
-                                <td>{{ $loop->iteration }}</td>
+                                <td>{{ $producto->id }}</td>
                                 <td>
                                     <strong>{{ $producto->name }}</strong>
                                     <br>

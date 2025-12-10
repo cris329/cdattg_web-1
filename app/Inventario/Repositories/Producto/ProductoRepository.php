@@ -74,7 +74,7 @@ class ProductoRepository implements ProductoRepositoryInterface
 
         $perPage = $filtros['per_page'] ?? 10;
 
-        return $query->orderBy('created_at', 'desc')->paginate($perPage);
+        return $query->orderBy('id', 'desc')->paginate($perPage);
     }
 
     /**
