@@ -172,11 +172,16 @@ class ComplementarioOfertado extends Model
 
         // Intentar obtener el nombre del parámetro a través de la relación
         try {
-            // Primero intentar usar la relación ya cargada
-            if ($this->relationLoaded('estado') && $this->estado) {
-                // Cargar el parámetro si no está cargado
-                if (!$this->estado->relationLoaded('parametro')) {
-                    $this->estado->load('parametro');
+            /** @var ParametroTema|null $estadoRelacion */
+            $estadoRelacion = null;
+
+            if ($this->relationLoaded('estado')) {
+                $estadoRelacion = $this->getRelation('estado');
+            }
+
+            if ($estadoRelacion instanceof ParametroTema) {
+                if (!$estadoRelacion->relationLoaded('parametro')) {
+                    $estadoRelacion->load('parametro');
                 }
                 if ($this->estado->parametro) {
                     $label = $this->estado->parametro->name;

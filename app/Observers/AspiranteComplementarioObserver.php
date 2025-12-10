@@ -4,12 +4,18 @@ namespace App\Observers;
 
 use App\Models\Complementarios\AspiranteComplementario;
 use App\Models\Complementarios\ComplementarioOfertado;
+use App\Repositories\Complementarios\ComplementarioOfertadoRepository;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Log;
+use RuntimeException;
 
 class AspiranteComplementarioObserver
 {
+    public function __construct(
+        private readonly ComplementarioOfertadoRepository $complementarioRepository
+    ) {}
+
     /**
      * Handle the AspiranteComplementario "created" event.
      *
@@ -72,8 +78,10 @@ class AspiranteComplementarioObserver
                         return;
                     }
 
+                    $estadoCuposLlenosId = $this->obtenerEstadoIdLegacy(2);
+
                     // Actualizar estado del complementario original a "Cupos Llenos"
-                    $complementarioActualizado->update(['estado' => 2]);
+                    $complementarioActualizado->update(['estado_id' => $estadoCuposLlenosId]);
 
                     // Crear nuevo complementario
                     $nuevoComplementario = $this->crearNuevoComplementario($complementarioActualizado);
@@ -118,7 +126,7 @@ class AspiranteComplementarioObserver
             'requisitos_ingreso' => $complementarioOriginal->requisitos_ingreso,
             'duracion' => $complementarioOriginal->duracion,
             'cupos' => $complementarioOriginal->cupos,
-            'estado' => 1, // Estado "Con Oferta"
+            'estado_id' => $this->obtenerEstadoIdLegacy(1), // Estado "Con Oferta"
             'modalidad_id' => $complementarioOriginal->modalidad_id,
             'jornada_id' => $complementarioOriginal->jornada_id,
             'ambiente_id' => $complementarioOriginal->ambiente_id,
@@ -236,6 +244,20 @@ class AspiranteComplementarioObserver
         }
 
         return $nuevoCodigo;
+    }
+
+    private function obtenerEstadoIdLegacy(int $valorLegacy): int
+    {
+        $estadoId = $this->complementarioRepository->getEstadoIdByLegacyValue($valorLegacy);
+
+        if (!$estadoId) {
+            throw new RuntimeException(sprintf(
+                'No se encontró el parámetro de estado para el valor legacy %d',
+                $valorLegacy
+            ));
+        }
+
+        return $estadoId;
     }
 
     /**
