@@ -195,11 +195,20 @@ class ComplementarioOfertadoFactory extends Factory
     private function obtenerEstadoId(): ?int
     {
         try {
-            // Buscar el tema ESTADO_PROGRAMA_COMPLEMENTARIO
-            $temaEstado = \App\Models\Tema::where('name', 'ESTADO_PROGRAMA_COMPLEMENTARIO')->first();
+            // Buscar el tema ESTADOS (ID 1) que contiene los estados de programas complementarios
+            $temaEstado = \App\Models\Tema::find(1); // Tema "ESTADOS"
             
             if ($temaEstado) {
-                // Obtener un ParametroTema aleatorio de este tema
+                // Obtener el ParametroTema para "Sin Oferta" (parametro_id = 277) por defecto
+                $estadoId = \App\Models\ParametroTema::where('tema_id', $temaEstado->id)
+                    ->where('parametro_id', 277) // SIN OFERTA por defecto
+                    ->value('id');
+                
+                if ($estadoId) {
+                    return $estadoId;
+                }
+                
+                // Si no encuentra el específico, buscar cualquier estado del tema ESTADOS
                 $estadoId = \App\Models\ParametroTema::where('tema_id', $temaEstado->id)
                     ->inRandomOrder()
                     ->value('id');
@@ -222,10 +231,17 @@ class ComplementarioOfertadoFactory extends Factory
     private function getEstadoIdByName(string $nombreEstado): ?int
     {
         try {
-            $temaEstado = \App\Models\Tema::where('name', 'ESTADO_PROGRAMA_COMPLEMENTARIO')->first();
+            // Buscar en el tema ESTADOS (ID 1)
+            $temaEstado = \App\Models\Tema::find(1); // Tema "ESTADOS"
             
             if ($temaEstado) {
-                $parametro = \App\Models\Parametro::where('name', $nombreEstado)->first();
+                // Buscar el parámetro por nombre (asegurarse de que coincida el caso)
+                $parametro = \App\Models\Parametro::where('name', strtoupper($nombreEstado))->first();
+                
+                if (!$parametro) {
+                    // Intentar con el nombre exacto
+                    $parametro = \App\Models\Parametro::where('name', $nombreEstado)->first();
+                }
                 
                 if ($parametro) {
                     $parametroTema = \App\Models\ParametroTema::where('tema_id', $temaEstado->id)

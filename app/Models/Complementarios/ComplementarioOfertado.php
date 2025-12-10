@@ -41,6 +41,13 @@ class ComplementarioOfertado extends Model
         'ambiente_id',
     ];
 
+    /**
+     * Valores por defecto para los atributos
+     */
+    protected $attributes = [
+        'estado_id' => 3, // ID de parametros_temas para "Sin Oferta" (parametro_id = 277)
+    ];
+
     public function modalidad()
     {
         return $this->belongsTo(ParametroTema::class, 'modalidad_id');
