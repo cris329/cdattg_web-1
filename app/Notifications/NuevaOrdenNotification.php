@@ -56,12 +56,12 @@ class NuevaOrdenNotification extends Notification implements ShouldQueue
             ->subject('Nueva Solicitud de ' . $tipoOrden . ' - Orden #' . $this->orden->id)
             ->greeting('¡Hola, ' . $notifiable->name . '!')
             ->line('Se ha recibido una nueva solicitud de ' . strtolower($tipoOrden) . ' que requiere tu aprobación.')
-            ->line('**Orden:** #' . $this->orden->id)
-            ->line('**Tipo:** ' . $tipoOrden)
-            ->line('**Solicitante:** ' . $this->solicitante->name)
-            ->line('**Email:** ' . $this->solicitante->email)
-            ->line('**Productos:** ' . $cantidadProductos . ($cantidadProductos === 1 ? ' producto' : ' productos'))
-            ->line('**Motivo:** ' . \Illuminate\Support\Str::limit($motivo, 100))
+            ->line('Orden: #' . $this->orden->id)
+            ->line('Tipo: ' . $tipoOrden)
+            ->line('Solicitante: ' . $this->solicitante->name)
+            ->line('Email: ' . $this->solicitante->email)
+            ->line('Productos: ' . $cantidadProductos . ($cantidadProductos === 1 ? ' producto' : ' productos'))
+            ->line('Motivo: ' . \Illuminate\Support\Str::limit($motivo, 100))
             ->when($this->orden->fecha_devolucion, function ($message) {
                 return $message->line('**Fecha de Devolución:** ' . $this->orden->fecha_devolucion->format('d/m/Y'));
             })

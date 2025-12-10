@@ -113,12 +113,12 @@
                             </div>
                         </div>
                     </div>
-                    <!-- Botón para escanear código de barras -->
-                    <div class="mt-3 text-right">
-                        <button class="btn btn-secondary btn-lg" data-toggle="modal" data-target="#modalEscanear">
+                    <!-- Botones de acciones -->
+                    <div class="d-flex justify-content-end flex-wrap mt-3 mb-4">
+                        <button class="btn btn-secondary btn-lg mr-4" data-toggle="modal" data-target="#modalEscanear">
                             <i class="fas fa-barcode"></i> Escanear Código de Barras
                         </button>
-                        <a href="{{ route('inventario.productos.exportar-pdf') }}" class="btn btn-danger btn-lg ml-2">
+                        <a href="{{ route('inventario.productos.exportar-pdf') }}" class="btn btn-danger btn-lg">
                             <i class="fas fa-file-pdf"></i> Exportar PDF
                         </a>
                     </div>

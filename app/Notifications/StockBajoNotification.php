@@ -46,12 +46,12 @@ class StockBajoNotification extends Notification implements ShouldQueue
             ->subject('Alerta de Stock ' . $nivelAlerta . ' - ' . $this->producto->name)
             ->greeting('¡Hola, ' . $notifiable->name . '!')
             ->line('Se ha detectado un nivel de stock ' . strtolower($nivelAlerta) . ' para el siguiente producto:')
-            ->line('**Producto:** ' . $this->producto->name)
-            ->line('**Código:** ' . ($this->producto->codigo_barras ?? 'N/A'))
-            ->line('**Stock Actual:** ' . $this->stockActual . ' unidades')
-            ->line('**Stock Mínimo:** ' . $this->stockMinimo . ' unidades')
+            ->line('Producto: ' . $this->producto->name)
+            ->line('Código:' . ($this->producto->codigo_barras ?? 'N/A'))
+            ->line('Stock Actual: ' . $this->stockActual . ' unidades')
+            ->line('Stock Mínimo: ' . $this->stockMinimo . ' unidades')
             ->when($this->stockActual == 0, function ($message) {
-                return $message->line('**ATENCIÓN:** El producto está agotado y requiere reabastecimiento inmediato.');
+                return $message->line('ATENCIÓN: El producto está agotado y requiere reabastecimiento inmediato.');
             })
             ->action('Ver Inventario', url('/inventario/productos'))
             ->line('Por favor, considera reabastecer este producto lo antes posible.')
