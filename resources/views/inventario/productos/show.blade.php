@@ -135,9 +135,14 @@
                             <li>
                                 <i class="fas fa-check-circle"></i>
                                 <strong>Estado:</strong>
-                                <span
-                                    class="badge-modern {{ ($producto->estado?->parametro?->name ?? '') === 'DISPONIBLE' ? 'badge-success' : 'badge-warning' }}">
-                                    {{ $producto->estado?->parametro?->name ?? 'N/A' }}
+                                @php
+                                    $estadoParametro = $producto->estado?->parametro?->name ?? null;
+                                    $esAgotado = $estadoParametro === 'AGOTADO' || $producto->cantidad <= 0;
+                                    $estadoTexto = $esAgotado ? 'AGOTADO' : ($estadoParametro ?? 'N/A');
+                                    $badgeClass = $esAgotado ? 'badge-danger' : 'badge-success';
+                                @endphp
+                                <span class="badge-modern {{ $badgeClass }}">
+                                    {{ $estadoTexto }}
                                 </span>
                             </li>
 
@@ -237,8 +242,14 @@
                         </div>
                     </div>
 
+                    @php
+                        $estadoParametroStat = $producto->estado?->parametro?->name ?? null;
+                        $esAgotadoStat = $estadoParametroStat === 'AGOTADO' || $producto->cantidad <= 0;
+                        $estadoTextoStat = $esAgotadoStat ? 'AGOTADO' : ($estadoParametroStat ?? 'N/A');
+                        $estadoStatClass = $esAgotadoStat ? 'danger' : 'success';
+                    @endphp
                     <div
-                        class="stat-card stat-{{ ($producto->estado?->parametro?->name ?? '') === 'DISPONIBLE' ? 'success' : 'warning' }}">
+                        class="stat-card stat-{{ $estadoStatClass }}">
                         <div class="stat-card-header">
                             <div class="stat-card-icon">
                                 <i class="fas fa-toggle-on"></i>
@@ -246,7 +257,7 @@
                             <div>
                                 <div class="stat-card-label">Estado</div>
                                 <div class="stat-card-value" style="font-size: 1rem;">
-                                    {{ $producto->estado?->parametro?->name ?? 'N/A' }}
+                                    {{ $estadoTextoStat }}
                                 </div>
                             </div>
                         </div>
