@@ -425,6 +425,9 @@ class AspirantesPrograma {
         button.disabled = true;
         button.innerHTML = '<i class="fas fa-spinner fa-spin me-1"></i>Iniciando validación...';
 
+        // Mostrar barra de progreso inmediatamente
+        this.showInitialProgressBar();
+
         try {
             const response = await fetch(this.config.routes.validarSofia, {
                 method: 'POST',
@@ -443,12 +446,14 @@ class AspirantesPrograma {
                 button.innerHTML = '<i class="fas fa-clock me-1"></i>Procesando...';
                 this.updateUIForValidationInProgress();
             } else {
+                this.hideProgressBar();
                 this.showAlert('error', data.message || 'Error durante la validación');
                 button.disabled = false;
                 button.innerHTML = originalText;
             }
         } catch (error) {
             console.error('Error:', error);
+            this.hideProgressBar();
             this.showAlert('error', 'Error de conexión. Intente nuevamente.');
             button.disabled = false;
             button.innerHTML = originalText;
@@ -490,7 +495,8 @@ class AspirantesPrograma {
                     const progress = data.progress;
                     this.updateProgressDisplay(progress);
 
-                    if (progress.status === 'completed' || progress.status === 'failed') {
+                    // 286 = COMPLETED, 287 = FAILED según ParametroSeeder
+                    if (progress.status === 286 || progress.status === 287) {
                         clearInterval(this.progressInterval);
                         this.handleValidationComplete(progress);
                     }
@@ -521,9 +527,10 @@ class AspirantesPrograma {
             Math.round((progress.successful_validations / progress.processed_aspirantes) * 100) : 0;
         const estimatedTimeRemaining = this.calculateEstimatedTime(progress);
         let progressBarClass = 'bg-info';
-        if (progress.status === 'failed') {
+        // 286 = COMPLETED, 287 = FAILED según ParametroSeeder
+        if (progress.status === 287) {
             progressBarClass = 'bg-danger';
-        } else if (progress.status === 'completed') {
+        } else if (progress.status === 286) {
             progressBarClass = 'bg-success';
         }
 
@@ -532,13 +539,13 @@ class AspirantesPrograma {
                 <div class="card-body">
                     <div class="d-flex justify-content-between align-items-center mb-2">
                         <h6 class="mb-0">
-                            <i class="fas fa-cog ${progress.status === 'processing' ? 'fa-spin' : ''} me-2"></i>
+                            <i class="fas fa-cog ${progress.status === 285 ? 'fa-spin' : ''} me-2"></i>
                             Validación SenaSofiaPlus - ${progress.status_label}
                         </h6>
                         <small class="text-muted">${progress.progress_percentage}%</small>
                     </div>
                     <div class="progress mb-2" style="height: 25px;">
-                        <div class="progress-bar ${progressBarClass} progress-bar-striped ${progress.status === 'processing' ? 'progress-bar-animated' : ''}" 
+                        <div class="progress-bar ${progressBarClass} progress-bar-striped ${progress.status === 285 ? 'progress-bar-animated' : ''}" 
                              role="progressbar"
                              style="width: ${progress.progress_percentage}%"
                              aria-valuenow="${progress.progress_percentage}"
@@ -564,7 +571,7 @@ class AspirantesPrograma {
                             <strong class="text-info">${remaining}</strong>
                         </div>
                     </div>
-                    ${progress.status === 'processing' ? `
+                    ${progress.status === 285 ? `
                         <div class="row">
                             <div class="col-md-6">
                                 <small class="text-muted">
@@ -594,10 +601,66 @@ class AspirantesPrograma {
     }
 
     /**
+     * Mostrar barra de progreso inicial
+     */
+    showInitialProgressBar() {
+        let progressContainer = document.getElementById('sofia-progress-container');
+        if (!progressContainer) {
+            progressContainer = document.createElement('div');
+            progressContainer.id = 'sofia-progress-container';
+            progressContainer.className = 'mt-3';
+            const cardBody = document.querySelector('.card-body');
+            if (cardBody) {
+                cardBody.insertBefore(progressContainer, cardBody.firstChild);
+            }
+        }
+
+        progressContainer.innerHTML = `
+            <div class="card border-info shadow-sm">
+                <div class="card-body">
+                    <div class="d-flex justify-content-between align-items-center mb-2">
+                        <h6 class="mb-0">
+                            <i class="fas fa-cog fa-spin me-2"></i>
+                            Validación SenaSofiaPlus - Iniciando...
+                        </h6>
+                        <small class="text-muted">0%</small>
+                    </div>
+                    <div class="progress mb-2" style="height: 25px;">
+                        <div class="progress-bar bg-info progress-bar-striped progress-bar-animated" 
+                             role="progressbar"
+                             style="width: 0%"
+                             aria-valuenow="0"
+                             aria-valuemin="0" 
+                             aria-valuemax="100">
+                        </div>
+                    </div>
+                    <div class="text-center">
+                        <small class="text-muted">
+                            <i class="fas fa-spinner fa-spin me-1"></i>
+                            Preparando validación...
+                        </small>
+                    </div>
+                </div>
+            </div>
+        `;
+    }
+
+    /**
+     * Ocultar barra de progreso
+     */
+    hideProgressBar() {
+        const progressContainer = document.getElementById('sofia-progress-container');
+        if (progressContainer) {
+            progressContainer.remove();
+        }
+    }
+
+    /**
      * Calcular tiempo estimado restante
      */
     calculateEstimatedTime(progress) {
-        if (progress.status !== 'processing' || progress.processed_aspirantes === 0) {
+        // 285 = PROCESSING según ParametroSeeder
+        if (progress.status !== 285 || progress.processed_aspirantes === 0) {
             return 'Calculando...';
         }
 
@@ -622,7 +685,8 @@ class AspirantesPrograma {
         const button = document.getElementById('btn-validar-sofia');
         const progressContainer = document.getElementById('sofia-progress-container');
 
-        if (progress.status === 'completed') {
+        // 286 = COMPLETED según ParametroSeeder
+        if (progress.status === 286) {
             const successRate = progress.total_aspirantes > 0 ?
                 Math.round((progress.successful_validations / progress.total_aspirantes) * 100) : 0;
 
@@ -637,7 +701,8 @@ class AspirantesPrograma {
             setTimeout(() => {
                 location.reload();
             }, 3000);
-        } else if (progress.status === 'failed') {
+        // 287 = FAILED según ParametroSeeder
+        } else if (progress.status === 287) {
             let errorMessage = 'La validación falló. ';
             if (progress.errors?.length > 0) {
                 errorMessage += `Errores encontrados: ${progress.errors.length}. `;
