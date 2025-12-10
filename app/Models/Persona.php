@@ -309,17 +309,17 @@ class Persona extends Model
     public function getEstadoSofiaLabelAttribute()
     {
         $label = 'Desconocido';
-        
-        if ($this->estado_sofia && 
+
+        if ($this->estado_sofia &&
             ($parametro = $this->estadoSofiaParametro) &&
             ($temaEstados = Tema::where('name', 'ESTADOS SOFIA')->first()) &&
-            ($parametroTema = ParametroTema::where('tema_id', $temaEstados->id)
+            ParametroTema::where('tema_id', $temaEstados->id)
                 ->where('parametro_id', $parametro->id)
                 ->where('status', 1)
-                ->first())) {
+                ->exists()) {
             $label = $parametro->name;
         }
-        
+
         return $label;
     }
 
@@ -332,14 +332,14 @@ class Persona extends Model
     public function getEstadoSofiaBadgeClassAttribute()
     {
         $badgeClass = 'bg-dark';
-        
-        if ($this->estado_sofia && 
+
+        if ($this->estado_sofia &&
             ($parametro = $this->estadoSofiaParametro) &&
             ($temaEstados = Tema::where('name', 'ESTADOS SOFIA')->first()) &&
-            ($parametroTema = ParametroTema::where('tema_id', $temaEstados->id)
+            ParametroTema::where('tema_id', $temaEstados->id)
                 ->where('parametro_id', $parametro->id)
                 ->where('status', 1)
-                ->first())) {
+                ->exists()) {
             $badgeClass = match (strtoupper($parametro->name)) {
                 'NO REGISTRADO' => 'bg-danger',
                 'REGISTRADO' => 'bg-success',
@@ -347,7 +347,7 @@ class Persona extends Model
                 default => 'bg-dark'
             };
         }
-        
+
         return $badgeClass;
     }
 
