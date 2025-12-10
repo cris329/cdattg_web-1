@@ -140,14 +140,15 @@ class ComplementarioOfertado extends Model
         
         // Intentar obtener el nombre del parámetro a través de la relación
         try {
-            $estado = $this->estado()->with('parametro')->first();
-            if ($estado && $estado->parametro) {
-                $nombre = $estado->parametro->name;
+            // Usar una consulta directa para evitar referencia circular
+            $parametroTema = \App\Models\ParametroTema::with('parametro')->find($estadoId);
+            if ($parametroTema && $parametroTema->parametro) {
+                $nombre = strtoupper(trim($parametroTema->parametro->name));
                 
                 return match ($nombre) {
-                    'Sin Oferta' => 0,
-                    'Con Oferta' => 1,
-                    'Cupos Llenos' => 2,
+                    'SIN OFERTA' => 0,
+                    'CON OFERTA' => 1,
+                    'CUPOS LLENOS' => 2,
                     default => 0,
                 };
             }
