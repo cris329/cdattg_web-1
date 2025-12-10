@@ -74,7 +74,8 @@
                                             id="sort-by"
                                             class="form-control"
                                         >
-                                            <option value="name" {{ request('sort_by', 'name') == 'name' ? 'selected' : '' }}>Nombre</option>
+                                            <option value="random" {{ request('sort_by', 'random') == 'random' ? 'selected' : '' }}>Aleatorio</option>
+                                            <option value="name" {{ request('sort_by') == 'name' ? 'selected' : '' }}>Nombre</option>
                                             <option value="stock-asc" {{ request('sort_by') == 'stock-asc' ? 'selected' : '' }}>Stock Menor</option>
                                             <option value="stock-desc" {{ request('sort_by') == 'stock-desc' ? 'selected' : '' }}>Stock Mayor</option>
                                             <option value="newest" {{ request('sort_by') == 'newest' ? 'selected' : '' }}>Más Recientes</option>

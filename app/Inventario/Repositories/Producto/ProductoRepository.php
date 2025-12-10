@@ -122,7 +122,7 @@ class ProductoRepository implements ProductoRepositoryInterface
             $query->where('estado_producto_id', '!=', $filtros['estado_agotado_id']);
         }
 
-        $sortBy = $filtros['sort_by'] ?? 'newest';
+        $sortBy = $filtros['sort_by'] ?? 'random';
         switch ($sortBy) {
             case 'stock-asc':
                 $query->orderBy('cantidad', 'asc');
@@ -132,6 +132,9 @@ class ProductoRepository implements ProductoRepositoryInterface
                 break;
             case 'name':
                 $query->orderBy('name', 'asc');
+                break;
+            case 'random':
+                $query->inRandomOrder();
                 break;
             case 'newest':
             default:

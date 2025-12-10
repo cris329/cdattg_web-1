@@ -231,7 +231,7 @@ class ProductoController extends Controller
         $filtros = [
             'search' => $request->input('search'),
             'tipo_producto_id' => $request->input('tipo_producto_id'),
-            'sort_by' => $request->input('sort_by', 'name'),
+            'sort_by' => $request->input('sort_by', 'random'),
             'estado_agotado_id' => $estadoAgotado?->id,
             'per_page' => 12
         ];
