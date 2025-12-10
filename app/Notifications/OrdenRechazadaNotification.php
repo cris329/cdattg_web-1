@@ -48,14 +48,14 @@ class OrdenRechazadaNotification extends Notification implements ShouldQueue
             ->subject('Tu Solicitud ha sido Rechazada - Orden #' . $orden->id)
             ->greeting('Hola, ' . $notifiable->name)
             ->line('Lamentamos informarte que tu solicitud de ' . strtolower($tipoOrden) . ' ha sido rechazada.')
-            ->line('**Orden:** #' . $orden->id)
+            ->line('Orden: #' . $orden->id)
             ->line('**Tipo:** ' . $tipoOrden)
-            ->line('**Producto:** ' . $producto->name)
-            ->line('**Cantidad Solicitada:** ' . $this->detalleOrden->cantidad . ' unidades')
-            ->line('**Rechazado por:** ' . $this->aprobador->name);
+            ->line('Producto: ' . $producto->name)
+            ->line('Cantidad Solicitada: ' . $this->detalleOrden->cantidad . ' unidades')
+            ->line('Rechazado por: ' . $this->aprobador->name);
 
         if ($this->motivoRechazo) {
-            $message->line('**Motivo del Rechazo:**')
+            $message->line('Motivo del Rechazo:')
                 ->line($this->motivoRechazo);
         }
 

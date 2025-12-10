@@ -93,7 +93,8 @@ class ProductoController extends Controller
         $productos = $this->repository->obtenerTodosOrdenadosPorCantidadDesc();
 
         $pdf = Pdf::loadView('inventario.productos.report', [
-            'productos' => $productos
+            'productos' => $productos,
+            'pdf' => true
         ])->setPaper('a4', 'portrait');
 
         return $pdf->download('reporte_productos_inventario.pdf');
