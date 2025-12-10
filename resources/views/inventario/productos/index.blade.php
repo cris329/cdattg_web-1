@@ -118,6 +118,9 @@
                         <button class="btn btn-secondary btn-lg" data-toggle="modal" data-target="#modalEscanear">
                             <i class="fas fa-barcode"></i> Escanear Código de Barras
                         </button>
+                        <a href="{{ route('inventario.productos.exportar-pdf') }}" class="btn btn-danger btn-lg ml-2">
+                            <i class="fas fa-file-pdf"></i> Exportar PDF
+                        </a>
                     </div>
 
                     <x-data-table

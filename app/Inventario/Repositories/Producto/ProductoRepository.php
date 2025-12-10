@@ -274,6 +274,21 @@ class ProductoRepository implements ProductoRepositoryInterface
         return $producto->save();
     }
 
+    public function obtenerTodosOrdenadosPorCantidadDesc(): Collection
+    {
+        return Producto::with([
+            'categoria',
+            'marca',
+            'unidadMedida.parametro',
+            'estado.parametro',
+            'contratoConvenio',
+            'ambiente',
+            'proveedor'
+        ])
+            ->orderBy('cantidad', 'desc')
+            ->get();
+    }
+
     /**
      * Obtiene el código de barras máximo
      *

@@ -18,6 +18,7 @@ use Illuminate\View\View;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\JsonResponse;
 use App\Http\Requests\Inventario\ProductoRequest;
+use Barryvdh\DomPDF\Facade\Pdf;
 
 
 class ProductoController extends Controller
@@ -85,6 +86,17 @@ class ProductoController extends Controller
             'marcas',
             'estadosProducto'
         ));
+    }
+
+    public function exportarPdf()
+    {
+        $productos = $this->repository->obtenerTodosOrdenadosPorCantidadDesc();
+
+        $pdf = Pdf::loadView('inventario.productos.report', [
+            'productos' => $productos
+        ])->setPaper('a4', 'portrait');
+
+        return $pdf->download('reporte_productos_inventario.pdf');
     }
 
     /**

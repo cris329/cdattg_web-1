@@ -19,6 +19,9 @@ Route::prefix('inventario')
         
         Route::post('productos/agregar-carrito', [ProductoController::class, 'agregarAlCarrito'])
             ->name('productos.agregar-carrito');
+
+        Route::get('productos/exportar-pdf', [ProductoController::class, 'exportarPdf'])
+            ->name('productos.exportar-pdf');
         
 
         Route::resource('productos', ProductoController::class);
