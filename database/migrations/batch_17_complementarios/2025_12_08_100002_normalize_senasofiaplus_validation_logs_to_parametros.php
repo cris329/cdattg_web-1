@@ -13,14 +13,95 @@ return new class extends Migration
      */
     public function up(): void
     {
-        // Obtener los IDs de los parámetros
-        $validar = Parametro::where('name', 'VALIDAR')->first();
-        $exitoso = Parametro::where('name', 'EXITOSO')->first();
-        $error = Parametro::where('name', 'ERROR')->first();
-        $advertencia = Parametro::where('name', 'ADVERTENCIA')->first();
+        // Obtener los IDs de los parámetros por ID (280, 281, 282, 283 según ParametroSeeder)
+        $validar = Parametro::find(280);
+        $exitoso = Parametro::find(281);
+        $error = Parametro::find(282);
+        $advertencia = Parametro::find(283);
 
+        // Si los parámetros no existen, solo cambiar la estructura sin migrar datos
         if (!$validar || !$exitoso || !$error || !$advertencia) {
-            throw new \Exception('Los parámetros de validación Sofía no existen. Ejecuta primero la migración de creación de parámetros.');
+            // Solo cambiar el tipo de columnas sin migrar datos
+            if (!Schema::hasTable('senasofiaplus_validation_logs')) {
+                return;
+            }
+
+            $driver = DB::getDriverName();
+            
+            if ($driver === 'sqlite') {
+                // SQLite: crear nuevas columnas BIGINT, luego eliminar antiguas
+                if (Schema::hasColumn('senasofiaplus_validation_logs', 'accion')) {
+                    Schema::table('senasofiaplus_validation_logs', function (Blueprint $table) {
+                        $table->unsignedBigInteger('accion_new')->nullable()->after('aspirante_id');
+                    });
+                    DB::statement('UPDATE senasofiaplus_validation_logs SET accion_new = NULL');
+                    Schema::table('senasofiaplus_validation_logs', function (Blueprint $table) {
+                        $table->dropColumn('accion');
+                    });
+                    try {
+                        DB::statement('ALTER TABLE senasofiaplus_validation_logs RENAME COLUMN accion_new TO accion');
+                    } catch (\Exception $e) {
+                        Schema::table('senasofiaplus_validation_logs', function (Blueprint $table) {
+                            $table->unsignedBigInteger('accion')->nullable()->after('aspirante_id');
+                        });
+                        Schema::table('senasofiaplus_validation_logs', function (Blueprint $table) {
+                            $table->dropColumn('accion_new');
+                        });
+                    }
+                }
+                
+                if (Schema::hasColumn('senasofiaplus_validation_logs', 'resultado')) {
+                    Schema::table('senasofiaplus_validation_logs', function (Blueprint $table) {
+                        $table->unsignedBigInteger('resultado_new')->nullable()->after('accion');
+                    });
+                    DB::statement('UPDATE senasofiaplus_validation_logs SET resultado_new = NULL');
+                    Schema::table('senasofiaplus_validation_logs', function (Blueprint $table) {
+                        $table->dropColumn('resultado');
+                    });
+                    try {
+                        DB::statement('ALTER TABLE senasofiaplus_validation_logs RENAME COLUMN resultado_new TO resultado');
+                    } catch (\Exception $e) {
+                        Schema::table('senasofiaplus_validation_logs', function (Blueprint $table) {
+                            $table->unsignedBigInteger('resultado')->nullable()->after('accion');
+                        });
+                        Schema::table('senasofiaplus_validation_logs', function (Blueprint $table) {
+                            $table->dropColumn('resultado_new');
+                        });
+                    }
+                }
+            } else {
+                // MySQL/MariaDB: cambiar tipo directamente
+                if (Schema::hasColumn('senasofiaplus_validation_logs', 'accion')) {
+                    DB::statement('ALTER TABLE senasofiaplus_validation_logs MODIFY COLUMN accion BIGINT UNSIGNED NULL');
+                }
+                if (Schema::hasColumn('senasofiaplus_validation_logs', 'resultado')) {
+                    DB::statement('ALTER TABLE senasofiaplus_validation_logs MODIFY COLUMN resultado BIGINT UNSIGNED NULL');
+                }
+            }
+            
+            // Intentar agregar foreign keys (puede fallar si los parámetros no existen)
+            try {
+                if (Schema::hasColumn('senasofiaplus_validation_logs', 'accion')) {
+                    Schema::table('senasofiaplus_validation_logs', function (Blueprint $table) {
+                        $table->foreign('accion')
+                            ->references('id')
+                            ->on('parametros')
+                            ->onDelete('restrict');
+                    });
+                }
+                if (Schema::hasColumn('senasofiaplus_validation_logs', 'resultado')) {
+                    Schema::table('senasofiaplus_validation_logs', function (Blueprint $table) {
+                        $table->foreign('resultado')
+                            ->references('id')
+                            ->on('parametros')
+                            ->onDelete('restrict');
+                    });
+                }
+            } catch (\Exception $e) {
+                // Si falla, se agregará después cuando existan los parámetros
+            }
+            
+            return;
         }
 
         // Crear columnas temporales
@@ -115,11 +196,11 @@ return new class extends Migration
      */
     public function down(): void
     {
-        // Obtener los IDs de los parámetros
-        $validar = Parametro::where('name', 'VALIDAR')->first();
-        $exitoso = Parametro::where('name', 'EXITOSO')->first();
-        $error = Parametro::where('name', 'ERROR')->first();
-        $advertencia = Parametro::where('name', 'ADVERTENCIA')->first();
+        // Obtener los IDs de los parámetros por ID (280, 281, 282, 283 según ParametroSeeder)
+        $validar = Parametro::find(280);
+        $exitoso = Parametro::find(281);
+        $error = Parametro::find(282);
+        $advertencia = Parametro::find(283);
 
         if (!$validar || !$exitoso || !$error || !$advertencia) {
             return;

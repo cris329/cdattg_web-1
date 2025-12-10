@@ -13,14 +13,64 @@ return new class extends Migration
      */
     public function up(): void
     {
-        // Obtener los IDs de los parámetros
-        $pending = Parametro::where('name', 'PENDING')->first();
-        $processing = Parametro::where('name', 'PROCESSING')->first();
-        $completed = Parametro::where('name', 'COMPLETED')->first();
-        $failed = Parametro::where('name', 'FAILED')->first();
+        // Obtener los IDs de los parámetros por ID (284, 285, 286, 287 según ParametroSeeder)
+        $pending = Parametro::find(284);
+        $processing = Parametro::find(285);
+        $completed = Parametro::find(286);
+        $failed = Parametro::find(287);
 
+        // Si los parámetros no existen, solo cambiar la estructura sin migrar datos
         if (!$pending || !$processing || !$completed || !$failed) {
-            throw new \Exception('Los parámetros de progreso Sofía no existen. Ejecuta primero la migración de creación de parámetros.');
+            // Solo cambiar el tipo de columna sin migrar datos
+            if (!Schema::hasTable('sofia_validation_progress')) {
+                return;
+            }
+
+            $driver = DB::getDriverName();
+            
+            if ($driver === 'sqlite') {
+                // SQLite: crear nueva columna BIGINT, luego eliminar antigua
+                if (Schema::hasColumn('sofia_validation_progress', 'status')) {
+                    Schema::table('sofia_validation_progress', function (Blueprint $table) {
+                        $table->unsignedBigInteger('status_new')->nullable()->after('user_id');
+                    });
+                    DB::statement('UPDATE sofia_validation_progress SET status_new = NULL');
+                    Schema::table('sofia_validation_progress', function (Blueprint $table) {
+                        $table->dropColumn('status');
+                    });
+                    try {
+                        DB::statement('ALTER TABLE sofia_validation_progress RENAME COLUMN status_new TO status');
+                    } catch (\Exception $e) {
+                        Schema::table('sofia_validation_progress', function (Blueprint $table) {
+                            $table->unsignedBigInteger('status')->nullable()->after('user_id');
+                        });
+                        Schema::table('sofia_validation_progress', function (Blueprint $table) {
+                            $table->dropColumn('status_new');
+                        });
+                    }
+                }
+            } else {
+                // MySQL/MariaDB: cambiar tipo directamente
+                if (Schema::hasColumn('sofia_validation_progress', 'status')) {
+                    DB::statement('ALTER TABLE sofia_validation_progress MODIFY COLUMN status BIGINT UNSIGNED NULL');
+                }
+            }
+            
+            // Intentar agregar foreign key (puede fallar si los parámetros no existen)
+            try {
+                if (Schema::hasColumn('sofia_validation_progress', 'status')) {
+                    Schema::table('sofia_validation_progress', function (Blueprint $table) {
+                        $table->foreign('status')
+                            ->references('id')
+                            ->on('parametros')
+                            ->onDelete('restrict');
+                    });
+                }
+            } catch (\Exception $e) {
+                // Si falla, se agregará después cuando existan los parámetros
+            }
+            
+            return;
         }
 
         // Crear columna temporal
@@ -105,11 +155,11 @@ return new class extends Migration
      */
     public function down(): void
     {
-        // Obtener los IDs de los parámetros
-        $pending = Parametro::where('name', 'PENDING')->first();
-        $processing = Parametro::where('name', 'PROCESSING')->first();
-        $completed = Parametro::where('name', 'COMPLETED')->first();
-        $failed = Parametro::where('name', 'FAILED')->first();
+        // Obtener los IDs de los parámetros por ID (284, 285, 286, 287 según ParametroSeeder)
+        $pending = Parametro::find(284);
+        $processing = Parametro::find(285);
+        $completed = Parametro::find(286);
+        $failed = Parametro::find(287);
 
         if (!$pending || !$processing || !$completed || !$failed) {
             return;
