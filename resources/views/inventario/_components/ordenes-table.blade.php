@@ -1,65 +1,6 @@
-{{--
-    Componente: filtros.blade.php
-    Componente reutilizable para filtrar órdenes por estado o tipo
-    Parámetros:
-    - $estado: (opcional) Filtrar por estado (EN ESPERA, APROBADA, RECHAZADA)
-    - $tipo: (opcional) Filtrar por tipo (PRÉSTAMO, SALIDA)
---}}
-
 <div class="container-fluid">
     <div class="row">
         <div class="col-12">
-            {{-- Filtros --}}
-            <div class="card mb-3">
-                <div class="card-body">
-                    <div class="row">
-                        <div class="col-md-4">
-                            <div class="form-group">
-                                <label for="search-orden">
-                                    <i class="fas fa-filter"></i> Buscar Orden
-                                </label>
-                                <input
-                                    type="text"
-                                    id="search-orden"
-                                    class="form-control"
-                                    placeholder="ID o descripción..."
-                                >
-                            </div>
-                        </div>
-                        <div class="col-md-3">
-                            <div class="form-group">
-                                <label for="fecha-desde">
-                                    <i class="fas fa-calendar-alt"></i> Desde
-                                </label>
-                                <input
-                                    type="date"
-                                    id="fecha-desde"
-                                    class="form-control"
-                                >
-                            </div>
-                        </div>
-                        <div class="col-md-3">
-                            <div class="form-group">
-                                <label for="fecha-hasta">
-                                    <i class="fas fa-calendar-alt"></i> Hasta
-                                </label>
-                                <input
-                                    type="date"
-                                    id="fecha-hasta"
-                                    class="form-control"
-                                >
-                            </div>
-                        </div>
-                        <div class="col-md-2 d-flex align-items-end">
-                            <button class="btn btn-primary btn-block" id="btn-filtrar">
-                                <i class="fas fa-search"></i> Filtrar
-                            </button>
-                        </div>
-                    </div>
-                </div>
-            </div>
-
-            {{-- Tabla de Órdenes --}}
             @php
                 $emptyStates = [
                     'EN ESPERA' => [
@@ -91,6 +32,7 @@
                 $stateKey = strtoupper($estado ?? 'DEFAULT');
                 $emptyState = $emptyStates[$stateKey] ?? $emptyStates['DEFAULT'];
             @endphp
+
             <div class="card">
                 <div class="card-header with-border">
                     <h3 class="card-title">
@@ -197,23 +139,4 @@
         </div>
     </div>
 </div>
-
-@push('js')
-    <script>
-        document
-            .getElementById('btn-filtrar')
-            .addEventListener('click', function() {
-                const search = document.getElementById('search-orden').value;
-                const desde = document.getElementById('fecha-desde').value;
-                const hasta = document.getElementById('fecha-hasta').value;
-
-                const url = new URL(window.location.href);
-                if (search) url.searchParams.set('search', search);
-                if (desde) url.searchParams.set('desde', desde);
-                if (hasta) url.searchParams.set('hasta', hasta);
-
-                window.location.href = url.toString();
-            });
-    </script>
-@endpush
 

@@ -76,6 +76,9 @@
                                             } elseif(str_contains($tipo, 'NuevaOrden')) {
                                                 $icon = 'fa-file-alt';
                                                 $color = 'primary';
+                                            } elseif(str_contains($tipo, 'DevolucionRegistrada')) {
+                                                $icon = 'fa-undo';
+                                                $color = 'success';
                                             }
                                             
                                             // Decodificar datos si es string
@@ -179,6 +182,21 @@
                                                                 - {{ $datos['tipo_orden'] ?? 'N/A' }}
                                                                 <br>{{ $datos['solicitante']['name'] ?? 'N/A' }}
                                                                 <span class="badge badge-info">{{ $datos['solicitante']['rol'] ?? 'N/A' }}</span>
+                                                            @elseif(str_contains($tipo, 'DevolucionRegistrada'))
+                                                                <strong>Devolución registrada</strong>
+                                                                <br>
+                                                                <span class="text-muted">
+                                                                    {{ $datos['producto_nombre'] ?? 'Producto sin nombre' }}
+                                                                    • {{ $datos['cantidad_devuelta'] ?? 0 }} {{ ($datos['cantidad_devuelta'] ?? 0) === 1 ? 'unidad' : 'unidades' }}
+                                                                </span>
+                                                                <br>
+                                                                <small>
+                                                                    Usuario: {{ $datos['usuario']['name'] ?? 'N/A' }}
+                                                                </small>
+                                                                <br>
+                                                                <small class="text-muted">
+                                                                    Orden #{{ $datos['orden_id'] ?? 'N/A' }}
+                                                                </small>
                                                             @endif
                                                         </p>
                                                     </div>

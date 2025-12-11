@@ -20,7 +20,7 @@
 @endsection
 
 @section('content')
-    @include('inventario._components.filtros', ['ordenes' => $ordenes, 'estado' => 'RECHAZADA'])
+    @include('inventario._components.ordenes-table', ['ordenes' => $ordenes, 'estado' => 'RECHAZADA'])
 @endsection
 
 @include('inventario._components.common-footer')

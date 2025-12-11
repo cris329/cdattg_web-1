@@ -7,7 +7,7 @@ use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Notifications\Messages\MailMessage;
 use Illuminate\Notifications\Notification;
 
-class StockBajoNotification extends Notification implements ShouldQueue
+class StockBajoNotification extends Notification
 {
     use Queueable;
 
@@ -41,7 +41,7 @@ class StockBajoNotification extends Notification implements ShouldQueue
     public function toMail(object $notifiable): MailMessage
     {
         return (new MailMessage)
-            ->subject('Alerta de Stock Bajo - ' . $this->producto->producto)
+            ->subject('⚠️ Alerta de Stock Bajo - ' . $this->producto->name)
             ->view('inventario.email.stock-bajo', [
                 'notifiable' => $notifiable,
                 'producto' => $this->producto,

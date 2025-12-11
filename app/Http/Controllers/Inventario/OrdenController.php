@@ -105,7 +105,7 @@ class OrdenController extends Controller
     {
         try {
             $estadoEnEspera = $this->service->obtenerEstadoEnEspera();
-            $user = auth()->user();
+            $user = Auth::user();
             $userId = null;
 
             if ($user !== null && !$user->can('VER TODAS LAS ORDENES')) {
@@ -129,7 +129,7 @@ class OrdenController extends Controller
             // Obtener estado APROBADA desde AprobacionService (mismo que rechazadas)
             $aprobacionService = app(\App\Inventario\Services\Aprobacion\AprobacionService::class);
             $estadoAprobada = $aprobacionService->obtenerEstadoAprobada();
-            $user = auth()->user();
+            $user = Auth::user();
             $userId = null;
 
             if ($user !== null && !$user->can('VER TODAS LAS ORDENES')) {
@@ -152,7 +152,7 @@ class OrdenController extends Controller
         // Obtener estado RECHAZADA desde AprobacionService
         $estadoRechazada = app(\App\Inventario\Services\Aprobacion\AprobacionService::class)->obtenerEstadoRechazada();
 
-        $user = auth()->user();
+        $user = Auth::user();
         $userId = null;
 
         if ($user !== null && !$user->can('VER TODAS LAS ORDENES')) {

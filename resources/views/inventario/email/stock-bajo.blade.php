@@ -20,7 +20,7 @@
         <div class="info-box-title"> Información del Producto</div>
         <div class="info-row">
             <span class="info-label">Producto:</span>
-            <span class="info-value"><strong>{{ $producto->producto }}</strong></span>
+            <span class="info-value"><strong>{{ $producto->name }}</strong></span>
         </div>
         <div class="info-row">
             <span class="info-label">Código:</span>

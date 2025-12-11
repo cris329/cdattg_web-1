@@ -61,12 +61,15 @@ class OrdenAprobadaNotification extends Notification implements ShouldQueue
      */
     public function toArray(object $notifiable): array
     {
+        $producto = $this->detalleOrden->producto;
+
         return [
             'orden_id' => $this->detalleOrden->orden->id,
             'detalle_orden_id' => $this->detalleOrden->id,
             'producto' => [
-                'id' => $this->detalleOrden->producto->id,
-                'producto' => $this->detalleOrden->producto->name,
+                'id' => $producto->id,
+                'producto' => $producto->name,
+                'name' => $producto->name,
             ],
             'cantidad' => $this->detalleOrden->cantidad,
             'aprobador' => [

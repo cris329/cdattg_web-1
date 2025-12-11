@@ -4,10 +4,11 @@ declare(strict_types=1);
 
 namespace App\Inventario\Services\Devolucion;
 
-use App\Models\Inventario\Devolucion;
-use App\Inventario\Interfaces\Services\TransactionServiceInterface;
-use App\Models\Tema;
 use App\Exceptions\DevolucionException;
+use App\Models\Inventario\Devolucion;
+use App\Models\Tema;
+use App\Inventario\Interfaces\Services\NotificationServiceInterface;
+use App\Inventario\Interfaces\Services\TransactionServiceInterface;
 
 /**
  * Servicio para gestión de devoluciones
@@ -16,11 +17,14 @@ use App\Exceptions\DevolucionException;
 class DevolucionService
 {
     protected TransactionServiceInterface $transactionService;
+    protected NotificationServiceInterface $notificationService;
 
     public function __construct(
-        TransactionServiceInterface $transactionService
+        TransactionServiceInterface $transactionService,
+        NotificationServiceInterface $notificationService
     ) {
         $this->transactionService = $transactionService;
+        $this->notificationService = $notificationService;
     }
 
     /**
@@ -37,6 +41,8 @@ class DevolucionService
         int $cantidadDevuelta,
         ?string $observaciones
     ): array {
+        $devolucion = null;
+
         try {
             $this->transactionService->beginTransaction();
 
@@ -47,18 +53,23 @@ class DevolucionService
             );
 
             $this->transactionService->commit();
-
-            $mensaje = $this->construirMensajeDevolucion($devolucion);
-
-            return [
-                'devolucion' => $devolucion,
-                'mensaje' => $mensaje
-            ];
-
         } catch (\Exception $e) {
             $this->transactionService->rollBack();
             throw new DevolucionException('Error al registrar la devolución: ' . $e->getMessage());
         }
+
+        try {
+            $this->notificationService->notificarDevolucion($devolucion);
+        } catch (\Exception $e) {
+            throw new DevolucionException('Error al notificar la devolución: ' . $e->getMessage());
+        }
+
+        $mensaje = $this->construirMensajeDevolucion($devolucion);
+
+        return [
+            'devolucion' => $devolucion,
+            'mensaje' => $mensaje
+        ];
     }
 
     /**
