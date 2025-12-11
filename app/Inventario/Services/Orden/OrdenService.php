@@ -199,8 +199,10 @@ class OrdenService
             'user_update_id' => $userId
         ]);
 
-        $nuevaCantidad = $producto->cantidad - $productoData['cantidad'];
+        $cantidadAnterior = $producto->cantidad;
+        $nuevaCantidad = $cantidadAnterior - $productoData['cantidad'];
         $this->productoRepository->actualizarStock($producto, $nuevaCantidad);
+        $this->stockValidator->verificarYNotificarCambioStock($producto, $cantidadAnterior);
     }
 
     /**

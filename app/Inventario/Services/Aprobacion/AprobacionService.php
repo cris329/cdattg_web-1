@@ -138,8 +138,10 @@ class AprobacionService
                 'user_update_id' => Auth::id(),
             ]);
 
-            $nuevaCantidad = $producto->cantidad - $detalleOrden->cantidad;
+            $cantidadAnterior = $producto->cantidad;
+            $nuevaCantidad = $cantidadAnterior - $detalleOrden->cantidad;
             $this->productoRepository->actualizarStock($producto, $nuevaCantidad);
+            $this->stockValidator->verificarYNotificarCambioStock($producto, $cantidadAnterior);
             $this->productoRepository->actualizar($producto, ['user_update_id' => Auth::id()]);
 
             $this->notificarAprobacion($detalleOrden);
@@ -311,8 +313,10 @@ class AprobacionService
                     'user_update_id' => Auth::id(),
                 ]);
 
-                $nuevaCantidad = $detalle->producto->cantidad - $detalle->cantidad;
+                $cantidadAnterior = $detalle->producto->cantidad;
+                $nuevaCantidad = $cantidadAnterior - $detalle->cantidad;
                 $this->productoRepository->actualizarStock($detalle->producto, $nuevaCantidad);
+                $this->stockValidator->verificarYNotificarCambioStock($detalle->producto, $cantidadAnterior);
                 $this->productoRepository->actualizar($detalle->producto, ['user_update_id' => Auth::id()]);
             }
 
