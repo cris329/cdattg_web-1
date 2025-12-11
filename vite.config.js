@@ -53,6 +53,7 @@ export default defineConfig({
                 'inventario_notificaciones': 'resources/js/inventario/notificaciones.js',
                 'inventario_solicitud': 'resources/js/inventario/solicitud.js',
                 'inventario_select-marca': 'resources/js/inventario/select-marca.js',
+                'inventario_ordenes_index': 'resources/js/inventario/ordenes-index.js',
                 // Complementarios files
                 'estadisticas_complementarios': 'resources/js/complementarios/estadisticas.js',
                 'aspirantes_programa': 'resources/js/complementarios/aspirantes/programa.js',
