@@ -22,6 +22,8 @@ Route::prefix('inventario')
 
         Route::get('productos/exportar-pdf', [ProductoController::class, 'exportarPdf'])
             ->name('productos.exportar-pdf');
+        Route::get('productos/exportar-excel', [ProductoController::class, 'exportarExcel'])
+            ->name('productos.exportar-excel');
         
 
         Route::resource('productos', ProductoController::class)->except(['index']);

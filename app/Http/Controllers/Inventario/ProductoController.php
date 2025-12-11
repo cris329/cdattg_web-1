@@ -20,6 +20,8 @@ use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\JsonResponse;
 use App\Http\Requests\Inventario\ProductoRequest;
 use Barryvdh\DomPDF\Facade\Pdf;
+use App\Services\ExportService;
+use Symfony\Component\HttpFoundation\BinaryFileResponse;
 
 
 class ProductoController extends Controller
@@ -32,6 +34,7 @@ class ProductoController extends Controller
     protected StockValidatorServiceInterface $stockValidator;
     protected ProductoEnrichmentService $enrichmentService;
     protected FormDataService $formDataService;
+    protected ExportService $exportService;
 
     public function __construct(
         ProductoRepositoryInterface $repository,
@@ -39,7 +42,8 @@ class ProductoController extends Controller
         FormOptionsServiceInterface $formOptionsService,
         StockValidatorServiceInterface $stockValidator,
         ProductoEnrichmentService $enrichmentService,
-        FormDataService $formDataService
+        FormDataService $formDataService,
+        ExportService $exportService
     ) {
         $this->middleware('auth');
 
@@ -49,6 +53,7 @@ class ProductoController extends Controller
         $this->stockValidator = $stockValidator;
         $this->enrichmentService = $enrichmentService;
         $this->formDataService = $formDataService;
+        $this->exportService = $exportService;
 
         // Middlewares de permisos de inventario
         $this->middleware('can:VER PRODUCTO')->only(['index', 'show']);
@@ -99,6 +104,38 @@ class ProductoController extends Controller
         ])->setPaper('a4', 'portrait');
 
         return $pdf->download('reporte_productos_inventario.pdf');
+    }
+
+    public function exportarExcel(): BinaryFileResponse
+    {
+        $productos = $this->repository->obtenerTodosOrdenadosPorCantidadDesc();
+
+        $datos = $productos->map(static function ($producto): array {
+            return [
+                'id' => $producto->id,
+                'nombre' => $producto->name,
+                'codigo_barras' => $producto->codigo_barras,
+                'cantidad' => $producto->cantidad,
+                'categoria' => $producto->categoria->name ?? '',
+                'marca' => $producto->marca->name ?? '',
+                'estado' => $producto->estado?->parametro?->name ?? '',
+            ];
+        });
+
+        $columnas = [
+            ['field' => 'id', 'label' => 'ID'],
+            ['field' => 'nombre', 'label' => 'Producto'],
+            ['field' => 'codigo_barras', 'label' => 'Código de barras'],
+            ['field' => 'cantidad', 'label' => 'Cantidad'],
+            ['field' => 'categoria', 'label' => 'Categoría'],
+            ['field' => 'marca', 'label' => 'Marca'],
+            ['field' => 'estado', 'label' => 'Estado'],
+        ];
+
+        $relativePath = $this->exportService->exportarExcel($datos, $columnas, 'productos_inventario');
+        $absolutePath = storage_path('app/public/' . $relativePath);
+
+        return response()->download($absolutePath, 'productos_inventario.xlsx')->deleteFileAfterSend(true);
     }
 
     /**

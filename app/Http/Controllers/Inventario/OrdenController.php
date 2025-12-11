@@ -29,7 +29,7 @@ class OrdenController extends Controller
         $this->middleware('can:VER ORDEN')->only(['index', 'show', 'prestamosSalidas']);
         $this->middleware('can:CREAR ORDEN')->only(['store', 'storePrestamos']);
         $this->middleware('can:EDITAR ORDEN')->only(['update']);
-        $this->middleware('can:ELIMINAR ORDEN')->only(['destroy']);
+        $this->middleware('can:ELIMINAR ORDEN')->only(['destroy', 'vaciarHistorial']);
         $this->middleware('can:APROBAR ORDEN')->only(['aprobar']);
         $this->middleware('can:COMPLETAR ORDEN')->only(['completar']);
 
@@ -231,5 +231,31 @@ class OrdenController extends Controller
             ?? route('inventario.ordenes.index');
 
         return view('inventario.ordenes.show', compact('orden', 'backUrl'));
+    }
+
+    /**
+     * Vacía el historial de órdenes que ya fueron completamente devueltas.
+     */
+    public function vaciarHistorial(): RedirectResponse
+    {
+        try {
+            $resultado = $this->service->vaciarHistorial();
+
+            $mensaje = 'Historial de órdenes vaciado correctamente.';
+
+            if ($resultado['eliminadas'] === 0 && $resultado['pendientes'] > 0) {
+                $mensaje = 'No se eliminaron órdenes porque existen préstamos sin devolver.';
+            } elseif ($resultado['pendientes'] > 0) {
+                $mensaje .= ' No se eliminaron ' . $resultado['pendientes'] . ' órdenes en préstamo sin devolver.';
+            }
+
+            return redirect()
+                ->route('inventario.ordenes.index')
+                ->with('success', $mensaje);
+        } catch (OrdenException $e) {
+            return redirect()
+                ->route('inventario.ordenes.index')
+                ->with('error', 'Error al vaciar el historial de órdenes: ' . $e->getMessage());
+        }
     }
 }

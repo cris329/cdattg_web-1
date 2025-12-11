@@ -29,7 +29,7 @@
                         permission="CREAR PRODUCTO"
                     />
 
-                    {{-- Filtros adicionales (mismo estilo que en el catálogo) --}}
+                    {{-- Filtros adicionales --}}
                     <div class="row mb-3 mt-3">
                         <div class="col-12">
                             <div class="card">
@@ -115,11 +115,14 @@
                     </div>
                     <!-- Botones de acciones -->
                     <div class="d-flex justify-content-end flex-wrap mt-3 mb-4">
-                        <button class="btn btn-secondary btn-lg mr-4" data-toggle="modal" data-target="#modalEscanear">
+                        <button class="btn btn-secondary btn-lg mr-2" data-toggle="modal" data-target="#modalEscanear">
                             <i class="fas fa-barcode"></i> Escanear Código de Barras
                         </button>
-                        <a href="{{ route('inventario.productos.exportar-pdf') }}" class="btn btn-danger btn-lg">
+                        <a href="{{ route('inventario.productos.exportar-pdf') }}" class="btn btn-danger btn-lg mr-2">
                             <i class="fas fa-file-pdf"></i> Exportar PDF
+                        </a>
+                        <a href="{{ route('inventario.productos.exportar-excel') }}" class="btn btn-success btn-lg">
+                            <i class="fas fa-file-excel"></i> Exportar Excel
                         </a>
                     </div>
 
@@ -130,7 +133,7 @@
                         searchPlaceholder="Buscar producto..."
                         searchValue="{{ request('search') }}"
                         :columns="[
-                            ['label' => '#', 'width' => '3%'],
+                            ['label' => 'Id', 'width' => '3%'],
                             ['label' => 'Producto', 'width' => '20%'],
                             ['label' => 'Código', 'width' => '14%'],
                             ['label' => 'Categoría', 'width' => '10%'],
@@ -146,7 +149,7 @@
                     >
                         @forelse ($productos as $producto)
                             <tr>
-                                <td>{{ $loop->iteration }}</td>
+                                <td>{{ $producto->id }}</td>
                                 <td>
                                     <strong>{{ $producto->name }}</strong>
                                     <br>

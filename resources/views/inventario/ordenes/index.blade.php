@@ -23,6 +23,17 @@
         <div class="container-fluid">
             <div class="row">
                 <div class="col-12">
+                    @can('ELIMINAR ORDEN')
+                        <div class="mb-3 text-right">
+                            <button
+                                type="button"
+                                id="btn-limpiar-historial-ordenes"
+                                class="btn btn-danger"
+                            >
+                                <i class="fas fa-trash-alt"></i> Limpiar historial
+                            </button>
+                        </div>
+                    @endcan
                     {{-- Script para limpiar carrito si viene de una orden exitosa --}}
                     @if(session('clear_cart'))
                         <script>
@@ -55,16 +66,36 @@
                             @php
                                 $tipoNombre = $orden->tipoOrden->parametro->name ?? 'N/A';
                                 $tipoClass = $tipoNombre === 'PRÉSTAMO' ? 'info' : 'warning';
-                                $estadoNombre = $orden->detalles->first()->estadoOrden->parametro->name ?? 'N/A';
-                                $estadoClass = match($estadoNombre) {
+
+                                $detalles = $orden->detalles;
+                                $estadoBase = $detalles->first()->estadoOrden->parametro->name ?? 'N/A';
+
+                                $estaDevuelto = $detalles->isNotEmpty()
+                                    && $detalles->every(static function ($detalle): bool {
+                                        return $detalle->estaCompletamenteDevuelto();
+                                    });
+
+                                $estadoNombre = $estaDevuelto ? 'DEVUELTO' : $estadoBase;
+
+                                $estadoClass = match ($estadoNombre) {
                                     'EN ESPERA' => 'warning',
                                     'APROBADA' => 'success',
                                     'RECHAZADA' => 'danger',
-                                    default => 'secondary'
+                                    'DEVUELTO' => 'primary',
+                                    default => 'secondary',
                                 };
-                                $totalProductos = $orden->detalles->count();
+
+                                $estadoIcon = match ($estadoNombre) {
+                                    'EN ESPERA' => 'clock',
+                                    'APROBADA' => 'check-circle',
+                                    'RECHAZADA' => 'times-circle',
+                                    'DEVUELTO' => 'undo',
+                                    default => 'question-circle',
+                                };
+
+                                $totalProductos = $detalles->count();
                             @endphp
-                            <tr>
+                            <tr data-estado="{{ $estadoNombre }}">
                                 <td>{{ $loop->iteration }}</td>
                                 <td><span class="badge badge-secondary">{{ $orden->id }}</span></td>
                                 <td>
@@ -85,7 +116,7 @@
                                 </td>
                                 <td>
                                     <span class="badge badge-{{ $estadoClass }}">
-                                        <i class="fas fa-{{ $estadoNombre === 'EN ESPERA' ? 'clock' : ($estadoNombre === 'APROBADA' ? 'check-circle' : 'times-circle') }}"></i>
+                                        <i class="fas fa-{{ $estadoIcon }}"></i>
                                         {{ $estadoNombre }}
                                     </span>
                                 </td>
@@ -146,3 +177,7 @@
 @endsection
 
 @include('inventario._components.common-footer')
+
+@push('js')
+    @vite('resources/js/inventario/ordenes-index.js')
+@endpush

@@ -5,6 +5,8 @@ namespace App\Services;
 use PhpOffice\PhpSpreadsheet\Spreadsheet;
 use PhpOffice\PhpSpreadsheet\Writer\Xlsx;
 use PhpOffice\PhpSpreadsheet\Writer\Csv;
+use PhpOffice\PhpSpreadsheet\Style\Fill;
+use PhpOffice\PhpSpreadsheet\Style\Alignment;
 use Illuminate\Support\Collection;
 use Illuminate\Support\Facades\Log;
 
@@ -24,25 +26,49 @@ class ExportService
             $spreadsheet = new Spreadsheet();
             $sheet = $spreadsheet->getActiveSheet();
 
+            // Determinar columna inicial para el título (si la primera columna es ID, empezar en B)
+            $primerCampo = $columnas[0]['field'] ?? null;
+            $inicioTituloCol = (is_string($primerCampo) && strtolower($primerCampo) === 'id') ? 'B' : 'A';
+
             // Título
-            $sheet->setCellValue('A1', strtoupper($titulo));
-            $sheet->mergeCells('A1:' . chr(64 + count($columnas)) . '1');
-            $sheet->getStyle('A1')->getFont()->setBold(true)->setSize(14);
+            $sheet->setCellValue($inicioTituloCol . '1', strtoupper($titulo));
+            $sheet->mergeCells($inicioTituloCol . '1:' . chr(64 + count($columnas)) . '1');
+            $sheet->getStyle($inicioTituloCol . '1')->getFont()->setBold(true)->setSize(14);
 
             // Fecha de generación
-            $sheet->setCellValue('A2', 'Fecha de generación: ' . now()->format('d/m/Y H:i:s'));
+            $sheet->setCellValue($inicioTituloCol . '2', 'Fecha de generación: ' . now()->format('d/m/Y H:i:s'));
 
             // Encabezados de columnas
-            $row = 4;
+            $headerRow = 4;
             $col = 'A';
             foreach ($columnas as $columna) {
-                $sheet->setCellValue($col . $row, $columna['label']);
-                $sheet->getStyle($col . $row)->getFont()->setBold(true);
+                $sheet->setCellValue($col . $headerRow, $columna['label']);
                 $col++;
             }
 
+            // Estilos de encabezado tipo tabla
+            $lastColumnLetter = chr(64 + count($columnas));
+            $headerRange = 'A' . $headerRow . ':' . $lastColumnLetter . $headerRow;
+
+            $sheet->getStyle($headerRange)->applyFromArray([
+                'font' => [
+                    'bold' => true,
+                    'color' => ['rgb' => 'FFFFFF'],
+                ],
+                'fill' => [
+                    'fillType' => Fill::FILL_SOLID,
+                    'startColor' => ['rgb' => '4472C4'],
+                ],
+                'alignment' => [
+                    'horizontal' => Alignment::HORIZONTAL_CENTER,
+                    'vertical' => Alignment::VERTICAL_CENTER,
+                ],
+            ]);
+            $sheet->getRowDimension($headerRow)->setRowHeight(20);
+
             // Datos
-            $row = 5;
+            $dataStartRow = 5;
+            $row = $dataStartRow;
             foreach ($datos as $dato) {
                 $col = 'A';
                 foreach ($columnas as $columna) {
@@ -53,8 +79,24 @@ class ExportService
                 $row++;
             }
 
+            $lastDataRow = $row - 1;
+
+            // Aplicar estilo de filas alternas para simular tabla con bandas
+            if ($lastDataRow >= $dataStartRow) {
+                for ($currentRow = $dataStartRow; $currentRow <= $lastDataRow; $currentRow++) {
+                    if ($currentRow % 2 === 0) {
+                        $range = 'A' . $currentRow . ':' . $lastColumnLetter . $currentRow;
+                        $sheet->getStyle($range)->getFill()->setFillType(Fill::FILL_SOLID);
+                        $sheet->getStyle($range)->getFill()->getStartColor()->setRGB('E9EDF5');
+                    }
+                }
+            }
+
+            // Agregar autofiltro a la fila de encabezados para comportamiento tipo tabla
+            $sheet->setAutoFilter('A' . $headerRow . ':' . $lastColumnLetter . $headerRow);
+
             // Auto-ajustar anchos
-            foreach (range('A', chr(64 + count($columnas))) as $col) {
+            foreach (range('A', $lastColumnLetter) as $col) {
                 $sheet->getColumnDimension($col)->setAutoSize(true);
             }
 

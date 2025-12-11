@@ -27,6 +27,8 @@ Route::prefix('inventario')
             ->name('ordenes.completadas');
         Route::get('ordenes/rechazadas', [OrdenController::class, 'rechazadas'])
             ->name('ordenes.rechazadas');
+        Route::delete('ordenes/vaciar-historial', [OrdenController::class, 'vaciarHistorial'])
+            ->name('ordenes.vaciar-historial');
         Route::get($ordenRoute, [OrdenController::class, 'show'])
             ->name('ordenes.show');
         Route::put($ordenRoute, [OrdenController::class, 'update'])
