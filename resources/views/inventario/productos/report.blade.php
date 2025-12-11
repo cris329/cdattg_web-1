@@ -6,16 +6,17 @@
     <style>
         body {
             font-family: DejaVu Sans, Arial, sans-serif;
-            font-size: 12px;
+            font-size: 10px;
         }
         h1 {
             text-align: center;
-            margin-bottom: 10px;
+            margin-bottom: 6px;
+            font-size: 16px;
         }
         .subtitle {
             text-align: center;
-            margin-bottom: 20px;
-            font-size: 11px;
+            margin-bottom: 10px;
+            font-size: 9px;
             color: #555555;
         }
         table {
@@ -24,12 +25,13 @@
         }
         th, td {
             border: 1px solid #dddddd;
-            padding: 6px 8px;
+            padding: 4px 5px;
             text-align: left;
         }
         th {
             background-color: #f2f2f2;
             font-weight: bold;
+            font-size: 9px;
         }
         .text-right {
             text-align: right;
@@ -49,6 +51,7 @@
                 <th>Producto</th>
                 <th>Categoría</th>
                 <th>Marca</th>
+                <th>Ubicación</th>
                 <th class="text-right">Cantidad</th>
                 <th>Peso / Unidad</th>
                 <th>Estado</th>
@@ -61,6 +64,7 @@
                     <td>{{ $producto->name }}</td>
                     <td>{{ $producto->categoria->name ?? 'N/A' }}</td>
                     <td>{{ $producto->marca->name ?? 'N/A' }}</td>
+                    <td>{{ $producto->ambiente->title ?? 'N/A' }}</td>
                     <td class="text-right">{{ $producto->cantidad }}</td>
                     <td>
                         @if($producto->peso && $producto->unidadMedida?->parametro?->name)

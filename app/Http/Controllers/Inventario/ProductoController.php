@@ -118,6 +118,9 @@ class ProductoController extends Controller
                 'cantidad' => $producto->cantidad,
                 'categoria' => $producto->categoria->name ?? '',
                 'marca' => $producto->marca->name ?? '',
+                'ubicacion' => $producto->ambiente->title ?? '',
+                'fecha_vencimiento' => optional($producto->fecha_vencimiento)->format('d/m/Y') ?? '',
+                'fecha_registro' => optional($producto->created_at)->format('d/m/Y') ?? '',
                 'estado' => $producto->estado?->parametro?->name ?? '',
             ];
         });
@@ -129,6 +132,9 @@ class ProductoController extends Controller
             ['field' => 'cantidad', 'label' => 'Cantidad'],
             ['field' => 'categoria', 'label' => 'Categoría'],
             ['field' => 'marca', 'label' => 'Marca'],
+            ['field' => 'ubicacion', 'label' => 'Ubicación'],
+            ['field' => 'fecha_vencimiento', 'label' => 'F. Vencimiento'],
+            ['field' => 'fecha_registro', 'label' => 'F. Registro'],
             ['field' => 'estado', 'label' => 'Estado'],
         ];
 

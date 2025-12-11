@@ -12,6 +12,7 @@ Route::prefix('inventario')
             ->name('productos.catalogo');
 
         Route::get('productos', [ProductoController::class, 'index'])
+            ->middleware('can:VER PRODUCTOS')
             ->name('productos.index');
         
         Route::get('productos/buscar', [ProductoController::class, 'buscar'])

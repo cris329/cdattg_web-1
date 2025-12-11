@@ -2,6 +2,7 @@
 
 $rutaLogoAdmin = 'vendor/adminlte/dist/img/LogoSena.png';
 $permisoVerProducto = 'VER PRODUCTO';
+$permisoVerProductos = 'VER PRODUCTOS';
 $permisoVerCatalogoProducto = 'VER CATALOGO PRODUCTO';
 $permisoVerCategoria = 'VER CATEGORIA';
 $permisoVerMarca = 'VER MARCA';
@@ -865,7 +866,7 @@ return [
                             'text' => 'Lista de Productos',
                             'url'  => 'inventario/productos',
                             'icon' => $iconoLista,
-                            'can'  => $permisoVerProducto,
+                            'can'  => $permisoVerProductos,
                         ],
                         [
                             'text' => 'Catálogo de Productos',

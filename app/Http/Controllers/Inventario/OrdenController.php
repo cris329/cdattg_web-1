@@ -26,7 +26,14 @@ class OrdenController extends Controller
         OrdenRepositoryInterface $repository,
         OrdenService $service
     ) {
-        $this->middleware('can:VER ORDEN')->only(['index', 'show', 'prestamosSalidas']);
+        $this->middleware('can:VER ORDEN')->only([
+            'index',
+            'show',
+            'prestamosSalidas',
+            'pendientes',
+            'completadas',
+            'rechazadas',
+        ]);
         $this->middleware('can:CREAR ORDEN')->only(['store', 'storePrestamos']);
         $this->middleware('can:EDITAR ORDEN')->only(['update']);
         $this->middleware('can:ELIMINAR ORDEN')->only(['destroy', 'vaciarHistorial']);
@@ -44,8 +51,14 @@ class OrdenController extends Controller
     {
         $filtros = [
             'search' => $request->input('search'),
-            'per_page' => 15
+            'per_page' => 15,
         ];
+
+        $user = $request->user();
+
+        if ($user !== null && !$user->can('VER TODAS LAS ORDENES')) {
+            $filtros['user_id'] = $user->id;
+        }
 
         $ordenes = $this->repository->obtenerConFiltros($filtros);
         $ordenes->appends($request->only('search'));
@@ -92,7 +105,14 @@ class OrdenController extends Controller
     {
         try {
             $estadoEnEspera = $this->service->obtenerEstadoEnEspera();
-            $ordenes = $this->repository->obtenerPendientes($estadoEnEspera->id);
+            $user = auth()->user();
+            $userId = null;
+
+            if ($user !== null && !$user->can('VER TODAS LAS ORDENES')) {
+                $userId = (int) $user->id;
+            }
+
+            $ordenes = $this->repository->obtenerPendientes((int) $estadoEnEspera->id, $userId);
         } catch (OrdenException $e) {
             $ordenes = collect();
         }
@@ -109,7 +129,14 @@ class OrdenController extends Controller
             // Obtener estado APROBADA desde AprobacionService (mismo que rechazadas)
             $aprobacionService = app(\App\Inventario\Services\Aprobacion\AprobacionService::class);
             $estadoAprobada = $aprobacionService->obtenerEstadoAprobada();
-            $ordenes = $this->repository->obtenerCompletadas($estadoAprobada->id);
+            $user = auth()->user();
+            $userId = null;
+
+            if ($user !== null && !$user->can('VER TODAS LAS ORDENES')) {
+                $userId = (int) $user->id;
+            }
+
+            $ordenes = $this->repository->obtenerCompletadas((int) $estadoAprobada->id, $userId);
         } catch (\Exception $e) {
             $ordenes = collect();
         }
@@ -124,7 +151,15 @@ class OrdenController extends Controller
     {
         // Obtener estado RECHAZADA desde AprobacionService
         $estadoRechazada = app(\App\Inventario\Services\Aprobacion\AprobacionService::class)->obtenerEstadoRechazada();
-        $ordenes = $this->repository->obtenerRechazadas($estadoRechazada->id);
+
+        $user = auth()->user();
+        $userId = null;
+
+        if ($user !== null && !$user->can('VER TODAS LAS ORDENES')) {
+            $userId = (int) $user->id;
+        }
+
+        $ordenes = $this->repository->obtenerRechazadas((int) $estadoRechazada->id, $userId);
 
         return view('inventario.ordenes.rechazadas', compact('ordenes'));
     }
@@ -224,6 +259,15 @@ class OrdenController extends Controller
 
         if (!$orden) {
             abort(404);
+        }
+
+        $user = request()->user();
+
+        if ($user !== null
+            && !$user->can('VER TODAS LAS ORDENES')
+            && (int) $orden->user_create_id !== (int) $user->id
+        ) {
+            abort(403);
         }
 
         $backUrl = request()->get('ref')

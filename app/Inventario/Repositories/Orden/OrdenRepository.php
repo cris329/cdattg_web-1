@@ -58,6 +58,10 @@ class OrdenRepository implements OrdenRepositoryInterface
             });
         }
 
+        if (!empty($filtros['user_id'])) {
+            $query->where('user_create_id', $filtros['user_id']);
+        }
+
         $perPage = $filtros['per_page'] ?? 15;
 
         return $query->paginate($perPage);
@@ -66,12 +70,13 @@ class OrdenRepository implements OrdenRepositoryInterface
     /**
      * Obtiene órdenes pendientes (EN ESPERA)
      *
-     * @param int $estadoEnEsperaId
+     * @param int      $estadoEnEsperaId
+     * @param int|null $userId
      * @return LengthAwarePaginator
      */
-    public function obtenerPendientes(int $estadoEnEsperaId): LengthAwarePaginator
+    public function obtenerPendientes(int $estadoEnEsperaId, ?int $userId = null): LengthAwarePaginator
     {
-        return Orden::with([
+        $query = Orden::with([
             'tipoOrden.parametro',
             'userCreate',
             'detalles.producto',
@@ -79,20 +84,25 @@ class OrdenRepository implements OrdenRepositoryInterface
         ])
         ->whereHas('detalles', function ($q) use ($estadoEnEsperaId) {
             $q->where('estado_orden_id', $estadoEnEsperaId);
-        })
-        ->latest()
-        ->paginate(15);
+        });
+
+        if ($userId !== null) {
+            $query->where('user_create_id', $userId);
+        }
+
+        return $query->latest()->paginate(15);
     }
 
     /**
      * Obtiene órdenes completadas (APROBADA)
      *
-     * @param int $estadoAprobadaId
+     * @param int      $estadoAprobadaId
+     * @param int|null $userId
      * @return LengthAwarePaginator
      */
-    public function obtenerCompletadas(int $estadoAprobadaId): LengthAwarePaginator
+    public function obtenerCompletadas(int $estadoAprobadaId, ?int $userId = null): LengthAwarePaginator
     {
-        return Orden::with([
+        $query = Orden::with([
             'tipoOrden.parametro',
             'userCreate',
             'detalles.producto',
@@ -100,20 +110,25 @@ class OrdenRepository implements OrdenRepositoryInterface
         ])
         ->whereHas('detalles', function ($q) use ($estadoAprobadaId) {
             $q->where('estado_orden_id', $estadoAprobadaId);
-        })
-        ->latest()
-        ->paginate(15);
+        });
+
+        if ($userId !== null) {
+            $query->where('user_create_id', $userId);
+        }
+
+        return $query->latest()->paginate(15);
     }
 
     /**
      * Obtiene órdenes rechazadas (RECHAZADA)
      *
-     * @param int $estadoRechazadaId
+     * @param int      $estadoRechazadaId
+     * @param int|null $userId
      * @return LengthAwarePaginator
      */
-    public function obtenerRechazadas(int $estadoRechazadaId): LengthAwarePaginator
+    public function obtenerRechazadas(int $estadoRechazadaId, ?int $userId = null): LengthAwarePaginator
     {
-        return Orden::with([
+        $query = Orden::with([
             'tipoOrden.parametro',
             'userCreate',
             'detalles.producto',
@@ -121,9 +136,13 @@ class OrdenRepository implements OrdenRepositoryInterface
         ])
         ->whereHas('detalles', function ($q) use ($estadoRechazadaId) {
             $q->where('estado_orden_id', $estadoRechazadaId);
-        })
-        ->latest()
-        ->paginate(15);
+        });
+
+        if ($userId !== null) {
+            $query->where('user_create_id', $userId);
+        }
+
+        return $query->latest()->paginate(15);
     }
 
     /**
