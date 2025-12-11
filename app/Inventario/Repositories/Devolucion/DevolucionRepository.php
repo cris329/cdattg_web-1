@@ -14,14 +14,19 @@ class DevolucionRepository implements DevolucionRepositoryInterface
     /**
      * Obtiene préstamos pendientes de devolución
      *
-     * @param int $estadoAprobadaId
+     * @param int      $estadoAprobadaId
+     * @param int|null $userId
      * @return LengthAwarePaginator
      */
-    public function obtenerPrestamosPendientes(int $estadoAprobadaId): LengthAwarePaginator
+    public function obtenerPrestamosPendientes(int $estadoAprobadaId, ?int $userId = null): LengthAwarePaginator
     {
         $prestamos = DetalleOrden::with(['orden.tipoOrden.parametro', 'producto', 'devoluciones'])
-            ->whereHas('orden', function ($query) {
+            ->whereHas('orden', function ($query) use ($userId) {
                 $query->whereNotNull('fecha_devolucion');
+
+                if ($userId !== null) {
+                    $query->where('user_create_id', $userId);
+                }
             })
             ->where('estado_orden_id', $estadoAprobadaId)
             ->get()
@@ -35,13 +40,21 @@ class DevolucionRepository implements DevolucionRepositoryInterface
     /**
      * Obtiene historial de devoluciones
      *
+     * @param int|null $userId
      * @return LengthAwarePaginator
      */
-    public function obtenerHistorial(): LengthAwarePaginator
+    public function obtenerHistorial(?int $userId = null): LengthAwarePaginator
     {
-        return Devolucion::with(['detalleOrden.producto', 'detalleOrden.orden', 'userCreate'])
-            ->orderBy('fecha_devolucion', 'desc')
-            ->paginate(20);
+        $query = Devolucion::with(['detalleOrden.producto', 'detalleOrden.orden', 'userCreate'])
+            ->orderBy('fecha_devolucion', 'desc');
+
+        if ($userId !== null) {
+            $query->whereHas('detalleOrden.orden', function ($q) use ($userId) {
+                $q->where('user_create_id', $userId);
+            });
+        }
+
+        return $query->paginate(20);
     }
 
     /**

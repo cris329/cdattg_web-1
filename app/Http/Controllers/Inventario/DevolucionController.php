@@ -39,7 +39,14 @@ class DevolucionController extends Controller
     {
         try {
             $estadoAprobadaId = $this->getEstadoOrdenAprobadaId();
-            $prestamos = $this->repository->obtenerPrestamosPendientes($estadoAprobadaId);
+            $user = Auth::user();
+            $userId = null;
+
+            if ($user !== null && !$user->can('VER TODAS LAS ORDENES')) {
+                $userId = (int) $user->id;
+            }
+
+            $prestamos = $this->repository->obtenerPrestamosPendientes($estadoAprobadaId, $userId);
 
             return view('inventario.devoluciones.index', compact('prestamos'));
         } catch (\Exception $e) {
@@ -60,6 +67,15 @@ class DevolucionController extends Controller
 
             if (!$detalleOrden) {
                 abort(404);
+            }
+
+            $user = Auth::user();
+
+            if ($user !== null
+                && !$user->can('VER TODAS LAS ORDENES')
+                && (int) $detalleOrden->orden->user_create_id !== (int) $user->id
+            ) {
+                abort(403);
             }
 
             if ($detalleOrden->estaCompletamenteDevuelto()) {
@@ -119,7 +135,14 @@ class DevolucionController extends Controller
     // Mostrar historial de devoluciones
     public function historial(): View
     {
-        $devoluciones = $this->repository->obtenerHistorial();
+        $user = Auth::user();
+        $userId = null;
+
+        if ($user !== null && !$user->can('VER TODAS LAS ORDENES')) {
+            $userId = (int) $user->id;
+        }
+
+        $devoluciones = $this->repository->obtenerHistorial($userId);
 
         return view('inventario.devoluciones.historial', compact('devoluciones'));
     }
@@ -131,6 +154,15 @@ class DevolucionController extends Controller
 
         if (!$devolucion) {
             abort(404);
+        }
+
+        $user = Auth::user();
+
+        if ($user !== null
+            && !$user->can('VER TODAS LAS ORDENES')
+            && (int) $devolucion->detalleOrden->orden->user_create_id !== (int) $user->id
+        ) {
+            abort(403);
         }
 
         return view('inventario.devoluciones.show', compact('devolucion'));

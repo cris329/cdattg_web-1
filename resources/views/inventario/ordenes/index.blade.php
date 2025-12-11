@@ -142,7 +142,7 @@
                                        title="Ver detalles">
                                         <i class="fas fa-eye"></i>
                                     </a>
-                                    @if($estadoNombre === 'EN ESPERA')
+                                    @if($estadoNombre === 'EN ESPERA' && auth()->user()?->can('APROBAR ORDEN'))
                                         <a href="{{ route('inventario.aprobaciones.pendientes') }}"
                                            class="btn btn-sm btn-warning"
                                            title="Gestionar">

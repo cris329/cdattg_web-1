@@ -298,6 +298,7 @@ class RolePermissionSeeder extends Seeder
             
             // Ordenes
             'VER ORDEN',
+            'VER TODAS LAS ORDENES',
             'CREAR ORDEN',
             'EDITAR ORDEN',
             'ELIMINAR ORDEN',
