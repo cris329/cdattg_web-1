@@ -26,6 +26,7 @@ export default defineConfig({
                 'inventario_modal_producto_css': 'resources/css/inventario/modal-producto.css',
                 'inventario_notificaciones_css': 'resources/css/inventario/notificaciones.css',
                 'inventario_orden_css': 'resources/css/inventario/orden.css',
+                'inventario_email_css': 'resources/css/inventario/email.css',
                 // Complementarios CSS files
                 'formulario_inscripcion_css': 'resources/css/formulario_inscripcion.css',
                 'gestion_aspirantes_css': 'resources/css/complementario/gestion_aspirantes.css',

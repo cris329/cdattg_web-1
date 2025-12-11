@@ -72,17 +72,12 @@ class Notificacion extends DatabaseNotification
         return is_array($decoded) ? $decoded : [];
     }
 
-    /**
-     * Laravel espera 'type' pero nuestra columna es 'tipo'
-     */
+  
     public function getTypeAttribute() : ?string
     {
         return $this->attributes['tipo'] ?? null;
     }
 
-    /**
-     * Laravel espera 'read_at' pero nuestra columna es 'leida_en'
-     */
     public function getReadAtAttribute() : ?Carbon
     {
         return $this->leida_en;

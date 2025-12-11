@@ -45,50 +45,19 @@ class RecordatorioDevolucionNotification extends Notification implements ShouldQ
         $fechaDevolucion = $this->orden->fecha_devolucion->format('d/m/Y');
         $cantidadProductos = $this->orden->detalles->count();
         
-        // Personalizar urgencia según días restantes
-        $urgencia = match($this->diasRestantes) {
-            3 => 'Te recordamos que',
-            2 => 'Atención:',
-            1 => 'URGENTE:',
-            default => 'Te recordamos que'
-        };
-        
         $diasTexto = $this->diasRestantes === 1 
             ? '1 día' 
             : $this->diasRestantes . ' días';
         
-        $message = (new MailMessage)
+        return (new MailMessage)
             ->subject('Recordatorio: Devolución de Préstamo en ' . $diasTexto)
-            ->greeting('Hola, ' . $notifiable->name)
-            ->line($urgencia . ' tienes un préstamo pendiente de devolución.')
-            ->line('Orden: #' . $this->orden->id)
-            ->line('Productos prestados: ' . $cantidadProductos . ($cantidadProductos === 1 ? ' producto' : ' productos'))
-            ->line('Fecha límite de devolución: ' . $fechaDevolucion)
-            ->line('Días restantes: ' . $this->diasRestantes . ($this->diasRestantes === 1 ? ' día' : ' días'));
-
-        // Listar productos
-        if ($cantidadProductos <= 5) {
-            $message->line('Productos:');
-            foreach ($this->orden->detalles as $detalle) {
-                $cantidadPendiente = $detalle->getCantidadPendiente();
-                if ($cantidadPendiente > 0) {
-                    $message->line('• ' . $detalle->producto->name . ' (' . $cantidadPendiente . ' unidad' . ($cantidadPendiente > 1 ? 'es' : '') . ')');
-                }
-            }
-        }
-        
-        // Mensaje de urgencia adicional
-        if ($this->diasRestantes === 1) {
-            $message->line('Este es el último día para devolver los productos.');
-        } elseif ($this->diasRestantes === 2) {
-            $message->line('Solo quedan 2 días. Por favor, planifica la devolución.');
-        }
-
-        $message->action('Ver Mis Préstamos', url('/inventario/mis-prestamos'))
-            ->line('Por favor, asegúrate de devolver los productos antes de la fecha límite.')
-            ->salutation('Saludos, ' . config('app.name'));
-
-        return $message;
+            ->view('inventario.email.recordatorio-devolucion', [
+                'notifiable' => $notifiable,
+                'orden' => $this->orden,
+                'fechaDevolucion' => $fechaDevolucion,
+                'cantidadProductos' => $cantidadProductos,
+                'diasRestantes' => $this->diasRestantes,
+            ]);
     }
 
     /**

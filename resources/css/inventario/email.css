@@ -1,0 +1,307 @@
+/* ============================================
+   EMAIL TEMPLATES - INVENTARIO
+   Sistema de notificaciones por email
+   ============================================ */
+
+/* Reset y estilos base */
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+body {
+    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
+    line-height: 1.6;
+    color: #333333;
+    background-color: #f4f7fa;
+}
+
+/* Wrapper principal */
+.email-wrapper {
+    width: 100%;
+    background-color: #f4f7fa;
+    padding: 20px 0;
+}
+
+.email-container {
+    max-width: 600px;
+    margin: 0 auto;
+    background-color: #ffffff;
+    border-radius: 8px;
+    overflow: hidden;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+}
+
+/* Header */
+.email-header {
+    background: linear-gradient(135deg, #39A900 0%, #2d8000 100%);
+    padding: 30px 20px;
+    text-align: center;
+    color: #ffffff;
+}
+
+.email-header .logo {
+    font-size: 28px;
+    font-weight: bold;
+    margin-bottom: 5px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 10px;
+}
+
+.email-header .logo-icon {
+    width: 40px;
+    height: 40px;
+    background-color: rgba(255, 255, 255, 0.2);
+    border-radius: 8px;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 24px;
+}
+
+.email-header .subtitle {
+    font-size: 14px;
+    opacity: 0.9;
+    margin-top: 5px;
+}
+
+/* Body */
+.email-body {
+    padding: 40px 30px;
+}
+
+.greeting {
+    font-size: 18px;
+    font-weight: 600;
+    color: #2d3748;
+    margin-bottom: 20px;
+}
+
+.content {
+    font-size: 15px;
+    color: #4a5568;
+    line-height: 1.8;
+    margin-bottom: 20px;
+}
+
+.content p {
+    margin-bottom: 15px;
+}
+
+.content strong {
+    color: #2d3748;
+    font-weight: 600;
+}
+
+/* Info Box */
+.info-box {
+    background-color: #f7fafc;
+    border-left: 4px solid #39A900;
+    padding: 20px;
+    margin: 25px 0;
+    border-radius: 4px;
+}
+
+.info-box-title {
+    font-size: 16px;
+    font-weight: 600;
+    color: #2d3748;
+    margin-bottom: 12px;
+}
+
+.info-row {
+    display: flex;
+    padding: 8px 0;
+    border-bottom: 1px solid #e2e8f0;
+}
+
+.info-row:last-child {
+    border-bottom: none;
+}
+
+.info-label {
+    font-weight: 600;
+    color: #4a5568;
+    min-width: 140px;
+}
+
+.info-value {
+    color: #2d3748;
+    flex: 1;
+}
+
+/* Alert Boxes */
+.alert-box {
+    padding: 15px 20px;
+    margin: 20px 0;
+    border-radius: 6px;
+    display: flex;
+    align-items: flex-start;
+    gap: 12px;
+}
+
+.alert-box.info {
+    background-color: #ebf8ff;
+    border-left: 4px solid #3182ce;
+    color: #2c5282;
+}
+
+.alert-box.warning {
+    background-color: #fffaf0;
+    border-left: 4px solid #ed8936;
+    color: #7c2d12;
+}
+
+.alert-box.success {
+    background-color: #f0fff4;
+    border-left: 4px solid #39A900;
+    color: #22543d;
+}
+
+.alert-box.danger {
+    background-color: #fff5f5;
+    border-left: 4px solid #e53e3e;
+    color: #742a2a;
+}
+
+.alert-icon {
+    font-size: 20px;
+    flex-shrink: 0;
+}
+
+/* Botones */
+.button-container {
+    text-align: center;
+    margin: 30px 0;
+}
+
+.button {
+    display: inline-block;
+    padding: 14px 32px;
+    background: linear-gradient(135deg, #39A900 0%, #2d8000 100%);
+    color: #ffffff !important;
+    text-decoration: none;
+    border-radius: 6px;
+    font-weight: 600;
+    font-size: 16px;
+    box-shadow: 0 4px 6px rgba(57, 169, 0, 0.2);
+    transition: all 0.3s ease;
+}
+
+.button:hover {
+    box-shadow: 0 6px 12px rgba(57, 169, 0, 0.3);
+    transform: translateY(-2px);
+}
+
+/* Lista de productos */
+.products-list {
+    margin: 20px 0;
+}
+
+.product-item {
+    display: flex;
+    align-items: center;
+    padding: 12px;
+    background-color: #f7fafc;
+    border-radius: 6px;
+    margin-bottom: 10px;
+    gap: 12px;
+}
+
+.product-icon {
+    width: 40px;
+    height: 40px;
+    background-color: #39A900;
+    color: white;
+    border-radius: 6px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 18px;
+    flex-shrink: 0;
+}
+
+.product-details {
+    flex: 1;
+}
+
+.product-name {
+    font-weight: 600;
+    color: #2d3748;
+    margin-bottom: 2px;
+}
+
+.product-quantity {
+    font-size: 13px;
+    color: #718096;
+}
+
+/* Footer */
+.email-footer {
+    background-color: #2d3748;
+    padding: 30px 30px;
+    text-align: center;
+    color: #a0aec0;
+}
+
+.footer-links {
+    margin-bottom: 15px;
+}
+
+.footer-links a {
+    color: #a0aec0;
+    text-decoration: none;
+    margin: 0 10px;
+    font-size: 13px;
+}
+
+.footer-links a:hover {
+    color: #ffffff;
+}
+
+.copyright {
+    font-size: 13px;
+    margin-top: 15px;
+}
+
+/* Utilidades */
+.divider {
+    height: 1px;
+    background-color: #e2e8f0;
+    margin: 25px 0;
+}
+
+.signature {
+    margin-top: 30px;
+    padding-top: 20px;
+    border-top: 2px solid #e2e8f0;
+    font-size: 14px;
+    color: #718096;
+}
+
+/* Responsive */
+@media only screen and (max-width: 600px) {
+    .email-container {
+        margin: 0 10px;
+    }
+    
+    .email-body {
+        padding: 30px 20px;
+    }
+    
+    .info-row {
+        flex-direction: column;
+    }
+    
+    .info-label {
+        margin-bottom: 5px;
+    }
+    
+    .button {
+        padding: 12px 24px;
+        font-size: 14px;
+    }
+}

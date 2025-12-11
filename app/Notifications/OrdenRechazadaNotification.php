@@ -44,26 +44,17 @@ class OrdenRechazadaNotification extends Notification implements ShouldQueue
         $producto = $this->detalleOrden->producto;
         $tipoOrden = $orden->tipoOrden->parametro->name ?? 'N/A';
 
-        $message = (new MailMessage)
+        return (new MailMessage)
             ->subject('Tu Solicitud ha sido Rechazada - Orden #' . $orden->id)
-            ->greeting('Hola, ' . $notifiable->name)
-            ->line('Lamentamos informarte que tu solicitud de ' . strtolower($tipoOrden) . ' ha sido rechazada.')
-            ->line('Orden: #' . $orden->id)
-            ->line('**Tipo:** ' . $tipoOrden)
-            ->line('Producto: ' . $producto->name)
-            ->line('Cantidad Solicitada: ' . $this->detalleOrden->cantidad . ' unidades')
-            ->line('Rechazado por: ' . $this->aprobador->name);
-
-        if ($this->motivoRechazo) {
-            $message->line('Motivo del Rechazo:')
-                ->line($this->motivoRechazo);
-        }
-
-        $message->action('Ver Detalles', url('/inventario/ordenes/' . $orden->id))
-            ->line('Si tienes alguna pregunta, por favor contacta al administrador.')
-            ->salutation('Saludos, ' . config('app.name'));
-
-        return $message;
+            ->view('inventario.email.orden-rechazada', [
+                'notifiable' => $notifiable,
+                'orden' => $orden,
+                'detalleOrden' => $this->detalleOrden,
+                'producto' => $producto,
+                'tipoOrden' => $tipoOrden,
+                'aprobador' => $this->aprobador,
+                'motivoRechazo' => $this->motivoRechazo,
+            ]);
     }
 
     /**

@@ -59,7 +59,7 @@
                             $descripcion = $orden->descripcion_orden ?? '';
                             preg_match('/MOTIVO:\s*(.+?)$/s', $descripcion, $matchMotivo);
                             $motivoCorto = isset($matchMotivo[1]) ? trim($matchMotivo[1]) : 'N/A';
-                            $productosOrden = $detallesOrden->pluck('producto.producto')->join(', ');
+                            $productosOrden = $detallesOrden->pluck('producto.name')->join(', ');
                         @endphp
 
                         <div class="card mb-3 border-primary">
