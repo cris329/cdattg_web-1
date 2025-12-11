@@ -98,7 +98,8 @@ class AspiranteManagementService
      * Agregar aspirante existente a un programa
      *
      * Nota: Las validaciones de existencia del programa, persona e inscripción duplicada
-     * ahora se realizan en StoreAspiranteRequest (FormRequest).
+     * también se realizan en StoreAspiranteRequest (FormRequest), pero aquí se valida
+     * nuevamente como capa de seguridad adicional y para manejar excepciones de BD.
      *
      * @param int $complementarioId ID del programa complementario
      * @param string $numeroDocumento Número de documento de la persona
@@ -118,6 +119,15 @@ class AspiranteManagementService
             if (!$persona) {
                 return $this->createErrorResponse(
                     'No se encontró ninguna persona registrada con el número de documento "' . $numeroDocumento . '".'
+                );
+            }
+
+            // Validar que el aspirante no esté ya inscrito en el programa
+            $existeInscripcion = $this->aspiranteRepository->existeInscripcion($persona->id, $complementarioId);
+
+            if ($existeInscripcion) {
+                return $this->createErrorResponse(
+                    'El aspirante ya está en este programa complementario.'
                 );
             }
 
