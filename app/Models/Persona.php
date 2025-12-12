@@ -112,12 +112,12 @@ class Persona extends Model
 
     public function tipoDocumento()
     {
-        return $this->belongsTo(ParametroTema::class, 'tipo_documento');
+        return $this->belongsTo(Parametro::class, 'tipo_documento');
     }
 
     public function tipoGenero()
     {
-        return $this->belongsTo(ParametroTema::class, 'genero');
+        return $this->belongsTo(Parametro::class, 'genero');
     }
 
     public function instructor()
