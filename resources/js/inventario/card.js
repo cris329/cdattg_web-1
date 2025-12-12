@@ -908,16 +908,30 @@ function showSuccessNotification(message) {
 function clearFilters() {
     const searchInput = document.getElementById('search-product');
     const typeSelect = document.getElementById('filter-type');
+    const categorySelect = document.getElementById('filter-category');
     const sortSelect = document.getElementById('sort-by');
 
-    if (searchInput) searchInput.value = '';
+    if (searchInput) {
+        searchInput.value = '';
+    }
+
     if (typeSelect) {
         typeSelect.value = '';
         if (typeof $ !== 'undefined' && $?.fn?.select2) {
             $(typeSelect).val(null).trigger('change');
         }
     }
-    if (sortSelect) sortSelect.value = 'name';
+
+    if (categorySelect) {
+        categorySelect.value = '';
+        if (typeof $ !== 'undefined' && $?.fn?.select2) {
+            $(categorySelect).val(null).trigger('change');
+        }
+    }
+
+    if (sortSelect) {
+        sortSelect.value = 'random';
+    }
 
     applyFilters();
 }
