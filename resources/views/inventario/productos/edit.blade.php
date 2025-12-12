@@ -30,7 +30,11 @@
         {{-- Alertas --}}
         @include('components.session-alerts')
 
-        <div class="row">
+        <form action="{{ route('inventario.productos.update', $producto->id) }}" method="POST" enctype="multipart/form-data">
+            @csrf
+            @method('PUT')
+
+            <div class="row">
             {{-- Columna de Imagen --}}
             <div class="col-lg-4 col-md-5">
                 <div class="image-preview-container slide-in">
@@ -74,10 +78,6 @@
                         </h3>
                     </div>
 
-                    <form action="{{ route('inventario.productos.update', $producto->id) }}" method="POST" enctype="multipart/form-data">
-                        @csrf
-                        @method('PUT')
-                        
                         <div class="form-content-container">
                             {{-- Sección: Información Básica --}}
                             <div class="form-section">
@@ -390,7 +390,7 @@
                                             >
                                                 <option value="">Seleccionar proveedor</option>
                                                 @foreach($proveedores as $proveedor)
-                                                    <option value="{{ $proveedor->id }}" {{ old('proveedor_id', $producto->name_id) == $proveedor->id ? 'selected' : '' }}>
+                                                    <option value="{{ $proveedor->id }}" {{ old('proveedor_id', $producto->proveedor_id) == $proveedor->id ? 'selected' : '' }}>
                                                         {{ $proveedor->name }}
                                                     </option>
                                                 @endforeach
@@ -459,10 +459,10 @@
                                 Actualizar Producto
                             </button>
                         </div>
-                    </form>
+                    </div>
                 </div>
             </div>
-        </div>
+        </form>
     </div>
 
     {{-- Modal para imagen --}}
