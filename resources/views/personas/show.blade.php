@@ -192,7 +192,7 @@
                                     <span class="text-muted text-uppercase small d-block">Tipo de documento</span>
                                     <p class="h6 mb-0">
                                         @if ($persona->tipoDocumento)
-                                            {{ $persona->tipoDocumento->name }}
+                                            {{ $persona->tipoDocumento->parametro->name }}
                                         @else
                                             <span class="badge badge-warning text-dark">Sin información</span>
                                         @endif
@@ -232,7 +232,7 @@
                                     <span class="text-muted text-uppercase small d-block">Género</span>
                                     <p class="h6 mb-0">
                                         @if ($persona->tipoGenero)
-                                            {{ $persona->tipoGenero->name }}
+                                            {{ $persona->tipoGenero->parametro->name }}
                                         @else
                                             <span class="badge badge-warning text-dark">Sin información</span>
                                         @endif

@@ -198,7 +198,7 @@
                                         </tr>
                                         <tr>
                                             <th class="py-3">Tipo de Documento</th>
-                                            <td class="py-3">{{ $instructor->persona->tipoDocumento->name ?? 'No registrado' }}</td>
+                                            <td class="py-3">{{ $instructor->persona->tipoDocumento->parametro->name ?? 'No registrado' }}</td>
                                         </tr>
                                         <tr>
                                             <th class="py-3">Número de Documento</th>
@@ -217,7 +217,7 @@
                                         </tr>
                                         <tr>
                                             <th class="py-3">Género</th>
-                                            <td class="py-3">{{ $instructor->persona->tipoGenero->name ?? 'No registrado' }}</td>
+                                            <td class="py-3">{{ $instructor->persona->tipoGenero->parametro->name ?? 'No registrado' }}</td>
                                         </tr>
                                         <tr>
                                             <th class="py-3">Estado del Usuario</th>

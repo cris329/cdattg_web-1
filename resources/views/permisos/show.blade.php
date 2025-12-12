@@ -137,7 +137,7 @@
                             <ul class="list-group list-group-unbordered mb-3">
                                 <li class="list-group-item">
                                     <b><i class="fas fa-id-card"></i> Tipo de documento:</b>
-                                    <span class="float-right">{{ $user->persona->tipoDocumento->name }}</span>
+                                    <span class="float-right">{{ $user->persona->tipoDocumento?->parametro->name ?? 'N/A' }}</span>
                                 </li>
                                 <li class="list-group-item">
                                     <b><i class="fas fa-file-alt"></i> Número de documento:</b>
@@ -157,7 +157,7 @@
                                 </li>
                                 <li class="list-group-item">
                                     <b><i class="fas fa-venus-mars"></i> Género:</b>
-                                    <span class="float-right">{{ $user->persona->tipoGenero->name }}</span>
+                                    <span class="float-right">{{ $user->persona->tipoGenero?->parametro->name ?? 'N/A' }}</span>
                                 </li>
                                 <li class="list-group-item">
                                     <b><i class="fas fa-toggle-on"></i> Estado:</b>
