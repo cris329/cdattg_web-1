@@ -109,6 +109,11 @@
                                 </div>
                                 <div class="row mt-2">
                                     <div class="col-12 text-right">
+                                        <button type="button"
+                                                class="btn btn-secondary btn-sm mr-2"
+                                                onclick="inventarioCard.clearFilters()">
+                                            <i class="fas fa-eraser"></i> Limpiar
+                                        </button>
                                         <button type="submit" class="btn btn-primary btn-sm">
                                             <i class="fas fa-filter"></i> Aplicar Filtros
                                         </button>
