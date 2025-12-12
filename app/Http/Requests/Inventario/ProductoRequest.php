@@ -64,7 +64,7 @@ class ProductoRequest extends FormRequest
             'contrato_convenio_id' => 'required|exists:contratos_convenios,id',
             'ambiente_id' => 'required|exists:ambientes,id',
             'fecha_vencimiento' => 'nullable|date',
-            'imagen' => 'nullable|image|mimes:jpg,jpeg,png|max:2048'
+            'imagen' => 'nullable|image|mimes:jpg,jpeg,png|max:5120'
         ];
     }
 }

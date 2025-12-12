@@ -60,7 +60,7 @@
                             >
                         </label>
                         <p class="text-muted mt-2 mb-0" style="font-size: 0.85rem;">
-                            <i class="fas fa-info-circle"></i> JPG, PNG (máx. 2MB)
+                            <i class="fas fa-info-circle"></i> JPG, PNG (máx. 5MB)
                         </p>
                     </div>
                 </div>

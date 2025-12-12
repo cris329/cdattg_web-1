@@ -8,7 +8,6 @@
     id="imageModal"
     tabindex="-1"
     aria-labelledby="imageModalLabel"
-    aria-hidden="true"
 >
     <div class="modal-dialog modal-dialog-centered modal-xl">
         <div class="modal-content image-modal-modern">
