@@ -113,9 +113,7 @@ function setupLivewireNavigationListener() {
 
         // También escuchar eventos de hook cuando se actualiza el DOM
         if (typeof Livewire.hook === 'function') {
-            Livewire.hook('morph', {
-                updated: handleNavigation
-            });
+            Livewire.hook('morph.updated', handleNavigation);
         }
     }
 

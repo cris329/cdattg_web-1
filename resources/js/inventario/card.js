@@ -171,9 +171,7 @@ function setupNavigationListener() {
         }
 
         if (typeof Livewire.hook === 'function') {
-            Livewire.hook('morph', {
-                updated: handleNavigation
-            });
+            Livewire.hook('morph.updated', handleNavigation);
         }
     }
 
