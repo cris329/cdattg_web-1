@@ -18,25 +18,23 @@ class VerificarPrestamosProximosJob implements ShouldQueue
 {
     use Dispatchable, InteractsWithQueue, Queueable, SerializesModels;
 
-    protected ParametroTemaRepositoryInterface $parametroTemaRepository;
-
     /**
      * Create a new job instance.
      */
-    public function __construct(ParametroTemaRepositoryInterface $parametroTemaRepository)
+    public function __construct()
     {
-        $this->parametroTemaRepository = $parametroTemaRepository;
+        //
     }
 
     /**
      * Execute the job.
      */
-    public function handle(): void
+    public function handle(ParametroTemaRepositoryInterface $parametroTemaRepository): void
     {
         try {
             // Obtener IDs necesarios usando el repositorio
-            $tipoPrestamoId = $this->obtenerTipoPrestamoId();
-            $estadoAprobadaId = $this->obtenerEstadoAprobadaId();
+            $tipoPrestamoId = $this->obtenerTipoPrestamoId($parametroTemaRepository);
+            $estadoAprobadaId = $this->obtenerEstadoAprobadaId($parametroTemaRepository);
 
             if (!$tipoPrestamoId || !$estadoAprobadaId) {
                 Log::warning('[VerificarPrestamosProximosJob] No se encontraron tipos o estados necesarios');
@@ -135,18 +133,18 @@ class VerificarPrestamosProximosJob implements ShouldQueue
     /**
      * Obtener el ID del tipo de orden PRÉSTAMO usando el repositorio
      */
-    private function obtenerTipoPrestamoId(): ?int
+    private function obtenerTipoPrestamoId(ParametroTemaRepositoryInterface $parametroTemaRepository): ?int
     {
-        $parametroTema = $this->parametroTemaRepository->obtenerEstadoPorNombre('PRÉSTAMO', 'TIPOS DE ORDEN');
+        $parametroTema = $parametroTemaRepository->obtenerEstadoPorNombre('PRÉSTAMO', 'TIPOS DE ORDEN');
         return $parametroTema?->id;
     }
 
     /**
      * Obtener el ID del estado APROBADA usando el repositorio
      */
-    private function obtenerEstadoAprobadaId(): ?int
+    private function obtenerEstadoAprobadaId(ParametroTemaRepositoryInterface $parametroTemaRepository): ?int
     {
-        $parametroTema = $this->parametroTemaRepository->obtenerEstadoPorNombre('APROBADA', 'ESTADOS DE ORDEN');
+        $parametroTema = $parametroTemaRepository->obtenerEstadoPorNombre('APROBADA', 'ESTADOS DE ORDEN');
         return $parametroTema?->id;
     }
 
@@ -159,13 +157,23 @@ class VerificarPrestamosProximosJob implements ShouldQueue
             return false;
         }
 
-        return DB::table('notifications')
-            ->where('notifiable_type', 'App\Models\User')
-            ->where('notifiable_id', $orden->userCreate->id)
-            ->where('type', RecordatorioDevolucionNotification::class)
-            ->whereDate('created_at', Carbon::today())
-            ->whereRaw("JSON_EXTRACT(data, '$.orden_id') = ?", [$orden->id])
-            ->whereRaw("JSON_EXTRACT(data, '$.dias_restantes') = ?", [$diasAntes])
-            ->exists();
+        try {
+            return DB::table('notificaciones')
+                ->where('notificable_type', 'App\\Models\\User')
+                ->where('notificable_id', $orden->userCreate->id)
+                ->where('tipo', 'App\\Notifications\\RecordatorioDevolucionNotification')
+                ->whereDate('created_at', Carbon::today())
+                ->whereRaw("JSON_EXTRACT(datos, '$.orden_id') = ?", [$orden->id])
+                ->whereRaw("JSON_EXTRACT(datos, '$.dias_restantes') = ?", [$diasAntes])
+                ->exists();
+        } catch (\Exception $e) {
+            Log::warning('[VerificarPrestamosProximosJob] Error al verificar duplicados', [
+                'error' => $e->getMessage(),
+                'orden_id' => $orden->id,
+                'dias_antes' => $diasAntes
+            ]);
+            // Si hay error en la verificación, permitir envío para no bloquear notificaciones
+            return false;
+        }
     }
 }

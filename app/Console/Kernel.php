@@ -22,7 +22,7 @@ class Kernel extends ConsoleKernel
             ->runInBackground();
 
         // Verificar préstamos próximos a vencer y enviar recordatorios
-        $schedule->job(new \App\Jobs\VerificarPrestamosProximosJob)
+        $schedule->job(\App\Jobs\VerificarPrestamosProximosJob::class)
             ->dailyAt('00:00')
             ->timezone('America/Bogota')
             ->withoutOverlapping();
