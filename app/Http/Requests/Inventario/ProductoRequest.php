@@ -57,7 +57,7 @@ class ProductoRequest extends FormRequest
             'descripcion' => 'required|string',
             'peso' => 'required|numeric|min:0',
             'unidad_medida_id' => 'required|exists:parametros_temas,id',
-            'codigo_barras' => 'nullable|string',
+            'codigo_barras' => 'nullable|string|max:13',
             'estado_producto_id' => 'required|exists:parametros_temas,id',
             'categoria_id' => 'required|exists:parametros,id',
             'marca_id' => 'required|exists:parametros,id',

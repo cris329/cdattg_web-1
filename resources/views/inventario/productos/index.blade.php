@@ -296,7 +296,7 @@
     {{-- base.css se carga desde common-css.blade.php --}}
 @endpush
 
-@push('scripts')
+@push('js')
     @vite(['resources/js/inventario/escaner.js'])
     @vite(['resources/js/pages/formularios-generico.js'])
 @endpush

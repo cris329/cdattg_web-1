@@ -30,7 +30,7 @@ class BarcodeService implements BarcodeServiceInterface
     {
         $digits = preg_replace('/\D/', '', (string) $codigo);
 
-        if (strlen($digits) === $this->getBarcodeLength()) {
+        if ($digits !== '' && strlen($digits) <= 13) {
             return $digits;
         }
 
@@ -65,13 +65,16 @@ class BarcodeService implements BarcodeServiceInterface
 
     public function normalizarCodigoBarras(?string $codigo): ?string
     {
-        if (empty($codigo)) {
+        if ($codigo === null || $codigo === '') {
             return null;
         }
 
         $digits = preg_replace('/\D/', '', $codigo);
+        if ($digits === '' || strlen($digits) > 13) {
+            return null;
+        }
 
-        return strlen($digits) === $this->getBarcodeLength() ? $digits : null;
+        return $digits;
     }
 }
 
