@@ -233,7 +233,7 @@ class AspiranteExportService
     {
         $row = 3;
         foreach ($aspirantes as $aspirante) {
-            $tipoDocumento = $aspirante->persona->tipoDocumento ? $aspirante->persona->tipoDocumento->name : 'N/A';
+            $tipoDocumento = $aspirante->persona->tipoDocumento ? $aspirante->persona->tipoDocumento->parametro->name : 'N/A';
             $numeroDocumento = $aspirante->persona->numero_documento;
             
             // Obtener caracterización

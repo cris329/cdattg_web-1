@@ -20,7 +20,7 @@ class AprendizResource extends JsonResource
                 'id' => $this->persona->id ?? null,
                 'nombre_completo' => $this->persona->nombre_completo ?? 'N/A',
                 'numero_documento' => $this->persona->numero_documento ?? 'N/A',
-                'tipo_documento' => $this->persona->tipoDocumento->name ?? 'N/A',
+                'tipo_documento' => $this->persona->tipoDocumento?->parametro->name ?? 'N/A',
                 'email' => $this->persona->email ?? 'N/A',
                 'telefono' => $this->persona->telefono ?? null,
             ],

@@ -18,7 +18,7 @@ class AspiranteDocumentoService
         $tipoDocumento = $persona->tipoDocumento ? str_replace(
             ' ',
             '_',
-            $persona->tipoDocumento->name
+            $persona->tipoDocumento->parametro->name
         ) : 'DOC';
 
         return "{$tipoDocumento}_{$persona->numero_documento}_" .

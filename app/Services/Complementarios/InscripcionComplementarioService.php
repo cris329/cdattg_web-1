@@ -304,7 +304,7 @@ class InscripcionComplementarioService
      */
     private function generarNombreArchivo(Persona $persona, $file): string
     {
-        $tipoDocumento = $persona->tipoDocumento->name ?? 'DOC';
+        $tipoDocumento = $persona->tipoDocumento?->parametro->name ?? 'DOC';
         $numeroDocumento = $persona->numero_documento;
         $primerNombre = $persona->primer_nombre;
         $primerApellido = $persona->primer_apellido;

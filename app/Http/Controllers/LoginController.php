@@ -238,7 +238,7 @@ class LoginController extends Controller
             // Construcción de datos de la persona
             $persona = [
                 "id" => $personaD->id,
-                "tipo_documento" => optional($personaD->tipoDocumento)->name,
+                "tipo_documento" => optional($personaD->tipoDocumento)->parametro->name ?? null,
                 "numero_documento" => $personaD->numero_documento,
                 "primer_nombre" => $personaD->primer_nombre,
                 "segundo_nombre" => $personaD->segundo_nombre,

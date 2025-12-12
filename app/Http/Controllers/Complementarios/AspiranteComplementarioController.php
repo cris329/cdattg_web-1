@@ -178,7 +178,7 @@ class AspiranteComplementarioController extends Controller
             'persona' => [
                 'id' => $persona->id,
                 'tipo_documento_id' => $persona->tipo_documento,
-                'tipo_documento' => $persona->tipoDocumento ? $persona->tipoDocumento->name : null,
+                'tipo_documento' => $persona->tipoDocumento ? $persona->tipoDocumento->parametro->name : null,
                 'numero_documento' => $persona->numero_documento,
                 'primer_nombre' => $persona->primer_nombre,
                 'segundo_nombre' => $persona->segundo_nombre,
@@ -186,7 +186,7 @@ class AspiranteComplementarioController extends Controller
                 'segundo_apellido' => $persona->segundo_apellido,
                 'fecha_nacimiento' => $persona->fecha_nacimiento,
                 'genero_id' => $persona->genero,
-                'genero' => $persona->tipoGenero ? $persona->tipoGenero->name : null,
+                'genero' => $persona->tipoGenero ? $persona->tipoGenero->parametro->name : null,
                 'telefono' => $persona->telefono,
                 'celular' => $persona->celular,
                 'email' => $persona->email,

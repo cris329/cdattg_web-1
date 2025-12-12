@@ -45,7 +45,7 @@ class ProbarRelacionesAprendiz extends Command
             // Probar tipo de documento
             $this->info('📋 Tipo de Documento:');
             if ($aprendiz->persona?->tipoDocumento) {
-                $this->line("   ✅ Relación cargada: " . $aprendiz->persona->tipoDocumento->name);
+                $this->line("   ✅ Relación cargada: " . ($aprendiz->persona->tipoDocumento?->parametro->name ?? 'N/A'));
             } else {
                 $this->warn("   ⚠️  No se pudo cargar el tipo de documento");
                 $this->line("   ID tipo_documento en persona: " . ($aprendiz->persona?->tipo_documento ?? 'NULL'));

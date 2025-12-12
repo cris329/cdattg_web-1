@@ -153,7 +153,7 @@ class ValidarDocumentoJob implements ShouldQueue
         try {
             // Construir el patrón de búsqueda del archivo en Google Drive
             // Formato: tipo_documento_NumeroDocumento_PrimerNombre_PrimerApellido_*.pdf
-            $tipoDocumento = $persona->tipoDocumento ? str_replace(' ', '_', $persona->tipoDocumento->name) : 'DOC';
+            $tipoDocumento = $persona->tipoDocumento ? str_replace(' ', '_', $persona->tipoDocumento->parametro->name) : 'DOC';
             $numeroDocumento = $persona->numero_documento;
             $primerNombre = str_replace(' ', '_', $persona->primer_nombre);
             $primerApellido = str_replace(' ', '_', $persona->primer_apellido);
