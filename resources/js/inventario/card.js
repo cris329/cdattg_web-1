@@ -299,134 +299,30 @@ let searchKeypressHandler = null;
  * Configurar búsqueda de productos
  */
 function setupSearchFilter() {
-    const searchInput = document.getElementById('search-product');
-    if (!searchInput) {
-        return;
-    }
-
-    if (searchFilterInitialized && searchInput.dataset.searchInitialized === 'true') {
-        return;
-    }
-
-    if (searchInputHandler) {
-        searchInput.removeEventListener('input', searchInputHandler);
-    }
-    if (searchKeypressHandler) {
-        searchInput.removeEventListener('keypress', searchKeypressHandler);
-    }
-
-    searchInputHandler = function() {
-        if (searchTimeout) {
-            clearTimeout(searchTimeout);
-        }
-        searchTimeout = setTimeout(() => {
-            applyFilters();
-        }, 500);
-    };
-
-    searchKeypressHandler = function(e) {
-        if (e.key === 'Enter') {
-            e.preventDefault();
-            if (searchTimeout) {
-                clearTimeout(searchTimeout);
-            }
-            applyFilters();
-        }
-    };
-
-    searchInput.addEventListener('input', searchInputHandler);
-    searchInput.addEventListener('keypress', searchKeypressHandler);
-
-    searchInput.dataset.searchInitialized = 'true';
-    searchFilterInitialized = true;
+    // Filters are applied manually using the "Aplicar" button.
 }
 
 /**
  * Configurar filtro por tipo de producto
  */
 function setupTypeFilter() {
-    const typeSelect = document.getElementById('filter-type');
-    if (!typeSelect) return;
-
-    typeSelect.addEventListener('change', function() {
-        applyFilters();
-    });
+    // Filters are applied manually using the "Aplicar" button.
 }
 
 /**
  * Configurar ordenamiento de productos
  */
 function setupSortFilter() {
-    const sortSelect = document.getElementById('sort-by');
-    if (!sortSelect) return;
-
-    sortSelect.addEventListener('change', function() {
-        applyFilters();
-    });
-}
-
-/**
- * Aplicar filtros mediante redirección con parámetros GET
- */
-function collectFilterValues() {
-    const searchInput = document.getElementById('search-product');
-    const typeSelect = document.getElementById('filter-type');
-    const sortSelect = document.getElementById('sort-by');
-
-    const searchTerm = searchInput?.value.trim() || '';
-    const typeId = typeSelect?.value || '';
-    const sortBy = sortSelect?.value || 'name';
-
-    return { searchTerm, typeId, sortBy };
-}
-
-function buildFilterEntries({ searchTerm, typeId, sortBy }) {
-    const sortValue = sortBy === 'name' ? '' : sortBy;
-    return [
-        { key: 'search', value: searchTerm },
-        { key: 'tipo_producto_id', value: typeId },
-        { key: 'sort_by', value: sortValue }
-    ];
-}
-
-function updateSearchParam(params, key, value) {
-    if (value) {
-        params.set(key, value);
-        return;
-    }
-
-    params.delete(key);
-}
-
-function buildFallbackUrl(baseUrl, entries) {
-    const params = new URLSearchParams();
-    for (const { key, value } of entries) {
-        if (value) {
-            params.set(key, value);
-        }
-    }
-
-    const queryString = params.toString();
-    return queryString ? `${baseUrl}?${queryString}` : baseUrl;
+    // Filters are applied manually using the "Aplicar" button.
 }
 
 function applyFilters() {
-    const filterValues = collectFilterValues();
-    const filterEntries = buildFilterEntries(filterValues);
-
-    try {
-        const url = new URL(globalThis.location.href);
-        url.searchParams.delete('page');
-        for (const entry of filterEntries) {
-            updateSearchParam(url.searchParams, entry.key, entry.value);
-        }
-
-        globalThis.location.href = url.toString();
-    } catch (error) {
-        console.error('applyFilters: error actualizando la URL', error);
-        const baseUrl = globalThis.location.origin + globalThis.location.pathname;
-        globalThis.location.href = buildFallbackUrl(baseUrl, filterEntries);
+    const form = document.getElementById('catalog-filters-form');
+    if (!form) {
+        return;
     }
+
+    form.submit();
 }
 
 /**

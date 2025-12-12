@@ -298,6 +298,7 @@ class ProductoController extends Controller
         $filtros = [
             'search' => $request->input('search'),
             'tipo_producto_id' => $request->input('tipo_producto_id'),
+            'categoria_id' => $request->input('categoria_id'),
             'sort_by' => $request->input('sort_by', 'random'),
             'estado_agotado_id' => $estadoAgotado?->id,
             'per_page' => 12
@@ -307,12 +308,14 @@ class ProductoController extends Controller
         $productos->appends([
             'search' => $filtros['search'],
             'tipo_producto_id' => $filtros['tipo_producto_id'],
+            'categoria_id' => $filtros['categoria_id'],
             'sort_by' => $filtros['sort_by']
         ]);
 
         $tiposProductos = $this->repository->obtenerTiposProductos();
+        $categorias = $this->formOptionsService->obtenerCategorias();
 
-        return view('inventario.productos.card', compact('productos', 'tiposProductos'));
+        return view('inventario.productos.card', compact('productos', 'tiposProductos', 'categorias'));
     }
 
     /**

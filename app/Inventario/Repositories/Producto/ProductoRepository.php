@@ -123,6 +123,7 @@ class ProductoRepository implements ProductoRepositoryInterface
             'cantidad',
             'imagen',
             'tipo_producto_id',
+            'categoria_id',
             'estado_producto_id',
             'created_at'
         ])->where('cantidad', '>', 0);
@@ -133,6 +134,10 @@ class ProductoRepository implements ProductoRepositoryInterface
 
         if (!empty($filtros['tipo_producto_id'])) {
             $query->where('tipo_producto_id', $filtros['tipo_producto_id']);
+        }
+
+        if (!empty($filtros['categoria_id'])) {
+            $query->where('categoria_id', $filtros['categoria_id']);
         }
 
         if (!empty($filtros['estado_agotado_id'])) {

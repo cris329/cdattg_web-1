@@ -29,60 +29,92 @@
                 <div class="col-12">
                     <div class="card">
                         <div class="card-body">
-                            <div class="row">
-                                <div class="col-md-5">
-                                    <div class="form-group">
-                                        <label for="search-product">
-                                            <i class="fas fa-search"></i> Buscar Producto
-                                        </label>
-                                        <input
-                                            type="text"
-                                            id="search-product"
-                                            class="form-control"
-                                            placeholder="Buscar por nombre..."
-                                            value="{{ request('search') }}"
-                                        >
+                            <form id="catalog-filters-form" method="GET" action="{{ route('inventario.productos.catalogo') }}">
+                                <div class="row">
+                                    <div class="col-md-3">
+                                        <div class="form-group">
+                                            <label for="search-product">
+                                                <i class="fas fa-search"></i> Buscar Producto
+                                            </label>
+                                            <input
+                                                type="text"
+                                                id="search-product"
+                                                name="search"
+                                                class="form-control"
+                                                placeholder="Buscar por nombre..."
+                                                value="{{ request('search') }}"
+                                            >
+                                        </div>
+                                    </div>
+                                    <div class="col-md-3">
+                                        <div class="form-group">
+                                            <label for="filter-type">
+                                                <i class="fas fa-box-open"></i> Tipo de Producto
+                                            </label>
+                                            <select
+                                                id="filter-type"
+                                                name="tipo_producto_id"
+                                                class="form-control"
+                                                data-placeholder="Todos los tipos"
+                                            >
+                                                <option value="">Todos los tipos</option>
+                                                @foreach($tiposProductos as $tipoProducto)
+                                                    <option value="{{ $tipoProducto->id }}"
+                                                        {{ request('tipo_producto_id') == $tipoProducto->id ? 'selected' : '' }}>
+                                                        {{ $tipoProducto->parametro->name }}
+                                                    </option>
+                                                @endforeach
+                                            </select>
+                                        </div>
+                                    </div>
+                                    <div class="col-md-3">
+                                        <div class="form-group">
+                                            <label for="filter-category">
+                                                <i class="fas fa-list"></i> Categoría
+                                            </label>
+                                            <select
+                                                id="filter-category"
+                                                name="categoria_id"
+                                                class="form-control"
+                                                data-placeholder="Todas las categorías"
+                                            >
+                                                <option value="">Todas las categorías</option>
+                                                @foreach($categorias as $categoria)
+                                                    <option value="{{ $categoria->parametro->id }}"
+                                                        {{ request('categoria_id') == $categoria->parametro->id ? 'selected' : '' }}>
+                                                        {{ $categoria->parametro->name }}
+                                                    </option>
+                                                @endforeach
+                                            </select>
+                                        </div>
+                                    </div>
+                                    <div class="col-md-3">
+                                        <div class="form-group">
+                                            <label for="sort-by">
+                                                <i class="fas fa-sort"></i> Ordenar por
+                                            </label>
+                                            <select
+                                                id="sort-by"
+                                                name="sort_by"
+                                                class="form-control"
+                                            >
+                                                <option value="random" {{ request('sort_by', 'random') == 'random' ? 'selected' : '' }}>Aleatorio</option>
+                                                <option value="name" {{ request('sort_by') == 'name' ? 'selected' : '' }}>Nombre</option>
+                                                <option value="stock-asc" {{ request('sort_by') == 'stock-asc' ? 'selected' : '' }}>Stock Menor</option>
+                                                <option value="stock-desc" {{ request('sort_by') == 'stock-desc' ? 'selected' : '' }}>Stock Mayor</option>
+                                                <option value="newest" {{ request('sort_by') == 'newest' ? 'selected' : '' }}>Más Recientes</option>
+                                            </select>
+                                        </div>
                                     </div>
                                 </div>
-                                <div class="col-md-4">
-                                    <div class="form-group">
-                                        <label for="filter-type">
-                                            <i class="fas fa-box-open"></i> Tipo de producto
-                                        </label>
-                                        <select
-                                            id="filter-type"
-                                            name="filter-type"
-                                            class="form-control select2"
-                                            data-placeholder="Todos los tipos"
-                                        >
-                                            <option value="">Todos los tipos</option>
-                                            @foreach($tiposProductos as $tipoProducto)
-                                                <option value="{{ $tipoProducto->id }}"
-                                                    {{ request('tipo_producto_id') == $tipoProducto->id ? 'selected' : '' }}>
-                                                    {{ $tipoProducto->parametro->name }}
-                                                </option>
-                                            @endforeach
-                                        </select>
+                                <div class="row mt-2">
+                                    <div class="col-12 text-right">
+                                        <button type="submit" class="btn btn-primary btn-sm">
+                                            <i class="fas fa-filter"></i> Aplicar Filtros
+                                        </button>
                                     </div>
                                 </div>
-                                <div class="col-md-3">
-                                    <div class="form-group">
-                                        <label for="sort-by">
-                                            <i class="fas fa-sort"></i> Ordenar por
-                                        </label>
-                                        <select
-                                            id="sort-by"
-                                            class="form-control"
-                                        >
-                                            <option value="random" {{ request('sort_by', 'random') == 'random' ? 'selected' : '' }}>Aleatorio</option>
-                                            <option value="name" {{ request('sort_by') == 'name' ? 'selected' : '' }}>Nombre</option>
-                                            <option value="stock-asc" {{ request('sort_by') == 'stock-asc' ? 'selected' : '' }}>Stock Menor</option>
-                                            <option value="stock-desc" {{ request('sort_by') == 'stock-desc' ? 'selected' : '' }}>Stock Mayor</option>
-                                            <option value="newest" {{ request('sort_by') == 'newest' ? 'selected' : '' }}>Más Recientes</option>
-                                        </select>
-                                    </div>
-                                </div>
-                            </div>
+                            </form>
                         </div>
                     </div>
                 </div>

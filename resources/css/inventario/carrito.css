@@ -188,13 +188,22 @@
 }
 
 #empty-cart-message h4 {
-    color: #6c757d;
+    color: #000000;
     margin-bottom: 0.5rem;
 }
 
 #empty-cart-message p {
-    color: #adb5bd;
+    color: #000000;
     margin-bottom: 1.5rem;
+}
+
+.btn-tool
+{
+    background-color: transparent;
+    color: #f3f3f3 !important;
+    font-size: .875rem;
+    margin: -.75rem 0;
+    padding: .25rem .5rem;
 }
 
 /* ========================================
