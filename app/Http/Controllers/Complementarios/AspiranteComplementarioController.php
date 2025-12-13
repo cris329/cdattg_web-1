@@ -208,7 +208,7 @@ class AspiranteComplementarioController extends Controller
     public function create(int $programa): View
     {
         $data = $this->aspiranteManagementService->obtenerAspirantesPorProgramaId($programa);
-        
+
         // Preparar datos adicionales para el formulario
         $temaTipoDocumento = $this->temaRepository->obtenerTiposDocumento();
         $tiposDocumento = $this->complementarioService->getTiposDocumento();
@@ -218,37 +218,43 @@ class AspiranteComplementarioController extends Controller
                 ? $temaTipoDocumento->parametros()->where('parametros_temas.status', 1)->orderBy('parametros.name')->get(['parametros.id', 'parametros.name'])
                 : $tiposDocumento
         ];
-        
+
         $temaGenero = $this->temaRepository->obtenerGeneros();
         $generosFallback = $this->complementarioService->getGeneros();
         $generos = ($temaGenero && isset($temaGenero->parametros) && $temaGenero->parametros->count() > 0)
             ? $temaGenero
             : (object) ['parametros' => $generosFallback];
-        
+
         $temaCaracterizacion = $this->temaRepository->obtenerCaracterizacionesComplementarias();
         $caracterizaciones = ($temaCaracterizacion && isset($temaCaracterizacion->parametros) && $temaCaracterizacion->parametros->count() > 0)
             ? $temaCaracterizacion
             : (object) ['parametros' => collect()];
-        
+
         $temaVia = $this->temaRepository->obtenerVias();
         $vias = ($temaVia && isset($temaVia->parametros) && $temaVia->parametros->count() > 0)
             ? $temaVia
             : (object) ['parametros' => collect()];
-        
+
         $temaLetra = $this->temaRepository->obtenerLetras();
         $letras = ($temaLetra && isset($temaLetra->parametros) && $temaLetra->parametros->count() > 0)
             ? $temaLetra
             : (object) ['parametros' => collect()];
-        
+
         $temaCardinal = $this->temaRepository->obtenerCardinales();
         $cardinales = ($temaCardinal && isset($temaCardinal->parametros) && $temaCardinal->parametros->count() > 0)
             ? $temaCardinal
             : (object) ['parametros' => collect()];
-        
+
+        // Obtener tema de nivel de escolaridad
+        $temaNivelEscolaridad = $this->temaRepository->obtenerNivelEscolaridad();
+        $nivelEscolaridad = ($temaNivelEscolaridad && isset($temaNivelEscolaridad->parametros) && $temaNivelEscolaridad->parametros->count() > 0)
+            ? $temaNivelEscolaridad
+            : (object) ['parametros' => collect()];
+
         $paises = Pais::all();
         $departamentos = Departamento::all();
         $municipios = collect();
-        
+
         return view('complementarios.aspirantes.create', array_merge($data, [
             'documentos' => $documentos,
             'generos' => $generos,
@@ -256,6 +262,7 @@ class AspiranteComplementarioController extends Controller
             'vias' => $vias,
             'letras' => $letras,
             'cardinales' => $cardinales,
+            'nivelEscolaridad' => $nivelEscolaridad,
             'paises' => $paises,
             'departamentos' => $departamentos,
             'municipios' => $municipios,
@@ -445,9 +452,54 @@ class AspiranteComplementarioController extends Controller
             'municipio_id' => $validated['municipio_id'] ?? null,
             'direccion' => $validated['direccion'] ?? null,
             'caracterizacion_ids' => $validated['caracterizaciones'] ?? [], // PersonaService espera 'caracterizacion_ids'
+            'nivel_escolaridad_id' => $validated['nivel_escolaridad_id'] ?? null,
         ];
 
+        // Convertir parametro_id a parametros_temas.id para tipo_documento, genero y nivel_escolaridad_id
+        $datosPersona = $this->convertirParametrosAParametrosTemas($datosPersona);
+
         return $this->personaService->crear($datosPersona);
+    }
+
+    /**
+     * Convertir parametro_id a parametros_temas.id para tipo_documento, genero y nivel_escolaridad_id
+     */
+    private function convertirParametrosAParametrosTemas(array $data): array
+    {
+        // Convertir tipo_documento (parametro_id) a parametros_temas.id
+        if (isset($data['tipo_documento'])) {
+            $parametroTema = \App\Models\ParametroTema::where('tema_id', 2) // TIPO DE DOCUMENTO
+                ->where('parametro_id', $data['tipo_documento'])
+                ->first();
+
+            if ($parametroTema) {
+                $data['tipo_documento'] = $parametroTema->id;
+            }
+        }
+
+        // Convertir genero (parametro_id) a parametros_temas.id
+        if (isset($data['genero'])) {
+            $parametroTema = \App\Models\ParametroTema::where('tema_id', 3) // GENERO
+                ->where('parametro_id', $data['genero'])
+                ->first();
+
+            if ($parametroTema) {
+                $data['genero'] = $parametroTema->id;
+            }
+        }
+
+        // Convertir nivel_escolaridad_id (parametro_id) a parametros_temas.id
+        if (isset($data['nivel_escolaridad_id'])) {
+            $parametroTema = \App\Models\ParametroTema::where('tema_id', 23) // NIVEL-ESCOLARIDAD
+                ->where('parametro_id', $data['nivel_escolaridad_id'])
+                ->first();
+
+            if ($parametroTema) {
+                $data['nivel_escolaridad_id'] = $parametroTema->id;
+            }
+        }
+
+        return $data;
     }
 
     /**

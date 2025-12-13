@@ -45,7 +45,7 @@ class CreateAspiranteRequest extends FormRequest
                 'max:191',
                 Rule::unique('personas', 'numero_documento'),
             ],
-            
+
             // Datos personales
             'primer_nombre' => [
                 'required',
@@ -72,14 +72,14 @@ class CreateAspiranteRequest extends FormRequest
                 'date',
                 'before:today',
             ],
-            
+
             // Datos de género
             'genero_id' => [
                 'nullable',
                 'integer',
                 Rule::exists('parametros', 'id'),
             ],
-            
+
             // Datos de contacto
             'telefono' => [
                 'nullable',
@@ -97,7 +97,7 @@ class CreateAspiranteRequest extends FormRequest
                 'max:191',
                 Rule::unique('personas', 'email'),
             ],
-            
+
             // Datos de ubicación
             'pais_id' => [
                 'nullable',
@@ -119,7 +119,7 @@ class CreateAspiranteRequest extends FormRequest
                 'string',
                 'max:191',
             ],
-            
+
             // Caracterizaciones complementarias
             'caracterizaciones' => [
                 'nullable',
@@ -129,7 +129,14 @@ class CreateAspiranteRequest extends FormRequest
                 'integer',
                 Rule::exists('parametros', 'id'),
             ],
-            
+
+            // Nivel de escolaridad
+            'nivel_escolaridad_id' => [
+                'nullable',
+                'integer',
+                Rule::exists('parametros_temas', 'id'),
+            ],
+
             // Observaciones del aspirante
             'observaciones' => [
                 'nullable',
@@ -150,12 +157,12 @@ class CreateAspiranteRequest extends FormRequest
             'tipo_documento.exists' => 'El tipo de documento seleccionado no es válido.',
             'tipo_documento_id.required_without' => 'El tipo de documento es obligatorio.',
             'tipo_documento_id.exists' => 'El tipo de documento seleccionado no es válido.',
-            
+
             // Número de documento
             'numero_documento.required' => 'El número de documento es obligatorio.',
             'numero_documento.unique' => 'Ya existe una persona registrada con este número de documento.',
             'numero_documento.max' => 'El número de documento no puede exceder los 191 caracteres.',
-            
+
             // Nombres
             'primer_nombre.required' => 'El primer nombre es obligatorio.',
             'primer_nombre.max' => 'El primer nombre no puede exceder los 191 caracteres.',
@@ -163,31 +170,31 @@ class CreateAspiranteRequest extends FormRequest
             'primer_apellido.required' => 'El primer apellido es obligatorio.',
             'primer_apellido.max' => 'El primer apellido no puede exceder los 191 caracteres.',
             'segundo_apellido.max' => 'El segundo apellido no puede exceder los 191 caracteres.',
-            
+
             // Fecha de nacimiento
             'fecha_nacimiento.date' => 'La fecha de nacimiento debe ser una fecha válida.',
             'fecha_nacimiento.before' => 'La fecha de nacimiento debe ser anterior a la fecha actual.',
-            
+
             // Género
             'genero_id.exists' => 'El género seleccionado no es válido.',
-            
+
             // Contacto
             'celular.max' => 'El número de celular no puede exceder los 191 caracteres.',
             'telefono.max' => 'El número de teléfono no puede exceder los 191 caracteres.',
             'email.email' => 'El correo electrónico debe tener un formato válido.',
             'email.unique' => 'Ya existe una persona registrada con este correo electrónico.',
             'email.max' => 'El correo electrónico no puede exceder los 191 caracteres.',
-            
+
             // Ubicación
             'pais_id.exists' => 'El país seleccionado no es válido.',
             'departamento_id.exists' => 'El departamento seleccionado no es válido.',
             'municipio_id.exists' => 'El municipio seleccionado no es válido.',
             'direccion.max' => 'La dirección no puede exceder los 191 caracteres.',
-            
+
             // Caracterizaciones
             'caracterizaciones.array' => 'Las caracterizaciones deben ser una lista válida.',
             'caracterizaciones.*.exists' => 'Una o más caracterizaciones seleccionadas no existen.',
-            
+
             // Observaciones
             'observaciones.max' => 'Las observaciones no pueden exceder los 500 caracteres.',
         ];
@@ -249,4 +256,3 @@ class CreateAspiranteRequest extends FormRequest
         $this->merge([$field => $formatted]);
     }
 }
-

@@ -46,7 +46,10 @@ class InscripcionComplementarioService
         $tiposDocumento = $this->complementarioService->getTiposDocumento();
         $generos = $this->complementarioService->getGeneros();
 
-        return compact('categoriasConHijos', 'paises', 'departamentos', 'tiposDocumento', 'generos');
+        // Obtener tema de nivel de escolaridad
+        $nivelEscolaridad = $this->buildTemaPayload($this->temaRepository->obtenerNivelEscolaridad());
+
+        return compact('categoriasConHijos', 'paises', 'departamentos', 'tiposDocumento', 'generos', 'nivelEscolaridad');
     }
 
     /**
@@ -113,6 +116,9 @@ class InscripcionComplementarioService
         $letras = $this->buildTemaPayload($this->temaRepository->obtenerLetras());
         $cardinales = $this->buildTemaPayload($this->temaRepository->obtenerCardinales());
 
+        // Obtener tema de nivel de escolaridad
+        $nivelEscolaridad = $this->buildTemaPayload($this->temaRepository->obtenerNivelEscolaridad());
+
         $paises = Pais::all();
         $departamentos = Departamento::all();
         $municipios = collect();
@@ -133,6 +139,7 @@ class InscripcionComplementarioService
             'vias' => $vias,
             'letras' => $letras,
             'cardinales' => $cardinales,
+            'nivelEscolaridad' => $nivelEscolaridad,
             'personaAutenticada' => $personaAutenticada,
         ];
     }
@@ -198,14 +205,29 @@ class InscripcionComplementarioService
      */
     private function procesarPersona(array $data): Persona
     {
+        // Log para depuración
+        Log::info('Datos recibidos en procesarPersona', [
+            'nivel_escolaridad_id' => $data['nivel_escolaridad_id'] ?? 'NO ENVIADO',
+            'tipo_documento' => $data['tipo_documento'] ?? null,
+            'genero' => $data['genero'] ?? null,
+            'keys' => array_keys($data)
+        ]);
+
         // Convertir parametro_id a parametros_temas.id
         $data = $this->convertirParametrosAParametrosTemas($data);
+
+        // Log después de conversión
+        Log::info('Datos después de convertirParametrosAParametrosTemas', [
+            'nivel_escolaridad_id' => $data['nivel_escolaridad_id'] ?? null,
+            'tipo_documento' => $data['tipo_documento'] ?? null,
+            'genero' => $data['genero'] ?? null,
+        ]);
 
         return $this->personaRepository->createOrUpdate($data);
     }
 
     /**
-     * Convertir parametro_id a parametros_temas.id para tipo_documento y genero
+     * Convertir parametro_id a parametros_temas.id para tipo_documento, genero y nivel_escolaridad_id
      */
     private function convertirParametrosAParametrosTemas(array $data): array
     {
@@ -228,6 +250,17 @@ class InscripcionComplementarioService
 
             if ($parametroTema) {
                 $data['genero'] = $parametroTema->id;
+            }
+        }
+
+        // Convertir nivel_escolaridad_id (parametro_id) a parametros_temas.id
+        if (isset($data['nivel_escolaridad_id'])) {
+            $parametroTema = \App\Models\ParametroTema::where('tema_id', 23) // NIVEL-ESCOLARIDAD
+                ->where('parametro_id', $data['nivel_escolaridad_id'])
+                ->first();
+
+            if ($parametroTema) {
+                $data['nivel_escolaridad_id'] = $parametroTema->id;
             }
         }
 

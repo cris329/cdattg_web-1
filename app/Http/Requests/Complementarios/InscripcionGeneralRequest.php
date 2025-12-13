@@ -50,6 +50,7 @@ class InscripcionGeneralRequest extends FormRequest
             'direccion' => 'nullable|string|max:191',
             'observaciones' => 'nullable|string',
             'parametro_id' => 'nullable|exists:parametros,id',
+            'nivel_escolaridad_id' => 'nullable|exists:parametros,id',
         ];
     }
 

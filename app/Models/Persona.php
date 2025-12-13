@@ -48,6 +48,7 @@ class Persona extends Model
         'user_create_id',
         'user_edit_id',
         'parametro_id',
+        'nivel_escolaridad_id',
     ];
 
     protected static function boot()
@@ -398,5 +399,13 @@ class Persona extends Model
     public function contactAlerts()
     {
         return $this->hasMany(PersonaContactAlert::class);
+    }
+
+    /**
+     * Relación con el nivel de escolaridad.
+     */
+    public function nivelEscolaridad(): BelongsTo
+    {
+        return $this->belongsTo(ParametroTema::class, 'nivel_escolaridad_id');
     }
 }

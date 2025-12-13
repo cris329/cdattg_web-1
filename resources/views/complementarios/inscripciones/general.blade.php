@@ -523,6 +523,35 @@
                                         @endforeach
                                     </div>
 
+                                    <!-- Nivel de Escolaridad -->
+                                    @if(isset($nivelEscolaridad) && $nivelEscolaridad->parametros->isNotEmpty())
+                                    <div class="row mb-4">
+                                        <div class="col-12">
+                                            <h4 class="text-dark mb-3">
+                                                <i class="fas fa-graduation-cap mr-2"></i>Nivel de Escolaridad
+                                            </h4>
+                                            <p class="text-muted mb-3">Seleccione el nivel de escolaridad más alto alcanzado:</p>
+                                        </div>
+                                        <div class="col-12">
+                                            @php
+                                                $nivelEscolaridadSeleccionado = old('nivel_escolaridad_id');
+                                            @endphp
+                                            @foreach ($nivelEscolaridad->parametros as $parametro)
+                                                <div class="form-check mb-2">
+                                                    <input class="form-check-input" type="radio"
+                                                        id="nivel-escolaridad-{{ $parametro->id }}" name="nivel_escolaridad_id"
+                                                        value="{{ $parametro->id }}"
+                                                        {{ $nivelEscolaridadSeleccionado == $parametro->id ? 'checked' : '' }}>
+                                                    <label class="form-check-label"
+                                                        for="nivel-escolaridad-{{ $parametro->id }}">
+                                                        {{ $parametro->name }}
+                                                    </label>
+                                                </div>
+                                            @endforeach
+                                        </div>
+                                    </div>
+                                    @endif
+
                                     <!-- Observaciones -->
                                     <div class="row mb-4">
                                         <div class="col-12">

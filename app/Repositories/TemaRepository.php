@@ -105,4 +105,14 @@ class TemaRepository
 
         return $tema;
     }
+
+    /**
+     * Obtiene nivel de escolaridad
+     *
+     * @return Tema|null
+     */
+    public function obtenerNivelEscolaridad(): ?Tema
+    {
+        return $this->encontrarConParametros(23);
+    }
 }

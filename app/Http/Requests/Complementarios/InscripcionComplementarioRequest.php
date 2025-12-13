@@ -50,6 +50,7 @@ class InscripcionComplementarioRequest extends FormRequest
             'direccion' => 'nullable|string|max:191',
             'observaciones' => 'nullable|string',
             'parametro_id' => 'nullable|exists:parametros,id',
+            'nivel_escolaridad_id' => 'nullable|exists:parametros,id',
             'documento_identidad' => 'required|file|mimes:pdf|max:5120',
             'acepto_privacidad' => 'required|accepted',
             'acepto_terminos' => 'required|accepted',
