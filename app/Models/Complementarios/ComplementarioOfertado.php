@@ -29,6 +29,7 @@ class ComplementarioOfertado extends Model
     protected $table = 'complementarios_ofertados';
 
     protected $fillable = [
+        'catalogo_id',
         'codigo',
         'nombre',
         'justificacion',
@@ -56,6 +57,11 @@ class ComplementarioOfertado extends Model
     public function jornada()
     {
         return $this->belongsTo(JornadaFormacion::class, 'jornada_id');
+    }
+
+    public function catalogo()
+    {
+        return $this->belongsTo(ComplementarioCatalogo::class, 'catalogo_id');
     }
 
     public function ambiente()
