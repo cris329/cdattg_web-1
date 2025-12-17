@@ -28,9 +28,9 @@ class UpdateProgramaComplementarioRequest extends FormRequest
             'ambiente_id' => 'required|exists:ambientes,id',
             'ambiente_comentario' => 'nullable|string|max:500',
             'dias' => 'nullable|array',
-            'dias.*.dia_id' => 'required_with:dias.*.hora_inicio,dias.*.hora_fin|exists:parametros_temas,id',
-            'dias.*.hora_inicio' => 'nullable|date_format:H:i',
-            'dias.*.hora_fin' => 'nullable|date_format:H:i|after:dias.*.hora_inicio',
+            'dias.*.dia_id' => 'required_with:dias|integer|exists:parametros_temas,id',
+            'dias.*.hora_inicio' => 'required_with:dias.*.dia_id|date_format:H:i',
+            'dias.*.hora_fin' => 'required_with:dias.*.dia_id|date_format:H:i|after:dias.*.hora_inicio',
             'competencias' => 'nullable|array',
             'competencias.*' => 'exists:competencias,id',
             'raps' => 'nullable|array',
@@ -40,21 +40,55 @@ class UpdateProgramaComplementarioRequest extends FormRequest
         ];
     }
 
+    /**
+     * Obtiene los mensajes de validación personalizados.
+     *
+     * @return array<string, string>
+     */
+    public function messages(): array
+    {
+        return [
+            'dias.array' => 'Los días de formación deben ser un array.',
+            'dias.*.dia_id.required_with' => 'El día es requerido cuando se especifica un horario.',
+            'dias.*.dia_id.integer' => 'El ID del día debe ser un número entero.',
+            'dias.*.dia_id.exists' => 'El día seleccionado no existe en el sistema.',
+            'dias.*.hora_inicio.required_with' => 'La hora de inicio es requerida cuando se especifica un día.',
+            'dias.*.hora_inicio.date_format' => 'La hora de inicio debe tener el formato HH:MM (ej: 08:00).',
+            'dias.*.hora_fin.required_with' => 'La hora de fin es requerida cuando se especifica un día.',
+            'dias.*.hora_fin.date_format' => 'La hora de fin debe tener el formato HH:MM (ej: 16:00).',
+            'dias.*.hora_fin.after' => 'La hora de fin debe ser posterior a la hora de inicio.',
+        ];
+    }
+
+    /**
+     * Obtiene los datos validados y normalizados.
+     *
+     * @param string|null $key
+     * @param mixed $default
+     * @return array<string, mixed>|mixed
+     */
     public function validated($key = null, $default = null)
     {
         $validated = parent::validated($key, $default);
+        
         if (isset($validated['dias']) && is_array($validated['dias'])) {
             $validated['dias'] = collect($validated['dias'])
                 ->filter(static function ($dia) {
-                    return isset($dia['dia_id']);
+                    // Filtrar solo días que tengan dia_id y horarios válidos
+                    return isset($dia['dia_id']) 
+                        && isset($dia['hora_inicio']) 
+                        && isset($dia['hora_fin'])
+                        && !empty($dia['hora_inicio'])
+                        && !empty($dia['hora_fin']);
                 })
                 ->map(static function ($dia) {
                     return [
                         'dia_id' => (int) $dia['dia_id'],
-                        'hora_inicio' => $dia['hora_inicio'] ?? null,
-                        'hora_fin' => $dia['hora_fin'] ?? null,
+                        'hora_inicio' => $dia['hora_inicio'],
+                        'hora_fin' => $dia['hora_fin'],
                     ];
                 })
+                ->unique('dia_id') // Evitar duplicados
                 ->values()
                 ->all();
         }
