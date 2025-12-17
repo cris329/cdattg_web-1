@@ -383,6 +383,45 @@
                                             <div class="invalid-feedback">{{ $message }}</div>
                                         @enderror
                                     </div>
+
+                                    <!-- Sección de Días y Horarios de Formación -->
+                                    <div class="card card-outline card-warning mb-4">
+                                        <div class="card-header">
+                                            <h6 class="card-title mb-0">
+                                                <i class="fas fa-calendar-alt mr-2"></i>Días y Horarios de Formación
+                                            </h6>
+                                        </div>
+                                        <div class="card-body">
+                                            <p class="text-muted small mb-3">
+                                                Selecciona los días de la semana y asigna un horario individual para cada día.
+                                                Si un día no tiene formación, deja la opción "Sin formación" seleccionada.
+                                            </p>
+                                            
+                                            <div id="dias-horarios-container">
+                                                <!-- Se llenará dinámicamente con JavaScript -->
+                                            </div>
+                                            
+                                            <!-- Campo oculto para enviar datos al servidor -->
+                                            <input type="hidden" name="dias_json" id="dias_json" value="">
+                                            
+                                            @error('dias')
+                                                <div class="alert alert-danger mt-2">
+                                                    <small>{{ $message }}</small>
+                                                </div>
+                                            @enderror
+                                            @if($errors->has('dias.*'))
+                                                <div class="alert alert-danger mt-2">
+                                                    <small>
+                                                        <ul class="mb-0">
+                                                            @foreach($errors->get('dias.*') as $error)
+                                                                <li>{{ $error[0] ?? $error }}</li>
+                                                            @endforeach
+                                                        </ul>
+                                                    </small>
+                                                </div>
+                                            @enderror
+                                        </div>
+                                    </div>
                                 </div>
 
                                 <div class="tab-pane fade" id="tab-estado"
@@ -486,13 +525,18 @@
 @endsection
 
 @section('js')
+    @vite(['resources/js/complementarios/dias-horarios.js'])
     <!-- Datos del servidor para JavaScript -->
     <script type="application/json" id="raps-seleccionados-data">
         @json($rapsSeleccionados ?? [])
     </script>
+    <script type="application/json" id="dias-existentes-data">
+        @json($diasSeleccionados ?? [])
+    </script>
     <script>
         // Datos del servidor
         const rapsSeleccionados = JSON.parse(document.getElementById('raps-seleccionados-data').textContent);
+        const diasExistentes = JSON.parse(document.getElementById('dias-existentes-data').textContent);
 
         document.addEventListener('DOMContentLoaded', function() {
             if (typeof $ !== 'undefined' && $.fn.select2) {
@@ -614,8 +658,19 @@
                 }
             };
 
+            // Inicializar gestor de días y horarios
+            let diasHorariosManager = null;
+            if (typeof DiasHorariosManager !== 'undefined') {
+                diasHorariosManager = new DiasHorariosManager('dias-horarios-container', diasExistentes);
+            }
+
             // Validación del formulario
             form.addEventListener('submit', function(e) {
+                // Preparar datos de días y horarios antes de enviar
+                if (diasHorariosManager) {
+                    diasHorariosManager.prepararEnvioFormulario(form);
+                }
+
                 const requiredFields = form.querySelectorAll('[required]');
                 let isValid = true;
                 let primerCampoInvalido = null;

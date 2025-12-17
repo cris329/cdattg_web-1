@@ -370,6 +370,45 @@
                                             <div class="invalid-feedback">{{ $message }}</div>
                                         @enderror
                                     </div>
+
+                                    <!-- Sección de Días y Horarios de Formación -->
+                                    <div class="card card-outline card-warning mb-4">
+                                        <div class="card-header">
+                                            <h6 class="card-title mb-0">
+                                                <i class="fas fa-calendar-alt mr-2"></i>Días y Horarios de Formación
+                                            </h6>
+                                        </div>
+                                        <div class="card-body">
+                                            <p class="text-muted small mb-3">
+                                                Selecciona los días de la semana y asigna un horario individual para cada día.
+                                                Si un día no tiene formación, deja la opción "Sin formación" seleccionada.
+                                            </p>
+                                            
+                                            <div id="dias-horarios-container">
+                                                <!-- Se llenará dinámicamente con JavaScript -->
+                                            </div>
+                                            
+                                            <!-- Campo oculto para enviar datos al servidor -->
+                                            <input type="hidden" name="dias_json" id="dias_json" value="">
+                                            
+                                            @error('dias')
+                                                <div class="alert alert-danger mt-2">
+                                                    <small>{{ $message }}</small>
+                                                </div>
+                                            @enderror
+                                            @if($errors->has('dias.*'))
+                                                <div class="alert alert-danger mt-2">
+                                                    <small>
+                                                        <ul class="mb-0">
+                                                            @foreach($errors->get('dias.*') as $error)
+                                                                <li>{{ $error[0] ?? $error }}</li>
+                                                            @endforeach
+                                                        </ul>
+                                                    </small>
+                                                </div>
+                                            @enderror
+                                        </div>
+                                    </div>
                                 </div>
 
                                 <div class="tab-pane fade" id="tab-estado"
@@ -473,6 +512,7 @@
 @endsection
 
 @section('js')
+    @vite(['resources/js/complementarios/dias-horarios.js'])
     <script>
         document.addEventListener('DOMContentLoaded', function() {
             // Lógica de selección desde catálogo SENA
@@ -661,8 +701,19 @@
                 }
             };
 
+            // Inicializar gestor de días y horarios
+            let diasHorariosManager = null;
+            if (typeof DiasHorariosManager !== 'undefined') {
+                diasHorariosManager = new DiasHorariosManager('dias-horarios-container');
+            }
+
             // Validación ligera del formulario: delegar en validación HTML5/Laravel
-            form.addEventListener('submit', function () {
+            form.addEventListener('submit', function (e) {
+                // Preparar datos de días y horarios antes de enviar
+                if (diasHorariosManager) {
+                    diasHorariosManager.prepararEnvioFormulario(form);
+                }
+                
                 // Si el navegador detecta algún campo inválido, no llegará aquí.
                 if (saveBtn) {
                     saveBtn.disabled = true;
