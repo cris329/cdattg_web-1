@@ -153,6 +153,14 @@ class ComplementarioService
             ->with('parametro')
             ->get();
 
+        // Días de formación (Tema: DIAS = 4) desde parametros_temas
+        $diasSemana = ParametroTema::query()
+            ->where('tema_id', 4)
+            ->with('parametro')
+            ->where('status', 1)
+            ->orderBy('parametro_id')
+            ->get();
+
         $jornadas = JornadaFormacion::query()->get();
 
         $ambientes = Ambiente::query()
@@ -174,7 +182,7 @@ class ComplementarioService
             ->porNombreAsc()
             ->get(['id', 'codigo', 'nombre']);
 
-        return compact('catalogoProgramas', 'modalidades', 'jornadas', 'ambientes', 'competencias', 'guias');
+        return compact('catalogoProgramas', 'modalidades', 'diasSemana', 'jornadas', 'ambientes', 'competencias', 'guias');
     }
 
     /**
