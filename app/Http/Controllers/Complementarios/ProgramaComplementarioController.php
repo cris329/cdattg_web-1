@@ -97,6 +97,7 @@ class ProgramaComplementarioController extends Controller
             'modalidad' => $programa->modalidad_nombre ?? 'N/A',
             'jornada' => $programa->jornada_nombre ?? 'N/A',
             'dias' => $this->formatearDiasFormacion($programa),
+            'dias_detalle' => $this->mapearDiasFormacionPublico($programa),
             'cupos' => $programa->cupos,
             'estado' => $programa->estado_label,
         ];
@@ -432,5 +433,24 @@ class ProgramaComplementarioController extends Controller
             $nombreDia = $dia->parametro?->name ?? 'Día';
             return $nombreDia . ' (' . $dia->pivot->hora_inicio . ' - ' . $dia->pivot->hora_fin . ')';
         })->implode(', ');
+    }
+
+    /**
+     * Mapea los días de formación para la vista pública en formato estructurado.
+     *
+     * @return array<int, array{dia: string, hora_inicio: string|null, hora_fin: string|null}>
+     */
+    private function mapearDiasFormacionPublico(ComplementarioOfertado $programa): array
+    {
+        return $programa->diasFormacion
+            ->map(static function ($dia) {
+                return [
+                    'dia' => (string) ($dia->parametro?->name ?? 'Día'),
+                    'hora_inicio' => $dia->pivot->hora_inicio ? substr((string) $dia->pivot->hora_inicio, 0, 5) : null,
+                    'hora_fin' => $dia->pivot->hora_fin ? substr((string) $dia->pivot->hora_fin, 0, 5) : null,
+                ];
+            })
+            ->values()
+            ->all();
     }
 }
