@@ -28,6 +28,35 @@
                 <h5 class="mb-3">Requisitos de Ingreso</h5>
                 <p class="text-muted mb-5">{{ $programaData['requisitos_ingreso'] ?? 'No disponible' }}</p>
 
+                <h5 class="mb-3">Días y Horarios</h5>
+                @php
+                    $diasDetalle = $programaData['dias_detalle'] ?? [];
+                @endphp
+                @if(!empty($diasDetalle))
+                    <div class="table-responsive mb-4">
+                        <table class="table table-sm table-bordered bg-white">
+                            <thead class="thead-light">
+                                <tr>
+                                    <th>Día</th>
+                                    <th>Hora inicio</th>
+                                    <th>Hora fin</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                @foreach($diasDetalle as $dia)
+                                    <tr>
+                                        <td class="font-weight-semibold">{{ $dia['dia'] ?? 'Día' }}</td>
+                                        <td>{{ $dia['hora_inicio'] ?? '—' }}</td>
+                                        <td>{{ $dia['hora_fin'] ?? '—' }}</td>
+                                    </tr>
+                                @endforeach
+                            </tbody>
+                        </table>
+                    </div>
+                @else
+                    <p class="text-muted mb-4">No hay días de formación configurados para este programa.</p>
+                @endif
+
                 <div class="row">
                     <div class="col-md-4">
                         <div class="info-box bg-light">
