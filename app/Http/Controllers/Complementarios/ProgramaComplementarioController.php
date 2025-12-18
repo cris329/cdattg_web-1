@@ -429,7 +429,8 @@ class ProgramaComplementarioController extends Controller
     private function formatearDiasFormacion(ComplementarioOfertado $programa): string
     {
         return $programa->diasFormacion->map(static function ($dia) {
-            return $dia->name . ' (' . $dia->pivot->hora_inicio . ' - ' . $dia->pivot->hora_fin . ')';
+            $nombreDia = $dia->parametro?->name ?? 'Día';
+            return $nombreDia . ' (' . $dia->pivot->hora_inicio . ' - ' . $dia->pivot->hora_fin . ')';
         })->implode(', ');
     }
 }
