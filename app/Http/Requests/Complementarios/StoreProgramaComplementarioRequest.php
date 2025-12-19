@@ -14,12 +14,10 @@ class StoreProgramaComplementarioRequest extends FormRequest
     public function rules(): array
     {
         return [
-            'catalogo_id' => 'nullable|exists:complementarios_catalogo,id',
+            'catalogo_id' => 'required|exists:complementarios_catalogo,id',
             'codigo' => 'required_without:catalogo_id|string|unique:complementarios_ofertados,codigo',
-            'nombre' => 'required_without:catalogo_id|string',
+            // nombre, duracion y requisitos_ingreso ahora se obtienen del catálogo
             'justificacion' => 'required|string|max:600',
-            'requisitos_ingreso' => 'required_without:catalogo_id|string|max:400',
-            'duracion' => 'required_without:catalogo_id|integer|min:1',
             'cupos' => 'required|integer|min:1',
             'estado' => 'required|integer|in:0,1,2',
             'modalidad_id' => 'nullable|exists:parametros_temas,id',
@@ -69,6 +67,9 @@ class StoreProgramaComplementarioRequest extends FormRequest
     public function validated($key = null, $default = null)
     {
         $validated = parent::validated($key, $default);
+        
+        // Eliminar campos que ya no existen en la tabla (se obtienen del catálogo)
+        unset($validated['nombre'], $validated['duracion'], $validated['requisitos_ingreso']);
         
         if (isset($validated['dias']) && is_array($validated['dias'])) {
             $validated['dias'] = collect($validated['dias'])
