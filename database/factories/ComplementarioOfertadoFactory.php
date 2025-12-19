@@ -24,7 +24,6 @@ class ComplementarioOfertadoFactory extends Factory
             'justificacion' => $this->faker->paragraph(2),
             'cupos' => $this->faker->numberBetween(10, 50),
             'estado_id' => $this->obtenerEstadoId(),
-            'modalidad_id' => $this->obtenerModalidadId(),
             'jornada_id' => $this->obtenerJornadaId(),
             'ambiente_id' => $this->obtenerAmbienteId(),
         ];
@@ -109,6 +108,7 @@ class ComplementarioOfertadoFactory extends Factory
             'nivel_formacion' => 'CURSO ESPECIAL',
             'duracion_horas' => $this->faker->numberBetween(30, 120),
             'requisitos_ingreso' => $this->faker->paragraph(2),
+            'modalidad_id' => $this->obtenerModalidadId(),
             'activo' => true,
         ]);
         

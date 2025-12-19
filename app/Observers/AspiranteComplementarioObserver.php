@@ -125,7 +125,6 @@ class AspiranteComplementarioObserver
             'justificacion' => $complementarioOriginal->justificacion,
             'cupos' => $complementarioOriginal->cupos,
             'estado_id' => $this->obtenerEstadoIdLegacy(1), // Estado "Con Oferta"
-            'modalidad_id' => $complementarioOriginal->modalidad_id,
             'jornada_id' => $complementarioOriginal->jornada_id,
             'ambiente_id' => $complementarioOriginal->ambiente_id,
             'user_create_id' => Auth::id() ?? 1, // Usuario autenticado o sistema
