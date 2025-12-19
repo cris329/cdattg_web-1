@@ -3,6 +3,7 @@
 namespace Database\Factories;
 
 use App\Models\Ambiente;
+use App\Models\Complementarios\ComplementarioCatalogo;
 use App\Models\Complementarios\ComplementarioOfertado;
 use App\Models\JornadaFormacion;
 use App\Models\ParametroTema;
@@ -18,11 +19,9 @@ class ComplementarioOfertadoFactory extends Factory
     public function definition(): array
     {
         return [
+            'catalogo_id' => $this->obtenerOCrearCatalogoId(),
             'codigo' => $this->generarCodigo(),
-            'nombre' => $this->obtenerNombre(),
             'justificacion' => $this->faker->paragraph(2),
-            'requisitos_ingreso' => $this->faker->paragraph(2),
-            'duracion' => $this->faker->numberBetween(30, 120),
             'cupos' => $this->faker->numberBetween(10, 50),
             'estado_id' => $this->obtenerEstadoId(),
             'modalidad_id' => $this->obtenerModalidadId(),
@@ -70,10 +69,20 @@ class ComplementarioOfertadoFactory extends Factory
     }
 
     /**
-     * Obtiene un nombre para el programa complementario
+     * Obtiene o crea un ID de catálogo para el programa complementario
      */
-    private function obtenerNombre(): string
+    private function obtenerOCrearCatalogoId(): ?int
     {
+        // Intentar obtener un catálogo existente aleatoriamente
+        $catalogoExistente = ComplementarioCatalogo::where('activo', true)
+            ->inRandomOrder()
+            ->first();
+        
+        if ($catalogoExistente) {
+            return $catalogoExistente->id;
+        }
+        
+        // Si no hay catálogos, crear uno nuevo
         $nombres = [
             'Auxiliar de Cocina',
             'Acabados en Madera',
@@ -89,12 +98,21 @@ class ComplementarioOfertadoFactory extends Factory
             'Jardinería y Paisajismo',
         ];
         
-        try {
-            return $this->faker->unique()->randomElement($nombres);
-        } catch (\OverflowException $e) {
-            // Si se agotaron los nombres únicos, generar uno nuevo
-            return $this->faker->words(3, true) . ' ' . $this->faker->unique()->numberBetween(1000, 9999);
-        }
+        $denominacion = $this->faker->randomElement($nombres);
+        $prfCodigo = 'PRF' . str_pad($this->faker->unique()->numberBetween(1, 9999), 4, '0', STR_PAD_LEFT);
+        
+        $catalogo = ComplementarioCatalogo::create([
+            'prf_codigo' => $prfCodigo,
+            'version' => 1,
+            'cod_ver' => $prfCodigo . '-1',
+            'denominacion' => $denominacion,
+            'nivel_formacion' => 'CURSO ESPECIAL',
+            'duracion_horas' => $this->faker->numberBetween(30, 120),
+            'requisitos_ingreso' => $this->faker->paragraph(2),
+            'activo' => true,
+        ]);
+        
+        return $catalogo->id;
     }
 
     /**
@@ -274,12 +292,18 @@ class ComplementarioOfertadoFactory extends Factory
     }
 
     /**
-     * Con duración específica
+     * Con duración específica (actualiza el catálogo asociado)
      */
     public function conDuracion(int $horas): static
     {
-        return $this->state(fn () => [
-            'duracion' => $horas,
-        ]);
+        return $this->state(function (array $attributes) use ($horas) {
+            // Si ya tiene un catalogo_id, actualizar su duración
+            if (isset($attributes['catalogo_id'])) {
+                ComplementarioCatalogo::where('id', $attributes['catalogo_id'])
+                    ->update(['duracion_horas' => $horas]);
+            }
+            
+            return [];
+        });
     }
 }
