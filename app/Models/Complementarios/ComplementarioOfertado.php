@@ -33,7 +33,6 @@ class ComplementarioOfertado extends Model
         'justificacion',
         'cupos',
         'estado_id',
-        'modalidad_id',
         'jornada_id',
         'ambiente_id',
         'ambiente_comentario',
@@ -46,9 +45,40 @@ class ComplementarioOfertado extends Model
         'estado_id' => 3, // ID de parametros_temas para "Sin Oferta" (parametro_id = 277)
     ];
 
-    public function modalidad()
+    /**
+     * Accessor para obtener la modalidad desde el catálogo
+     * Mantiene compatibilidad hacia atrás con código que usa $complementario->modalidad
+     */
+    public function getModalidadAttribute()
     {
-        return $this->belongsTo(ParametroTema::class, 'modalidad_id');
+        if ($this->catalogo_id && $this->relationLoaded('catalogo')) {
+            return $this->catalogo?->modalidad;
+        }
+        
+        if ($this->catalogo_id) {
+            $this->loadMissing(['catalogo.modalidad.parametro']);
+            return $this->catalogo?->modalidad;
+        }
+        
+        return null;
+    }
+
+    /**
+     * Accessor para obtener modalidad_id desde el catálogo
+     * Mantiene compatibilidad hacia atrás con código que usa $complementario->modalidad_id
+     */
+    public function getModalidadIdAttribute(): ?int
+    {
+        if ($this->catalogo_id && $this->relationLoaded('catalogo')) {
+            return $this->catalogo?->modalidad_id;
+        }
+        
+        if ($this->catalogo_id) {
+            $this->loadMissing('catalogo');
+            return $this->catalogo?->modalidad_id;
+        }
+        
+        return null;
     }
 
     public function jornada()
