@@ -64,7 +64,7 @@ class TemaSeeder extends Seeder
             [
                 'id'       => 4,
                 'name'     => 'DIAS',
-                'paramIds' => array_merge(range(12, 18), [276]),
+                'paramIds' => array_merge(range(12, 17), [276]),
             ],
             [
                 'id'       => 5,

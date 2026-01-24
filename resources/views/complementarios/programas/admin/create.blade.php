@@ -106,6 +106,42 @@
                             <div class="tab-content" id="formTabsContent">
                                 <div class="tab-pane fade show active" id="tab-general" role="tabpanel"
                                     aria-labelledby="tab-general-tab">
+                                    <div class="card card-outline card-success mb-4">
+                                        <div class="card-header py-2">
+                                            <h6 class="card-title mb-0">
+                                                <i class="fas fa-file-excel mr-2"></i>Seleccionar desde catálogo SENA
+                                            </h6>
+                                        </div>
+                                        <div class="card-body">
+                                            <div class="form-group">
+                                                <label for="catalogo_id" class="form-label font-weight-semibold">
+                                                    Programa en catálogo (CURSO ESPECIAL)
+                                                </label>
+                                                <select name="catalogo_id" id="catalogo_id"
+                                                    class="form-control @error('catalogo_id') is-invalid @enderror">
+                                                    <option value="">-- Seleccionar desde catálogo --</option>
+                                                    @foreach ($catalogoProgramas ?? [] as $catalogo)
+                                                        <option value="{{ $catalogo->id }}"
+                                                            data-codigo="{{ $catalogo->prf_codigo }}"
+                                                            data-nombre="{{ $catalogo->denominacion }}"
+                                                            data-duracion="{{ $catalogo->duracion_horas }}"
+                                                            data-requisitos="{{ e($catalogo->requisitos_ingreso) }}"
+                                                            @selected(old('catalogo_id') == $catalogo->id)>
+                                                            {{ $catalogo->prf_codigo }} - {{ $catalogo->denominacion }}
+                                                        </option>
+                                                    @endforeach
+                                                </select>
+                                                <small class="helper-text">
+                                                    Al seleccionar un programa del catálogo se rellenarán
+                                                    automáticamente el código, el nombre, los requisitos (si están
+                                                    disponibles) y la duración en horas.
+                                                </small>
+                                                @error('catalogo_id')
+                                                    <div class="invalid-feedback">{{ $message }}</div>
+                                                @enderror
+                                            </div>
+                                        </div>
+                                    </div>
                                     <div class="form-row">
                                         <div class="form-group col-md-7">
                                             <label for="nombre" class="form-label font-weight-semibold">Nombre del
@@ -201,18 +237,6 @@
                                                 <small class="helper-text">Los RAPs se muestran automáticamente según las competencias seleccionadas. Su selección es opcional.</small>
                                             </div>
 
-                                            <!-- Selector de Guías de Aprendizaje -->
-                                            <div class="form-group mt-3">
-                                                <label for="guias" class="form-label font-weight-semibold">
-                                                    Guías de Aprendizaje
-                                                </label>
-                                                <select class="form-control select2-multiple" id="guias" name="guias[]" multiple>
-                                                    @foreach($guias ?? [] as $guia)
-                                                        <option value="{{ $guia->id }}">{{ $guia->codigo }} - {{ $guia->nombre }}</option>
-                                                    @endforeach
-                                                </select>
-                                                <small class="helper-text">Selecciona las guías de aprendizaje asociadas a este programa.</small>
-                                            </div>
                                         </div>
                                     </div>
                                     <div class="form-row">
@@ -257,32 +281,7 @@
                                     </div>
 
                                     <div class="form-row">
-                                        <div class="form-group col-md-4">
-                                            <label for="modalidad_id" class="form-label font-weight-semibold">
-                                                Modalidad<span class="text-danger"> *</span>
-                                            </label>
-                                            @php
-                                                $modalidadSelectClass = 'form-control select2';
-                                                if ($errors->has('modalidad_id')) {
-                                                    $modalidadSelectClass .= ' is-invalid';
-                                                }
-                                            @endphp
-                                            <select name="modalidad_id" id="modalidad_id"
-                                                class="{{ $modalidadSelectClass }}" required>
-                                                <option value="">Seleccione una modalidad</option>
-                                                @foreach ($modalidades as $modalidad)
-                                                    <option value="{{ $modalidad->id }}"
-                                                        {{ old('modalidad_id') == $modalidad->id ? 'selected' : '' }}>
-                                                        {{ $modalidad->parametro->name }}
-                                                    </option>
-                                                @endforeach
-                                            </select>
-                                            <small class="helper-text">Ejemplo: Presencial, virtual, mixta.</small>
-                                            @error('modalidad_id')
-                                                <div class="invalid-feedback">{{ $message }}</div>
-                                            @enderror
-                                        </div>
-                                        <div class="form-group col-md-4">
+                                        <div class="form-group col-md-6">
                                             <label for="jornada_id" class="form-label font-weight-semibold">
                                                 Jornada<span class="text-danger"> *</span>
                                             </label>
@@ -307,7 +306,7 @@
                                                 <div class="invalid-feedback">{{ $message }}</div>
                                             @enderror
                                         </div>
-                                        <div class="form-group col-md-4">
+                                        <div class="form-group col-md-6">
                                             <label for="ambiente_id" class="form-label font-weight-semibold">
                                                 Ambiente<span class="text-danger"> *</span>
                                             </label>
@@ -354,6 +353,59 @@
                                                 programa.</small>
                                             @error('ambiente_id')
                                                 <div class="invalid-feedback">{{ $message }}</div>
+                                            @enderror
+                                        </div>
+                                    </div>
+
+                                    <div class="form-group">
+                                        <label for="ambiente_comentario" class="form-label font-weight-semibold">
+                                            Comentario sobre el ambiente
+                                        </label>
+                                        <textarea name="ambiente_comentario" id="ambiente_comentario" rows="2"
+                                            class="form-control @error('ambiente_comentario') is-invalid @enderror"
+                                            placeholder="Ej. Casa de la mujer, Alcaldía, Centro comunitario, etc."
+                                            maxlength="500">{{ old('ambiente_comentario') }}</textarea>
+                                        <small class="helper-text">Opcional. Especifica detalles adicionales sobre la ubicación o lugar específico donde se ejecutará el programa (máximo 500 caracteres).</small>
+                                        @error('ambiente_comentario')
+                                            <div class="invalid-feedback">{{ $message }}</div>
+                                        @enderror
+                                    </div>
+
+                                    <!-- Sección de Días y Horarios de Formación -->
+                                    <div class="card card-outline card-warning mb-4">
+                                        <div class="card-header">
+                                            <h6 class="card-title mb-0">
+                                                <i class="fas fa-calendar-alt mr-2"></i>Días y Horarios de Formación
+                                            </h6>
+                                        </div>
+                                        <div class="card-body">
+                                            <p class="text-muted small mb-3">
+                                                Selecciona los días de la semana y asigna un horario individual para cada día.
+                                                Si un día no tiene formación, deja la opción "Sin formación" seleccionada.
+                                            </p>
+                                            
+                                            <div id="dias-horarios-container">
+                                                <!-- Se llenará dinámicamente con JavaScript -->
+                                            </div>
+                                            
+                                            <!-- Campo oculto para enviar datos al servidor -->
+                                            <input type="hidden" name="dias_json" id="dias_json" value="">
+                                            
+                                            @error('dias')
+                                                <div class="alert alert-danger mt-2">
+                                                    <small>{{ $message }}</small>
+                                                </div>
+                                            @enderror
+                                            @if($errors->has('dias.*'))
+                                                <div class="alert alert-danger mt-2">
+                                                    <small>
+                                                        <ul class="mb-0">
+                                                            @foreach($errors->get('dias.*') as $error)
+                                                                <li>{{ $error[0] ?? $error }}</li>
+                                                            @endforeach
+                                                        </ul>
+                                                    </small>
+                                                </div>
                                             @enderror
                                         </div>
                                     </div>
@@ -460,8 +512,92 @@
 @endsection
 
 @section('js')
+    @vite(['resources/js/complementarios/dias-horarios.js'])
+    <script type="application/json" id="dias-semana-data">
+        @json(
+            collect($diasSemana ?? [])->map(fn ($d) => [
+                'id' => (int) $d->id,
+                'nombre' => (string) ($d->parametro->name ?? ''),
+            ])->values()
+        )
+    </script>
     <script>
         document.addEventListener('DOMContentLoaded', function() {
+            // Lógica de selección desde catálogo SENA
+            const catalogoSelect = document.getElementById('catalogo_id');
+            const codigoInput = document.getElementById('codigo');
+            const nombreInput = document.getElementById('nombre');
+            const duracionInput = document.getElementById('duracion');
+            const requisitosInput = document.getElementById('requisitos_ingreso');
+
+            if (catalogoSelect) {
+                const bloquearCamposDesdeCatalogo = (usarCatalogo) => {
+                    const campos = [codigoInput, nombreInput, duracionInput, requisitosInput];
+
+                    campos.forEach((campo) => {
+                        if (!campo) {
+                            return;
+                        }
+
+                        if (usarCatalogo) {
+                            campo.setAttribute('readonly', 'readonly');
+                            campo.removeAttribute('required');
+                        } else {
+                            campo.removeAttribute('readonly');
+                        }
+                    });
+
+                    if (codigoInput && !usarCatalogo) {
+                        codigoInput.setAttribute('required', 'required');
+                    }
+                    if (nombreInput && !usarCatalogo) {
+                        nombreInput.setAttribute('required', 'required');
+                    }
+                    if (duracionInput && !usarCatalogo) {
+                        duracionInput.setAttribute('required', 'required');
+                    }
+                    if (requisitosInput && !usarCatalogo) {
+                        requisitosInput.setAttribute('required', 'required');
+                    }
+                };
+
+                const aplicarSeleccionCatalogo = () => {
+                    const option = catalogoSelect.options[catalogoSelect.selectedIndex];
+
+                    const tieneCatalogo = !!option && !!option.value;
+
+                    if (!tieneCatalogo) {
+                        bloquearCamposDesdeCatalogo(false);
+                        return;
+                    }
+
+                    const codigo = option.dataset.codigo || '';
+                    const nombre = option.dataset.nombre || '';
+                    const duracion = option.dataset.duracion || '';
+                    const requisitos = option.dataset.requisitos || '';
+
+                    if (codigoInput && codigo) {
+                        codigoInput.value = codigo;
+                    }
+
+                    if (nombreInput && nombre) {
+                        nombreInput.value = nombre;
+                    }
+
+                    if (duracionInput && duracion) {
+                        duracionInput.value = duracion;
+                    }
+
+                    if (requisitosInput && requisitos) {
+                        requisitosInput.value = requisitos;
+                    }
+
+                    bloquearCamposDesdeCatalogo(true);
+                };
+
+                catalogoSelect.addEventListener('change', aplicarSeleccionCatalogo);
+                aplicarSeleccionCatalogo();
+            }
             if (typeof $ !== 'undefined' && $.fn.select2) {
                 // Configurar Select2 para campos existentes
                 $('.select2').select2({
@@ -475,7 +611,7 @@
                     }
                 });
 
-                // Configurar Select2 múltiple para competencias y guías
+                // Configurar Select2 múltiple para competencias
                 $('.select2-multiple').select2({
                     theme: 'bootstrap4',
                     width: '100%',
@@ -573,39 +709,25 @@
                 }
             };
 
-            // Validación del formulario
-            form.addEventListener('submit', function(e) {
-                const requiredFields = form.querySelectorAll('[required]');
-                let isValid = true;
-                let primerCampoInvalido = null;
+            // Inicializar gestor de días y horarios
+            let diasHorariosManager = null;
+            if (typeof DiasHorariosManager !== 'undefined') {
+                const diasSemana = JSON.parse(document.getElementById('dias-semana-data')?.textContent || '[]');
+                diasHorariosManager = new DiasHorariosManager('dias-horarios-container', [], diasSemana);
+            }
 
-                // Validar campos requeridos
-                requiredFields.forEach(field => {
-                    if (!field.value || !field.value.trim()) {
-                        field.classList.add('is-invalid');
-                        isValid = false;
-                        if (!primerCampoInvalido) {
-                            primerCampoInvalido = field;
-                        }
-                    } else {
-                        field.classList.remove('is-invalid');
-                    }
-                });
-
-                // Validar estructura académica - Solo competencias son requeridas
-                // Los RAPs son informativos y se relacionan con las competencias, no son obligatorios
-
-                if (!isValid) {
-                    e.preventDefault();
-                    if (primerCampoInvalido) {
-                        activarTabDeCampo(primerCampoInvalido);
-                        primerCampoInvalido.focus();
-                    }
-                    return;
+            // Validación ligera del formulario: delegar en validación HTML5/Laravel
+            form.addEventListener('submit', function (e) {
+                // Preparar datos de días y horarios antes de enviar
+                if (diasHorariosManager) {
+                    diasHorariosManager.prepararEnvioFormulario(form);
                 }
-
-                saveBtn.disabled = true;
-                saveBtn.innerHTML = '<i class="fas fa-spinner fa-spin mr-1"></i> Guardando...';
+                
+                // Si el navegador detecta algún campo inválido, no llegará aquí.
+                if (saveBtn) {
+                    saveBtn.disabled = true;
+                    saveBtn.innerHTML = '<i class="fas fa-spinner fa-spin mr-1"></i> Guardando...';
+                }
             });
         });
     </script>

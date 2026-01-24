@@ -465,6 +465,12 @@ return [
                             'can' => 'CREAR PROGRAMA COMPLEMENTARIO',
                         ],
                         [
+                            'text' => 'Importar Catálogo SENA',
+                            'url' => 'complementarios-ofertados/catalogo/importar',
+                            'icon' => 'fas fa-fw fa-file-excel',
+                            'can' => 'CREAR PROGRAMA COMPLEMENTARIO',
+                        ],
+                        [
                             'text' => 'Gestión de Aspirantes',
                             'url' => 'gestion-aspirantes',
                             'icon' => 'fas fa-fw fa-users',

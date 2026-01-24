@@ -97,6 +97,7 @@ class ProgramaComplementarioController extends Controller
             'modalidad' => $programa->modalidad_nombre ?? 'N/A',
             'jornada' => $programa->jornada_nombre ?? 'N/A',
             'dias' => $this->formatearDiasFormacion($programa),
+            'dias_detalle' => $this->mapearDiasFormacionPublico($programa),
             'cupos' => $programa->cupos,
             'estado' => $programa->estado_label,
         ];
@@ -168,6 +169,7 @@ class ProgramaComplementarioController extends Controller
             'modalidad_id' => $programa->modalidad_id,
             'jornada_id' => $programa->jornada_id,
             'ambiente_id' => $programa->ambiente_id,
+            'ambiente_comentario' => $programa->ambiente_comentario,
             'dias' => $dias,
         ]);
     }
@@ -262,16 +264,26 @@ class ProgramaComplementarioController extends Controller
     private function extractProgramaAtributos(array $payload): array
     {
         $atributos = collect($payload)->only([
+            'catalogo_id',
             'codigo',
-            'nombre',
             'justificacion',
-            'requisitos_ingreso',
-            'duracion',
             'cupos',
-            'modalidad_id',
             'jornada_id',
             'ambiente_id',
+            'ambiente_comentario',
         ])->toArray();
+
+        // Si se seleccionó un programa del catálogo, sobrescribir datos básicos
+        if (!empty($payload['catalogo_id'])) {
+            /** @var \App\Models\Complementarios\ComplementarioCatalogo|null $catalogo */
+            $catalogo = \App\Models\Complementarios\ComplementarioCatalogo::query()
+                ->find($payload['catalogo_id']);
+
+            if ($catalogo !== null) {
+                $atributos['catalogo_id'] = $catalogo->id;
+                $atributos['codigo'] = $catalogo->prf_codigo;
+            }
+        }
 
         // Convertir estado legacy (0,1,2) a estado_id (ID de ParametroTema)
         if (isset($payload['estado'])) {
@@ -373,15 +385,18 @@ class ProgramaComplementarioController extends Controller
     /**
      * Mapea los días de formación de un programa a un formato estructurado.
      *
+     * @param ComplementarioOfertado $programa
      * @return array<int, array<string, mixed>>
      */
     private function mapearDiasFormacion(ComplementarioOfertado $programa): array
     {
         return $programa->diasFormacion->map(static function ($dia) {
+            // El dia_id en el pivot es el ID del parámetro/día
+            // Usamos el ID del modelo relacionado (Parametro)
             return [
-                'dia_id' => $dia->id,
-                'hora_inicio' => $dia->pivot->hora_inicio,
-                'hora_fin' => $dia->pivot->hora_fin,
+                'dia_id' => (int) $dia->id,
+                'hora_inicio' => $dia->pivot->hora_inicio ? substr($dia->pivot->hora_inicio, 0, 5) : null,
+                'hora_fin' => $dia->pivot->hora_fin ? substr($dia->pivot->hora_fin, 0, 5) : null,
             ];
         })->toArray();
     }
@@ -392,7 +407,27 @@ class ProgramaComplementarioController extends Controller
     private function formatearDiasFormacion(ComplementarioOfertado $programa): string
     {
         return $programa->diasFormacion->map(static function ($dia) {
-            return $dia->name . ' (' . $dia->pivot->hora_inicio . ' - ' . $dia->pivot->hora_fin . ')';
+            $nombreDia = $dia->parametro?->name ?? 'Día';
+            return $nombreDia . ' (' . $dia->pivot->hora_inicio . ' - ' . $dia->pivot->hora_fin . ')';
         })->implode(', ');
+    }
+
+    /**
+     * Mapea los días de formación para la vista pública en formato estructurado.
+     *
+     * @return array<int, array{dia: string, hora_inicio: string|null, hora_fin: string|null}>
+     */
+    private function mapearDiasFormacionPublico(ComplementarioOfertado $programa): array
+    {
+        return $programa->diasFormacion
+            ->map(static function ($dia) {
+                return [
+                    'dia' => (string) ($dia->parametro?->name ?? 'Día'),
+                    'hora_inicio' => $dia->pivot->hora_inicio ? substr((string) $dia->pivot->hora_inicio, 0, 5) : null,
+                    'hora_fin' => $dia->pivot->hora_fin ? substr((string) $dia->pivot->hora_fin, 0, 5) : null,
+                ];
+            })
+            ->values()
+            ->all();
     }
 }

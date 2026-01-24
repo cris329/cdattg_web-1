@@ -6,7 +6,6 @@ use App\Models\Ambiente;
 use App\Models\Competencia;
 use App\Models\GuiasAprendizaje;
 use App\Models\JornadaFormacion;
-use App\Models\Parametro;
 use App\Models\ParametroTema;
 use App\Models\ResultadosAprendizaje;
 use App\Models\User;
@@ -29,16 +28,14 @@ class ComplementarioOfertado extends Model
     protected $table = 'complementarios_ofertados';
 
     protected $fillable = [
+        'catalogo_id',
         'codigo',
-        'nombre',
         'justificacion',
-        'requisitos_ingreso',
-        'duracion',
         'cupos',
         'estado_id',
-        'modalidad_id',
         'jornada_id',
         'ambiente_id',
+        'ambiente_comentario',
     ];
 
     /**
@@ -48,14 +45,50 @@ class ComplementarioOfertado extends Model
         'estado_id' => 3, // ID de parametros_temas para "Sin Oferta" (parametro_id = 277)
     ];
 
-    public function modalidad()
+    /**
+     * Accessor para obtener la modalidad desde el catálogo
+     * Mantiene compatibilidad hacia atrás con código que usa $complementario->modalidad
+     */
+    public function getModalidadAttribute()
     {
-        return $this->belongsTo(ParametroTema::class, 'modalidad_id');
+        if ($this->catalogo_id && $this->relationLoaded('catalogo')) {
+            return $this->catalogo?->modalidad;
+        }
+        
+        if ($this->catalogo_id) {
+            $this->loadMissing(['catalogo.modalidad.parametro']);
+            return $this->catalogo?->modalidad;
+        }
+        
+        return null;
+    }
+
+    /**
+     * Accessor para obtener modalidad_id desde el catálogo
+     * Mantiene compatibilidad hacia atrás con código que usa $complementario->modalidad_id
+     */
+    public function getModalidadIdAttribute(): ?int
+    {
+        if ($this->catalogo_id && $this->relationLoaded('catalogo')) {
+            return $this->catalogo?->modalidad_id;
+        }
+        
+        if ($this->catalogo_id) {
+            $this->loadMissing('catalogo');
+            return $this->catalogo?->modalidad_id;
+        }
+        
+        return null;
     }
 
     public function jornada()
     {
         return $this->belongsTo(JornadaFormacion::class, 'jornada_id');
+    }
+
+    public function catalogo()
+    {
+        return $this->belongsTo(ComplementarioCatalogo::class, 'catalogo_id');
     }
 
     public function ambiente()
@@ -73,7 +106,14 @@ class ComplementarioOfertado extends Model
 
     public function diasFormacion()
     {
-        return $this->belongsToMany(Parametro::class, 'complementarios_ofertados_dias_formacion', 'complementario_id', 'dia_id')
+        // dia_id apunta a parametros_temas (Tema: DIAS)
+        return $this->belongsToMany(
+            ParametroTema::class,
+            'complementarios_ofertados_dias_formacion',
+            'complementario_id',
+            'dia_id'
+        )
+            ->with('parametro')
                     ->withPivot('hora_inicio', 'hora_fin');
     }
 
@@ -210,6 +250,60 @@ class ComplementarioOfertado extends Model
             'CUPOS LLENOS' => 'bg-danger',
             default => 'bg-secondary',
         };
+    }
+
+    /**
+     * Accessor para obtener el nombre desde el catálogo
+     * Mantiene compatibilidad hacia atrás con código que usa $complementario->nombre
+     */
+    public function getNombreAttribute(): ?string
+    {
+        if ($this->catalogo_id && $this->relationLoaded('catalogo')) {
+            return $this->catalogo?->denominacion;
+        }
+        
+        if ($this->catalogo_id) {
+            $this->loadMissing('catalogo');
+            return $this->catalogo?->denominacion;
+        }
+        
+        return null;
+    }
+
+    /**
+     * Accessor para obtener la duración desde el catálogo
+     * Mantiene compatibilidad hacia atrás con código que usa $complementario->duracion
+     */
+    public function getDuracionAttribute(): ?int
+    {
+        if ($this->catalogo_id && $this->relationLoaded('catalogo')) {
+            return $this->catalogo?->duracion_horas;
+        }
+        
+        if ($this->catalogo_id) {
+            $this->loadMissing('catalogo');
+            return $this->catalogo?->duracion_horas;
+        }
+        
+        return null;
+    }
+
+    /**
+     * Accessor para obtener los requisitos de ingreso desde el catálogo
+     * Mantiene compatibilidad hacia atrás con código que usa $complementario->requisitos_ingreso
+     */
+    public function getRequisitosIngresoAttribute(): ?string
+    {
+        if ($this->catalogo_id && $this->relationLoaded('catalogo')) {
+            return $this->catalogo?->requisitos_ingreso;
+        }
+        
+        if ($this->catalogo_id) {
+            $this->loadMissing('catalogo');
+            return $this->catalogo?->requisitos_ingreso;
+        }
+        
+        return null;
     }
 
     public function getIconoAttribute()

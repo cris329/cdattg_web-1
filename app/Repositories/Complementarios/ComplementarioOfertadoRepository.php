@@ -99,11 +99,15 @@ class ComplementarioOfertadoRepository
     }
 
     /**
-     * Buscar programa por nombre
+     * Buscar programa por nombre (ahora busca en el catálogo por denominacion)
      */
     public function findByNombre(string $nombre): ?ComplementarioOfertado
     {
-        return ComplementarioOfertado::where('nombre', str_replace('-', ' ', $nombre))->first();
+        $nombreNormalizado = str_replace('-', ' ', $nombre);
+        
+        return ComplementarioOfertado::whereHas('catalogo', function ($query) use ($nombreNormalizado) {
+            $query->where('denominacion', $nombreNormalizado);
+        })->first();
     }
 
     /**
@@ -182,34 +186,35 @@ class ComplementarioOfertadoRepository
         return ComplementarioOfertado::selectRaw('
                 complementarios_ofertados.id,
                 complementarios_ofertados.codigo,
-                complementarios_ofertados.nombre,
-                complementarios_ofertados.duracion,
+                complementarios_catalogo.denominacion as nombre,
+                complementarios_catalogo.duracion_horas as duracion,
                 complementarios_ofertados.cupos,
                 complementarios_ofertados.estado_id,
-                complementarios_ofertados.modalidad_id,
+                complementarios_catalogo.modalidad_id,
                 complementarios_ofertados.jornada_id,
                 complementarios_ofertados.ambiente_id,
                 complementarios_ofertados.justificacion,
-                complementarios_ofertados.requisitos_ingreso,
+                complementarios_catalogo.requisitos_ingreso,
                 complementarios_ofertados.created_at,
                 complementarios_ofertados.updated_at,
                 COUNT(aspirantes_complementarios.id) as total_aspirantes,
                 SUM(CASE WHEN aspirantes_complementarios.estado = 3 THEN 1 ELSE 0 END) as aceptados,
                 SUM(CASE WHEN aspirantes_complementarios.estado = 1 THEN 1 ELSE 0 END) as pendientes
             ')
+            ->leftJoin('complementarios_catalogo', 'complementarios_ofertados.catalogo_id', '=', 'complementarios_catalogo.id')
             ->leftJoin('aspirantes_complementarios', 'complementarios_ofertados.id', '=', 'aspirantes_complementarios.complementario_id')
             ->groupBy(
                 'complementarios_ofertados.id',
                 'complementarios_ofertados.codigo',
-                'complementarios_ofertados.nombre',
-                'complementarios_ofertados.duracion',
+                'complementarios_catalogo.denominacion',
+                'complementarios_catalogo.duracion_horas',
                 'complementarios_ofertados.cupos',
                 'complementarios_ofertados.estado_id',
-                'complementarios_ofertados.modalidad_id',
+                'complementarios_catalogo.modalidad_id',
                 'complementarios_ofertados.jornada_id',
                 'complementarios_ofertados.ambiente_id',
                 'complementarios_ofertados.justificacion',
-                'complementarios_ofertados.requisitos_ingreso',
+                'complementarios_catalogo.requisitos_ingreso',
                 'complementarios_ofertados.created_at',
                 'complementarios_ofertados.updated_at'
             )

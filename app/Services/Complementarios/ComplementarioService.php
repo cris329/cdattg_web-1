@@ -80,7 +80,8 @@ class ComplementarioService
         $programa->icono = $this->getIconoForPrograma($programa->nombre);
         // Usar los accessors del modelo que ya manejan el nuevo sistema de estados
         // $programa->badge_class y $programa->estado_label ya están definidos en el modelo
-        $programa->modalidad_nombre = $programa->modalidad->parametro->name ?? null;
+        // Obtener modalidad desde el catálogo
+        $programa->modalidad_nombre = $programa->catalogo?->modalidad?->parametro?->name ?? null;
         $programa->jornada_nombre = $programa->jornada->jornada ?? null;
 
         return $programa;
@@ -135,6 +136,19 @@ class ComplementarioService
      */
     public function obtenerDatosFormulario(): array
     {
+        /** @var \Illuminate\Support\Collection<int, \App\Models\Complementarios\ComplementarioCatalogo> $catalogoProgramas */
+        $catalogoProgramas = \App\Models\Complementarios\ComplementarioCatalogo::query()
+            ->where('nivel_formacion', 'CURSO ESPECIAL')
+            ->where('activo', true)
+            ->orderBy('denominacion')
+            ->get([
+                'id',
+                'prf_codigo',
+                'denominacion',
+                'duracion_horas',
+                'requisitos_ingreso',
+            ]);
+
         $modalidades = ParametroTema::query()
             ->where('tema_id', 5)
             ->with('parametro')
@@ -167,7 +181,7 @@ class ComplementarioService
             ->porNombreAsc()
             ->get(['id', 'codigo', 'nombre']);
 
-        return compact('modalidades', 'jornadas', 'ambientes', 'competencias', 'guias');
+        return compact('catalogoProgramas', 'modalidades', 'diasSemana', 'jornadas', 'ambientes', 'competencias', 'guias');
     }
 
     /**

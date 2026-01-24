@@ -129,8 +129,13 @@
     color: #4299e1;
 }
 
-small {
-    font-size: 16px !important;
+/*
+ * Evitar overrides globales a etiquetas HTML.
+ * El estilo anterior forzaba <small> a 16px en TODO el sistema y rompía la tipografía de AdminLTE/Bootstrap.
+ * Usa la clase .small-16 solo cuando realmente se necesite ese tamaño.
+ */
+.small-16 {
+    font-size: 16px;
     color: #6c757d;
 }
 

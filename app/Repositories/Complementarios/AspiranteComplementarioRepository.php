@@ -241,11 +241,12 @@ class AspiranteComplementarioRepository
     public function getDistribucionPorProgramas(): Collection
     {
         return AspiranteComplementario::selectRaw('
-                complementarios_ofertados.nombre as programa,
+                complementarios_catalogo.denominacion as programa,
                 COUNT(*) as total
             ')
             ->join('complementarios_ofertados', 'aspirantes_complementarios.complementario_id', '=', 'complementarios_ofertados.id')
-            ->groupBy('complementarios_ofertados.nombre')
+            ->leftJoin('complementarios_catalogo', 'complementarios_ofertados.catalogo_id', '=', 'complementarios_catalogo.id')
+            ->groupBy('complementarios_catalogo.denominacion')
             ->orderBy('total', 'desc')
             ->get();
     }

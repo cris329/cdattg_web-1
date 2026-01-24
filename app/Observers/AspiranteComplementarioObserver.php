@@ -120,14 +120,11 @@ class AspiranteComplementarioObserver
 
         // Crear el nuevo complementario con los mismos datos básicos
         $nuevoComplementario = ComplementarioOfertado::create([
+            'catalogo_id' => $complementarioOriginal->catalogo_id,
             'codigo' => $nuevoCodigo,
-            'nombre' => $complementarioOriginal->nombre,
             'justificacion' => $complementarioOriginal->justificacion,
-            'requisitos_ingreso' => $complementarioOriginal->requisitos_ingreso,
-            'duracion' => $complementarioOriginal->duracion,
             'cupos' => $complementarioOriginal->cupos,
             'estado_id' => $this->obtenerEstadoIdLegacy(1), // Estado "Con Oferta"
-            'modalidad_id' => $complementarioOriginal->modalidad_id,
             'jornada_id' => $complementarioOriginal->jornada_id,
             'ambiente_id' => $complementarioOriginal->ambiente_id,
             'user_create_id' => Auth::id() ?? 1, // Usuario autenticado o sistema

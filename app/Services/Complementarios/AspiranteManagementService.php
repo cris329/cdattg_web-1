@@ -64,11 +64,11 @@ class AspiranteManagementService
             abort(404, self::PROGRAMA_NO_ENCONTRADO_SIN_PUNTO);
         }
 
-        // Cargar relación parametro de modalidad si existe (la vista usa optional() para manejar casos donde no existe)
+        // Cargar relación parametro de modalidad desde el catálogo si existe
         // Hacerlo de forma segura para evitar errores si la relación no existe
         try {
-            if ($programa->modalidad_id && $programa->relationLoaded('modalidad') && $programa->modalidad && $programa->modalidad->parametro_id) {
-                $programa->loadMissing('modalidad.parametro');
+            if ($programa->catalogo_id) {
+                $programa->loadMissing(['catalogo.modalidad.parametro']);
             }
         } catch (\Exception $e) {
             // Si falla cargar la relación, continuar sin ella (la vista maneja esto con optional())
