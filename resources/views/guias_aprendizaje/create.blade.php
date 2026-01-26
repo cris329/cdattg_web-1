@@ -206,147 +206,15 @@
 @endsection
 
 @section('content_header')
-    <x-page-header 
-        icon="fa-book-open" 
-        title="Guías de Aprendizaje"
-        subtitle="Gestión de guías de aprendizaje del SENA"
-        :breadcrumb="[['label' => 'Guías de Aprendizaje', 'url' => route('guias-aprendizaje.index') , 'icon' => 'fa-book-open'], ['label' => 'Crear', 'icon' => 'fa-plus', 'active' => true]]"
-    />
-@endsection
-
-@section('content')
-    <section class="content mt-4">
-        <div class="container-fluid">
-            @if (session('error'))
-                <div class="alert alert-danger alert-dismissible fade show" role="alert">
-                    <i class="fas fa-exclamation-circle"></i> {{ session('error') }}
-                    <button type="button" class="close" data-dismiss="alert" aria-label="Close">
-                        <span aria-hidden="true">&times;</span>
-                    </button>
+    <div class="admin-header">
+        <div class="admin-header-content">
+            <div class="admin-header-left">
+                <div class="admin-header-icon">
+                    <i class="fas fa-plus-circle"></i>
                 </div>
-            @endif
-
-            <div class="row">
-                <div class="col-12">
-                    <a class="btn btn-outline-secondary btn-sm mb-3" href="{{ route('guias-aprendizaje.index') }}">
-                        <i class="fas fa-arrow-left mr-1"></i> Volver
-                    </a>
-
-                    <div class="card shadow-sm no-hover">
-                        <div class="card-header bg-white py-3">
-                            <h5 class="card-title m-0 font-weight-bold text-primary">
-                                <i class="fas fa-plus-circle mr-2"></i>Nueva Guía de Aprendizaje
-                            </h5>
-                        </div>
-                        <div class="card-body">
-                            <form method="POST" action="{{ route('guias-aprendizaje.store') }}">
-                                @csrf
-
-                                <!-- Información Básica -->
-                                <div class="form-section">
-                                    <div class="form-section-title">
-                                        <i class="fas fa-info-circle mr-1"></i> Información Básica
-                                    </div>
-                                    <div class="row">
-                                        <div class="col-md-6">
-                                            <div class="form-group">
-                                                <label for="codigo" class="form-label font-weight-bold">Código <span class="text-danger">*</span></label>
-                                                <input type="text" name="codigo" id="codigo"
-                                                    class="form-control @error('codigo') is-invalid @enderror"
-                                                    value="{{ old('codigo') }}" placeholder="Ej: GA-2024-001" required>
-                                                @error('codigo')
-                                                    <div class="invalid-feedback">{{ $message }}</div>
-                                                @enderror
-                                                <small class="form-text text-muted">Código único de identificación</small>
-                                            </div>
-                                        </div>
-
-                                        <div class="col-md-6">
-                                            <div class="form-group">
-                                                <label for="nombre" class="form-label font-weight-bold">Nombre <span class="text-danger">*</span></label>
-                                                <input type="text" name="nombre" id="nombre"
-                                                    class="form-control @error('nombre') is-invalid @enderror"
-                                                    value="{{ old('nombre') }}" placeholder="Nombre de la guía" required>
-                                                @error('nombre')
-                                                    <div class="invalid-feedback">{{ $message }}</div>
-                                                @enderror
-                                                <small class="form-text text-muted">Nombre descriptivo de la guía</small>
-                                            </div>
-                                        </div>
-                                    </div>
-                                </div>
-
-                                <!-- Resultados de Aprendizaje -->
-                                <div class="form-section">
-                                    <div class="form-section-title">
-                                        <i class="fas fa-target mr-1"></i> Resultados de Aprendizaje
-                                    </div>
-                                    <div class="row">
-                                        <div class="col-md-12">
-                                            <div class="form-group">
-                                                <label for="resultados_aprendizaje" class="form-label font-weight-bold">
-                                                    <i class="fas fa-list-check mr-2"></i>Seleccionar Resultados 
-                                                    <span class="text-danger">*</span>
-                                                    <span id="resultados-counter" class="resultados-counter" style="display: none;">
-                                                        <i class="fas fa-check-circle mr-1"></i><span id="counter-number">0</span> seleccionados
-                                                    </span>
-                                                </label>
-                                                
-                                                @if($resultadosAprendizaje->isEmpty())
-                                                    <div class="alert alert-warning">
-                                                        <i class="fas fa-exclamation-triangle mr-2"></i>
-                                                        No hay resultados de aprendizaje activos disponibles. 
-                                                        <a href="{{ route('resultados-aprendizaje.index') }}" class="alert-link">
-                                                            Crear un resultado de aprendizaje
-                                                        </a>
-                                                    </div>
-                                                @endif
-                                                
-                                                <div class="position-relative">
-                                                    <select name="resultados_aprendizaje[]" id="resultados_aprendizaje"
-                                                        class="form-control @error('resultados_aprendizaje') is-invalid @enderror"
-                                                        multiple="multiple"
-                                                        data-toggle="tooltip" 
-                                                        data-placement="top" 
-                                                        title="Escriba para buscar o haga clic para seleccionar"
-                                                        @if($resultadosAprendizaje->isEmpty()) disabled @else required @endif>
-                                                        @foreach($resultadosAprendizaje as $resultado)
-                                                            <option value="{{ $resultado->id }}"
-                                                                {{ in_array($resultado->id, old('resultados_aprendizaje', [])) ? 'selected' : '' }}>
-                                                                {{ $resultado->codigo }} - {{ $resultado->nombre }}
-                                                            </option>
-                                                        @endforeach
-                                                    </select>
-                                                    <small class="form-text text-muted mt-2">
-                                                        <i class="fas fa-info-circle mr-1"></i>
-                                                        Escriba para buscar resultados o haga clic para seleccionar múltiples opciones
-                                                        <strong>({{ $resultadosAprendizaje->count() }} disponibles)</strong>
-                                                    </small>
-                                                </div>
-                                                @error('resultados_aprendizaje')
-                                                    <div class="invalid-feedback">{{ $message }}</div>
-                                                @enderror
-                                            </div>
-                                        </div>
-                                    </div>
-                                </div>
-
-                                <!-- Estado -->
-                                <div class="form-section">
-                                    <div class="form-section-title">
-                                        <i class="fas fa-toggle-on mr-1"></i> Estado
-                                    </div>
-                                    <div class="row">
-                                        <div class="col-md-6">
-                                            <div class="form-group">
-                                                <label for="status" class="form-label font-weight-bold">Estado</label>
-                                                <select name="status" id="status" class="form-control @error('status') is-invalid @enderror">
-                                                    <option value="1" {{ old('status', '1') == '1' ? 'selected' : '' }}>Activo</option>
-                                                    <option value="0" {{ old('status') == '0' ? 'selected' : '' }}>Inactivo</option>
-                                                </select>
-                                                @error('status')
-                                                    <div class="invalid-feedback">{{ $message }}</div>
-                                                @enderror
+                <div class="admin-header-text">
+                    <h1 class="admin-header-title">Crear Nueva Guía</h1>
+                    <p class="admin-header-subtitle">Completa los datos para crear una nueva guía de aprendizaje</p>
                                                 <small class="form-text text-muted">Estado inicial de la guía</small>
                                             </div>
                                         </div>

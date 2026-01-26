@@ -69,7 +69,7 @@ Route::get('/user', function (Request $request) {
 // RUTAS DE USUARIO Y PERMISOS
 // ==========================================
 
-Route::middleware('auth:sanctum')->group(function () {
+Route::middleware('auth')->group(function () {
     Route::get('/user/permissions', [UserController::class, 'permissions']);
 });
 

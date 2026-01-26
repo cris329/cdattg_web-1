@@ -1,4 +1,9 @@
 /* ===== ESTILOS MINIMALISTAS - RED CONOCIMIENTO ===== */
+/*
+Regla del proyecto:
+Todo CSS debe estar encapsulado por vista o módulo.
+No se permiten selectores globales para acciones.
+*/
 
 :root {
     --primary: #1e3a8a;
@@ -14,7 +19,7 @@
 }
 
 /* Layout */
-.content-wrapper {
+.vista-red-conocimiento .content-wrapper {
     margin-left: 250px !important;
     background: var(--bg-light);
     min-height: 100vh;
@@ -23,7 +28,7 @@
     padding: 0 0.5rem;
 }
 
-.main-sidebar {
+.vista-red-conocimiento .main-sidebar {
     position: fixed !important;
     top: 0 !important;
     left: 0 !important;
@@ -33,15 +38,15 @@
 }
 
 /* ===== HEADER ADMINISTRATIVO COMPACTO ===== */
-.admin-header .col-md-8 {
-    padding: 0 0.5rem;
+.vista-red-conocimiento .admin-header .col-md-8 {
+    padding: 0 0.5rem !important;
 }
 
-.admin-header .col-md-4 {
-    padding: 0 0.5rem;
+.vista-red-conocimiento .admin-header .col-md-4 {
+    padding: 0 0.5rem !important;
 }
 
-.admin-header {
+.vista-red-conocimiento .admin-header {
     background: white;
     border-bottom: 1px solid var(--border);
     padding: 1.25rem 0;
@@ -51,23 +56,23 @@
     flex-shrink: 0;
 }
 
-.admin-header-content {
+.vista-red-conocimiento .admin-header-content {
     display: flex;
     align-items: center;
     justify-content: space-between;
     padding: 0 0.5rem;
 }
 
-.admin-header-left {
+.vista-red-conocimiento .admin-header-left {
     display: flex;
     align-items: center;
 }
 
-.admin-header-text {
+.vista-red-conocimiento .admin-header-text {
     flex: 1;
 }
 
-.admin-header-icon {
+.vista-red-conocimiento .admin-header-icon {
     width: 40px;
     height: 40px;
     background: var(--primary);
@@ -81,11 +86,11 @@
     flex-shrink: 0;
 }
 
-.admin-header-content {
+.vista-red-conocimiento .admin-header-content {
     flex: 1;
 }
 
-.admin-header-title {
+.vista-red-conocimiento .admin-header-title {
     font-size: 1.25rem;
     font-weight: 600;
     color: var(--text);
@@ -93,14 +98,14 @@
     line-height: 1.2;
 }
 
-.admin-header-subtitle {
+.vista-red-conocimiento .admin-header-subtitle {
     font-size: 0.8rem;
     color: var(--text-muted);
     margin-bottom: 0;
     line-height: 1.3;
 }
 
-.admin-breadcrumb {
+.vista-red-conocimiento .admin-breadcrumb {
     background: transparent;
     padding: 0;
     margin: 0;
@@ -138,7 +143,7 @@
 }
 
 /* Main Card */
-.main-card {
+.vista-red-conocimiento .main-card {
     background: white;
     border-radius: 6px;
     box-shadow: var(--shadow);
@@ -151,7 +156,7 @@
 }
 
 /* Toolbar */
-.toolbar {
+.vista-red-conocimiento .toolbar {
     background: white;
     padding: 1rem 0.5rem;
     border-bottom: 1px solid var(--border);
@@ -163,13 +168,13 @@
     flex-shrink: 0;
 }
 
-.search-container {
+.vista-red-conocimiento .search-container {
     flex: 1;
     min-width: 300px;
     position: relative;
 }
 
-.search-input {
+.vista-red-conocimiento .search-input {
     width: 100%;
     padding: 0.5rem 1rem 0.5rem 2.5rem;
     border: 1px solid var(--border);
@@ -183,7 +188,7 @@
     border-color: var(--primary-light);
 }
 
-.search-icon {
+.vista-red-conocimiento .search-icon {
     position: absolute;
     left: 0.75rem;
     top: 50%;
@@ -194,14 +199,14 @@
 }
 
 /* Filtros adicionales */
-.filters-container {
+.vista-red-conocimiento .filters-container {
     display: flex;
     align-items: center;
     gap: 0.5rem;
     flex-wrap: wrap;
 }
 
-.filter-select {
+.vista-red-conocimiento .filter-select {
     padding: 0.5rem;
     border: 1px solid var(--border);
     border-radius: 4px;
@@ -216,7 +221,7 @@
     border-color: var(--primary-light);
 }
 
-.btn-clear-filters {
+.vista-red-conocimiento .btn-clear-filters {
     padding: 0.5rem;
     border: 1px solid var(--danger);
     border-radius: 4px;
@@ -237,7 +242,7 @@
     color: white;
 }
 
-.loading-indicator {
+.vista-red-conocimiento .loading-indicator {
     display: flex;
     align-items: center;
     gap: 0.5rem;
@@ -251,7 +256,7 @@
     animation: fadeIn 0.3s ease;
 }
 
-.loading-indicator i {
+.vista-red-conocimiento .loading-indicator i {
     color: var(--primary);
 }
 
@@ -279,7 +284,7 @@
 }
 
 /* Button Primary */
-.btn-primary-modern {
+.vista-red-conocimiento .btn-primary-modern {
     background: var(--primary);
     color: white;
     border: none;
@@ -371,13 +376,13 @@
 }
 
 /* Tabla ERP - Solución Definitiva (1 sola tabla) */
-.table-scroll-wrapper {
+.vista-red-conocimiento .table-scroll-wrapper {
     width: 100%;
     overflow-x: auto;
 }
 
 /* tabla normal */
-.modern-table {
+.vista-red-conocimiento .modern-table {
     width: 100%;
     border-collapse: separate;
     border-spacing: 0;
@@ -388,8 +393,8 @@
 }
 
 /* altura uniforme real */
-.modern-table th,
-.modern-table td {
+.vista-red-conocimiento .modern-table th,
+.vista-red-conocimiento .modern-table td {
     vertical-align: middle;
     padding: 12px 14px;
     white-space: nowrap;
@@ -397,7 +402,7 @@
 }
 
 /* ACCIONES sticky en la MISMA tabla */
-.sticky-actions {
+.vista-red-conocimiento .sticky-actions {
     position: sticky;
     right: 0;
     background: #fff;
@@ -413,11 +418,11 @@
 }
 
 /* botón centrado */
-.td-actions {
+.vista-red-conocimiento .td-actions {
     text-align: center;
 }
 
-.btn-action {
+.vista-red-conocimiento .btn-action {
     width: 34px;
     height: 34px;
     display: inline-flex;
@@ -429,23 +434,23 @@
 }
 
 /* Column width optimization - ERP Style */
-.modern-table th.nombre,
-.modern-table td.nombre { width: 350px; min-width: 350px; }
+.vista-red-conocimiento .modern-table th.nombre,
+.vista-red-conocimiento .modern-table td.nombre { width: 350px; min-width: 350px; }
 
-.modern-table th.regional,
-.modern-table td.regional { width: 200px; min-width: 200px; }
+.vista-red-conocimiento .modern-table th.regional,
+.vista-red-conocimiento .modern-table td.regional { width: 200px; min-width: 200px; }
 
-.modern-table th.programas-count,
-.modern-table td.programas-count { width: 120px; min-width: 120px; }
+.vista-red-conocimiento .modern-table th.programas-count,
+.vista-red-conocimiento .modern-table td.programas-count { width: 120px; min-width: 120px; }
 
-.modern-table th.estado,
-.modern-table td.estado { width: 120px; min-width: 120px; }
+.vista-red-conocimiento .modern-table th.estado,
+.vista-red-conocimiento .modern-table td.estado { width: 120px; min-width: 120px; }
 
-.modern-table th.th-actions,
-.modern-table td.td-actions { width: 140px; min-width: 140px; }
+.vista-red-conocimiento .modern-table th.th-actions,
+.vista-red-conocimiento .modern-table td.td-actions { width: 140px; min-width: 140px; }
 
 /* Badges */
-.badge-modern {
+.vista-red-conocimiento .badge-modern {
     padding: 0.1875rem 0.375rem;
     border-radius: 3px;
     font-size: 0.6875rem;
@@ -484,7 +489,7 @@
 }
 
 /* Headers */
-.modern-table th {
+.vista-red-conocimiento .modern-table th {
     font-weight: 600;
     color: var(--text);
     text-transform: uppercase;
@@ -493,12 +498,12 @@
     border-bottom: 2px solid #e5e7eb;
 }
 
-.modern-table th.sortable {
+.vista-red-conocimiento .modern-table th.sortable {
     cursor: pointer;
     user-select: none;
 }
 
-.modern-table th.sortable:hover {
+.vista-red-conocimiento .modern-table th.sortable:hover {
     color: var(--primary-light);
 }
 
@@ -526,7 +531,7 @@
     margin: 0 auto;
 }
 
-.btn-action {
+.vista-red-conocimiento .btn-action {
     width: 34px;
     height: 34px;
     border-radius: 4px;
@@ -541,7 +546,7 @@
     margin: 0 2px;
 }
 
-.btn-view {
+.vista-red-conocimiento .btn-view {
     background: rgba(59, 130, 246, 0.1);
     color: var(--primary-light);
 }
@@ -551,7 +556,7 @@
     color: white;
 }
 
-.btn-edit {
+.vista-red-conocimiento .btn-edit {
     background: rgba(245, 158, 11, 0.1);
     color: var(--warning);
 }
@@ -561,7 +566,7 @@
     color: white;
 }
 
-.btn-delete {
+.vista-red-conocimiento .btn-delete {
     background: rgba(239, 68, 68, 0.1);
     color: var(--danger);
 }
@@ -598,7 +603,7 @@
     margin: 0;
 }
 
-.btn-close-erp {
+.vista-red-conocimiento .btn-close-erp {
     background: none;
     border: none;
     color: var(--text-muted);
@@ -691,7 +696,7 @@
 }
 
 /* Botones ERP */
-.btn-erp {
+.vista-red-conocimiento .btn-erp {
     padding: 0.625rem 1.25rem;
     border-radius: 6px;
     font-size: 0.875rem;
@@ -890,7 +895,7 @@
         margin-left: 0 !important;
     }
     
-    .main-sidebar {
+    .vista-red-conocimiento .main-sidebar {
         transform: translateX(-100%) !important;
         transition: transform 0.3s ease !important;
     }
@@ -899,22 +904,22 @@
         transform: translateX(0) !important;
     }
     
-    .admin-header {
+    .vista-red-conocimiento .admin-header {
         padding: 0.5rem 0;
     }
     
-    .admin-header-icon {
+    .vista-red-conocimiento .admin-header-icon {
         width: 32px;
         height: 32px;
         font-size: 0.875rem;
         margin-right: 0.5rem;
     }
     
-    .admin-header-title {
+    .vista-red-conocimiento .admin-header-title {
         font-size: 1.125rem;
     }
     
-    .admin-header-subtitle {
+    .vista-red-conocimiento .admin-header-subtitle {
         font-size: 0.75rem;
     }
     
@@ -943,7 +948,7 @@
         flex-direction: column;
     }
     
-    .btn-action {
+    .vista-red-conocimiento .btn-action {
         width: 100%;
     }
     
@@ -968,7 +973,7 @@
         width: 100%;
     }
     
-    .btn-clear-filters {
+    .vista-red-conocimiento .btn-clear-filters {
         align-self: center;
         width: auto;
         min-width: 80px;
@@ -1352,4 +1357,390 @@
 .badge-inactive {
     background: #fdecea;
     color: #d93025;
+}
+
+/* ===== MODALES UNIFICADOS - RED CONOCIMIENTO ===== */
+/* Overlay base para todas las modales */
+.vista-red-conocimiento .modal-overlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background-color: rgba(0, 0, 0, 0.5);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    z-index: 1050;
+    padding: 20px;
+}
+
+/* Contenedor principal unificado */
+.vista-red-conocimiento .modal-container {
+    width: 100%;
+    max-width: 600px;
+    max-height: 90vh;
+    background: #ffffff;
+    border-radius: 12px;
+    display: flex;
+    flex-direction: column;
+    overflow: hidden;
+    box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.1), 0 10px 10px -5px rgba(0, 0, 0, 0.04);
+}
+
+/* Modal grande para formularios */
+.vista-red-conocimiento .modal-container.modal-lg {
+    max-width: 800px;
+}
+
+/* Header unificado */
+.vista-red-conocimiento .modal-header {
+    padding: 20px 24px 16px 24px;
+    border-bottom: 1px solid #e5e7eb;
+    background: #ffffff;
+    flex-shrink: 0;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+}
+
+.vista-red-conocimiento .modal-title {
+    font-size: 18px;
+    font-weight: 600;
+    margin: 0;
+    color: #1f2937;
+    line-height: 1.2;
+}
+
+/* Botón de cierre unificado */
+.vista-red-conocimiento .modal-close {
+    width: 32px;
+    height: 32px;
+    border-radius: 6px;
+    border: none;
+    background: transparent;
+    font-size: 18px;
+    color: #6b7280;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: all 0.2s ease;
+    opacity: 0.7;
+}
+
+.vista-red-conocimiento .modal-close:hover {
+    background: #f1f5f9;
+    color: #111827;
+    opacity: 1;
+}
+
+/* Body unificado */
+.vista-red-conocimiento .modal-body {
+    flex: 1;
+    overflow-y: auto;
+    padding: 24px;
+}
+
+/* Footer unificado */
+.vista-red-conocimiento .modal-footer {
+    padding: 16px 24px 20px 24px;
+    border-top: 1px solid #e5e7eb;
+    background: #ffffff;
+    flex-shrink: 0;
+    display: flex;
+    justify-content: flex-end;
+    gap: 12px;
+}
+
+/* Botones unificados */
+.vista-red-conocimiento .btn-modal {
+    padding: 10px 16px;
+    border-radius: 6px;
+    font-size: 14px;
+    font-weight: 500;
+    border: 1px solid transparent;
+    cursor: pointer;
+    transition: all 0.2s ease;
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    text-decoration: none;
+}
+
+.vista-red-conocimiento .btn-modal.btn-secondary {
+    background: #ffffff;
+    color: #374151;
+    border-color: #d1d5db;
+}
+
+.vista-red-conocimiento .btn-modal.btn-secondary:hover {
+    background: #f9fafb;
+    color: #374151;
+}
+
+.vista-red-conocimiento .btn-modal.btn-primary {
+    background: var(--primary);
+    color: white;
+    border-color: var(--primary);
+}
+
+.vista-red-conocimiento .btn-modal.btn-primary:hover {
+    background: var(--primary-light);
+    color: white;
+}
+
+.vista-red-conocimiento .btn-modal.btn-danger {
+    background: #dc2626;
+    color: white;
+    border-color: #dc2626;
+}
+
+.vista-red-conocimiento .btn-modal.btn-danger:hover {
+    background: #b91c1c;
+    color: white;
+}
+
+.vista-red-conocimiento .btn-modal.btn-success {
+    background: #10b981;
+    color: white;
+    border-color: #10b981;
+}
+
+.vista-red-conocimiento .btn-modal.btn-success:hover {
+    background: #059669;
+    color: white;
+}
+
+/* Estados especiales */
+.vista-red-conocimiento .btn-modal:disabled {
+    opacity: 0.6;
+    cursor: not-allowed;
+}
+
+/* Secciones dentro del modal */
+.vista-red-conocimiento .modal-section {
+    margin-bottom: 24px;
+}
+
+.vista-red-conocimiento .modal-section:last-child {
+    margin-bottom: 0;
+}
+
+.vista-red-conocimiento .section-title {
+    font-size: 14px;
+    font-weight: 600;
+    color: #374151;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+    margin: 0 0 12px 0;
+    padding-bottom: 8px;
+    border-bottom: 1px solid #f1f5f9;
+}
+
+/* Alertas en modales */
+.vista-red-conocimiento .modal-alert {
+    padding: 12px 16px;
+    border-radius: 6px;
+    margin-bottom: 16px;
+    font-size: 13px;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+}
+
+.vista-red-conocimiento .modal-alert.alert-danger {
+    background: #fef2f2;
+    border: 1px solid #fecaca;
+    color: #dc2626;
+}
+
+.vista-red-conocimiento .modal-alert.alert-warning {
+    background: #fffbeb;
+    border: 1px solid #fed7aa;
+    color: #d97706;
+}
+
+.vista-red-conocimiento .modal-alert.alert-info {
+    background: #eff6ff;
+    border: 1px solid #dbeafe;
+    color: #2563eb;
+}
+
+/* ===== HEADER ADMINISTRATIVO - IMPORTANTE ===== */
+.admin-header .col-md-8 {
+    padding: 0 0.5rem !important;
+}
+
+.admin-header .col-md-4 {
+    padding: 0 0.5rem !important;
+}
+
+.admin-header {
+    background: white !important;
+    border-bottom: 1px solid var(--border) !important;
+    padding: 1.25rem 0 !important;
+    margin-bottom: 1rem !important;
+    box-shadow: 0 1px 2px rgba(0,0,0,0.04) !important;
+    width: 100% !important;
+    flex-shrink: 0 !important;
+}
+
+.admin-header-content {
+    display: flex !important;
+    align-items: center !important;
+    justify-content: space-between !important;
+    padding: 0 0.5rem !important;
+}
+
+.admin-header-left {
+    display: flex !important;
+    align-items: center !important;
+}
+
+.admin-header-text {
+    flex: 1 !important;
+}
+
+.admin-header-icon {
+    width: 40px !important;
+    height: 40px !important;
+    background: var(--primary) !important;
+    border-radius: 50% !important;
+    display: flex !important;
+    align-items: center !important;
+    justify-content: center !important;
+    color: white !important;
+    font-size: 1rem !important;
+    margin-right: 0.75rem !important;
+    flex-shrink: 0 !important;
+}
+
+.admin-header-title {
+    font-size: 1.25rem !important;
+    font-weight: 600 !important;
+    color: var(--text) !important;
+    margin-bottom: 0.125rem !important;
+    line-height: 1.2 !important;
+}
+
+.admin-header-subtitle {
+    font-size: 0.8rem !important;
+    color: var(--text-muted) !important;
+    margin-bottom: 0 !important;
+    line-height: 1.3 !important;
+}
+
+.admin-breadcrumb {
+    background: transparent !important;
+    padding: 0 !important;
+    margin: 0 !important;
+}
+
+.breadcrumb {
+    background: transparent !important;
+    padding: 0 !important;
+    margin: 0 !important;
+    font-size: 0.875rem !important;
+}
+
+.breadcrumb-item + .breadcrumb-item::before {
+    content: "/" !important;
+    color: var(--text-muted) !important;
+}
+
+.breadcrumb-item.active {
+    color: var(--text) !important;
+    font-weight: 500 !important;
+}
+
+/* ===== CSS PARA MODAL DE ELIMINACIÓN - IMPORTANTE ===== */
+/* 🎨 CSS para modal de eliminación limpio y profesional */
+.modal-header-simple {
+    display: flex !important;
+    justify-content: space-between !important;
+    align-items: center !important;
+    padding: 16px 20px !important;
+    border-bottom: 1px solid #e5e7eb !important;
+}
+
+.modal-close {
+    background: none !important;
+    border: none !important;
+    font-size: 20px !important;
+    cursor: pointer !important;
+    padding: 4px !important;
+    color: #6b7280 !important;
+}
+
+.modal-close:hover {
+    color: #374151 !important;
+}
+
+.confirm-text {
+    font-size: 16px !important;
+    font-weight: 500 !important;
+    margin-top: 8px !important;
+    margin-bottom: 16px !important;
+    color: #111827 !important;
+}
+
+.confirm-details {
+    font-size: 14px !important;
+    color: #374151 !important;
+    display: flex !important;
+    flex-direction: column !important;
+    gap: 6px !important;
+    padding-left: 8px !important;
+    border-left: 3px solid #e5e7eb !important;
+    margin: 12px 0 !important;
+}
+
+.confirm-warning {
+    font-size: 13px !important;
+    color: #6b7280 !important;
+    margin-bottom: 20px !important;
+    font-style: italic !important;
+}
+
+.modal-actions {
+    display: flex !important;
+    justify-content: flex-end !important;
+    gap: 12px !important;
+    padding: 16px 20px !important;
+    border-top: 1px solid #e5e7eb !important;
+}
+
+.modal-actions .btn {
+    padding: 8px 16px !important;
+    font-weight: 500 !important;
+    border-radius: 6px !important;
+}
+
+.btn-outline-secondary {
+    background: white !important;
+    border: 1px solid #d1d5db !important;
+    color: #374151 !important;
+}
+
+.btn-outline-secondary:hover {
+    background: #f9fafb !important;
+    border-color: #9ca3af !important;
+}
+
+.btn-danger {
+    background: #dc2626 !important;
+    border: 1px solid #dc2626 !important;
+    color: white !important;
+}
+
+.btn-danger:hover {
+    background: #b91c1c !important;
+    border-color: #b91c1c !important;
+}
+
+.btn-danger:disabled {
+    background: #9ca3af !important;
+    border-color: #9ca3af !important;
+    cursor: not-allowed !important;
 }

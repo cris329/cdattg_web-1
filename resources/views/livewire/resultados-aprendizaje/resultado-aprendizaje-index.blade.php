@@ -1,3 +1,779 @@
+<style>
+/* ===== ESTILOS MINIMALISTAS - COMPETENCIAS ===== */
+
+:root {
+    --primary: #1e3a8a;
+    --primary-light: #3b82f6;
+    --bg-light: #f8fafc;
+    --border: #e2e8f0;
+    --text: #374151;
+    --text-muted: #64748b;
+    --success: #10b981;
+    --danger: #ef4444;
+    --warning: #f59e0b;
+    --shadow: 0 1px 3px rgba(0,0,0,0.1);
+}
+
+/* Layout */
+.content-wrapper {
+    margin-left: 250px !important;
+    background: var(--bg-light);
+    min-height: auto;
+    display: flex;
+    flex-direction: column;
+    padding: 0 0.5rem;
+}
+
+.main-sidebar {
+    position: fixed !important;
+    top: 0 !important;
+    left: 0 !important;
+    height: 100vh !important;
+    overflow-y: auto !important;
+    z-index: 1000 !important;
+}
+
+/* ===== HEADER ADMINISTRATIVO COMPACTO ===== */
+.admin-header .col-md-8 {
+    padding: 0 0.5rem;
+}
+
+.admin-header .col-md-4 {
+    padding: 0 0.5rem;
+}
+
+.admin-header {
+    background: white;
+    border-bottom: 1px solid var(--border);
+    padding: 1.25rem 0;
+    margin-bottom: 1rem;
+    box-shadow: 0 1px 2px rgba(0,0,0,0.04);
+    width: 100%;
+    flex-shrink: 0;
+}
+
+.admin-header-content {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 0 0.5rem;
+}
+
+.admin-header-left {
+    display: flex;
+    align-items: center;
+}
+
+.admin-header-text {
+    flex: 1;
+}
+
+.admin-header-icon {
+    width: 40px;
+    height: 40px;
+    background: var(--primary);
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: white;
+    font-size: 1rem;
+    margin-right: 0.75rem;
+    flex-shrink: 0;
+}
+
+.admin-header-content {
+    flex: 1;
+}
+
+.admin-header-title {
+    font-size: 1.25rem;
+    font-weight: 600;
+    color: var(--text);
+    margin-bottom: 0.125rem;
+    line-height: 1.2;
+}
+
+.admin-header-subtitle {
+    font-size: 0.8rem;
+    color: var(--text-muted);
+    margin-bottom: 0;
+    line-height: 1.3;
+}
+
+.admin-breadcrumb {
+    background: transparent;
+    padding: 0;
+    margin: 0;
+}
+
+.breadcrumb {
+    background: transparent;
+    padding: 0;
+    margin: 0;
+    font-size: 0.875rem;
+}
+
+.breadcrumb-item + .breadcrumb-item::before {
+    content: "/";
+    color: var(--text-muted);
+}
+
+.breadcrumb-item.active {
+    color: var(--text);
+    font-weight: 500;
+}
+
+/* ===== MAIN CARD ===== */
+.main-card {
+    background: white;
+    border-radius: 8px;
+    box-shadow: var(--shadow);
+    border: 1px solid var(--border);
+    overflow: hidden;
+}
+
+/* ===== BARRA DE HERRAMIENTAS ===== */
+.toolbar {
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+    padding: 1rem;
+    background: white;
+    border-radius: 8px;
+    box-shadow: var(--shadow);
+    margin-bottom: 1.5rem;
+    flex-wrap: wrap;
+}
+
+.search-container {
+    position: relative;
+    flex: 1;
+    min-width: 250px;
+}
+
+.search-icon {
+    position: absolute;
+    left: 12px;
+    top: 50%;
+    transform: translateY(-50%);
+    color: var(--text-muted);
+    font-size: 0.875rem;
+}
+
+.search-input {
+    width: 100%;
+    padding: 0.625rem 1rem 0.625rem 2.5rem;
+    border: 1px solid var(--border);
+    border-radius: 6px;
+    font-size: 0.875rem;
+    transition: all 0.2s ease;
+    background: white;
+}
+
+.search-input:focus {
+    outline: none;
+    border-color: var(--primary-light);
+    box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.1);
+}
+
+.filters-container {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+}
+
+.filter-select {
+    padding: 0.625rem 1rem;
+    border: 1px solid var(--border);
+    border-radius: 6px;
+    font-size: 0.875rem;
+    background: white;
+    cursor: pointer;
+    transition: all 0.2s ease;
+}
+
+.filter-select:focus {
+    outline: none;
+    border-color: var(--primary-light);
+    box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.1);
+}
+
+.btn-clear-filters {
+    padding: 0.625rem;
+    background: var(--danger);
+    color: white;
+    border: none;
+    border-radius: 6px;
+    cursor: pointer;
+    transition: all 0.2s ease;
+}
+
+.btn-clear-filters:hover {
+    background: #dc2626;
+    transform: translateY(-1px);
+}
+
+.results-selector {
+    display: flex;
+    align-items: center;
+}
+
+.results-select {
+    padding: 0.625rem 1rem;
+    border: 1px solid var(--border);
+    border-radius: 6px;
+    font-size: 0.875rem;
+    background: white;
+    cursor: pointer;
+    transition: all 0.2s ease;
+}
+
+.btn-primary-modern {
+    padding: 0.625rem 1.25rem;
+    background: var(--primary);
+    color: white;
+    border: none;
+    border-radius: 6px;
+    font-size: 0.875rem;
+    font-weight: 500;
+    cursor: pointer;
+    transition: all 0.2s ease;
+    display: inline-flex;
+    align-items: center;
+    gap: 0.5rem;
+}
+
+.btn-primary-modern:hover {
+    background: var(--primary-light);
+    transform: translateY(-1px);
+    box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+}
+
+/* ===== INDICADORES DE CARGA ===== */
+.loading-indicator {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    padding: 0.75rem;
+    background: #f0f9ff;
+    border: 1px solid #bae6fd;
+    border-radius: 6px;
+    color: #0369a1;
+    font-size: 0.875rem;
+    margin-bottom: 1rem;
+}
+
+/* ===== TABLA MODERNA ===== */
+.table-scroll-wrapper {
+    overflow-x: auto;
+    background: white;
+    border-radius: 8px;
+    box-shadow: var(--shadow);
+}
+
+.modern-table {
+    width: 100%;
+    border-collapse: collapse;
+    font-size: 0.875rem;
+}
+
+.modern-table thead {
+    background: linear-gradient(135deg, #f8fafc 0%, #e2e8f0 100%);
+}
+
+.modern-table th {
+    padding: 1rem;
+    text-align: left;
+    font-weight: 600;
+    color: var(--text);
+    border-bottom: 2px solid var(--border);
+    white-space: nowrap;
+}
+
+.modern-table th.sortable {
+    cursor: pointer;
+    user-select: none;
+    transition: all 0.2s ease;
+}
+
+.modern-table th.sortable:hover {
+    background: rgba(59, 130, 246, 0.05);
+}
+
+.sort-icon {
+    margin-left: 0.5rem;
+    font-size: 0.75rem;
+    color: var(--primary-light);
+}
+
+.modern-table td {
+    padding: 1rem;
+    border-bottom: 1px solid var(--border);
+    vertical-align: middle;
+}
+
+.modern-table tbody tr {
+    transition: all 0.2s ease;
+}
+
+.modern-table tbody tr:hover {
+    background: rgba(59, 130, 246, 0.02);
+}
+
+/* Columnas específicas */
+.modern-table .codigo {
+    width: 120px;
+    font-weight: 600;
+    color: var(--primary);
+}
+
+.modern-table .nombre {
+    min-width: 250px;
+}
+
+.modern-table .duracion {
+    width: 100px;
+    text-align: center;
+}
+
+.modern-table .competencias,
+.modern-table .guias {
+    width: 100px;
+    text-align: center;
+}
+
+.modern-table .estado {
+    width: 120px;
+    text-align: center;
+}
+
+.modern-table .th-actions,
+.modern-table .td-actions {
+    width: 200px;
+    text-align: center;
+}
+
+.sticky-actions {
+    position: sticky;
+    right: 0;
+    background: white;
+    z-index: 10;
+}
+
+/* ===== BADGES MODERNOS ===== */
+.badge-modern {
+    display: inline-block;
+    padding: 0.375rem 0.75rem;
+    font-size: 0.75rem;
+    font-weight: 600;
+    border-radius: 12px;
+    text-transform: uppercase;
+    letter-spacing: 0.025em;
+}
+
+.badge-primary {
+    background: var(--primary-light);
+    color: white;
+}
+
+.badge-info {
+    background: var(--info);
+    color: white;
+}
+
+.badge-warning {
+    background: var(--warning);
+    color: white;
+}
+
+.badge-secondary {
+    background: var(--text-muted);
+    color: white;
+}
+
+/* ===== BOTONES DE ACCIÓN ===== */
+.btn-action {
+    width: auto;
+    min-width: 34px;
+    height: 34px;
+    border-radius: 6px;
+    border: 2px solid;
+    background: transparent;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    transition: all 0.2s ease;
+    font-size: 0.8rem;
+    font-weight: 500;
+    line-height: 1;
+    padding: 0.625rem 1.25rem;
+    margin: 0 2px;
+    gap: 0.5rem;
+    white-space: nowrap;
+    cursor: pointer;
+    text-decoration: none;
+    position: relative;
+    overflow: hidden;
+    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+}
+
+.btn-action::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: -100%;
+    width: 100%;
+    height: 100%;
+    background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.2), transparent);
+    transition: left 0.5s ease;
+    z-index: 1;
+}
+
+.btn-action:hover::before {
+    left: 100%;
+}
+
+.btn-action i {
+    font-size: 0.75rem;
+    transition: transform 0.2s ease;
+    position: relative;
+    z-index: 2;
+}
+
+.btn-action:hover i {
+    transform: scale(1.1);
+}
+
+.btn-action span {
+    position: relative;
+    z-index: 2;
+}
+
+/* Botón Ver (Azul medio) */
+.btn-view {
+    color: #3b82f6;
+    border-color: #3b82f6;
+    background: linear-gradient(135deg, rgba(59, 130, 246, 0.05), rgba(59, 130, 246, 0.02));
+}
+
+.btn-view:hover {
+    color: #2563eb;
+    background: linear-gradient(135deg, rgba(59, 130, 246, 0.1), rgba(59, 130, 246, 0.05));
+    border-color: #2563eb;
+    transform: translateY(-1px);
+    box-shadow: 0 2px 4px rgba(59, 130, 246, 0.1);
+}
+
+.btn-view:active {
+    transform: translateY(0);
+    box-shadow: 0 1px 2px rgba(59, 130, 246, 0.1);
+}
+
+/* Botón Editar (Naranja medio) */
+.btn-edit {
+    color: #f59e0b;
+    border-color: #f59e0b;
+    background: linear-gradient(135deg, rgba(245, 158, 11, 0.05), rgba(245, 158, 11, 0.02));
+}
+
+.btn-edit:hover {
+    color: #d97706;
+    background: linear-gradient(135deg, rgba(245, 158, 11, 0.1), rgba(245, 158, 11, 0.05));
+    border-color: #d97706;
+    transform: translateY(-1px);
+    box-shadow: 0 2px 4px rgba(245, 158, 11, 0.1);
+}
+
+.btn-edit:active {
+    transform: translateY(0);
+    box-shadow: 0 1px 2px rgba(245, 158, 11, 0.1);
+}
+
+/* Botón Gestionar Competencias (Púrpura medio) */
+.btn-competencias {
+    color: #8b5cf6;
+    border-color: #8b5cf6;
+    background: linear-gradient(135deg, rgba(139, 92, 246, 0.05), rgba(139, 92, 246, 0.02));
+}
+
+.btn-competencias:hover {
+    color: #7c3aed;
+    background: linear-gradient(135deg, rgba(139, 92, 246, 0.1), rgba(139, 92, 246, 0.05));
+    border-color: #7c3aed;
+    transform: translateY(-1px);
+    box-shadow: 0 2px 4px rgba(139, 92, 246, 0.1);
+}
+
+.btn-competencias:active {
+    transform: translateY(0);
+    box-shadow: 0 1px 2px rgba(139, 92, 246, 0.1);
+}
+
+/* Botón Eliminar (Rojo medio) */
+.btn-delete {
+    color: #ef4444;
+    border-color: #ef4444;
+    background: linear-gradient(135deg, rgba(239, 68, 68, 0.05), rgba(239, 68, 68, 0.02));
+}
+
+.btn-delete:hover {
+    color: #dc2626;
+    background: linear-gradient(135deg, rgba(239, 68, 68, 0.1), rgba(239, 68, 68, 0.05));
+    border-color: #dc2626;
+    transform: translateY(-1px);
+    box-shadow: 0 2px 4px rgba(239, 68, 68, 0.1);
+}
+
+.btn-delete:active {
+    transform: translateY(0);
+    box-shadow: 0 1px 2px rgba(239, 68, 68, 0.1);
+}
+
+/* ===== BOTÓN DE ESTADO SIMPLE ===== */
+.badge-toggle {
+    width: auto;
+    height: auto;
+    border-radius: 4px;
+    border: none !important;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    transition: all 0.2s ease;
+    font-size: 0.75rem;
+    font-weight: 500;
+    line-height: 1;
+    padding: 0.375rem 0.75rem;
+    margin: 0;
+    gap: 0.375rem;
+    white-space: nowrap;
+    cursor: pointer;
+    text-decoration: none;
+    box-shadow: none !important;
+}
+
+.badge-toggle i {
+    font-size: 0.7rem;
+    transition: none;
+}
+
+.badge-toggle:hover i {
+    transform: none;
+}
+
+.badge-toggle:disabled {
+    opacity: 0.6;
+    cursor: not-allowed;
+    pointer-events: none;
+}
+
+/* Badge Toggle - Estado Activo (Verde simple) */
+.badge-toggle.badge-success {
+    color: white !important;
+    background: #10b981 !important;
+    border: none !important;
+    box-shadow: none !important;
+}
+
+.badge-toggle.badge-success:hover {
+    background: #059669 !important;
+    transform: none;
+    box-shadow: none !important;
+}
+
+.badge-toggle.badge-success:active {
+    background: #047857 !important;
+    transform: none;
+    box-shadow: none !important;
+}
+
+/* Badge Toggle - Estado Inactivo (Gris simple) */
+.badge-toggle.badge-danger {
+    color: white !important;
+    background: #6b7280 !important;
+    border: none !important;
+    box-shadow: none !important;
+}
+
+.badge-toggle.badge-danger:hover {
+    background: #4b5563 !important;
+    transform: none;
+    box-shadow: none !important;
+}
+
+.badge-toggle.badge-danger:active {
+    background: #374151 !important;
+    transform: none;
+    box-shadow: none !important;
+}
+
+/* ===== EMPTY STATES ===== */
+.empty-state {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    padding: 3rem 2rem;
+    text-align: center;
+    background: white;
+    border-radius: 8px;
+    box-shadow: var(--shadow);
+}
+
+.empty-state-icon {
+    margin-bottom: 1rem;
+    color: var(--text-muted);
+}
+
+.empty-state-icon i {
+    font-size: 3rem;
+}
+
+.empty-state h3 {
+    margin: 0 0 0.5rem 0;
+    color: var(--text);
+    font-weight: 600;
+}
+
+.empty-state p {
+    margin: 0 0 1.5rem 0;
+    color: var(--text-muted);
+    font-size: 0.875rem;
+}
+
+.action-hint {
+    font-size: 0.75rem;
+    color: var(--text-muted);
+    margin: 0.25rem 0;
+}
+
+/* ===== MODAL GESTIÓN ===== */
+.modal-overlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: rgba(0, 0, 0, 0.5);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    z-index: 1000;
+}
+
+.modal-container {
+    background: white;
+    border-radius: 8px;
+    box-shadow: 0 10px 25px rgba(0, 0, 0, 0.2);
+    max-width: 90vw;
+    max-height: 90vh;
+    overflow: hidden;
+}
+
+.modal-lg {
+    width: 900px;
+}
+
+.modal-header-simple {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 1.5rem;
+    border-bottom: 1px solid var(--border);
+    background: linear-gradient(135deg, #f8fafc 0%, #e2e8f0 100%);
+}
+
+.modal-title {
+    margin: 0;
+    font-size: 1.25rem;
+    font-weight: 600;
+    color: var(--text);
+}
+
+.modal-subtitle {
+    margin: 0.25rem 0 0 0;
+    color: var(--text-muted);
+    font-size: 0.875rem;
+}
+
+.code-pill {
+    background: var(--primary-light);
+    color: white;
+    padding: 0.25rem 0.75rem;
+    border-radius: 12px;
+    font-size: 0.75rem;
+    font-weight: 600;
+}
+
+.modal-close {
+    background: none;
+    border: none;
+    font-size: 1.5rem;
+    cursor: pointer;
+    color: var(--text-muted);
+    padding: 0.5rem;
+    border-radius: 4px;
+    transition: all 0.2s ease;
+}
+
+.modal-close:hover {
+    background: rgba(0, 0, 0, 0.1);
+    color: var(--text);
+}
+
+.modal-body {
+    padding: 0;
+    max-height: 70vh;
+    overflow-y: auto;
+}
+
+.modal-content-wrapper {
+    min-height: 400px;
+}
+
+/* ===== RESPONSIVE ===== */
+@media (max-width: 768px) {
+    .toolbar {
+        flex-direction: column;
+        align-items: stretch;
+        gap: 1rem;
+    }
+    
+    .search-container {
+        min-width: auto;
+    }
+    
+    .filters-container {
+        flex-wrap: wrap;
+    }
+    
+    .modern-table {
+        font-size: 0.8rem;
+    }
+    
+    .modern-table th,
+    .modern-table td {
+        padding: 0.75rem 0.5rem;
+    }
+    
+    .btn-action {
+        padding: 0.5rem 0.75rem;
+        font-size: 0.75rem;
+        min-width: 28px;
+        height: 28px;
+    }
+    
+    .btn-action i {
+        font-size: 0.7rem;
+    }
+    
+    .modal-lg {
+        width: 95vw;
+        margin: 1rem;
+    }
+}
+</style>
+
 <div>
     <!-- Barra de herramientas moderna -->
     <div class="toolbar">
@@ -142,11 +918,11 @@
                                 </button>
                             @endcan
                             @can('GESTIONAR COMPETENCIAS RESULTADO APRENDIZAJE')
-                                <a href="{{ route('resultados-aprendizaje.gestionarCompetencias', $resultado->id) }}" 
-                                   class="btn-action btn-competencias" 
-                                   title="Gestionar competencias">
+                                <button wire:click="openCompetenciasModal({{ $resultado->id }})" 
+                                        class="btn-action btn-competencias" 
+                                        title="Gestionar competencias">
                                     <i class="fas fa-link"></i>
-                                </a>
+                                </button>
                             @endcan
                             @can('ELIMINAR RESULTADO APRENDIZAJE')
                                 <button wire:click="confirmDelete({{ $resultado->id }})" 
@@ -364,11 +1140,11 @@
                                     <i class="fas fa-{{ $selectedResultado->status ? 'times' : 'check' }} me-2"></i>
                                     {{ $selectedResultado->status ? 'Desactivar' : 'Activar' }}
                                 </button>
-                                <a href="{{ route('resultados-aprendizaje.competencias', $selectedResultado->id) }}" 
-                                   class="btn btn-primary">
+                                <button wire:click="openCompetenciasModal({{ $selectedResultado->id }})" 
+                                        class="btn btn-primary">
                                     <i class="fas fa-link me-2"></i>
                                     Gestionar competencias
-                                </a>
+                                </button>
                             </div>
                         </div>
                                 @if($selectedResultado->userEdit)
@@ -446,4 +1222,84 @@
             </div>
         </div>
     @endif
+
+    <!-- Modal Gestión de Competencias -->
+    @if ($showCompetenciasModal && $selectedResultado)
+        <div class="modal-overlay" wire:click="$set('showCompetenciasModal', false)">
+            <div class="modal-container modal-lg" wire:click.stop>
+                
+                <!-- Header Simple -->
+                <div class="modal-header-simple">
+                    <div>
+                        <h4 class="modal-title">Gestión de Competencias</h4>
+                        <p class="modal-subtitle">
+                            <span class="code-pill">{{ $selectedResultado->codigo }}</span>
+                        </p>
+                    </div>
+                    <button class="modal-close" wire:click="$set('showCompetenciasModal', false)">✕</button>
+                </div>
+
+                <!-- Body -->
+                <div class="modal-body">
+                    <div class="modal-content-wrapper">
+                        <livewire:resultados-aprendizaje.gestionar-competencias :resultadoId="$selectedResultado->id" />
+                    </div>
+                </div>
+            </div>
+        </div>
+    @endif
 </div>
+
+<!-- Scripts para gestión de competencias - Cargados en el nivel principal -->
+<script>
+// Funciones globales para gestión de competencias
+window.confirmarAsignarCompetencia = function(competenciaId, nombreCompleto) {
+    const partes = nombreCompleto.split(' - ');
+    const codigo = partes[0] || competenciaId;
+    const nombre = partes[1] || nombreCompleto;
+    
+    // Deshabilitar temporalmente para evitar doble click
+    const button = event.target.closest('button');
+    if (button) {
+        button.disabled = true;
+        setTimeout(() => {
+            button.disabled = false;
+        }, 2000);
+    }
+    
+    showConfirmModal(
+        'Asignar competencia',
+        '¿Desea asignar esta competencia al resultado de aprendizaje?',
+        'success',
+        'asignarCompetencia',
+        competenciaId,
+        codigo,
+        nombre
+    );
+};
+
+window.confirmarDesasignarCompetencia = function(competenciaId, nombreCompleto) {
+    const partes = nombreCompleto.split(' - ');
+    const codigo = partes[0] || competenciaId;
+    const nombre = partes[1] || nombreCompleto;
+    
+    // Deshabilitar temporalmente para evitar doble click
+    const button = event.target.closest('button');
+    if (button) {
+        button.disabled = true;
+        setTimeout(() => {
+            button.disabled = false;
+        }, 2000);
+    }
+    
+    showConfirmModal(
+        'Desasignar competencia',
+        '¿Desea quitar esta competencia del resultado de aprendizaje?',
+        'danger',
+        'desasignarCompetencia',
+        competenciaId,
+        codigo,
+        nombre
+    );
+};
+</script>

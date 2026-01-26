@@ -35,10 +35,12 @@
 @endsection
 
 @section('content')
-    <div class="main-card">
-        <x-session-alerts />
-        
-        <livewire:competencias.competencia-index />
+    <div class="vista-competencias">
+        <div class="main-card">
+            <x-session-alerts />
+            
+            <livewire:competencias.competencia-index />
+        </div>
     </div>
 @endsection
 

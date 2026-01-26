@@ -3,57 +3,71 @@
 namespace App\Livewire\ResultadosAprendizaje;
 
 use Livewire\Component;
-use App\Models\ResultadoAprendizaje;
+use App\Models\ResultadosAprendizaje;
 use App\Models\Competencia;
+use Illuminate\Support\Facades\Log;
+use Exception;
 
 class GestionarCompetencias extends Component
 {
-    public $resultadoAprendizaje;
-    public $competenciasAsignadas;
-    public $competenciasDisponibles;
-
+    // Propiedades principales
+    public $resultadoId;
+    public $resultado;
+    
+    // Colecciones para la gestión
+    public $asignados = [];
+    public $disponibles = [];
+    
+    // Listeners para eventos
     protected $listeners = [
         'confirmAction' => 'handleConfirmedAction',
+        'refreshComponent' => '$refresh',
+    ];
+
+    // Reglas de validación
+    protected $rules = [
+        // Reglas específicas si se necesitan
     ];
 
     public function mount($resultadoId)
     {
-        $this->resultadoAprendizaje = ResultadoAprendizaje::findOrFail($resultadoId);
-        $this->cargarCompetencias();
+        $this->resultadoId = $resultadoId;
+        $this->cargarDatos();
     }
 
-    public function cargarCompetencias()
+    public function render()
     {
-        $this->competenciasAsignadas = $this->resultadoAprendizaje->competencias()->get();
-        
-        $asignadasIds = $this->competenciasAsignadas->pluck('id')->toArray();
-        $this->competenciasDisponibles = Competencia::whereNotIn('id', $asignadasIds)
-            ->orderBy('nombre')
-            ->get();
+        return view('livewire.resultados-aprendizaje.gestionar-competencias');
     }
 
-    public function confirmarAsociar($competenciaId, $nombreCompetencia)
+    /**
+     * Cargar datos iniciales
+     */
+    public function cargarDatos()
     {
-        $this->dispatch('confirm', [
-            'title' => 'Asignar Competencia',
-            'message' => "¿Desea asignar la competencia {$nombreCompetencia}?",
-            'type' => 'info',
-            'action' => 'asignarCompetencia',
-            'params' => $competenciaId
-        ]);
+        try {
+            $this->resultado = ResultadosAprendizaje::findOrFail($this->resultadoId);
+            
+            // Obtener asignados (usando relación many-to-many)
+            $this->asignados = $this->resultado->competencias()
+                ->orderBy('nombre')
+                ->get();
+            
+            // Obtener disponibles (los que no están asignados)
+            $asignadosIds = $this->asignados->pluck('id');
+            $this->disponibles = Competencia::whereNotIn('id', $asignadosIds)
+                ->orderBy('nombre')
+                ->get();
+                
+        } catch (\Exception $e) {
+            Log::error('Error cargando datos: ' . $e->getMessage());
+            // Manejo de error silencioso
+        }
     }
 
-    public function confirmarDesasociar($competenciaId, $nombreCompetencia)
-    {
-        $this->dispatch('confirm', [
-            'title' => 'Desasociar Competencia',
-            'message' => "¿Desea quitar la competencia {$nombreCompetencia}?",
-            'type' => 'danger',
-            'action' => 'desasociarCompetencia',
-            'params' => $competenciaId
-        ]);
-    }
-
+    /**
+     * Manejar acciones confirmadas desde el modal
+     */
     public function handleConfirmedAction($action, $params)
     {
         try {
@@ -61,42 +75,75 @@ class GestionarCompetencias extends Component
                 case 'asignarCompetencia':
                     $this->asignarCompetencia($params);
                     break;
-                case 'desasociarCompetencia':
-                    $this->desasociarCompetencia($params);
+                case 'desasignarCompetencia':
+                    $this->desasignarCompetencia($params);
                     break;
             }
             
-            $this->dispatch('notify', [
-                'type' => 'success',
-                'message' => 'Operación completada correctamente'
-            ]);
+            // Refrescar datos después de la acción
+            $this->cargarDatos();
+            
         } catch (\Exception $e) {
+            Log::error('Error en acción confirmada: ' . $e->getMessage());
+            // Notificación de error si es necesario
             $this->dispatch('notify', [
                 'type' => 'error',
-                'message' => 'Error al ejecutar la acción: ' . $e->getMessage()
+                'message' => 'Error al procesar la acción'
             ]);
         }
     }
 
-    public function asignarCompetencia($competenciaId)
+    /**
+     * Asignar un elemento
+     */
+    public function asignarCompetencia($elementoId)
     {
-        $this->resultadoAprendizaje->competencias()->attach($competenciaId, [
-            'user_create_id' => auth()->id(),
-            'user_edit_id' => auth()->id(),
-        ]);
-        
-        $this->cargarCompetencias();
+        try {
+            $elemento = Competencia::findOrFail($elementoId);
+            
+            // Verificar si ya está asignado
+            if ($this->resultado->competencias()->where('competencia_id', $elementoId)->exists()) {
+                return; // Ya está asignado, no hacer nada
+            }
+            
+            // Realizar la asignación (many-to-many)
+            $this->resultado->competencias()->attach($elementoId, [
+                'user_create_id' => auth()->id(),
+                'user_edit_id' => auth()->id(),
+            ]);
+            
+            // Notificación de éxito (opcional)
+            $this->dispatch('notify', [
+                'type' => 'success',
+                'message' => "{$elemento->nombre} asignada correctamente"
+            ]);
+            
+        } catch (\Exception $e) {
+            Log::error('Error asignando competencia: ' . $e->getMessage());
+            throw $e; // Re-lanzar para que el listener maneje
+        }
     }
 
-    public function desasociarCompetencia($competenciaId)
+    /**
+     * Desasignar un elemento
+     */
+    public function desasignarCompetencia($elementoId)
     {
-        $this->resultadoAprendizaje->competencias()->detach($competenciaId);
-        
-        $this->cargarCompetencias();
-    }
-
-    public function render()
-    {
-        return view('livewire.resultados-aprendizaje.gestionar-competencias');
+        try {
+            $elemento = Competencia::findOrFail($elementoId);
+            
+            // Realizar la desasignación (many-to-many)
+            $this->resultado->competencias()->detach($elementoId);
+            
+            // Notificación de éxito (opcional)
+            $this->dispatch('notify', [
+                'type' => 'success',
+                'message' => "{$elemento->nombre} desasignada correctamente"
+            ]);
+            
+        } catch (\Exception $e) {
+            Log::error('Error desasignando competencia: ' . $e->getMessage());
+            throw $e; // Re-lanzar para que el listener maneje
+        }
     }
 }

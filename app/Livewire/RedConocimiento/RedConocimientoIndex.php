@@ -116,6 +116,13 @@ class RedConocimientoIndex extends Component
         $this->showCreateModal = false;
     }
 
+    public function closeModals()
+    {
+        $this->showCreateModal = false;
+        $this->showEditModal = false;
+        $this->selectedRed = null;
+    }
+
     public function openEditModal($redId)
     {
         $this->selectedRed = RedConocimiento::find($redId);

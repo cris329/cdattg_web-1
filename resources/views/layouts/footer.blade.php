@@ -165,7 +165,7 @@
 
     <div class="footer-bottom" style="
         border-top: 1px solid #f1f5f9 !important;
-        padding: 12px !important;
+        padding: 12px 24px !important;
         text-align: center !important;
         font-size: 12px !important;
         color: #9ca3af !important;
@@ -173,7 +173,13 @@
         margin: 0 !important;
         font-weight: 400 !important;
         box-sizing: border-box !important;
+        width: 100% !important;
+        display: block !important;
+        clear: both !important;
     ">
         © {{ now()->format('Y') }} SENA · Plataforma Académica
     </div>
 </footer>
+
+<!-- Global Modals - Cargado UNA SOLA VEZ -->
+@include('layouts.partials.global-modals')

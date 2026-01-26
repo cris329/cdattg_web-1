@@ -16,6 +16,13 @@ class GuiasAprendizaje extends Model
     protected $fillable = [
         'codigo',
         'nombre',
+        'descripcion',
+        'programa_formacion_id',
+        'duracion_horas',
+        'duracion_meses',
+        'objetivo_general',
+        'metodologia',
+        'evaluacion',
         'status',
         'user_create_id',
         'user_edit_id',
@@ -67,6 +74,14 @@ class GuiasAprendizaje extends Model
     public function userEdit()
     {
         return $this->belongsTo(User::class, 'user_edit_id');
+    }
+
+    /**
+     * Relación con el programa de formación
+     */
+    public function programaFormacion()
+    {
+        return $this->belongsTo(ProgramaFormacion::class, 'programa_formacion_id');
     }
 
     /**

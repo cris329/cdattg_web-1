@@ -13,7 +13,26 @@ use App\Http\Controllers\GuiaAprendizajeController;
 |
 */
 
-// Rutas resource para CRUD completo
+// Rutas principales con nueva arquitectura Livewire
+Route::get('/guias-aprendizaje', function () {
+    return view('guias_aprendizaje.index');
+})->name('guias-aprendizaje.index')->middleware('can:VER GUIA APRENDIZAJE');
+
+// Rutas para crear y editar (nueva arquitectura)
+Route::get('/guias-aprendizaje/create', function () {
+    return view('guias_aprendizaje.create_new');
+})->name('guias-aprendizaje.create')->middleware('can:CREAR GUIA APRENDIZAJE');
+
+Route::get('/guias-aprendizaje/{guiaAprendizaje}/edit', function ($guiaAprendizaje) {
+    return view('guias_aprendizaje.edit_new', ['guiaAprendizaje' => $guiaAprendizaje]);
+})->name('guias-aprendizaje.edit')->middleware('can:EDITAR GUIA APRENDIZAJE');
+
+// Ruta para gestionar relaciones (nueva arquitectura)
+Route::get('/guias-aprendizaje/{guiaAprendizaje}/gestionar-relaciones', function ($guiaAprendizaje) {
+    return view('guias_aprendizaje.gestionar_relaciones', ['guiaAprendizaje' => $guiaAprendizaje]);
+})->name('guias-aprendizaje.gestionarRelaciones')->middleware('can:EDITAR GUIA APRENDIZAJE');
+
+// Rutas resource para CRUD completo (mantener compatibilidad)
 Route::resource('guias-aprendizaje', GuiaAprendizajeController::class)
     ->parameters(['guias-aprendizaje' => 'guia_aprendizaje']);
 
@@ -28,7 +47,7 @@ Route::middleware('can:EDITAR GUIA APRENDIZAJE')->group(function () {
 });
 
 Route::middleware('can:EDITAR GUIA APRENDIZAJE')->group(function () {
-    // Gestionar resultados de aprendizaje asociados
+    // Gestionar resultados de aprendizaje asociados (legacy)
     Route::get('/guias-aprendizaje/{guiaAprendizaje}/gestionar-resultados', [GuiaAprendizajeController::class, 'gestionarResultados'])
          ->name('guias-aprendizaje.gestionarResultados');
     

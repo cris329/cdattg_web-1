@@ -428,6 +428,7 @@ class RolePermissionSeeder extends Seeder
             'EDITAR GUIA APRENDIZAJE',
             'ELIMINAR GUIA APRENDIZAJE',
             'CAMBIAR ESTADO GUIA APRENDIZAJE',
+            'GESTIONAR RESULTADOS GUIA',
         ];
     }
 

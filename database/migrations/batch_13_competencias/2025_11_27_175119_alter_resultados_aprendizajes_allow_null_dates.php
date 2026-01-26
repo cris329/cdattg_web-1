@@ -47,8 +47,12 @@ return new class extends Migration
             DB::statement('PRAGMA foreign_keys=on;');
         } else {
             Schema::table('resultados_aprendizajes', function (Blueprint $table) {
-                $table->date('fecha_inicio')->nullable()->change();
-                $table->date('fecha_fin')->nullable()->change();
+                if (Schema::hasColumn('resultados_aprendizajes', 'fecha_inicio')) {
+                    $table->date('fecha_inicio')->nullable()->change();
+                }
+                if (Schema::hasColumn('resultados_aprendizajes', 'fecha_fin')) {
+                    $table->date('fecha_fin')->nullable()->change();
+                }
             });
         }
     }
@@ -67,8 +71,12 @@ return new class extends Migration
         }
 
         Schema::table('resultados_aprendizajes', function (Blueprint $table) {
-            $table->date('fecha_inicio')->nullable(false)->change();
-            $table->date('fecha_fin')->nullable(false)->change();
+            if (Schema::hasColumn('resultados_aprendizajes', 'fecha_inicio')) {
+                $table->date('fecha_inicio')->nullable(false)->change();
+            }
+            if (Schema::hasColumn('resultados_aprendizajes', 'fecha_fin')) {
+                $table->date('fecha_fin')->nullable(false)->change();
+            }
         });
     }
 };

@@ -2,10 +2,6 @@
 
 @section('title', 'Resultados de Aprendizaje')
 
-@section('css')
-    @vite(['resources/css/competencias.css'])
-@endsection
-
 @section('content_header')
     <div class="admin-header">
         <div class="admin-header-content">
@@ -35,10 +31,12 @@
 @endsection
 
 @section('content')
-    <div class="main-card">
-        <x-session-alerts />
-        
-        <livewire:resultados-aprendizaje.resultado-aprendizaje-index />
+    <div class="vista-resultados-aprendizaje">
+        <div class="main-card">
+            <x-session-alerts />
+            
+            <livewire:resultados-aprendizaje.resultado-aprendizaje-index />
+        </div>
     </div>
 @endsection
 

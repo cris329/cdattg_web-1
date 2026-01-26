@@ -35,10 +35,12 @@
 @endsection
 
 @section('content')
-    <div class="main-card">
-        <x-session-alerts />
-        
-        <livewire:programas.programa-index />
+    <div class="vista-programas">
+        <div class="main-card">
+            <x-session-alerts />
+            
+            <livewire:programas.programa-index />
+        </div>
     </div>
 @endsection
 

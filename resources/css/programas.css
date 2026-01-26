@@ -1,4 +1,9 @@
 /* ===== ESTILOS MINIMALISTAS - PROGRAMAS ===== */
+/*
+Regla del proyecto:
+Todo CSS debe estar encapsulado por vista o módulo.
+No se permiten selectores globales para acciones.
+*/
 
 :root {
     --primary: #1e3a8a;
@@ -14,7 +19,7 @@
 }
 
 /* Layout */
-.content-wrapper {
+.vista-programas .content-wrapper {
     margin-left: 250px !important;
     background: var(--bg-light);
     min-height: 100vh;
@@ -23,7 +28,7 @@
     padding: 0 0.5rem;
 }
 
-.main-sidebar {
+.vista-programas .main-sidebar {
     position: fixed !important;
     top: 0 !important;
     left: 0 !important;
@@ -33,15 +38,15 @@
 }
 
 /* ===== HEADER ADMINISTRATIVO COMPACTO ===== */
-.admin-header .col-md-8 {
+.vista-programas .admin-header .col-md-8 {
     padding: 0 0.5rem;
 }
 
-.admin-header .col-md-4 {
+.vista-programas .admin-header .col-md-4 {
     padding: 0 0.5rem;
 }
 
-.admin-header {
+.vista-programas .admin-header {
     background: white;
     border-bottom: 1px solid var(--border);
     padding: 1.25rem 0;
@@ -51,23 +56,23 @@
     flex-shrink: 0;
 }
 
-.admin-header-content {
+.vista-programas .admin-header-content {
     display: flex;
     align-items: center;
     justify-content: space-between;
     padding: 0 0.5rem;
 }
 
-.admin-header-left {
+.vista-programas .admin-header-left {
     display: flex;
     align-items: center;
 }
 
-.admin-header-text {
+.vista-programas .admin-header-text {
     flex: 1;
 }
 
-.admin-header-icon {
+.vista-programas .admin-header-icon {
     width: 40px;
     height: 40px;
     background: var(--primary);
@@ -81,11 +86,11 @@
     flex-shrink: 0;
 }
 
-.admin-header-content {
+.vista-programas .admin-header-content {
     flex: 1;
 }
 
-.admin-header-title {
+.vista-programas .admin-header-title {
     font-size: 1.25rem;
     font-weight: 600;
     color: var(--text);
@@ -93,14 +98,14 @@
     line-height: 1.2;
 }
 
-.admin-header-subtitle {
+.vista-programas .admin-header-subtitle {
     font-size: 0.8rem;
     color: var(--text-muted);
     margin-bottom: 0;
     line-height: 1.3;
 }
 
-.admin-breadcrumb {
+.vista-programas .admin-breadcrumb {
     background: transparent;
     padding: 0;
     margin: 0;
@@ -108,7 +113,7 @@
     align-items: center;
 }
 
-.admin-breadcrumb .breadcrumb {
+.vista-programas .admin-breadcrumb .breadcrumb {
     background: transparent;
     padding: 0;
     margin: 0;
@@ -118,27 +123,27 @@
     flex-wrap: nowrap;
 }
 
-.admin-breadcrumb .breadcrumb-item {
+.vista-programas .admin-breadcrumb .breadcrumb-item {
     color: var(--text-muted);
 }
 
-.admin-breadcrumb .breadcrumb-item a {
+.vista-programas .admin-breadcrumb .breadcrumb-item a {
     color: var(--primary);
     text-decoration: none;
     transition: color 0.2s ease;
 }
 
-.admin-breadcrumb .breadcrumb-item a:hover {
+.vista-programas .admin-breadcrumb .breadcrumb-item a:hover {
     color: var(--primary-light);
 }
 
-.admin-breadcrumb .breadcrumb-item.active {
+.vista-programas .admin-breadcrumb .breadcrumb-item.active {
     color: var(--text);
     font-weight: 500;
 }
 
 /* Main Card */
-.main-card {
+.vista-programas .main-card {
     background: white;
     border-radius: 6px;
     box-shadow: var(--shadow);
@@ -212,7 +217,7 @@
 }
 
 /* Button Primary */
-.btn-primary-modern {
+.vista-programas .btn-primary-modern {
     background: var(--primary);
     color: white;
     border: none;
@@ -279,7 +284,7 @@
     text-align: center;
 }
 
-.btn-action {
+.vista-programas .btn-action {
     width: 34px;
     height: 34px;
     display: inline-flex;
@@ -394,7 +399,7 @@
     margin: 0 auto;
 }
 
-.btn-action {
+.vista-programas .btn-action {
     width: 34px;
     height: 34px;
     border-radius: 4px;
@@ -409,7 +414,7 @@
     margin: 0 2px;
 }
 
-.btn-view {
+.vista-programas .btn-view {
     background: rgba(59, 130, 246, 0.1);
     color: var(--primary-light);
 }
@@ -419,7 +424,7 @@
     color: white;
 }
 
-.btn-edit {
+.vista-programas .btn-edit {
     background: rgba(245, 158, 11, 0.1);
     color: var(--warning);
 }
@@ -429,7 +434,7 @@
     color: white;
 }
 
-.btn-delete {
+.vista-programas .btn-delete {
     background: rgba(239, 68, 68, 0.1);
     color: var(--danger);
 }
@@ -466,7 +471,7 @@
     margin: 0;
 }
 
-.btn-close-erp {
+.vista-programas .btn-close-erp {
     background: none;
     border: none;
     color: var(--text-muted);
@@ -629,7 +634,7 @@
 }
 
 /* Botones ERP */
-.btn-erp {
+.vista-programas .btn-erp {
     padding: 0.625rem 1.25rem;
     border-radius: 6px;
     font-size: 0.875rem;
@@ -827,7 +832,7 @@
         margin-left: 0 !important;
     }
     
-    .main-sidebar {
+    .vista-programas .main-sidebar {
         transform: translateX(-100%) !important;
         transition: transform 0.3s ease !important;
     }
@@ -836,22 +841,22 @@
         transform: translateX(0) !important;
     }
     
-    .admin-header {
+    .vista-programas .admin-header {
         padding: 0.5rem 0;
     }
     
-    .admin-header-icon {
+    .vista-programas .admin-header-icon {
         width: 32px;
         height: 32px;
         font-size: 0.875rem;
         margin-right: 0.5rem;
     }
     
-    .admin-header-title {
+    .vista-programas .admin-header-title {
         font-size: 1.125rem;
     }
     
-    .admin-header-subtitle {
+    .vista-programas .admin-header-subtitle {
         font-size: 0.75rem;
     }
     
@@ -869,7 +874,7 @@
         flex-direction: column;
     }
     
-    .btn-action {
+    .vista-programas .btn-action {
         width: 100%;
     }
     

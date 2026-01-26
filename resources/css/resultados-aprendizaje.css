@@ -1,3 +1,9 @@
+/*
+Regla del proyecto:
+Todo CSS debe estar encapsulado por vista o módulo.
+No se permiten selectores globales para acciones.
+*/
+
 /**
  * Estilos para el módulo de Resultados de Aprendizaje (RAP)
  * Sistema de Asistencia CDATTG - SENA
@@ -159,7 +165,7 @@
 /* ========================================
    BOTONES
 ======================================== */
-.btn-rap-primary {
+.vista-resultados-aprendizaje .btn-rap-primary {
     background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
     border: none;
     color: white;
@@ -175,7 +181,7 @@
     color: white;
 }
 
-.btn-rap-success {
+.vista-resultados-aprendizaje .btn-rap-success {
     background-color: #28a745;
     border: none;
     color: white;
@@ -191,7 +197,7 @@
     box-shadow: 0 4px 12px rgba(40, 167, 69, 0.3);
 }
 
-.btn-rap-danger {
+.vista-resultados-aprendizaje .btn-rap-danger {
     background-color: #dc3545;
     border: none;
     color: white;
@@ -431,3 +437,439 @@
 .rap-p-3 { padding: 1rem; }
 .rap-p-4 { padding: 1.5rem; }
 
+/* ========================================
+   ESTILOS MEJORADOS PARA BOTONES DE GESTIÓN
+======================================== */
+
+/* Action Buttons - Diseño Profesional Outline Mejorado */
+.vista-resultados-aprendizaje .btn-action {
+    width: auto;
+    min-width: 34px;
+    height: 34px;
+    border-radius: 6px;
+    border: 2px solid;
+    background: transparent;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    transition: all 0.2s ease;
+    font-size: 0.8rem;
+    font-weight: 500;
+    line-height: 1;
+    padding: 0.625rem 1.25rem;
+    margin: 0 2px;
+    gap: 0.5rem;
+    white-space: nowrap;
+    cursor: pointer;
+    text-decoration: none;
+    position: relative;
+    overflow: hidden;
+    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+}
+
+.btn-action::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: -100%;
+    width: 100%;
+    height: 100%;
+    background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.2), transparent);
+    transition: left 0.5s ease;
+    z-index: 1;
+}
+
+.btn-action:hover::before {
+    left: 100%;
+}
+
+.btn-action i {
+    font-size: 0.75rem;
+    transition: transform 0.2s ease;
+    position: relative;
+    z-index: 2;
+}
+
+.btn-action:hover i {
+    transform: scale(1.1);
+}
+
+.btn-action span {
+    position: relative;
+    z-index: 2;
+}
+
+.btn-action:disabled {
+    opacity: 0.6;
+    cursor: not-allowed;
+    pointer-events: none;
+}
+
+.btn-action:disabled::before {
+    display: none;
+}
+
+.btn-action:disabled:hover i {
+    transform: none;
+}
+
+/* Botón Asignar (Verde medio) - Mejorado */
+.vista-resultados-aprendizaje .btn-asignar {
+    color: #10b981;
+    border-color: #d1fae5;
+    background: linear-gradient(135deg, rgba(16, 185, 129, 0.05), rgba(16, 185, 129, 0.02));
+}
+
+.btn-asignar:hover {
+    color: #059669;
+    background: linear-gradient(135deg, rgba(16, 185, 129, 0.1), rgba(16, 185, 129, 0.05));
+    border-color: #10b981;
+    transform: translateY(-1px);
+    box-shadow: 0 2px 4px rgba(16, 185, 129, 0.1);
+}
+
+.btn-asignar:active {
+    transform: translateY(0);
+    box-shadow: 0 1px 2px rgba(16, 185, 129, 0.1);
+}
+
+/* Botón Desasignar (Rojo medio) - Mejorado */
+.vista-resultados-aprendizaje .btn-desasignar {
+    color: #ef4444;
+    border-color: #fee2e2;
+    background: linear-gradient(135deg, rgba(239, 68, 68, 0.05), rgba(239, 68, 68, 0.02));
+}
+
+.btn-desasignar:hover {
+    color: #dc2626;
+    background: linear-gradient(135deg, rgba(239, 68, 68, 0.1), rgba(239, 68, 68, 0.05));
+    border-color: #ef4444;
+    transform: translateY(-1px);
+    box-shadow: 0 2px 4px rgba(239, 68, 68, 0.1);
+}
+
+.btn-desasignar:active {
+    transform: translateY(0);
+    box-shadow: 0 1px 2px rgba(239, 68, 68, 0.1);
+}
+
+/* Force override para asegurar estilos en tablas */
+.cell-accion .btn-action,
+.cell-accion button.btn-action,
+td.cell-accion .btn-action,
+tr td .btn-action,
+.modern-table td .btn-action,
+.modern-table td button {
+    background: transparent !important;
+    border: 2px solid !important;
+    color: inherit !important;
+    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1) !important;
+    position: relative !important;
+    overflow: hidden !important;
+}
+
+/* Override específicos para botones de gestión */
+.cell-accion .btn-action.btn-asignar,
+.cell-accion button.btn-action.btn-asignar,
+.modern-table td .btn-action.btn-asignar,
+.modern-table td button.vista-resultados-aprendizaje .btn-asignar {
+    color: #10b981 !important;
+    border-color: #10b981 !important;
+    background: linear-gradient(135deg, rgba(16, 185, 129, 0.05), rgba(16, 185, 129, 0.02)) !important;
+}
+
+.cell-accion .btn-action.btn-asignar:hover,
+.cell-accion button.btn-action.btn-asignar:hover,
+.modern-table td .btn-action.btn-asignar:hover,
+.modern-table td button.btn-asignar:hover {
+    color: #059669 !important;
+    background: linear-gradient(135deg, rgba(16, 185, 129, 0.1), rgba(16, 185, 129, 0.05)) !important;
+    border-color: #059669 !important;
+    transform: translateY(-1px) !important;
+    box-shadow: 0 2px 4px rgba(16, 185, 129, 0.1) !important;
+}
+
+.cell-accion .btn-action.btn-desasignar,
+.cell-accion button.btn-action.btn-desasignar,
+.modern-table td .btn-action.btn-desasignar,
+.modern-table td button.vista-resultados-aprendizaje .btn-desasignar {
+    color: #ef4444 !important;
+    border-color: #ef4444 !important;
+    background: linear-gradient(135deg, rgba(239, 68, 68, 0.05), rgba(239, 68, 68, 0.02)) !important;
+}
+
+.cell-accion .btn-action.btn-desasignar:hover,
+.cell-accion button.btn-action.btn-desasignar:hover,
+.modern-table td .btn-action.btn-desasignar:hover,
+.modern-table td button.btn-desasignar:hover {
+    color: #dc2626 !important;
+    background: linear-gradient(135deg, rgba(239, 68, 68, 0.1), rgba(239, 68, 68, 0.05)) !important;
+    border-color: #dc2626 !important;
+    transform: translateY(-1px) !important;
+    box-shadow: 0 2px 4px rgba(239, 68, 68, 0.1) !important;
+}
+
+/* Responsive para botones */
+@media (max-width: 768px) {
+    .vista-resultados-aprendizaje .btn-action {
+        padding: 0.5rem 0.75rem;
+        font-size: 0.75rem;
+        min-width: 28px;
+        height: 28px;
+    }
+    
+    .btn-action i {
+        font-size: 0.7rem;
+    }
+}
+
+/* ========================================
+   COLORES ESPECÍFICOS PARA BOTONES DE ACCIÓN PRINCIPAL - MINIMALISTAS
+======================================== */
+
+/* Botón Ver (Azul medio) */
+.btn-view {
+    color: #3b82f6;
+    border-color: #3b82f6;
+    background: linear-gradient(135deg, rgba(59, 130, 246, 0.05), rgba(59, 130, 246, 0.02));
+}
+
+.btn-view:hover {
+    color: #2563eb;
+    background: linear-gradient(135deg, rgba(59, 130, 246, 0.1), rgba(59, 130, 246, 0.05));
+    border-color: #2563eb;
+    transform: translateY(-1px);
+    box-shadow: 0 2px 4px rgba(59, 130, 246, 0.1);
+}
+
+.btn-view:active {
+    transform: translateY(0);
+    box-shadow: 0 1px 2px rgba(59, 130, 246, 0.1);
+}
+
+/* Botón Editar (Naranja medio) */
+.btn-edit {
+    color: #f59e0b;
+    border-color: #f59e0b;
+    background: linear-gradient(135deg, rgba(245, 158, 11, 0.05), rgba(245, 158, 11, 0.02));
+}
+
+.btn-edit:hover {
+    color: #d97706;
+    background: linear-gradient(135deg, rgba(245, 158, 11, 0.1), rgba(245, 158, 11, 0.05));
+    border-color: #d97706;
+    transform: translateY(-1px);
+    box-shadow: 0 2px 4px rgba(245, 158, 11, 0.1);
+}
+
+.btn-edit:active {
+    transform: translateY(0);
+    box-shadow: 0 1px 2px rgba(245, 158, 11, 0.1);
+}
+
+/* Botón Gestionar Competencias (Púrpura medio) */
+.btn-competencias {
+    color: #8b5cf6;
+    border-color: #8b5cf6;
+    background: linear-gradient(135deg, rgba(139, 92, 246, 0.05), rgba(139, 92, 246, 0.02));
+}
+
+.btn-competencias:hover {
+    color: #7c3aed;
+    background: linear-gradient(135deg, rgba(139, 92, 246, 0.1), rgba(139, 92, 246, 0.05));
+    border-color: #7c3aed;
+    transform: translateY(-1px);
+    box-shadow: 0 2px 4px rgba(139, 92, 246, 0.1);
+}
+
+.btn-competencias:active {
+    transform: translateY(0);
+    box-shadow: 0 1px 2px rgba(139, 92, 246, 0.1);
+}
+
+/* Botón Eliminar (Rojo medio) */
+.btn-delete {
+    color: #ef4444;
+    border-color: #ef4444;
+    background: linear-gradient(135deg, rgba(239, 68, 68, 0.05), rgba(239, 68, 68, 0.02));
+}
+
+.btn-delete:hover {
+    color: #dc2626;
+    background: linear-gradient(135deg, rgba(239, 68, 68, 0.1), rgba(239, 68, 68, 0.05));
+    border-color: #dc2626;
+    transform: translateY(-1px);
+    box-shadow: 0 2px 4px rgba(239, 68, 68, 0.1);
+}
+
+.btn-delete:active {
+    transform: translateY(0);
+    box-shadow: 0 1px 2px rgba(239, 68, 68, 0.1);
+}
+
+/* Force override para botones de acción principal */
+.td-actions .btn-action,
+.td-actions button.btn-action,
+.sticky-actions .btn-action,
+.sticky-actions button.vista-resultados-aprendizaje .btn-action {
+    background: transparent !important;
+    border: 2px solid !important;
+    color: inherit !important;
+    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1) !important;
+    position: relative !important;
+    overflow: hidden !important;
+}
+
+.td-actions .btn-action.btn-view,
+.td-actions button.btn-action.btn-view,
+.sticky-actions .btn-action.btn-view,
+.sticky-actions button.btn-action.btn-view {
+    color: #3b82f6 !important;
+    border-color: #3b82f6 !important;
+    background: linear-gradient(135deg, rgba(59, 130, 246, 0.05), rgba(59, 130, 246, 0.02)) !important;
+}
+
+.td-actions .btn-action.btn-edit,
+.td-actions button.btn-action.btn-edit,
+.sticky-actions .btn-action.btn-edit,
+.sticky-actions button.btn-action.btn-edit {
+    color: #f59e0b !important;
+    border-color: #f59e0b !important;
+    background: linear-gradient(135deg, rgba(245, 158, 11, 0.05), rgba(245, 158, 11, 0.02)) !important;
+}
+
+.td-actions .btn-action.btn-competencias,
+.td-actions button.btn-action.btn-competencias,
+.sticky-actions .btn-action.btn-competencias,
+.sticky-actions button.btn-action.btn-competencias {
+    color: #8b5cf6 !important;
+    border-color: #8b5cf6 !important;
+    background: linear-gradient(135deg, rgba(139, 92, 246, 0.05), rgba(139, 92, 246, 0.02)) !important;
+}
+
+.td-actions .btn-action.btn-delete,
+.td-actions button.btn-action.btn-delete,
+.sticky-actions .btn-action.btn-delete,
+.sticky-actions button.btn-action.btn-delete {
+    color: #ef4444 !important;
+    border-color: #ef4444 !important;
+    background: linear-gradient(135deg, rgba(239, 68, 68, 0.05), rgba(239, 68, 68, 0.02)) !important;
+}
+
+/* ========================================
+   BOTÓN DE ESTADO SIMPLE
+======================================== */
+
+/* Badge Toggle - Estilo simple */
+.badge-toggle {
+    width: auto;
+    height: auto;
+    border-radius: 4px;
+    border: none !important;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    transition: all 0.2s ease;
+    font-size: 0.75rem;
+    font-weight: 500;
+    line-height: 1;
+    padding: 0.375rem 0.75rem;
+    margin: 0;
+    gap: 0.375rem;
+    white-space: nowrap;
+    cursor: pointer;
+    text-decoration: none;
+    box-shadow: none !important;
+}
+
+.badge-toggle i {
+    font-size: 0.7rem;
+    transition: none;
+}
+
+.badge-toggle:hover i {
+    transform: none;
+}
+
+.badge-toggle:disabled {
+    opacity: 0.6;
+    cursor: not-allowed;
+    pointer-events: none;
+}
+
+/* Badge Toggle - Estado Activo (Verde simple) */
+.badge-toggle.badge-success {
+    color: white !important;
+    background: #10b981 !important;
+    border: none !important;
+    box-shadow: none !important;
+}
+
+.badge-toggle.badge-success:hover {
+    background: #059669 !important;
+    transform: none;
+    box-shadow: none !important;
+}
+
+.badge-toggle.badge-success:active {
+    background: #047857 !important;
+    transform: none;
+    box-shadow: none !important;
+}
+
+/* Badge Toggle - Estado Inactivo (Gris simple) */
+.badge-toggle.badge-danger {
+    color: white !important;
+    background: #6b7280 !important;
+    border: none !important;
+    box-shadow: none !important;
+}
+
+.badge-toggle.badge-danger:hover {
+    background: #4b5563 !important;
+    transform: none;
+    box-shadow: none !important;
+}
+
+.badge-toggle.badge-danger:active {
+    background: #374151 !important;
+    transform: none;
+    box-shadow: none !important;
+}
+
+/* Force override para badge-toggle en tablas - Diseño Simple */
+.cell-estado .badge-toggle,
+.cell-estado button.badge-toggle,
+td.cell-estado .badge-toggle,
+tr td .badge-toggle {
+    border: none !important;
+    position: static !important;
+    overflow: visible !important;
+    box-shadow: none !important;
+    width: auto !important;
+    height: auto !important;
+    border-radius: 4px !important;
+    padding: 0.375rem 0.75rem !important;
+    margin: 0 !important;
+    gap: 0.375rem !important;
+}
+
+.cell-estado .badge-toggle.badge-success,
+.cell-estado button.badge-toggle.badge-success,
+td.cell-estado .badge-toggle.badge-success,
+tr td .badge-toggle.badge-success {
+    color: white !important;
+    background: #10b981 !important;
+    border: none !important;
+    box-shadow: none !important;
+}
+
+.cell-estado .badge-toggle.badge-danger,
+.cell-estado button.badge-toggle.badge-danger,
+td.cell-estado .badge-toggle.badge-danger,
+tr td .badge-toggle.badge-danger {
+    color: white !important;
+    background: #6b7280 !important;
+    border: none !important;
+    box-shadow: none !important;
+}

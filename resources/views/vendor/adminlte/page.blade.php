@@ -71,7 +71,5 @@
     @vite(['resources/js/global-notifications.js'])
     <!-- Global Modals JS -->
     @vite(['resources/js/global-modals.js'])
-    <!-- Debug Permissions JS -->
-    @vite(['resources/js/debug-permissions.js'])
 @stop
 

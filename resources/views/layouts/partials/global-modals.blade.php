@@ -180,90 +180,97 @@
 
 <script>
 // Sistema de modales profesional ERP - CARGADO UNA SOLA VEZ
-let modalConfig = null;
-
-function showConfirmModal(title, message, type, action, params, codigo, nombre) {
-    modalConfig = {action, params};
+if (typeof modalConfig === 'undefined') {
+    let modalConfig = null;
     
-    const modal = document.getElementById('globalConfirmModal');
-    const titleEl = modal.querySelector('.modal-confirm-title');
-    const messageEl = modal.querySelector('.modal-confirm-text');
-    const iconEl = modal.querySelector('.modal-confirm-icon');
-    const codeEl = modal.querySelector('.code-pill');
-    const tagEl = modal.querySelector('.tag');
-    const nameEl = modal.querySelector('.modal-confirm-item span:last-child');
-    const confirmBtn = modal.querySelector('.btn-confirm');
-    
-    // Configurar título y mensaje
-    titleEl.textContent = title;
-    messageEl.textContent = message;
-    
-    // Configurar icono según tipo
-    iconEl.className = 'modal-confirm-icon';
-    switch(type) {
-        case 'danger':
-            iconEl.classList.add('danger');
-            iconEl.innerHTML = '<i class="fas fa-unlink"></i>';
-            break;
-        case 'info':
-        case 'success':
-            iconEl.classList.add('success');
-            iconEl.innerHTML = '<i class="fas fa-link"></i>';
-            break;
-        default:
-            iconEl.classList.add('success');
-            iconEl.innerHTML = '<i class="fas fa-check"></i>';
-    }
-    
-    // Configurar información de la competencia
-    if (codeEl) codeEl.textContent = codigo;
-    if (tagEl) tagEl.textContent = 'Competencia';
-    if (nameEl) nameEl.textContent = nombre;
-    
-    // Configurar botón
-    if (confirmBtn) {
-        confirmBtn.className = 'btn btn-' + type;
-        confirmBtn.textContent = type === 'danger' ? 'Quitar' : 'Asignar';
-    } else {
-        const altConfirmBtn = modal.querySelector('button[onclick*="confirmAction"]');
-        if (altConfirmBtn) {
-            altConfirmBtn.className = 'btn btn-' + type;
-            altConfirmBtn.textContent = type === 'danger' ? 'Quitar' : 'Asignar';
+    function showConfirmModal(title, message, type, action, params, codigo, nombre) {
+        modalConfig = {action, params};
+        
+        const modal = document.getElementById('globalConfirmModal');
+        const titleEl = modal.querySelector('.modal-confirm-title');
+        const messageEl = modal.querySelector('.modal-confirm-text');
+        const iconEl = modal.querySelector('.modal-confirm-icon');
+        const codeEl = modal.querySelector('.code-pill');
+        const tagEl = modal.querySelector('.tag');
+        const nameEl = modal.querySelector('.modal-confirm-item span:last-child');
+        const confirmBtn = modal.querySelector('.btn-confirm');
+        
+        // Configurar título y mensaje
+        titleEl.textContent = title;
+        messageEl.textContent = message;
+        
+        // Configurar icono según tipo
+        iconEl.className = 'modal-confirm-icon';
+        switch(type) {
+            case 'danger':
+                iconEl.classList.add('danger');
+                iconEl.innerHTML = '<i class="fas fa-unlink"></i>';
+                break;
+            case 'info':
+            case 'success':
+                iconEl.classList.add('success');
+                iconEl.innerHTML = '<i class="fas fa-link"></i>';
+                break;
+            default:
+                iconEl.classList.add('success');
+                iconEl.innerHTML = '<i class="fas fa-check"></i>';
         }
+        
+        // Configurar información de la competencia
+        if (codeEl) codeEl.textContent = codigo;
+        if (tagEl) tagEl.textContent = 'Competencia';
+        if (nameEl) nameEl.textContent = nombre;
+        
+        // Configurar botón
+        if (confirmBtn) {
+            confirmBtn.className = 'btn btn-' + type;
+            confirmBtn.textContent = type === 'danger' ? 'Quitar' : 'Asignar';
+        } else {
+            const altConfirmBtn = modal.querySelector('button[onclick*="confirmAction"]');
+            if (altConfirmBtn) {
+                altConfirmBtn.className = 'btn btn-' + type;
+                altConfirmBtn.textContent = type === 'danger' ? 'Quitar' : 'Asignar';
+            }
+        }
+        
+        // 🔥 LIMPIAR OVERLAYS ANTES DE MOSTRAR
+        document.body.classList.remove('modal-open');
+        document.querySelectorAll('.modal-backdrop').forEach(e => e.remove());
+        document.body.style.overflow = '';
+        
+        // Mostrar modal
+        modal.style.display = 'block';
+        modal.classList.add('show');
     }
     
-    // 🔥 LIMPIAR OVERLAYS ANTES DE MOSTRAR
-    document.body.classList.remove('modal-open');
-    document.querySelectorAll('.modal-backdrop').forEach(e => e.remove());
-    document.body.style.overflow = '';
+    function closeConfirmModal() {
+        const modal = document.getElementById('globalConfirmModal');
+        modal.style.display = 'none';
+        modal.classList.remove('show');
+        modalConfig = null;
+        
+        // 🔥 LIMPIAR OVERLAYS AL CERRAR
+        document.body.classList.remove('modal-open');
+        document.querySelectorAll('.modal-backdrop').forEach(e => e.remove());
+        document.body.style.overflow = '';
+    }
     
-    // Mostrar modal
-    modal.style.display = 'block';
-    modal.classList.add('show');
-}
-
-function closeConfirmModal() {
-    const modal = document.getElementById('globalConfirmModal');
-    modal.style.display = 'none';
-    modal.classList.remove('show');
-    modalConfig = null;
+    function confirmAction() {
+        if (!modalConfig) return;
+        
+        // Enviar evento a Livewire
+        Livewire.dispatch('confirmAction', {
+            action: modalConfig.action,
+            params: modalConfig.params
+        });
+        
+        closeConfirmModal();
+    }
     
-    // 🔥 LIMPIAR OVERLAYS AL CERRAR
-    document.body.classList.remove('modal-open');
-    document.querySelectorAll('.modal-backdrop').forEach(e => e.remove());
-    document.body.style.overflow = '';
-}
-
-function confirmAction() {
-    if (!modalConfig) return;
-    
-    // Enviar evento a Livewire
-    Livewire.dispatch('confirmAction', {
-        action: modalConfig.action,
-        params: modalConfig.params
-    });
-    
-    closeConfirmModal();
+    // Hacer las funciones globales
+    window.showConfirmModal = showConfirmModal;
+    window.closeConfirmModal = closeConfirmModal;
+    window.confirmAction = confirmAction;
 }
 
 // Métodos para confirmación
