@@ -192,7 +192,7 @@ class ProgramaForm extends Component
 
     public function cancel()
     {
-        $this->reset();
+        // Solo cerrar el modal sin hacer reset para evitar parpadeo
         $this->dispatch('closeModal');
     }
 
@@ -218,9 +218,9 @@ class ProgramaForm extends Component
             'nombre' => 'required|string|max:255',
             'red_conocimiento_id' => 'required|exists:red_conocimientos,id',
             'nivel_formacion_id' => 'required|exists:parametros,id',
-            'horas_totales' => 'required|integer|min:1',
-            'horas_etapa_lectiva' => 'required|integer|min:1',
-            'horas_etapa_productiva' => 'required|integer|min:1',
+            'horas_totales' => 'required|integer|min:1|max:20000',
+            'horas_etapa_lectiva' => 'required|integer|min:1|max:20000',
+            'horas_etapa_productiva' => 'required|integer|min:1|max:20000',
         ];
 
         if ($this->isEdit && $this->programaId) {
@@ -241,8 +241,11 @@ class ProgramaForm extends Component
             'red_conocimiento_id.required' => 'Debe seleccionar una red de conocimiento.',
             'nivel_formacion_id.required' => 'Debe seleccionar un nivel de formación.',
             'horas_totales.required' => 'Las horas totales son obligatorias.',
+            'horas_totales.max' => 'Las horas totales no pueden superar las 20,000 horas.',
             'horas_etapa_lectiva.required' => 'Las horas lectivas son obligatorias.',
+            'horas_etapa_lectiva.max' => 'Las horas lectivas no pueden superar las 20,000 horas.',
             'horas_etapa_productiva.required' => 'Las horas productivas son obligatorias.',
+            'horas_etapa_productiva.max' => 'Las horas productivas no pueden superar las 20,000 horas.',
         ];
     }
 }

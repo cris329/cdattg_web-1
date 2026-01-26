@@ -117,6 +117,8 @@
                                        class="form-control-erp @error('horas_totales') is-invalid @enderror"
                                        placeholder="Total" 
                                        min="1" 
+                                       max="20000"
+                                       maxlength="5"
                                        required>
                                 <span class="input-group-text-erp">h</span>
                             </div>

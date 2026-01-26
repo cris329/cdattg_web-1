@@ -1,4 +1,10 @@
-<div>
+<div class="vista-guias-aprendizaje">
+    <!-- Toast Minimalista ERP -->
+    <div class="toast toast-minimal">
+        <i class="toast-icon"></i>
+        <span class="toast-text"></span>
+    </div>
+
     <!-- Barra de herramientas moderna -->
     <div class="toolbar">
         <div class="search-container">
@@ -49,27 +55,27 @@
     </div>
 
     <!-- Indicador de carga -->
-    <div wire:loading wire:target="search" class="loading-indicator">
+    <div wire:loading wire:target="search" class="loading-indicator" style="display: none;">
         <i class="fas fa-spinner fa-spin"></i>
         Buscando...
     </div>
 
-    <div wire:loading wire:target="statusFilter" class="loading-indicator">
+    <div wire:loading wire:target="statusFilter" class="loading-indicator" style="display: none;">
         <i class="fas fa-spinner fa-spin"></i>
         Filtrando por estado...
     </div>
 
-    <div wire:loading wire:target="resultadoFilter" class="loading-indicator">
+    <div wire:loading wire:target="resultadoFilter" class="loading-indicator" style="display: none;">
         <i class="fas fa-spinner fa-spin"></i>
         Filtrando por resultado...
     </div>
 
-    <div wire:loading wire:target="perPage" class="loading-indicator">
+    <div wire:loading wire:target="perPage" class="loading-indicator" style="display: none;">
         <i class="fas fa-spinner fa-spin"></i>
         Actualizando resultados...
     </div>
 
-    <div wire:loading wire:target="page" class="loading-indicator">
+    <div wire:loading wire:target="page" class="loading-indicator" style="display: none;">
         <i class="fas fa-spinner fa-spin"></i>
         Cargando página...
     </div>
@@ -158,7 +164,7 @@
                             @endcan
                             
                             @can('ELIMINAR GUIA APRENDIZAJE')
-                                <button onclick="confirmarEliminarGuia({{ $guia->id }}, '{{ $guia->codigo }} - {{ $guia->nombre }}')" 
+                                <button wire:click="openDeleteModal({{ $guia->id }})" 
                                         class="btn-action btn-delete" 
                                         title="Eliminar">
                                     <i class="fas fa-trash"></i>
@@ -215,326 +221,485 @@
     <!-- Modal Ver Detalles -->
     @if ($showShowModal && $selectedGuia)
         <div class="modal-overlay" wire:click="$set('showShowModal', false)">
-            <div class="modal-container" wire:click.stop>
+            <div class="modal-container modal-lg" wire:click.stop>
                 
-                <!-- Header Simple Unificado -->
-                <div class="modal-header-simple">
-                    <div>
-                        <h4 class="modal-title">{{ $selectedGuia->codigo }} - {{ $selectedGuia->nombre }}</h4>
-                        <p class="modal-subtitle">
-                            Guía de aprendizaje del SENA
-                        </p>
-                    </div>
-
+                <!-- Header -->
+                <div class="modal-header">
+                    <h5 class="modal-title">{{ $selectedGuia->nombre }}</h5>
                     <button class="modal-close" wire:click="$set('showShowModal', false)">✕</button>
                 </div>
-
+                
                 <!-- Body -->
                 <div class="modal-body">
-                    <div class="modal-content-wrapper">
-                        
-                        <!-- Sección: Información General -->
-                        <div class="section-card">
-                            <h6 class="section-title">Información General</h6>
-                            <div class="info-grid">
-                                <div class="info-item">
-                                    <div class="info-label">Código</div>
-                                    <div class="info-value">{{ $selectedGuia->codigo }}</div>
+                    <!-- Sección: Información General -->
+                    <div class="modal-section">
+                        <h6 class="section-title">Información General</h6>
+                        <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(250px, 1fr)); gap: 16px;">
+                            <div>
+                                <div style="font-size: 12px; color: #6b7280; text-transform: uppercase; margin-bottom: 4px;">Código</div>
+                                <div style="font-size: 14px; color: #1f2937; font-weight: 500;">{{ $selectedGuia->codigo }}</div>
+                            </div>
+                            <div>
+                                <div style="font-size: 12px; color: #6b7280; text-transform: uppercase; margin-bottom: 4px;">Nombre</div>
+                                <div style="font-size: 14px; color: #1f2937; font-weight: 500;">{{ $selectedGuia->nombre }}</div>
+                            </div>
+                            <div>
+                                <div style="font-size: 12px; color: #6b7280; text-transform: uppercase; margin-bottom: 4px;">Duración</div>
+                                <div style="font-size: 14px; color: #1f2937; font-weight: 500;">
+                                    {{ $selectedGuia->duracion_horas ?? 0 }} horas / {{ $selectedGuia->duracion_meses ?? 0 }} meses
                                 </div>
-                                <div class="info-item">
-                                    <div class="info-label">Nombre</div>
-                                    <div class="info-value">{{ $selectedGuia->nombre }}</div>
-                                </div>
-                                <div class="info-item">
-                                    <div class="info-label">Duración</div>
-                                    <div class="info-value">
-                                        {{ $selectedGuia->duracion_horas ?? 0 }} horas / {{ $selectedGuia->duracion_meses ?? 0 }} meses
-                                    </div>
-                                </div>
-                                <div class="info-item">
-                                    <div class="info-label">Programa</div>
-                                    <div class="info-value">
-                                        @if($selectedGuia->programaFormacion)
-                                            {{ $selectedGuia->programaFormacion->codigo }} - {{ Str::limit($selectedGuia->programaFormacion->nombre, 30) }}
-                                        @else
-                                            Sin programa asignado
-                                        @endif
-                                    </div>
-                                </div>
-                                <div class="info-item">
-                                    <div class="info-label">Estado</div>
-                                    <div class="info-value">
-                                        <span class="badge-status {{ $selectedGuia->status ? 'badge-active' : 'badge-inactive' }}">
-                                            <i class="fas fa-{{ $selectedGuia->status ? 'check' : 'times' }} me-1"></i>
-                                            {{ $selectedGuia->status ? 'Activo' : 'Inactivo' }}
-                                        </span>
-                                    </div>
+                            </div>
+                            <div>
+                                <div style="font-size: 12px; color: #6b7280; text-transform: uppercase; margin-bottom: 4px;">Programa</div>
+                                <div style="font-size: 14px; color: #1f2937; font-weight: 500;">
+                                    @if($selectedGuia->programaFormacion)
+                                        {{ $selectedGuia->programaFormacion->codigo }} - {{ Str::limit($selectedGuia->programaFormacion->nombre, 30) }}
+                                    @else
+                                        Sin programa asignado
+                                    @endif
                                 </div>
                             </div>
                         </div>
-                        
-                        <!-- Sección: Descripción -->
-                        <div class="section-card">
-                            <h6 class="section-title">Descripción</h6>
-                            <div class="description-content">
-                                @if($selectedGuia->descripcion)
-                                    <p>{{ $selectedGuia->descripcion }}</p>
-                                @else
-                                    <p class="text-muted">Sin descripción registrada</p>
-                                @endif
-                            </div>
-                        </div>
-                        
-                        <!-- Sección: Resultados de Aprendizaje -->
-                        <div class="section-card">
-                            <h6 class="section-title">Resultados de Aprendizaje ({{ $selectedGuia->resultadosAprendizaje->count() }})</h6>
-                            @if ($selectedGuia->resultadosAprendizaje->count() > 0)
-                                <div class="programs-list">
-                                    @foreach ($selectedGuia->resultadosAprendizaje->take(5) as $resultado)
-                                        <div class="program-item">
-                                            <span class="program-code">{{ $resultado->codigo }}</span>
-                                            <span class="program-name">{{ $resultado->nombre }}</span>
-                                        </div>
-                                    @endforeach
-                                </div>
-                                @if ($selectedGuia->resultadosAprendizaje->count() > 5)
-                                    <div class="text-muted small mt-2">
-                                        ... y {{ $selectedGuia->resultadosAprendizaje->count() - 5 }} más
-                                    </div>
-                                @endif
+                    </div>
+                    
+                    <!-- Sección: Descripción -->
+                    <div class="modal-section">
+                        <h6 class="section-title">Descripción</h6>
+                        <div style="font-size: 14px; color: #374151; line-height: 1.6;">
+                            @if($selectedGuia->descripcion)
+                                <p>{{ $selectedGuia->descripcion }}</p>
                             @else
-                                <p class="text-muted">No hay resultados de aprendizaje asociados a esta guía.</p>
+                                <p style="color: #6b7280; font-style: italic;">Sin descripción registrada</p>
                             @endif
                         </div>
-                        
-                        <!-- Sección: Actividades -->
-                        <div class="section-card">
-                            <h6 class="section-title">Actividades ({{ $selectedGuia->actividades->count() }})</h6>
-                            @if ($selectedGuia->actividades->count() > 0)
-                                <div class="results-summary">
-                                    <div class="summary-item">
-                                        <span class="summary-value">{{ $selectedGuia->actividades->count() }}</span>
-                                        <span class="summary-label">actividades creadas</span>
-                                    </div>
+                    </div>
+                    
+                    <!-- Sección: Estado de la Guía -->
+                    <div class="modal-section">
+                        <h6 class="section-title">Estado de la Guía de Aprendizaje</h6>
+                        <div style="display: flex; align-items: center; gap: 12px;">
+                            <span class="badge-modern {{ (int) $selectedGuia->status === 1 ? 'badge-active' : 'badge-inactive' }}" style="padding: 6px 10px; border-radius: 6px; font-size: 12px; font-weight: 600; display: inline-flex; align-items: center; text-transform: uppercase;">
+                                <i class="fas fa-{{ (int) $selectedGuia->status === 1 ? 'check' : 'times' }}" style="margin-right: 4px;"></i>
+                                {{ (int) $selectedGuia->status === 1 ? 'Activa' : 'Inactiva' }}
+                            </span>
+                            <span style="font-size: 13px; color: #6b7280; font-style: italic;">
+                                Esta guía {{ (int) $selectedGuia->status === 1 ? 'está' : 'no está' }} disponible para uso en los programas
+                            </span>
+                        </div>
+                    </div>
+                    
+                    <!-- Sección: Estadísticas -->
+                    <div class="modal-section">
+                        <h6 class="section-title">Estadísticas</h6>
+                        <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(150px, 1fr)); gap: 16px;">
+                            <div style="text-align: center; padding: 1rem; background: #f8fafc; border-radius: 6px;">
+                                <div style="font-size: 1.5rem; font-weight: 600; color: var(--primary);">
+                                    {{ $selectedGuia->resultadosAprendizaje->count() }}
                                 </div>
-                                
-                                <div class="results-list-small">
-                                    @foreach($selectedGuia->actividades->take(3) as $actividad)
-                                        <div class="result-item">
-                                            <div class="result-code">{{ $actividad->codigo ?? 'N/A' }}</div>
-                                            <div class="result-name">{{ Str::limit($actividad->nombre ?? 'Sin nombre', 40) }}</div>
-                                        </div>
-                                    @endforeach
+                                <div style="font-size: 0.875rem; color: #6b7280;">Resultados de Aprendizaje</div>
+                            </div>
+                            <div style="text-align: center; padding: 1rem; background: #f0fdf4; border-radius: 6px;">
+                                <div style="font-size: 1.5rem; font-weight: 600; color: var(--success);">
+                                    {{ $selectedGuia->actividades->count() }}
                                 </div>
-                                @if ($selectedGuia->actividades->count() > 3)
-                                    <div class="text-muted small mt-2">
-                                        ... y {{ $selectedGuia->actividades->count() - 3 }} más
+                                <div style="font-size: 0.875rem; color: #6b7280;">Actividades</div>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <!-- Sección: Resultados de Aprendizaje -->
+                    <div class="modal-section">
+                        <h6 class="section-title">Resultados de Aprendizaje Asociados ({{ $selectedGuia->resultadosAprendizaje->count() }})</h6>
+                        @if ($selectedGuia->resultadosAprendizaje->count() > 0)
+                            <div style="display: grid; gap: 8px;">
+                                @foreach ($selectedGuia->resultadosAprendizaje->take(5) as $resultado)
+                                    <div style="display: flex; align-items: center; gap: 8px; padding: 8px 12px; background: #f8fafc; border-radius: 6px;">
+                                        <span style="font-size: 12px; font-weight: 600; color: var(--primary);">{{ $resultado->codigo }}</span>
+                                        <span style="font-size: 13px; color: #374151;">{{ Str::limit($resultado->nombre, 60) }}</span>
                                     </div>
-                                @endif
-                            @else
-                                <div class="empty-section">
-                                    <div class="empty-icon">
-                                        <i class="fas fa-tasks"></i>
-                                    </div>
-                                    <p class="empty-text">No hay actividades asociadas</p>
+                                @endforeach
+                            </div>
+                            @if ($selectedGuia->resultadosAprendizaje->count() > 5)
+                                <div style="font-size: 13px; color: #6b7280; margin-top: 8px; font-style: italic;">
+                                    ... y {{ $selectedGuia->resultadosAprendizaje->count() - 5 }} más
                                 </div>
                             @endif
-                        </div>
-                        
-                        <!-- Sección: Metodología y Evaluación -->
-                        <div class="section-card">
-                            <h6 class="section-title">Metodología y Evaluación</h6>
-                            <div class="methodology-grid">
-                                <div class="methodology-item">
-                                    <div class="methodology-label">Objetivo General</div>
-                                    <div class="methodology-value">
-                                        @if($selectedGuia->objetivo_general)
-                                            <p>{{ $selectedGuia->objetivo_general }}</p>
-                                        @else
-                                            <p class="text-muted">No definido</p>
-                                        @endif
-                                    </div>
-                                </div>
-                                <div class="methodology-item">
-                                    <div class="methodology-label">Metodología</div>
-                                    <div class="methodology-value">
-                                        @if($selectedGuia->metodologia)
-                                            <p>{{ $selectedGuia->metodologia }}</p>
-                                        @else
-                                            <p class="text-muted">No definida</p>
-                                        @endif
-                                    </div>
-                                </div>
-                                <div class="methodology-item">
-                                    <div class="methodology-label">Sistema de Evaluación</div>
-                                    <div class="methodology-value">
-                                        @if($selectedGuia->evaluacion)
-                                            <p>{{ $selectedGuia->evaluacion }}</p>
-                                        @else
-                                            <p class="text-muted">No definido</p>
-                                        @endif
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-                        
-                        <!-- Sección: Acciones -->
-                        <div class="section-card section-actions">
-                            <h6 class="section-title">Acciones</h6>
-                            <div class="quick-actions">
-                                @can('EDITAR GUIA APRENDIZAJE')
-                                    <button wire:click="openEditModal({{ $selectedGuia->id }})" 
-                                            class="btn btn-warning">
-                                        <i class="fas fa-edit me-2"></i>
-                                        Editar guía
-                                    </button>
-                                @endcan
-                                <button wire:click="toggleStatus({{ $selectedGuia->id }})" 
-                                        wire:loading.attr="disabled"
-                                        class="btn btn-{{ $selectedGuia->status ? 'danger' : 'success' }}">
-                                    <i class="fas fa-{{ $selectedGuia->status ? 'times' : 'check' }} me-2"></i>
-                                    {{ $selectedGuia->status ? 'Desactivar' : 'Activar' }}
-                                </button>
-                                @can('GESTIONAR RESULTADOS GUIA')
-                                    <button wire:click="openGestionarResultados({{ $selectedGuia->id }})" 
-                                            class="btn btn-primary">
-                                        <i class="fas fa-link me-2"></i>
-                                        Gestionar resultados
-                                    </button>
-                                @endcan
-                            </div>
-                        </div>
-                        
-                        <!-- Auditoría -->
-                        <div class="audit-block">
-                            <div class="audit-label">CREACIÓN</div>
-                            <div class="audit-info">
-                                <div class="audit-user">{{ $selectedGuia->userCreate->name ?? 'Sistema' }}</div>
-                                <div class="audit-date">{{ $selectedGuia->created_at->format('d/m/Y H:i') }}</div>
-                            </div>
-                        </div>
-                        @if($selectedGuia->userEdit)
-                            <div class="audit-block">
-                                <div class="audit-label">Última modificación</div>
-                                <div class="audit-info">
-                                    <div class="audit-user">{{ $selectedGuia->userEdit->name }}</div>
-                                    <div class="audit-date">{{ $selectedGuia->updated_at->format('d/m/Y H:i') }}</div>
-                                </div>
+                        @else
+                            <div style="text-align: center; padding: 2rem; color: #6b7280;">
+                                <i class="fas fa-inbox fa-2x mb-2"></i>
+                                <p>No hay resultados de aprendizaje asociados</p>
                             </div>
                         @endif
                     </div>
+                    
+                    <!-- Sección: Acciones -->
+                    <div class="modal-section">
+                        <h6 class="section-title">Acciones</h6>
+                        <div style="display: flex; gap: 12px;">
+                            @can('EDITAR GUIA APRENDIZAJE')
+                                <button class="btn-modal btn-primary" wire:click="openEditModal({{ $selectedGuia->id }})">
+                                    <i class="fas fa-edit"></i>
+                                    Editar Guía
+                                </button>
+                            @endcan
+                            @can('GESTIONAR RESULTADOS GUIA APRENDIZAJE')
+                                <button class="btn-modal btn-info" wire:click="openGestionarResultados({{ $selectedGuia->id }})">
+                                    <i class="fas fa-tasks"></i>
+                                    Gestionar Resultados
+                                </button>
+                            @endcan
+                            <button class="btn-modal {{ (int) $selectedGuia->status === 1 ? 'btn-danger' : 'btn-success' }}" 
+                                    wire:click="toggleStatus({{ $selectedGuia->id }})" 
+                                    wire:loading.attr="disabled">
+                                <i wire:loading.remove wire:target="toggleStatus" class="fas fa-sync-alt"></i>
+                                <span wire:loading.remove wire:target="toggleStatus">
+                                    {{ (int) $selectedGuia->status === 1 ? 'Desactivar Guía' : 'Activar Guía' }}
+                                </span>
+                                <i wire:loading wire:target="toggleStatus" class="fas fa-spinner fa-spin"></i>
+                                <span wire:loading wire:target="toggleStatus">Procesando...</span>
+                            </button>
+                        </div>
+                    </div>
+                    
+                    <!-- Sección: Auditoría -->
+                    <div class="modal-section">
+                        <h6 class="section-title">Auditoría</h6>
+                        <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 20px;">
+                            <div>
+                                <div style="font-size: 12px; color: #9ca3af; text-transform: uppercase; margin-bottom: 4px;">Creado por</div>
+                                <div style="font-size: 13px; color: #374151; font-weight: 500;">{{ $selectedGuia->userCreated->name ?? 'Sistema' }}</div>
+                                <div style="font-size: 12px; color: #6b7280;">{{ $selectedGuia->created_at->format('d/m/Y H:i') }}</div>
+                            </div>
+                            <div>
+                                <div style="font-size: 12px; color: #9ca3af; text-transform: uppercase; margin-bottom: 4px;">Última edición</div>
+                                <div style="font-size: 13px; color: #374151; font-weight: 500;">{{ $selectedGuia->userEdited->name ?? 'Sin edición' }}</div>
+                                <div style="font-size: 12px; color: #6b7280;">{{ $selectedGuia->updated_at->format('d/m/Y H:i') }}</div>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <!-- Footer -->
+                    <div class="modal-footer">
+                        <button class="btn-modal btn-secondary" wire:click="$set('showShowModal', false)">
+                            <i class="fas fa-times"></i>
+                            Cerrar
+                        </button>
+                    </div>
                 </div>
             </div>
         </div>
     @endif
 
-    <!-- Modal Crear -->
-    @if($showCreateModal)
-        <div class="modal-erp-container">
-            <div class="modal-overlay" wire:click="closeCreateModal">
-                <div class="modal-container" wire:click.stop>
-                    <div class="modal-header-simple">
-                        <h2 class="modal-title">Crear Nueva Guía</h2>
-                        <p class="modal-subtitle">
-                            <i class="fas fa-plus-circle"></i>
-                            Completa los datos para crear una nueva guía de aprendizaje
-                        </p>
-                        <button class="modal-close" wire:click="closeCreateModal">
-                            <i class="fas fa-times"></i>
-                        </button>
+    <!-- Modal Confirmación Eliminación -->
+    @if ($showDeleteModal && $selectedGuia)
+        <div class="modal-overlay" wire:click="closeDeleteModal">
+            <div class="modal-container" wire:click.stop>
+                
+                <!-- Header -->
+                <div class="modal-header">
+                    <h5 class="modal-title">Eliminar Guía de Aprendizaje</h5>
+                </div>
+                
+                <!-- Body -->
+                <div class="modal-body">
+                    <!-- Alerta de advertencia -->
+                    <div class="modal-alert alert-danger">
+                        <i class="fas fa-exclamation-triangle"></i>
+                        <span>Esta acción es permanente y no se puede deshacer.</span>
                     </div>
                     
-                    <div class="modal-body">
-                        <div class="modal-content-wrapper">
-                            <livewire:guias-aprendizaje.guia-aprendizaje-form key="create-form" />
+                    <!-- Información del elemento -->
+                    <div class="modal-section">
+                        <h6 class="section-title">Información de la Guía de Aprendizaje</h6>
+                        <div style="display: grid; gap: 8px;">
+                            <div><strong>Código:</strong> {{ $selectedGuia->codigo }}</div>
+                            <div><strong>Nombre:</strong> {{ $selectedGuia->nombre }}</div>
+                            <div><strong>Descripción:</strong> {{ $selectedGuia->descripcion ?? 'Sin descripción' }}</div>
+                            <div><strong>Programa:</strong> 
+                                @if($selectedGuia->programaFormacion)
+                                    {{ $selectedGuia->programaFormacion->codigo }} - {{ Str::limit($selectedGuia->programaFormacion->nombre, 50) }}
+                                @else
+                                    Sin programa asignado
+                                @endif
+                            </div>
+                            <div><strong>Duración:</strong> {{ $selectedGuia->duracion_horas ?? 0 }} horas / {{ $selectedGuia->duracion_meses ?? 0 }} meses</div>
                         </div>
                     </div>
+                    
+                    <!-- Mensaje de confirmación -->
+                    <div class="modal-section">
+                        <p style="margin: 0; color: #6b7280; font-size: 14px;">
+                            ¿Está seguro de que desea eliminar esta guía de aprendizaje?
+                        </p>
+                    </div>
+                </div>
+                
+                <!-- Footer -->
+                <div class="modal-footer">
+                    <button class="btn-modal btn-secondary" wire:click="closeDeleteModal">
+                        <i class="fas fa-times"></i>
+                        Cancelar
+                    </button>
+                    <button class="btn-modal btn-danger" wire:click="deleteGuia({{ $selectedGuia->id }})" 
+                            wire:loading.attr="disabled">
+                        <i wire:loading.remove wire:target="deleteGuia" class="fas fa-trash"></i>
+                        <span wire:loading.remove wire:target="deleteGuia">Eliminar</span>
+                        <i wire:loading wire:target="deleteGuia" class="fas fa-spinner fa-spin"></i>
+                        <span wire:loading wire:target="deleteGuia">Eliminando...</span>
+                    </button>
                 </div>
             </div>
         </div>
     @endif
 
-    <!-- Modal Editar -->
-    @if($showEditModal && $selectedGuia)
-        <div class="modal-erp-container">
-            <div class="modal-overlay" wire:click="closeEditModal">
-                <div class="modal-container" wire:click.stop>
-                    <div class="modal-header-simple">
-                        <h2 class="modal-title">Editar Guía</h2>
-                        <p class="modal-subtitle">
-                            <i class="fas fa-edit"></i>
-                            Modifica los datos de la guía {{ $selectedGuia->codigo }}
-                        </p>
-                        <button class="modal-close" wire:click="closeEditModal">
-                            <i class="fas fa-times"></i>
-                        </button>
-                    </div>
-                    
-                    <div class="modal-body">
-                        <div class="modal-content-wrapper">
-                            <livewire:guias-aprendizaje.guia-aprendizaje-form :guia="$selectedGuia" :key="'edit-' . $selectedGuia->id" />
-                        </div>
-                    </div>
+    <!-- Modal Crear/Editar -->
+    @if ($showCreateModal || $showEditModal)
+        <div class="modal-overlay" wire:click="$set('showCreateModal', false); $set('showEditModal', false)">
+            <div class="modal-container" wire:click.stop>
+                
+                <!-- Header -->
+                <div class="modal-header">
+                    <h5 class="modal-title">
+                        {{ $showEditModal ? 'Editar Guía de Aprendizaje' : 'Nueva Guía de Aprendizaje' }}
+                    </h5>
+                </div>
+                
+                <!-- Body -->
+                <div class="modal-body">
+                    @if ($showCreateModal)
+                        <livewire:guias-aprendizaje.guia-aprendizaje-form />
+                    @endif
+                    @if ($showEditModal && $selectedGuia)
+                        <livewire:guias-aprendizaje.guia-aprendizaje-form :guiaId="$selectedGuia->id" />
+                    @endif
                 </div>
             </div>
         </div>
     @endif
 
     <!-- Modal Gestionar Resultados -->
-    <div class="modal-erp-container" wire:ignore.self>
-        <div class="modal-overlay" wire:ignore style="display: none;" id="gestionarResultadosModal">
-            <div class="modal-container modal-large" wire:ignore>
-                <livewire:guias-aprendizaje.gestionar-resultados />
+    @if ($showGestionarResultadosModal && $selectedGuia)
+        <div class="modal-overlay" wire:click="$set('showGestionarResultadosModal', false)">
+            <div class="modal-container modal-xl" wire:click.stop>
+                
+                <!-- Header -->
+                <div class="modal-header">
+                    <h5 class="modal-title">Resultados de Aprendizaje - {{ $selectedGuia->nombre }}</h5>
+                    <button class="modal-close" wire:click="$set('showGestionarResultadosModal', false)">✕</button>
+                </div>
+                
+                <!-- Body -->
+                <div class="modal-body">
+                    <!-- Sección: Información de la Guía -->
+                    <div class="modal-section">
+                        <h6 class="section-title">Información de la Guía de Aprendizaje</h6>
+                        <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 16px;">
+                            <div>
+                                <div style="font-size: 12px; color: #6b7280; text-transform: uppercase; margin-bottom: 4px;">Código</div>
+                                <div style="font-size: 14px; color: #1f2937; font-weight: 500;">{{ $selectedGuia->codigo }}</div>
+                            </div>
+                            <div>
+                                <div style="font-size: 12px; color: #6b7280; text-transform: uppercase; margin-bottom: 4px;">Nombre</div>
+                                <div style="font-size: 14px; color: #1f2937; font-weight: 500;">{{ $selectedGuia->nombre }}</div>
+                            </div>
+                            <div>
+                                <div style="font-size: 12px; color: #6b7280; text-transform: uppercase; margin-bottom: 4px;">Duración</div>
+                                <div style="font-size: 14px; color: #1f2937; font-weight: 500;">
+                                    {{ $selectedGuia->duracion_horas ?? 0 }} horas
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <!-- Sección: Lista de Resultados -->
+                    <div class="modal-section">
+                        <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 1rem;">
+                            <h6 class="section-title" style="margin-bottom: 0;">Resultados de Aprendizaje Disponibles</h6>
+                            <button class="btn-modal btn-primary" wire:click="refreshResultados">
+                                <i class="fas fa-sync-alt"></i>
+                                Actualizar Lista
+                            </button>
+                        </div>
+                        
+                        <!-- Filtro de búsqueda -->
+                        <div class="form-group" style="margin-bottom: 1rem;">
+                            <input type="text" 
+                                   wire:model.live="searchResultados" 
+                                   class="form-control-erp" 
+                                   placeholder="Buscar resultados por código o descripción...">
+                        </div>
+                        
+                        <!-- Tabla de Resultados Disponibles -->
+                        <div class="table-scroll-wrapper" style="max-height: 250px; overflow-y: auto; border: 1px solid #e5e7eb; border-radius: 6px;">
+                            <table class="modern-table" style="margin: 0;">
+                                <thead style="position: sticky; top: 0; background: #f9fafb; z-index: 10;">
+                                    <tr>
+                                        <th style="width: 100px;">
+                                            <input type="checkbox" 
+                                                   wire:model.live="selectAll" 
+                                                   class="form-check-input">
+                                        </th>
+                                        <th>Código</th>
+                                        <th>Nombre</th>
+                                        <th>Estado</th>
+                                        <th>Acción</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    @forelse ($this->getResultadosDisponibles() as $resultado)
+                                        <tr>
+                                            <td style="width: 100px; text-align: center; padding-left: 30px;">
+                                                <input type="checkbox" 
+                                                       wire:model.live="resultadosSeleccionados" 
+                                                       value="{{ $resultado->id }}"
+                                                       class="form-check-input">
+                                            </td>
+                                            <td class="fw-medium">{{ $resultado->codigo }}</td>
+                                            <td>{{ Str::limit($resultado->nombre, 80) }}</td>
+                                            <td>
+                                                <span class="badge-modern {{ $resultado->status ? 'badge-active' : 'badge-inactive' }}">
+                                                    {{ $resultado->status ? 'Activo' : 'Inactivo' }}
+                                                </span>
+                                            </td>
+                                            <td>
+                                                @if($selectedGuia->resultadosAprendizaje->contains($resultado->id))
+                                                    <button wire:click="desasignarResultado({{ $resultado->id }})" 
+                                                            class="btn-action btn-danger" 
+                                                            title="Desasignar resultado">
+                                                        <i class="fas fa-minus"></i>
+                                                    </button>
+                                                @else
+                                                    <button wire:click="asignarResultado({{ $resultado->id }})" 
+                                                            class="btn-action btn-success" 
+                                                            title="Asignar resultado">
+                                                        <i class="fas fa-plus"></i>
+                                                    </button>
+                                                @endif
+                                            </td>
+                                        </tr>
+                                    @empty
+                                        <tr>
+                                            <td colspan="5" class="text-center py-4">
+                                                <div style="color: #6b7280;">
+                                                    <i class="fas fa-search fa-2x mb-2"></i>
+                                                    <p>No se encontraron resultados disponibles</p>
+                                                </div>
+                                            </td>
+                                        </tr>
+                                    @endforelse
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                    
+                    <!-- Sección: Resultados Asignados -->
+                    <div class="modal-section">
+                        <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 1rem;">
+                            <h6 class="section-title" style="margin-bottom: 0;">Resultados Asignados ({{ $selectedGuia->resultadosAprendizaje->count() }})</h6>
+                            @if($selectedGuia->resultadosAprendizaje->count() > 0)
+                                <button class="btn-modal btn-warning" wire:click="desasignarTodos" 
+                                        wire:loading.attr="disabled">
+                                    <i wire:loading.remove wire:target="desasignarTodos" class="fas fa-minus"></i>
+                                    <span wire:loading.remove wire:target="desasignarTodos">Desasignar Todos</span>
+                                    <i wire:loading wire:target="desasignarTodos" class="fas fa-spinner fa-spin"></i>
+                                    <span wire:loading wire:target="desasignarTodos">Procesando...</span>
+                                </button>
+                            @endif
+                        </div>
+                        
+                        <!-- Tabla de Resultados Asignados -->
+                        <div class="table-scroll-wrapper" style="max-height: 200px; overflow-y: auto; border: 1px solid #e5e7eb; border-radius: 6px;">
+                            <table class="modern-table" style="margin: 0;">
+                                <thead style="position: sticky; top: 0; background: #f9fafb; z-index: 10;">
+                                    <tr>
+                                        <th>Código</th>
+                                        <th>Nombre</th>
+                                        <th>Estado</th>
+                                        <th class="th-actions sticky-actions">ACCIONES</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    @forelse ($selectedGuia->resultadosAprendizaje as $resultado)
+                                        <tr>
+                                            <td class="fw-medium">{{ $resultado->codigo }}</td>
+                                            <td>{{ Str::limit($resultado->nombre, 80) }}</td>
+                                            <td>
+                                                <span class="badge-modern {{ $resultado->status ? 'badge-active' : 'badge-inactive' }}">
+                                                    {{ $resultado->status ? 'Activo' : 'Inactivo' }}
+                                                </span>
+                                            </td>
+                                            <td class="td-actions sticky-actions">
+                                                <button wire:click="desasignarResultado({{ $resultado->id }})" 
+                                                        class="btn-action btn-danger" 
+                                                        title="Desasignar resultado">
+                                                    <i class="fas fa-minus"></i>
+                                                </button>
+                                            </td>
+                                        </tr>
+                                    @empty
+                                        <tr>
+                                            <td colspan="4" class="text-center py-4">
+                                                <div style="color: #6b7280;">
+                                                    <i class="fas fa-inbox fa-2x mb-2"></i>
+                                                    <p>No hay resultados asignados</p>
+                                                </div>
+                                            </td>
+                                        </tr>
+                                    @endforelse
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                    
+                    <!-- Sección: Estadísticas -->
+                    <div class="modal-section">
+                        <h6 class="section-title">Estadísticas</h6>
+                        <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(150px, 1fr)); gap: 16px;">
+                            <div style="text-align: center; padding: 1rem; background: #f8fafc; border-radius: 6px;">
+                                <div style="font-size: 1.5rem; font-weight: 600; color: var(--primary);">
+                                    {{ $selectedGuia->resultadosAprendizaje->count() }}
+                                </div>
+                                <div style="font-size: 0.875rem; color: #6b7280;">Total Resultados</div>
+                            </div>
+                            <div style="text-align: center; padding: 1rem; background: #f0fdf4; border-radius: 6px;">
+                                <div style="font-size: 1.5rem; font-weight: 600; color: var(--success);">
+                                    {{ $selectedGuia->resultadosAprendizaje->where('status', 1)->count() }}
+                                </div>
+                                <div style="font-size: 0.875rem; color: #6b7280;">Activos</div>
+                            </div>
+                            <div style="text-align: center; padding: 1rem; background: #fef2f2; border-radius: 6px;">
+                                <div style="font-size: 1.5rem; font-weight: 600; color: var(--danger);">
+                                    {{ $selectedGuia->resultadosAprendizaje->where('status', 0)->count() }}
+                                </div>
+                                <div style="font-size: 0.875rem; color: #6b7280;">Inactivos</div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- Footer -->
+                <div class="modal-footer">
+                    <div style="display: flex; justify-content: space-between; width: 100%;">
+                        <div>
+                            <button class="btn-modal btn-secondary" wire:click="$set('showGestionarResultadosModal', false)">
+                                <i class="fas fa-times"></i>
+                                Cerrar
+                            </button>
+                        </div>
+                        <div style="display: flex; gap: 0.75rem;">
+                            @if(count($this->resultadosSeleccionados ?? []) > 0)
+                                <button class="btn-modal btn-success" wire:click="asignarSeleccionados" 
+                                        wire:loading.attr="disabled">
+                                    <i wire:loading.remove wire:target="asignarSeleccionados" class="fas fa-plus"></i>
+                                    <span wire:loading.remove wire:target="asignarSeleccionados">Asignar Seleccionados ({{ count($this->resultadosSeleccionados ?? []) }})</span>
+                                    <i wire:loading wire:target="asignarSeleccionados" class="fas fa-spinner fa-spin"></i>
+                                    <span wire:loading wire:target="asignarSeleccionados">Procesando...</span>
+                                </button>
+                            @endif
+                        </div>
+                    </div>
+                </div>
             </div>
         </div>
-    </div>
-
-    </div>
-
-    @push('styles')
-    <style>
-        .modal-large {
-            max-width: 1200px;
-            width: 90%;
-            max-height: 90vh;
-            overflow-y: auto;
-        }
-        
-        .modal-container.modal-large {
-            background: white;
-            border-radius: 12px;
-            box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.1);
-            display: flex;
-            flex-direction: column;
-        }
-    </style>
-    @endpush
-
-    <script>
-        document.addEventListener('livewire:init', () => {
-            // Escuchar evento para abrir modal de gestión de resultados
-            Livewire.on('showGestionarResultadosModal', () => {
-                const modal = document.getElementById('gestionarResultadosModal');
-                if (modal) {
-                    modal.style.display = 'flex';
-                }
-            });
-
-            // Escuchar evento para cerrar modal de gestión de resultados
-            Livewire.on('closeGestionarResultadosModal', () => {
-                const modal = document.getElementById('gestionarResultadosModal');
-                if (modal) {
-                    modal.style.display = 'none';
-                }
-            });
-
-            // Cerrar modal al hacer clic en el overlay
-            document.addEventListener('click', (e) => {
-                const modal = document.getElementById('gestionarResultadosModal');
-                if (modal && e.target === modal) {
-                    modal.style.display = 'none';
-                }
-            });
-        });
-    </script>
+    @endif
 </div>

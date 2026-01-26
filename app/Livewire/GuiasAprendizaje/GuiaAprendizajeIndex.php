@@ -22,8 +22,15 @@ class GuiaAprendizajeIndex extends Component
     public $showCreateModal = false;
     public $showEditModal = false;
     public $showShowModal = false;
+    public $showDeleteModal = false;
+    public $showGestionarResultadosModal = false;
     public $selectedGuia = null;
     public $selectedId = null;
+    
+    // Propiedades para gestión de resultados
+    public $searchResultados = '';
+    public $resultadosSeleccionados = [];
+    public $selectAll = false;
 
     protected $queryString = [
         'search' => ['except' => ''],
@@ -137,6 +144,25 @@ class GuiaAprendizajeIndex extends Component
         $this->showEditModal = false;
         $this->selectedGuia = null;
     }
+    
+    public function openDeleteModal($guiaId)
+    {
+        $this->selectedGuia = GuiasAprendizaje::find($guiaId);
+        $this->showDeleteModal = true;
+        
+        if ($this->showShowModal) {
+            $this->showShowModal = false;
+        }
+        if ($this->showEditModal) {
+            $this->showEditModal = false;
+        }
+    }
+    
+    public function closeDeleteModal()
+    {
+        $this->showDeleteModal = false;
+        $this->selectedGuia = null;
+    }
 
     public function openShowModal($guiaId)
     {
@@ -149,6 +175,7 @@ class GuiaAprendizajeIndex extends Component
         $this->showCreateModal = false;
         $this->showEditModal = false;
         $this->showShowModal = false;
+        $this->showDeleteModal = false;
         $this->selectedGuia = null;
     }
 
@@ -301,10 +328,132 @@ class GuiaAprendizajeIndex extends Component
             return;
         }
         
-        // Dispatch event to open the resultados management modal
-        $this->dispatch('openGestionarResultadosModal', [
-            'guiaId' => $this->selectedGuia->id
+        $this->showGestionarResultadosModal = true;
+        
+        if ($this->showShowModal) {
+            $this->showShowModal = false;
+        }
+    }
+    
+    public function closeGestionarResultadosModal()
+    {
+        $this->showGestionarResultadosModal = false;
+        $this->selectedGuia = null;
+        $this->searchResultados = '';
+        $this->resultadosSeleccionados = [];
+        $this->selectAll = false;
+    }
+    
+    // Métodos para gestión de resultados en la modal
+    public function getResultadosDisponibles()
+    {
+        $query = ResultadosAprendizaje::query();
+        
+        // Aplicar búsqueda
+        if ($this->searchResultados) {
+            $query->where(function($q) {
+                $q->where('codigo', 'like', '%' . $this->searchResultados . '%')
+                  ->orWhere('nombre', 'like', '%' . $this->searchResultados . '%');
+            });
+        }
+        
+        // Excluir resultados ya asignados a la guía actual
+        if ($this->selectedGuia) {
+            $resultadosAsignados = $this->selectedGuia->resultadosAprendizaje->pluck('id')->toArray();
+            $query->whereNotIn('id', $resultadosAsignados);
+        }
+        
+        return $query->orderBy('codigo')->get();
+    }
+    
+    public function refreshResultados()
+    {
+        $this->searchResultados = '';
+        $this->resultadosSeleccionados = [];
+        $this->selectAll = false;
+    }
+    
+    public function asignarResultado($resultadoId)
+    {
+        if (!$this->selectedGuia) return;
+        
+        $resultado = ResultadosAprendizaje::find($resultadoId);
+        if (!$resultado) return;
+        
+        // Verificar si ya está asignado
+        if (!$this->selectedGuia->resultadosAprendizaje()->where('resultados_aprendizajes.id', $resultadoId)->exists()) {
+            $this->selectedGuia->resultadosAprendizaje()->attach($resultadoId, [
+                'user_create_id' => auth()->id(),
+                'user_edit_id' => auth()->id(),
+            ]);
+            
+            $this->dispatch('notify', [
+                'type' => 'success',
+                'message' => 'Resultado de aprendizaje asignado correctamente'
+            ]);
+        }
+        
+        $this->refreshResultados();
+    }
+    
+    public function desasignarResultado($resultadoId)
+    {
+        if (!$this->selectedGuia) return;
+        
+        $this->selectedGuia->resultadosAprendizaje()->detach($resultadoId);
+        
+        $this->dispatch('notify', [
+            'type' => 'success',
+            'message' => 'Resultado de aprendizaje desasignado correctamente'
         ]);
+        
+        $this->refreshResultados();
+    }
+    
+    public function asignarSeleccionados()
+    {
+        if (!$this->selectedGuia || empty($this->resultadosSeleccionados)) return;
+        
+        foreach ($this->resultadosSeleccionados as $resultadoId) {
+            // Verificar si ya está asignado
+            if (!$this->selectedGuia->resultadosAprendizaje()->where('resultados_aprendizajes.id', $resultadoId)->exists()) {
+                $this->selectedGuia->resultadosAprendizaje()->attach($resultadoId, [
+                    'user_create_id' => auth()->id(),
+                    'user_edit_id' => auth()->id(),
+                ]);
+            }
+        }
+        
+        $this->dispatch('notify', [
+            'type' => 'success',
+            'message' => count($this->resultadosSeleccionados) . ' resultados asignados correctamente'
+        ]);
+        
+        $this->refreshResultados();
+    }
+    
+    public function desasignarTodos()
+    {
+        if (!$this->selectedGuia) return;
+        
+        $resultadosCount = $this->selectedGuia->resultadosAprendizaje->count();
+        $this->selectedGuia->resultadosAprendizaje()->detach();
+        
+        $this->dispatch('notify', [
+            'type' => 'success',
+            'message' => $resultadosCount . ' resultados desasignados correctamente'
+        ]);
+        
+        $this->refreshResultados();
+    }
+    
+    public function updatedSelectAll()
+    {
+        if ($this->selectAll) {
+            $this->resultadosSeleccionados = $this->getResultadosDisponibles()->pluck('id')->toArray();
+        } else {
+            $this->resultadosSeleccionados = [];
+        }
     }
 
     public function handleConfirmedAction($action, $params)

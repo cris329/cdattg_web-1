@@ -40,23 +40,6 @@ document.addEventListener('DOMContentLoaded', () => {
         );
     };
 
-    // Confirmar eliminación de guía
-    window.confirmarEliminarGuia = function(guiaId, nombreGuia) {
-        const partes = nombreGuia.split(' - ');
-        const codigo = partes[0] || guiaId;
-        const nombre = partes[1] || nombreGuia;
-        
-        showConfirmModal(
-            'Eliminar Guía de Aprendizaje',
-            '¿Desea eliminar esta guía de aprendizaje? Esta acción no se puede deshacer.',
-            'danger',
-            'eliminarGuia',
-            guiaId,
-            codigo,
-            nombre
-        );
-    };
-
     // Función de prueba
     window.testModal = function() {
         console.log('🧪 Testing modal...');

@@ -49,12 +49,12 @@ class TemaSeeder extends Seeder
             [
                 'id'       => 1,
                 'name'     => 'ESTADOS',
-                'paramIds' => array_merge(range(1, 2), range(288, 290)),
+                'paramIds' => [1, 2], // Corregido: 1-2 (ACTIVO, INACTIVO)
             ],
             [
                 'id'       => 2,
                 'name'     => 'TIPO DE DOCUMENTO',
-                'paramIds' => array_merge(range(3, 8), range(274, 275)),
+                'paramIds' => range(3, 8), // Corregido: 3-8 (CÉDULA CIUDADANÍA a SIN IDENTIFICACIÓN)
             ],
             [
                 'id'       => 3,
@@ -64,7 +64,7 @@ class TemaSeeder extends Seeder
             [
                 'id'       => 4,
                 'name'     => 'DIAS',
-                'paramIds' => array_merge(range(12, 17), [276]),
+                'paramIds' => range(12, 17), // Corregido: 12-17 (LUNES a SABADO)
             ],
             [
                 'id'       => 5,
@@ -159,17 +159,17 @@ class TemaSeeder extends Seeder
             [
                 'id'       => 23,
                 'name'     => 'JORNADAS',
-                'paramIds' => range(277, 280),
+                'paramIds' => range(291, 294), // Corregido: 291-294 (MAÑANA, TARDE, NOCHE, FINES DE SEMANA)
             ],
             [
                 'id'       => 24,
                 'name'     => 'TIPOS DE VINCULACION',
-                'paramIds' => range(281, 283),
+                'paramIds' => range(295, 297), // Corregido: 295-297 (PLANTA, CONTRATISTA, APOYO A LA FORMACION)
             ],
             [
                 'id'       => 25,
                 'name'     => 'NIVELES ACADEMICOS',
-                'paramIds' => range(284, 292),
+                'paramIds' => range(298, 306), // Corregido: 298-306 (PRIMARIA a MAESTRIA)
             ],
         ];
     }

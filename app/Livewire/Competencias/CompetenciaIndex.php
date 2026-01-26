@@ -5,6 +5,7 @@ namespace App\Livewire\Competencias;
 use Livewire\Component;
 use Livewire\WithPagination;
 use App\Models\Competencia;
+use App\Models\ResultadosAprendizaje;
 use Livewire\Attributes\On;
 
 class CompetenciaIndex extends Component
@@ -22,6 +23,10 @@ class CompetenciaIndex extends Component
     public $showEditModal = false;
     public $showShowModal = false;
     public $showDeleteModal = false;
+    public $showResultadosModal = false;
+    public $searchResultados = '';
+    public $selectAll = false;
+    public $resultadosSeleccionados = [];
     public $selectedCompetencia = null;
 
     protected $queryString = [
@@ -218,6 +223,237 @@ class CompetenciaIndex extends Component
     {
         $this->showDeleteModal = false;
         $this->selectedCompetencia = null;
+    }
+
+    public function openResultadosModal($competenciaId)
+    {
+        $this->selectedCompetencia = Competencia::with(['resultadosAprendizaje'])->find($competenciaId);
+        $this->showResultadosModal = true;
+        $this->searchResultados = '';
+        $this->selectAll = false;
+        $this->resultadosSeleccionados = [];
+    }
+
+    public function closeResultadosModal()
+    {
+        $this->showResultadosModal = false;
+        $this->selectedCompetencia = null;
+        $this->searchResultados = '';
+        $this->selectAll = false;
+        $this->resultadosSeleccionados = [];
+    }
+
+    public function getResultadosDisponibles()
+    {
+        $query = ResultadosAprendizaje::activos()->ordenadoPorCodigo();
+        
+        // Filtrar por búsqueda
+        if ($this->searchResultados) {
+            $query->where(function($q) {
+                $q->where('codigo', 'like', '%' . $this->searchResultados . '%')
+                  ->orWhere('nombre', 'like', '%' . $this->searchResultados . '%');
+            });
+        }
+        
+        // Excluir los que ya están asignados a esta competencia
+        if ($this->selectedCompetencia) {
+            $asignadosIds = $this->selectedCompetencia->resultadosAprendizaje->pluck('id')->toArray();
+            if (!empty($asignadosIds)) {
+                $query->whereNotIn('id', $asignadosIds);
+            }
+        }
+        
+        return $query->get();
+    }
+
+    public function asignarResultado($resultadoId)
+    {
+        if (!$this->selectedCompetencia) return;
+        
+        try {
+            // Verificar que el resultado exista y esté activo
+            $resultado = ResultadosAprendizaje::activos()->find($resultadoId);
+            if (!$resultado) {
+                $this->dispatch('notify', [
+                    'type' => 'error',
+                    'message' => 'Resultado de aprendizaje no encontrado o inactivo',
+                ]);
+                return;
+            }
+            
+            // Verificar que no esté ya asignado
+            if ($this->selectedCompetencia->resultadosAprendizaje->contains($resultadoId)) {
+                $this->dispatch('notify', [
+                    'type' => 'warning',
+                    'message' => 'Este resultado ya está asignado a la competencia',
+                ]);
+                return;
+            }
+            
+            // Asignar el resultado a la competencia
+            $this->selectedCompetencia->resultadosAprendizaje()->attach($resultadoId, [
+                'duracion' => $resultado->duracion ?? 0,
+                'user_create_id' => auth()->id(),
+                'created_at' => now(),
+                'updated_at' => now(),
+            ]);
+            
+            $this->dispatch('notify', [
+                'type' => 'success',
+                'message' => 'Resultado asignado correctamente',
+            ]);
+            
+            // Refrescar la competencia para mostrar los cambios
+            $this->selectedCompetencia->refresh();
+            
+        } catch (\Exception $e) {
+            $this->dispatch('notify', [
+                'type' => 'error',
+                'message' => 'Error al asignar resultado: ' . $e->getMessage(),
+            ]);
+        }
+    }
+
+    public function desasignarResultado($resultadoId)
+    {
+        if (!$this->selectedCompetencia) return;
+        
+        try {
+            // Verificar que el resultado esté asignado
+            if (!$this->selectedCompetencia->resultadosAprendizaje->contains($resultadoId)) {
+                $this->dispatch('notify', [
+                    'type' => 'warning',
+                    'message' => 'Este resultado no está asignado a la competencia',
+                ]);
+                return;
+            }
+            
+            // Desasignar el resultado de la competencia
+            $this->selectedCompetencia->resultadosAprendizaje()->detach($resultadoId);
+            
+            $this->dispatch('notify', [
+                'type' => 'warning',
+                'message' => 'Resultado desasignado correctamente',
+            ]);
+            
+            // Refrescar la competencia para mostrar los cambios
+            $this->selectedCompetencia->refresh();
+            
+        } catch (\Exception $e) {
+            $this->dispatch('notify', [
+                'type' => 'error',
+                'message' => 'Error al desasignar resultado: ' . $e->getMessage(),
+            ]);
+        }
+    }
+
+    public function asignarSeleccionados()
+    {
+        if (!$this->selectedCompetencia || empty($this->resultadosSeleccionados)) return;
+        
+        try {
+            $count = 0;
+            $yaAsignados = 0;
+            
+            foreach ($this->resultadosSeleccionados as $resultadoId) {
+                // Verificar que el resultado exista y esté activo
+                $resultado = ResultadosAprendizaje::activos()->find($resultadoId);
+                if (!$resultado) continue;
+                
+                // Verificar que no esté ya asignado
+                if ($this->selectedCompetencia->resultadosAprendizaje->contains($resultadoId)) {
+                    $yaAsignados++;
+                    continue;
+                }
+                
+                // Asignar el resultado
+                $this->selectedCompetencia->resultadosAprendizaje()->attach($resultadoId, [
+                    'duracion' => $resultado->duracion ?? 0,
+                    'user_create_id' => auth()->id(),
+                    'created_at' => now(),
+                    'updated_at' => now(),
+                ]);
+                
+                $count++;
+            }
+            
+            $message = $count > 0 
+                ? "{$count} resultados asignados correctamente" 
+                : "Todos los resultados seleccionados ya estaban asignados";
+                
+            if ($yaAsignados > 0 && $count > 0) {
+                $message .= " ({$yaAsignados} ya estaban asignados)";
+            }
+            
+            $this->dispatch('notify', [
+                'type' => $count > 0 ? 'success' : 'info',
+                'message' => $message,
+            ]);
+            
+            // Limpiar selección y refrescar
+            $this->resultadosSeleccionados = [];
+            $this->selectAll = false;
+            $this->selectedCompetencia->refresh();
+            
+        } catch (\Exception $e) {
+            $this->dispatch('notify', [
+                'type' => 'error',
+                'message' => 'Error al asignar resultados: ' . $e->getMessage(),
+            ]);
+        }
+    }
+
+    public function desasignarTodos()
+    {
+        if (!$this->selectedCompetencia) return;
+        
+        try {
+            $count = $this->selectedCompetencia->resultadosAprendizaje->count();
+            
+            if ($count === 0) {
+                $this->dispatch('notify', [
+                    'type' => 'info',
+                    'message' => 'No hay resultados asignados para desasignar',
+                ]);
+                return;
+            }
+            
+            // Desasignar todos los resultados
+            $this->selectedCompetencia->resultadosAprendizaje()->detach();
+            
+            $this->dispatch('notify', [
+                'type' => 'warning',
+                'message' => "Todos los {$count} resultados han sido desasignados",
+            ]);
+            
+            // Refrescar la competencia para mostrar los cambios
+            $this->selectedCompetencia->refresh();
+            
+        } catch (\Exception $e) {
+            $this->dispatch('notify', [
+                'type' => 'error',
+                'message' => 'Error al desasignar resultados: ' . $e->getMessage(),
+            ]);
+        }
+    }
+
+    public function refreshResultados()
+    {
+        // Refrescar la lista de resultados disponibles
+        $this->dispatch('notify', [
+            'type' => 'info',
+            'message' => 'Lista de resultados actualizada',
+        ]);
+    }
+
+    public function updatedSelectAll()
+    {
+        if ($this->selectAll) {
+            // Seleccionar todos los resultados disponibles
+            $this->resultadosSeleccionados = $this->getResultadosDisponibles()->pluck('id')->toArray();
+        } else {
+            $this->resultadosSeleccionados = [];
+        }
     }
 
     public function deleteCompetencia($competenciaId)

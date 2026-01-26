@@ -5,7 +5,7 @@ Todo CSS debe estar encapsulado por vista o módulo.
 No se permiten selectores globales para acciones.
 */
 
-.vista-competencias {
+:root {
     --primary: #1e3a8a;
     --primary-light: #3b82f6;
     --bg-light: #f8fafc;
@@ -19,13 +19,13 @@ No se permiten selectores globales para acciones.
 }
 
 /* Layout */
-.content-wrapper {
+.vista-competencias .content-wrapper {
     margin-left: 250px !important;
     background: var(--bg-light);
-    min-height: auto;
+    height: auto !important;
     display: flex;
     flex-direction: column;
-    padding: 0 0.5rem;
+    padding: 0 0.5rem 3rem 0.5rem !important;
 }
 
 .vista-competencias .main-sidebar {
@@ -38,108 +38,95 @@ No se permiten selectores globales para acciones.
 }
 
 /* ===== HEADER ADMINISTRATIVO COMPACTO ===== */
-.vista-competencias .admin-header .col-md-8 {
-    padding: 0 0.5rem;
+.admin-header .col-md-8 {
+    padding: 0 0.5rem !important;
 }
 
-.vista-competencias .admin-header .col-md-4 {
-    padding: 0 0.5rem;
+.admin-header .col-md-4 {
+    padding: 0 0.5rem !important;
 }
 
-.vista-competencias .admin-header {
-    background: white;
-    border-bottom: 1px solid var(--border);
-    padding: 1.25rem 0;
-    margin-bottom: 1rem;
-    box-shadow: 0 1px 2px rgba(0,0,0,0.04);
-    width: 100%;
-    flex-shrink: 0;
+.admin-header {
+    background: white !important;
+    border-bottom: 1px solid var(--border) !important;
+    padding: 1.25rem 0 !important;
+    margin-bottom: 1rem !important;
+    box-shadow: 0 1px 2px rgba(0,0,0,0.04) !important;
+    width: 100% !important;
+    flex-shrink: 0 !important;
 }
 
-.vista-competencias .admin-header-content {
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-    padding: 0 0.5rem;
+.admin-header-content {
+    display: flex !important;
+    align-items: center !important;
+    justify-content: space-between !important;
+    padding: 0 0.5rem !important;
 }
 
-.vista-competencias .admin-header-left {
-    display: flex;
-    align-items: center;
+.admin-header-left {
+    display: flex !important;
+    align-items: center !important;
 }
 
-.vista-competencias .admin-header-text {
-    flex: 1;
+.admin-header-text {
+    flex: 1 !important;
 }
 
-.vista-competencias .admin-header-icon {
-    width: 40px;
-    height: 40px;
-    background: var(--primary);
-    border-radius: 50%;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    color: white;
-    font-size: 1rem;
-    margin-right: 0.75rem;
-    flex-shrink: 0;
+.admin-header-icon {
+    width: 40px !important;
+    height: 40px !important;
+    background: var(--primary) !important;
+    border-radius: 50% !important;
+    display: flex !important;
+    align-items: center !important;
+    justify-content: center !important;
+    color: white !important;
+    font-size: 1rem !important;
+    margin-right: 0.75rem !important;
+    flex-shrink: 0 !important;
 }
 
-.vista-competencias .admin-header-content {
-    flex: 1;
+.admin-header-title {
+    font-size: 1.25rem !important;
+    font-weight: 600 !important;
+    color: var(--text) !important;
+    margin-bottom: 0.125rem !important;
+    line-height: 1.2 !important;
 }
 
-.vista-competencias .admin-header-title {
-    font-size: 1.25rem;
-    font-weight: 600;
-    color: var(--text);
-    margin-bottom: 0.125rem;
-    line-height: 1.2;
+.admin-header-subtitle {
+    font-size: 0.8rem !important;
+    color: var(--text-muted) !important;
+    margin-bottom: 0 !important;
 }
 
-.vista-competencias .admin-header-subtitle {
-    font-size: 0.8rem;
-    color: var(--text-muted);
-    margin-bottom: 0;
-    line-height: 1.3;
+.admin-breadcrumb {
+    background: transparent !important;
+    padding: 0 !important;
+    margin: 0 !important;
+    list-style: none !important;
+    display: flex !important;
+    align-items: center !important;
+    font-size: 0.75rem !important;
 }
 
-.vista-competencias .admin-breadcrumb {
-    background: transparent;
-    padding: 0;
-    margin: 0;
-    display: inline-flex;
-    align-items: center;
+.admin-breadcrumb .breadcrumb-item {
+    color: var(--text-muted) !important;
 }
 
-.vista-competencias .admin-breadcrumb .breadcrumb {
-    background: transparent;
-    padding: 0;
-    margin: 0;
-    font-size: 0.75rem;
-    display: flex;
-    align-items: center;
-    flex-wrap: nowrap;
+.admin-breadcrumb .breadcrumb-item a {
+    color: var(--primary) !important;
+    text-decoration: none !important;
+    transition: color 0.2s ease !important;
 }
 
-.vista-competencias .admin-breadcrumb .breadcrumb-item {
-    color: var(--text-muted);
+.admin-breadcrumb .breadcrumb-item a:hover {
+    color: var(--primary-light) !important;
 }
 
-.vista-competencias .admin-breadcrumb .breadcrumb-item a {
-    color: var(--primary);
-    text-decoration: none;
-    transition: color 0.2s ease;
-}
-
-.vista-competencias .admin-breadcrumb .breadcrumb-item a:hover {
-    color: var(--primary-light);
-}
-
-.vista-competencias .admin-breadcrumb .breadcrumb-item.active {
-    color: var(--text);
-    font-weight: 500;
+.admin-breadcrumb .breadcrumb-item.active {
+    color: var(--text) !important;
+    font-weight: 500 !important;
 }
 
 /* Main Card */
@@ -149,14 +136,14 @@ No se permiten selectores globales para acciones.
     box-shadow: var(--shadow);
     border: none;
     width: 100%;
-    flex: 1;
+    flex: 0 1 auto !important;
     display: flex;
     flex-direction: column;
     margin-bottom: 1rem;
 }
 
 /* Toolbar */
-.vista-competencias .toolbar {
+.toolbar {
     background: white;
     padding: 1rem 0.5rem;
     border-bottom: 1px solid var(--border);
@@ -168,34 +155,35 @@ No se permiten selectores globales para acciones.
     flex-shrink: 0;
 }
 
-.vista-competencias .search-container {
+.search-container {
     flex: 1;
     min-width: 300px;
     position: relative;
 }
 
-.vista-competencias .search-input {
-    width: 100%;
-    padding: 0.5rem 1rem 0.5rem 2.5rem;
-    border: 1px solid var(--border);
-    border-radius: 4px;
-    font-size: 0.875rem;
-    transition: all 0.2s ease;
-}
-
-.vista-competencias .search-input:focus {
-    outline: none;
-    border-color: var(--primary-light);
-}
-
-.vista-competencias .search-icon {
+.search-icon {
     position: absolute;
-    left: 0.75rem;
+    left: 12px;
     top: 50%;
     transform: translateY(-50%);
     color: var(--text-muted);
-    pointer-events: none;
     font-size: 0.875rem;
+}
+
+.search-input {
+    width: 100%;
+    padding: 0.5rem 1rem 0.5rem 2.5rem;
+    border: 1px solid var(--border);
+    border-radius: 6px;
+    font-size: 0.875rem;
+    background: white;
+    transition: all 0.2s ease;
+}
+
+.search-input:focus {
+    outline: none;
+    border-color: var(--primary-light);
+    box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.1);
 }
 
 /* Filtros adicionales */
@@ -242,22 +230,41 @@ No se permiten selectores globales para acciones.
     color: white;
 }
 
-.vista-competencias .results-selector {
-    min-width: 100px;
-}
-
-.vista-competencias .results-selector select {
+.results-selector select {
     padding: 0.5rem;
     border: 1px solid var(--border);
     border-radius: 4px;
     font-size: 0.8rem;
 }
 
-.vista-competencias .results-select {
+.results-select {
     padding: 0.5rem;
     border: 1px solid var(--border);
     border-radius: 4px;
     font-size: 0.8rem;
+}
+
+.vista-competencias .loading-indicator {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    padding: 0.5rem 1rem;
+    background: var(--bg-light);
+    border: 1px solid var(--border);
+    border-radius: 4px;
+    font-size: 0.875rem;
+    color: var(--text-muted);
+    margin-bottom: 1rem;
+    animation: fadeIn 0.3s ease;
+}
+
+.vista-competencias .loading-indicator i {
+    color: var(--primary);
+}
+
+@keyframes fadeIn {
+    from { opacity: 0; transform: translateY(-10px); }
+    to { opacity: 1; transform: translateY(0); }
 }
 
 /* Button Primary */
@@ -272,84 +279,13 @@ No se permiten selectores globales para acciones.
     display: inline-flex;
     align-items: center;
     gap: 0.5rem;
+    cursor: pointer;
     transition: all 0.2s ease;
-    text-decoration: none;
 }
 
 .vista-competencias .btn-primary-modern:hover {
     background: var(--primary-light);
-    color: white;
-}
-
-/* ===== FORMULARIOS ERP ===== */
-.form-group {
-    margin-bottom: 1rem;
-}
-
-.form-label-erp {
-    font-size: 0.875rem;
-    font-weight: 500;
-    color: #4b5563;
-    margin-bottom: 0.5rem;
-    display: block;
-}
-
-.form-control-erp {
-    width: 100%;
-    padding: 0.625rem 0.875rem;
-    border: 1px solid var(--border);
-    border-radius: 6px;
-    font-size: 0.875rem;
-    transition: all 0.2s ease;
-    background: #ffffff;
-}
-
-.form-control-erp:focus {
-    outline: none;
-    border-color: var(--primary);
-    box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.1);
-}
-
-.form-control-erp.is-invalid {
-    border-color: var(--danger);
-}
-
-.invalid-feedback-erp {
-    color: var(--danger);
-    font-size: 0.75rem;
-    margin-top: 0.25rem;
-    display: block;
-}
-
-.input-group-erp {
-    display: flex;
-    align-items: stretch;
-}
-
-.input-group-erp .form-control-erp {
-    border-top-right-radius: 0;
-    border-bottom-right-radius: 0;
-    border-right: none;
-}
-
-.input-group-text-erp {
-    background: var(--bg-light);
-    border: 1px solid var(--border);
-    border-left: none;
-    border-top-right-radius: 6px;
-    border-bottom-right-radius: 6px;
-    padding: 0.625rem 0.875rem;
-    font-size: 0.75rem;
-    color: var(--text-muted);
-    font-weight: 500;
-}
-
-.section-subtitle {
-    font-size: 0.75rem;
-    color: var(--text-muted);
-    margin-top: -0.5rem;
-    margin-bottom: 1rem;
-    font-style: italic;
+    transform: translateY(-1px);
 }
 
 /* Tabla ERP - Solución Definitiva (1 sola tabla) */
@@ -358,269 +294,221 @@ No se permiten selectores globales para acciones.
     overflow-x: auto;
 }
 
-/* tabla normal */
 .vista-competencias .modern-table {
     width: 100%;
-    border-collapse: separate;
-    border-spacing: 0;
-    background: white;
-    border-radius: 8px;
-    overflow: hidden;
-    box-shadow: 0 2px 8px rgba(0,0,0,0.05);
-}
-
-/* altura uniforme real */
-.vista-competencias .modern-table th,
-.vista-competencias .modern-table td {
-    vertical-align: middle;
-    padding: 12px 14px;
-    white-space: nowrap;
-    border-bottom: 1px solid #f1f5f9;
-}
-
-/* ACCIONES sticky en la MISMA tabla */
-.vista-competencias .sticky-actions {
-    position: sticky;
-    right: 0;
-    background: #fff;
-    z-index: 10;
-    box-shadow: -2px 0 4px rgba(0,0,0,0.1);
-}
-
-/* header por encima */
-.vista-competencias .modern-table thead .sticky-actions {
-    background: #f8fafc;
-    z-index: 15;
-    box-shadow: -2px 0 4px rgba(0,0,0,0.1);
-}
-
-/* botón centrado */
-.vista-competencias .td-actions {
-    text-align: center;
-}
-
-.vista-competencias .btn-action {
-    width: 34px;
-    height: 34px;
-    border-radius: 4px;
-    border: none;
-    display: inline-flex;
-    align-items: center;
-    justify-content: center;
-    transition: all 0.2s ease;
+    border-collapse: collapse;
     font-size: 0.875rem;
-    line-height: 1;
-    padding: 0;
-    margin: 0 2px;
+    background: white;
 }
 
-.vista-competencias .btn-view {
-    background: rgba(59, 130, 246, 0.1);
-    color: var(--primary-light);
+.vista-competencias .modern-table thead {
+    background: var(--bg-light);
+    position: sticky;
+    top: 0;
+    z-index: 10;
 }
 
-.vista-competencias .btn-view:hover {
-    background: var(--primary-light);
-    color: white;
-}
-
-.vista-competencias .btn-edit {
-    background: rgba(245, 158, 11, 0.1);
-    color: var(--warning);
-}
-
-.vista-competencias .btn-edit:hover {
-    background: var(--warning);
-    color: white;
-}
-
-.vista-competencias .btn-delete {
-    background: rgba(239, 68, 68, 0.1);
-    color: var(--danger);
-}
-
-.vista-competencias .btn-delete:hover {
-    background: var(--danger);
-    color: white;
-}
-
-/* Column width optimization - ERP Style */
-.vista-competencias .modern-table th.codigo,
-.vista-competencias .modern-table td.codigo { width: 120px; min-width: 120px; }
-
-.vista-competencias .modern-table th.nombre,
-.vista-competencias .modern-table td.nombre { width: 350px; min-width: 350px; }
-
-.modern-table th.descripcion,
-.modern-table td.descripcion { width: 300px; min-width: 300px; }
-
-.modern-table th.duracion,
-.modern-table td.duracion { width: 100px; min-width: 100px; }
-
-.modern-table th.vigencia,
-.modern-table td.vigencia { width: 100px; min-width: 100px; }
-
-.modern-table th.programas,
-.modern-table td.programas { width: 100px; min-width: 100px; }
-
-.modern-table th.competencias,
-.modern-table td.competencias { width: 100px; min-width: 100px; }
-
-.modern-table th.guias,
-.modern-table td.guias { width: 80px; min-width: 80px; }
-
-.modern-table th.estado,
-.modern-table td.estado { width: 120px; min-width: 120px; }
-
-.modern-table th.th-actions,
-.modern-table td.td-actions { width: 140px; min-width: 140px; }
-
-.btn-action.btn-competencias {
-    background: #8b5cf6;
-    color: white;
-}
-
-.btn-action.btn-competencias:hover {
-    background: #7c3aed;
-}
-
-.btn-action.btn-competencias:hover {
-    transform: scale(1.05);
-}
-
-/* Badges */
-.badge-modern {
-    padding: 0.1875rem 0.375rem;
-    border-radius: 3px;
-    font-size: 0.6875rem;
+.vista-competencias .modern-table th {
+    padding: 0.75rem 1rem;
+    text-align: left;
     font-weight: 600;
+    color: var(--text);
+    border-bottom: 2px solid var(--border);
+    white-space: nowrap;
+    font-size: 0.8rem;
     text-transform: uppercase;
+    letter-spacing: 0.5px;
 }
 
-.badge-success {
-    background: rgba(16, 185, 129, 0.1);
-    color: var(--success);
+.vista-competencias .modern-table td {
+    padding: 0.75rem 1rem;
+    border-bottom: 1px solid var(--border);
+    vertical-align: middle;
+    color: var(--text);
 }
 
-.badge-danger {
-    background: rgba(239, 68, 68, 0.1);
-    color: var(--danger);
+.vista-competencias .modern-table tbody tr {
+    transition: background-color 0.2s ease;
 }
 
-.badge-primary {
+.vista-competencias .modern-table tbody tr:hover {
+    background: var(--bg-light);
+}
+
+.vista-competencias .modern-table .sortable {
+    cursor: pointer;
+    user-select: none;
+    position: relative;
+    padding-right: 1.5rem !important;
+}
+
+.vista-competencias .modern-table .sortable:hover {
+    color: var(--primary);
+}
+
+.vista-competencias .modern-table .sort-icon {
+    position: absolute;
+    right: 0.5rem;
+    top: 50%;
+    transform: translateY(-50%);
+    font-size: 0.75rem;
+    opacity: 0.5;
+}
+
+.vista-competencias .badge-modern {
+    padding: 0.25rem 0.75rem;
+    border-radius: 12px;
+    font-size: 0.75rem;
+    font-weight: 500;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+    display: inline-block;
+}
+
+.vista-competencias .badge-primary {
     background: rgba(30, 58, 138, 0.1);
     color: var(--primary);
 }
 
-.badge-secondary {
-    background: rgba(107, 114, 128, 0.1);
-    color: #6b7280;
-}
-
-.badge-info {
+.vista-competencias .badge-info {
     background: rgba(59, 130, 246, 0.1);
     color: #3b82f6;
 }
 
-.badge-warning {
+.vista-competencias .badge-secondary {
+    background: rgba(107, 114, 128, 0.1);
+    color: #6b7280;
+}
+
+.vista-competencias .badge-success {
+    background: rgba(16, 185, 129, 0.1);
+    color: var(--success);
+}
+
+.vista-competencias .badge-warning {
     background: rgba(245, 158, 11, 0.1);
     color: var(--warning);
 }
 
-/* Headers */
-.modern-table th {
-    font-weight: 600;
-    color: var(--text);
-    text-transform: uppercase;
-    font-size: 0.8125rem;
-    background-color: #f8fafc;
-    border-bottom: 2px solid #e5e7eb;
+.vista-competencias .badge-danger {
+    background: rgba(239, 68, 68, 0.1);
+    color: var(--danger);
 }
 
-.modern-table th.sortable {
+.vista-competencias .badge-active {
+    background: #e6f9f0;
+    color: #0f9d58;
+}
+
+.vista-competencias .badge-inactive {
+    background: #fdecea;
+    color: #d93025;
+}
+
+/* ===== BADGE TOGGLE INTERACTIVO ===== */
+.vista-competencias .badge-toggle {
+    border: none;
     cursor: pointer;
-    user-select: none;
-}
-
-.modern-table th.sortable:hover {
-    color: var(--primary-light);
-}
-
-.sort-icon {
-    margin-left: 0.5rem;
-    font-size: 0.75rem;
-    opacity: 0.6;
-}
-
-/* Hover */
-.modern-table tbody tr:hover {
-    background-color: #f8fafc;
-}
-
-/* Empty State */
-.empty-state {
-    display: flex;
-    flex-direction: column;
+    padding: 6px 10px;
+    border-radius: 6px;
+    font-size: 12px;
+    font-weight: 600;
+    display: inline-flex;
     align-items: center;
-    justify-content: center;
-    text-align: center;
-    padding: 5rem 1rem;
-    color: var(--text-muted);
-    max-width: 520px;
-    margin: 0 auto;
+    text-transform: uppercase;
+    line-height: 1;
+}
+
+.vista-competencias .badge-toggle i {
+    font-size: 11px;
+    transition: transform .2s ease;
+}
+
+.vista-competencias .badge-toggle:hover {
+    transform: scale(1.05);
+    opacity: .9;
+}
+
+.vista-competencias .badge-toggle:hover i {
+    transform: rotate(180deg);
+}
+
+.vista-competencias .badge-toggle:disabled {
+    opacity: .6;
+    cursor: not-allowed;
+    transform: none;
+}
+
+.vista-competencias .badge-toggle:disabled i {
+    transform: none;
+}
+
+.vista-competencias .badge-toggle.badge-success {
+    background: #e6f9f0;
+    color: #0f9d58;
+}
+
+.vista-competencias .badge-toggle.badge-danger {
+    background: #fdecea;
+    color: #d93025;
 }
 
 .vista-competencias .btn-action {
     width: 34px;
     height: 34px;
-    border-radius: 4px;
-    border: none;
     display: inline-flex;
     align-items: center;
     justify-content: center;
-    transition: all 0.2s ease;
-    font-size: 0.875rem;
-    line-height: 1;
     padding: 0;
-    margin: 0 2px;
+    line-height: 1;
+    border: none;
+    border-radius: 4px;
+    font-size: 0.75rem;
+    cursor: pointer;
+    transition: all 0.2s ease;
+    margin: 0 0.125rem;
 }
 
-.vista-competencias .btn-view {
+.vista-competencias .btn-action:hover {
+    transform: translateY(-1px);
+}
+
+.vista-competencias .btn-action.btn-view {
     background: rgba(59, 130, 246, 0.1);
     color: var(--primary-light);
 }
 
-.vista-competencias .btn-view:hover {
+.vista-competencias .btn-action.btn-view:hover {
     background: var(--primary-light);
     color: white;
 }
 
-.vista-competencias .btn-info {
+.vista-competencias .btn-action.btn-info {
     background: rgba(59, 130, 246, 0.1);
     color: var(--primary-light);
 }
 
-.vista-competencias .btn-info:hover {
+.vista-competencias .btn-action.btn-info:hover {
     background: var(--primary-light);
     color: white;
 }
 
-.vista-competencias .btn-edit {
+.vista-competencias .btn-action.btn-edit {
     background: rgba(245, 158, 11, 0.1);
     color: var(--warning);
 }
 
-.vista-competencias .btn-edit:hover {
+.vista-competencias .btn-action.btn-edit:hover {
     background: var(--warning);
     color: white;
 }
 
-.vista-competencias .btn-delete {
+.vista-competencias .btn-action.btn-delete {
     background: rgba(239, 68, 68, 0.1);
     color: var(--danger);
 }
 
-.vista-competencias .btn-delete:hover {
+.vista-competencias .btn-action.btn-delete:hover {
     background: var(--danger);
     color: white;
 }
@@ -628,14 +516,14 @@ No se permiten selectores globales para acciones.
 /* ===== MODAL ERP MINIMALISTA ===== */
 
 /* Contenedor principal del modal */
-.modal-erp-container {
+.vista-competencias .modal-erp-container {
     max-height: 90vh;
     display: flex;
     flex-direction: column;
 }
 
 /* Header Minimalista */
-.modal-header-erp {
+.vista-competencias .modal-header-erp {
     background: #ffffff;
     border-bottom: 1px solid var(--border);
     padding: 1rem 1.5rem;
@@ -645,7 +533,7 @@ No se permiten selectores globales para acciones.
     flex-shrink: 0;
 }
 
-.modal-title-erp {
+.vista-competencias .modal-title-erp {
     font-size: 1.125rem;
     font-weight: 600;
     color: var(--text);
@@ -663,13 +551,13 @@ No se permiten selectores globales para acciones.
     transition: all 0.2s ease;
 }
 
-.btn-close-erp:hover {
+.vista-competencias .btn-close-erp:hover {
     background: var(--bg-light);
     color: var(--text);
 }
 
 /* Body Principal */
-.modal-body-erp {
+.vista-competencias .modal-body-erp {
     padding: 1.5rem;
     background: #ffffff;
     flex: 1;
@@ -677,15 +565,15 @@ No se permiten selectores globales para acciones.
 }
 
 /* Secciones */
-.section-block {
+.vista-competencias .section-block {
     margin-bottom: 2rem;
 }
 
-.section-block:last-child {
+.vista-competencias .section-block:last-child {
     margin-bottom: 0;
 }
 
-.section-title {
+.vista-competencias .section-title {
     font-size: 0.875rem;
     font-weight: 600;
     color: var(--text);
@@ -694,182 +582,164 @@ No se permiten selectores globales para acciones.
     letter-spacing: 0.5px;
 }
 
-/* Bloque de Información */
-.section-info {
+.vista-competencias .section-subtitle {
+    font-size: 0.75rem;
+    color: var(--text-muted);
+    margin-top: -0.5rem;
+    margin-bottom: 1rem;
+    font-style: italic;
+}
+
+/* Labels Minimalistas */
+.vista-competencias .form-label-erp {
+    font-size: 0.875rem;
+    font-weight: 500;
+    color: #4b5563;
+    margin-bottom: 0.5rem;
+    display: block;
+}
+
+/* Inputs Protagonistas */
+.vista-competencias .form-control-erp {
+    width: 100%;
+    padding: 0.625rem 0.875rem;
+    border: 1px solid var(--border);
+    border-radius: 6px;
+    font-size: 0.875rem;
+    transition: all 0.2s ease;
+    background: #ffffff;
+}
+
+.vista-competencias .form-control-erp:focus {
+    outline: none;
+    border-color: var(--primary);
+    box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.1);
+}
+
+.vista-competencias .form-control-erp.is-invalid {
+    border-color: var(--danger);
+}
+
+.vista-competencias .invalid-feedback-erp {
+    font-size: 0.75rem;
+    color: var(--danger);
+    margin-top: 0.25rem;
+    display: block;
+}
+
+/* Input Groups */
+.vista-competencias .input-group-erp {
+    display: flex;
+    align-items: stretch;
+}
+
+.vista-competencias .input-group-erp .form-control-erp {
+    border-top-right-radius: 0;
+    border-bottom-right-radius: 0;
+    border-right: none;
+}
+
+.vista-competencias .input-group-text-erp {
+    background: var(--bg-light);
+    border: 1px solid var(--border);
+    border-left: none;
+    border-radius: 0 6px 6px 0;
+    padding: 0 0.75rem;
+    font-size: 0.875rem;
+    color: var(--text-muted);
+    display: flex;
+    align-items: center;
+}
+
+/* Sección de Información */
+.vista-competencias .section-info {
     background: #f8fafc;
     border: 1px solid #e2e8f0;
-    border-radius: 8px;
+    border-radius: 6px;
     padding: 1rem;
 }
 
-.info-content {
+.vista-competencias .info-content {
     display: flex;
     align-items: flex-start;
     gap: 0.75rem;
 }
 
-.info-icon {
-    color: #64748b;
-    font-size: 0.875rem;
+.vista-competencias .info-icon {
+    color: var(--primary-light);
     margin-top: 0.125rem;
     flex-shrink: 0;
 }
 
-.info-text {
+.vista-competencias .info-text {
     font-size: 0.875rem;
-    color: #475569;
+    color: var(--text-muted);
     line-height: 1.5;
 }
 
-.info-text strong {
-    color: #334155;
-}
-
 /* Footer ERP */
-.modal-footer-erp {
+.vista-competencias .modal-footer-erp {
     background: #ffffff;
     border-top: 1px solid var(--border);
     padding: 1rem 1.5rem;
-    flex-shrink: 0;
-}
-
-.footer-actions {
     display: flex;
     justify-content: flex-end;
     gap: 0.75rem;
+    flex-shrink: 0;
 }
 
-/* Footer para modal de detalles (sin acciones) */
-.modal-body-erp + .modal-header-erp {
-    border-bottom: 1px solid var(--border);
+.vista-competencias .footer-actions {
+    display: flex;
+    gap: 0.75rem;
 }
 
-/* Botones ERP */
 .vista-competencias .btn-erp {
     padding: 0.625rem 1.25rem;
+    border: none;
     border-radius: 6px;
     font-size: 0.875rem;
     font-weight: 500;
-    border: 1px solid transparent;
     cursor: pointer;
     transition: all 0.2s ease;
     display: inline-flex;
     align-items: center;
     gap: 0.5rem;
-    text-decoration: none;
 }
 
-.btn-erp.btn-secondary {
-    background: #ffffff;
-    color: var(--text);
-    border-color: var(--border);
-}
-
-.btn-erp.btn-secondary:hover {
-    background: var(--bg-light);
-    color: var(--text);
-}
-
-.btn-erp.btn-primary {
+.vista-competencias .btn-erp.btn-primary {
     background: var(--primary);
     color: white;
-    border-color: var(--primary);
 }
 
-.btn-erp.btn-primary:hover {
-    background: var(--primary-light);
-    color: white;
+.vista-competencias .btn-erp.btn-primary:hover {
+    background: var(--primary-dark);
+    transform: translateY(-1px);
 }
 
-/* ===== NOTIFICACIONES ===== */
-.alert-success {
-    background: linear-gradient(135deg, #10b981 0%, #059669 100%);
-    border: none;
-    color: white;
-    box-shadow: 0 4px 12px rgba(16, 185, 129, 0.3);
+.vista-competencias .btn-erp.btn-secondary {
+    background: var(--bg-light);
+    color: var(--text);
+    border: 1px solid var(--border);
 }
 
-.alert-success .btn-close {
-    color: white;
-    opacity: 0.8;
+.vista-competencias .btn-erp.btn-secondary:hover {
+    background: var(--bg-hover);
+    transform: translateY(-1px);
 }
 
-.alert-success .btn-close:hover {
-    opacity: 1;
-}
-
-.alert-dismissible {
-    animation: slideInRight 0.3s ease-out;
-}
-
-@keyframes slideInRight {
-    from {
-        transform: translateX(100%);
-        opacity: 0;
-    }
-    to {
-        transform: translateX(0);
-        opacity: 1;
-    }
-}
-
-/* ===== ALERTAS DE VALIDACIÓN ===== */
-.alert-sm {
-    padding: 0.5rem 0.75rem;
+/* Alertas */
+.vista-competencias .alert-sm {
+    padding: 0.75rem 1rem;
     font-size: 0.875rem;
     border-radius: 6px;
 }
 
-.alert-danger {
-    background: linear-gradient(135deg, #ef4444 0%, #dc2626 100%);
-    border: none;
-    color: white;
-    box-shadow: 0 2px 8px rgba(239, 68, 68, 0.3);
+.vista-competencias .form-group {
+    margin-bottom: 1rem;
 }
 
-.alert-success {
-    background: linear-gradient(135deg, #10b981 0%, #059669 100%);
-    border: none;
-    color: white;
-    box-shadow: 0 2px 8px rgba(16, 185, 129, 0.3);
-}
-
-.alert-danger .fa-exclamation-triangle,
-.alert-success .fa-check-circle {
-    opacity: 0.9;
-}
-
-.empty-state-icon {
-    width: 64px;
-    height: 64px;
-    margin-bottom: 1.5rem;
-    background: rgba(59, 130, 246, 0.1);
-    border-radius: 50%;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    font-size: 1.5rem;
-    color: var(--primary-light);
-}
-
-.empty-state h3 {
-    color: var(--text);
-    font-size: 1.125rem;
-    margin-bottom: 0.75rem;
-    font-weight: 600;
-}
-
-.empty-state p {
-    font-size: 0.875rem;
-    margin-bottom: 1.5rem;
-    line-height: 1.5;
-}
-
-.empty-state .action-hint {
-    font-size: 0.75rem;
-    color: var(--text-muted);
-    margin-bottom: 1.5rem;
-    font-style: italic;
+.vista-competencias .form-group:last-child {
+    margin-bottom: 0;
 }
 
 /* Pagination Wrapper - Siempre visible */
@@ -878,40 +748,42 @@ No se permiten selectores globales para acciones.
     justify-content: flex-end;
     padding: 1rem 0.5rem;
     border-top: 1px solid var(--border);
-}
-
-/* Pagination */
-.pagination-modern {
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-    padding: 0;
-    background: transparent;
-    border-top: none;
-    width: 100%;
+    background: white;
     flex-shrink: 0;
 }
 
 .pagination-info {
+    font-size: 0.875rem;
     color: var(--text-muted);
-    font-size: 0.8rem;
+    margin-right: 1rem;
+    display: flex;
+    align-items: center;
+}
+
+.pagination-links {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+}
+
+.pagination-links .page-item {
+    margin: 0;
 }
 
 .pagination-links .page-link {
-    padding: 0.375rem 0.5rem;
+    padding: 0.5rem 0.75rem;
     border: 1px solid var(--border);
-    background: white;
+    border-radius: 4px;
+    font-size: 0.875rem;
     color: var(--text);
-    border-radius: 3px;
     text-decoration: none;
     transition: all 0.2s ease;
-    font-size: 0.8rem;
 }
 
 .pagination-links .page-link:hover {
-    background: var(--primary-light);
-    color: white;
-    border-color: var(--primary-light);
+    background: var(--bg-light);
+    border-color: var(--primary);
+    color: var(--primary);
 }
 
 .pagination-links .page-item.active .page-link {
@@ -920,27 +792,9 @@ No se permiten selectores globales para acciones.
     border-color: var(--primary);
 }
 
-/* Modals */
-.modal-content {
-    border-radius: 6px;
-    border: none;
-    box-shadow: var(--shadow);
-}
-
-.modal-header {
-    background: var(--primary);
-    color: white;
-    border-radius: 6px 6px 0 0;
-    border: none;
-}
-
-.modal-header .btn-close {
-    color: white;
-}
-
 /* Responsive */
 @media (max-width: 768px) {
-    .content-wrapper {
+    .vista-competencias .content-wrapper {
         margin-left: 0 !important;
     }
     
@@ -951,25 +805,6 @@ No se permiten selectores globales para acciones.
     
     .main-sidebar.sidebar-open {
         transform: translateX(0) !important;
-    }
-    
-    .vista-competencias .admin-header {
-        padding: 0.5rem 0;
-    }
-    
-    .vista-competencias .admin-header-icon {
-        width: 32px;
-        height: 32px;
-        font-size: 0.875rem;
-        margin-right: 0.5rem;
-    }
-    
-    .vista-competencias .admin-header-title {
-        font-size: 1.125rem;
-    }
-    
-    .vista-competencias .admin-header-subtitle {
-        font-size: 0.75rem;
     }
     
     .toolbar {
@@ -987,7 +822,7 @@ No se permiten selectores globales para acciones.
         flex-wrap: wrap;
     }
     
-    .vista-competencias .filter-select {
+    .filter-select {
         min-width: 140px;
         flex: 1;
         min-width: 120px;
@@ -1012,12 +847,12 @@ No se permiten selectores globales para acciones.
 }
 
 @media (max-width: 480px) {
-    .filters-container {
+    .vista-competencias .filters-container {
         flex-direction: column;
         align-items: stretch;
     }
     
-    .vista-competencias .filter-select {
+    .filter-select {
         min-width: auto;
         width: 100%;
     }
@@ -1034,64 +869,17 @@ No se permiten selectores globales para acciones.
     background-color: var(--bg-light) !important;
     border-top: 1px solid var(--border) !important;
     margin-top: auto !important;
-    flex-shrink: 0 !important;
+    padding: 0 !important;
+    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif !important;
+    line-height: 1.5 !important;
+    box-sizing: border-box !important;
+    display: block !important;
+    width: 100% !important;
 }
 
-/* ===== BADGE TOGGLE INTERACTIVO ===== */
-.badge-toggle {
-    border: none;
-    cursor: pointer;
-    padding: 6px 10px;
-    border-radius: 6px;
-    font-size: 12px;
-    font-weight: 600;
-    display: inline-flex;
-    align-items: center;
-    transition: all .2s ease;
-    background: transparent;
-    font-family: inherit;
-    text-decoration: none;
-    line-height: 1;
-}
-
-.badge-toggle i {
-    font-size: 11px;
-    transition: transform .2s ease;
-}
-
-.badge-toggle:hover {
-    transform: scale(1.05);
-    opacity: .9;
-}
-
-.badge-toggle:hover i {
-    transform: rotate(180deg);
-}
-
-.badge-toggle:disabled {
-    opacity: .6;
-    cursor: not-allowed;
-    transform: none;
-}
-
-.badge-toggle:disabled i {
-    transform: none;
-}
-
-.badge-toggle.badge-success {
-    background: #e6f9f0;
-    color: #0f9d58;
-}
-
-.badge-toggle.badge-danger {
-    background: #fdecea;
-    color: #d93025;
-}
-
-/* ===== MODAL DETALLES VERTICAL - ESTRUCTURA PROFESIONAL ERP ===== */
-
-/* Overlay del modal */
-.modal-overlay {
+/* ===== MODALES UNIFICADOS - COMPETENCIAS ===== */
+/* Overlay base para todas las modales */
+.vista-competencias .modal-overlay {
     position: fixed;
     top: 0;
     left: 0;
@@ -1105,10 +893,10 @@ No se permiten selectores globales para acciones.
     padding: 20px;
 }
 
-/* Contenedor del modal (NO infinito) */
-.modal-container {
+/* Contenedor principal unificado */
+.vista-competencias .modal-container {
     width: 100%;
-    max-width: 920px;
+    max-width: 600px;
     max-height: 90vh;
     background: #ffffff;
     border-radius: 12px;
@@ -1118,48 +906,45 @@ No se permiten selectores globales para acciones.
     box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.1), 0 10px 10px -5px rgba(0, 0, 0, 0.04);
 }
 
-/* Header Simple Unificado para TODOS los modales */
-.modal-header-simple {
-    position: relative;
-    padding: 20px 56px 16px 24px;
-    border-bottom: 1px solid #e5e7eb;
-    background: #fff;
-    flex-shrink: 0;
+/* Modal grande para formularios */
+.vista-competencias .modal-container.modal-lg {
+    max-width: 800px;
 }
 
-.modal-header-simple .modal-title {
-    font-size: 20px;
+/* Modal extra grande para gestión de resultados */
+.vista-competencias .modal-container.modal-xl {
+    max-width: 1200px;
+    width: 95%;
+}
+
+/* Header unificado */
+.vista-competencias .modal-header {
+    padding: 20px 24px 16px 24px;
+    border-bottom: 1px solid #e5e7eb;
+    background: #ffffff;
+    flex-shrink: 0;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+}
+
+.vista-competencias .modal-title {
+    font-size: 18px;
     font-weight: 600;
-    margin: 0 0 4px 0;
+    margin: 0;
     color: #1f2937;
     line-height: 1.2;
 }
 
-.modal-header-simple .modal-subtitle {
-    margin: 0;
-    color: #6b7280;
-    font-size: 14px;
-    display: flex;
-    align-items: center;
-    gap: 8px;
-}
-
-/* 🔥 BOTÓN X UNIFICADO - FLOTANTE */
-.modal-close {
-    position: absolute;
-    top: 16px;
-    right: 16px;
-
+/* Botón de cierre unificado */
+.vista-competencias .modal-close {
     width: 32px;
     height: 32px;
-
     border-radius: 6px;
     border: none;
     background: transparent;
-
     font-size: 18px;
     color: #6b7280;
-
     cursor: pointer;
     display: flex;
     align-items: center;
@@ -1168,36 +953,105 @@ No se permiten selectores globales para acciones.
     opacity: 0.7;
 }
 
-.modal-close:hover {
+.vista-competencias .modal-close:hover {
     background: #f1f5f9;
     color: #111827;
     opacity: 1;
 }
 
-/* Body con scroll interno (ESTA ES LA CLAVE) */
-.modal-body {
+/* Body unificado */
+.vista-competencias .modal-body {
     flex: 1;
     overflow-y: auto;
-    padding: 0;
-}
-
-/* Contenido con ancho controlado */
-.modal-content-wrapper {
-    max-width: 880px;
-    margin: 0 auto;
     padding: 24px;
 }
 
-/* Secciones verticales */
-.section-card {
+/* Footer unificado */
+.vista-competencias .modal-footer {
+    padding: 16px 24px 20px 24px;
+    border-top: 1px solid #e5e7eb;
     background: #ffffff;
-    border: 1px solid #e5e7eb;
-    border-radius: 8px;
-    padding: 16px;
-    margin-bottom: 16px;
+    flex-shrink: 0;
+    display: flex;
+    justify-content: flex-end;
+    gap: 12px;
 }
 
-.section-title {
+/* Botones unificados */
+.vista-competencias .btn-modal {
+    padding: 10px 16px;
+    border-radius: 6px;
+    font-size: 14px;
+    font-weight: 500;
+    border: 1px solid transparent;
+    cursor: pointer;
+    transition: all 0.2s ease;
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    text-decoration: none;
+}
+
+.vista-competencias .btn-modal.btn-secondary {
+    background: #ffffff;
+    color: #374151;
+    border-color: #d1d5db;
+}
+
+.vista-competencias .btn-modal.btn-secondary:hover {
+    background: #f9fafb;
+    color: #374151;
+}
+
+.vista-competencias .btn-modal.btn-primary {
+    background: var(--primary);
+    color: white;
+    border-color: var(--primary);
+}
+
+.vista-competencias .btn-modal.btn-primary:hover {
+    background: var(--primary-light);
+    color: white;
+}
+
+.vista-competencias .btn-modal.btn-danger {
+    background: #dc2626;
+    color: white;
+    border-color: #dc2626;
+}
+
+.vista-competencias .btn-modal.btn-danger:hover {
+    background: #b91c1c;
+    color: white;
+}
+
+.vista-competencias .btn-modal.btn-success {
+    background: #10b981;
+    color: white;
+    border-color: #10b981;
+}
+
+.vista-competencias .btn-modal.btn-success:hover {
+    background: #059669;
+    color: white;
+}
+
+/* Estados especiales */
+.vista-competencias .btn-modal:disabled {
+    opacity: 0.6;
+    cursor: not-allowed;
+}
+
+/* Secciones dentro del modal */
+.vista-competencias .modal-section {
+    margin-bottom: 24px;
+}
+
+.vista-competencias .modal-section:last-child {
+    margin-bottom: 0;
+}
+
+.vista-competencias .section-title {
     font-size: 14px;
     font-weight: 600;
     color: #374151;
@@ -1208,807 +1062,36 @@ No se permiten selectores globales para acciones.
     border-bottom: 1px solid #f1f5f9;
 }
 
-/* Información General - Grid vertical */
-.info-grid {
-    display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
-    gap: 20px;
-}
-
-.info-item {
-    display: flex;
-    flex-direction: column;
-}
-
-.info-label {
-    font-size: 12px;
-    color: #6b7280;
-    text-transform: uppercase;
-    letter-spacing: 0.5px;
-    margin-bottom: 4px;
-    font-weight: 500;
-}
-
-.info-value {
-    font-size: 14px;
-    color: #1f2937;
-    font-weight: 500;
-}
-
-/* Estado y Acciones */
-.status-section {
-    margin-bottom: 24px;
-}
-
-.status-display {
-    margin-bottom: 12px;
-}
-
-.status-description {
-    font-size: 13px;
-    color: #6b7280;
-    font-style: italic;
-}
-
-.actions-section {
-    border-top: 1px solid #f1f5f9;
-    padding-top: 20px;
-}
-
-/* Auditoría */
-.audit-section {
-    display: flex;
-    flex-direction: column;
-    gap: 20px;
-}
-
-.audit-block {
-    display: flex;
-    flex-direction: column;
-    gap: 8px;
-}
-
-.audit-label {
-    font-size: 12px;
-    color: #9ca3af;
-    text-transform: uppercase;
-    letter-spacing: 0.5px;
-    font-weight: 600;
-}
-
-.audit-info {
-    display: flex;
-    flex-direction: column;
-    gap: 4px;
-}
-
-.audit-user {
-    font-size: 13px;
-    color: #374151;
-    font-weight: 500;
-}
-
-.audit-date {
-    font-size: 12px;
-    color: #6b7280;
-}
-
-/* Programas */
-.programs-list {
-    display: flex;
-    flex-direction: column;
-    gap: 8px;
-}
-
-.program-item {
-    display: flex;
-    align-items: center;
-    gap: 12px;
-    padding: 8px 0;
-    border-bottom: 1px solid #f1f5f9;
-}
-
-.program-item:last-child {
-    border-bottom: none;
-}
-
-.program-code {
-    font-family: 'Courier New', monospace;
-    background: #f1f5f9;
-    padding: 2px 6px;
-    border-radius: 4px;
-    font-size: 11px;
-    font-weight: 600;
-    color: #374151;
-    min-width: 60px;
-    text-align: center;
-}
-
-.program-name {
-    font-size: 13px;
-    color: #4b5563;
-    flex: 1;
-}
-
-/* Acciones rápidas - Estilos Bootstrap Consistentes */
-.quick-actions {
-    display: flex;
-    flex-wrap: wrap;
-    gap: 12px;
-}
-
-.quick-actions .btn {
-    display: flex;
-    align-items: center;
-    padding: 10px 16px;
+/* Alertas en modales */
+.vista-competencias .modal-alert {
+    padding: 12px 16px;
     border-radius: 6px;
-    font-size: 14px;
-    font-weight: 500;
-    text-decoration: none;
-    transition: all 0.2s ease;
-    cursor: pointer;
-    border: none;
-}
-
-.quick-actions .btn:hover {
-    transform: translateY(-1px);
-    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
-}
-
-.quick-actions .btn i {
-    font-size: 14px;
-}
-
-/* Botones específicos */
-.quick-actions .btn-warning {
-    background: #f59e0b;
-    color: white;
-}
-
-.quick-actions .btn-warning:hover {
-    background: #d97706;
-}
-
-.quick-actions .btn-danger {
-    background: #ef4444;
-    color: white;
-}
-
-.quick-actions .btn-danger:hover {
-    background: #dc2626;
-}
-
-.quick-actions .btn-success {
-    background: #10b981;
-    color: white;
-}
-
-.quick-actions .btn-success:hover {
-    background: #059669;
-}
-
-/* Badge Status */
-.badge-status {
-    padding: 6px 10px;
-    border-radius: 6px;
-    font-size: 12px;
-    font-weight: 600;
-    display: inline-flex;
-    align-items: center;
-    text-transform: uppercase;
-}
-
-.badge-active {
-    background: #e6f9f0;
-    color: #0f9d58;
-}
-
-.badge-inactive {
-    background: #fdecea;
-    color: #d93025;
-}
-
-/* ===== INDICADOR DE CARGA ===== */
-.loading-indicator {
-    display: flex;
-    align-items: center;
-    gap: 0.5rem;
-    padding: 0.5rem 1rem;
-    background: var(--bg-light);
-    border: 1px solid var(--border);
-    border-radius: 4px;
-    font-size: 0.875rem;
-    color: var(--text-muted);
-    margin-bottom: 1rem;
-    animation: fadeIn 0.3s ease;
-}
-
-.loading-indicator i {
-    color: var(--primary);
-}
-
-@keyframes fadeIn {
-    from { opacity: 0; transform: translateY(-10px); }
-    to { opacity: 1; transform: translateY(0); }
-}
-
-/* ===== ESTILOS ESPECÍFICOS PARA GESTIÓN DE RESULTADOS ===== */
-
-/* Nivel 1: Identidad de Competencia */
-.competencia-identity {
-    background: white;
-    border: 1px solid var(--border);
-    border-radius: 8px;
-    padding: 1.5rem;
-    box-shadow: var(--shadow);
-}
-
-.competencia-title {
-    color: var(--text);
-    font-weight: 600;
-    font-size: 1.25rem;
-}
-
-.competencia-meta {
-    display: flex;
-    align-items: center;
-    gap: 0.5rem;
-    margin-top: 0.25rem;
-    margin-bottom: 0.5rem;
-}
-
-.competencia-descripcion {
-    margin-top: 0.5rem;
-    max-width: 900px;
-    line-height: 1.6;
-    color: #4b5563;
-    font-size: 14px;
-    margin-bottom: 0;
-}
-
-.badge-status {
-    font-size: 0.75rem;
-    padding: 0.25rem 0.5rem;
-    font-weight: 500;
-}
-
-.badge-status-small {
-    font-size: 0.7rem;
-    padding: 0.2rem 0.4rem;
-    font-weight: 400;
-}
-
-.btn-link-back {
-    color: var(--primary);
-    text-decoration: none;
-    font-weight: 500;
-    padding: 0.5rem 1rem;
-    border-radius: 4px;
-    transition: all 0.3s ease;
-    font-size: 0.875rem;
-}
-
-.btn-link-back:hover {
-    background: rgba(59, 130, 246, 0.1);
-    color: var(--primary-light);
-}
-
-/* Acción Principal */
-.primary-action {
-    margin-top: 1.5rem;
-    text-align: center;
-}
-
-.btn-lg {
-    padding: 0.75rem 2rem;
-    font-size: 1rem;
-    font-weight: 600;
-}
-
-/* Nivel 2: Métricas - Versión Compacta */
-.metrics-section {
-    background: white;
-    border: 1px solid var(--border);
-    border-radius: 8px;
-    padding: 1rem;
-    box-shadow: var(--shadow);
-}
-
-.metrics-header {
-    margin-bottom: 0.75rem;
-}
-
-.metrics-title {
-    color: var(--text);
-    font-weight: 600;
-    font-size: 0.9rem;
-    margin: 0;
-}
-
-.metrics-grid-compact {
-    display: grid;
-    grid-template-columns: 1fr 1fr 1fr auto;
-    gap: 0.75rem;
-    align-items: center;
-}
-
-.metric-card-compact {
-    text-align: center;
-    padding: 0.5rem;
-    background: #f8fafc;
-    border-radius: 4px;
-    border: 1px solid #e5e7eb;
-}
-
-.metric-value-small {
-    font-size: 1.125rem;
-    font-weight: 600;
-    color: #64748b;
-    line-height: 1;
-    margin-bottom: 0.125rem;
-}
-
-.metric-label-small {
-    font-size: 0.75rem;
-    color: #6b7280;
-    font-weight: 500;
-    text-transform: lowercase;
-}
-
-.metric-status-compact {
-    display: flex;
-    align-items: center;
-    gap: 0.375rem;
-    padding: 0.5rem 0.75rem;
-    background: #f8fafc;
-    border-radius: 4px;
-    border: 1px solid #e5e7eb;
-}
-
-.status-indicator {
-    width: 6px;
-    height: 6px;
-    border-radius: 50%;
-}
-
-.status-active {
-    background: var(--success);
-}
-
-.status-inactive {
-    background: var(--danger);
-}
-
-.status-text-small {
-    font-size: 0.75rem;
-    color: #6b7280;
-    font-weight: 500;
-}
-
-/* Mensaje Contextual Compacto */
-.contextual-message-compact {
-    display: flex;
-    align-items: center;
-    gap: 0.75rem;
-    padding: 0.75rem;
-    background: #f8fafc;
-    border: 1px solid #e5e7eb;
-    border-radius: 4px;
-    margin-top: 0.75rem;
-}
-
-.message-icon-small {
-    color: #64748b;
-    font-size: 1rem;
-}
-
-.message-content-small {
-    flex: 1;
-    font-size: 0.875rem;
-    color: #6b7280;
-    line-height: 1.4;
-}
-
-/* Resultados Unificados - Nuevo Diseño */
-.results-container {
-    width: 100%;
-}
-
-/* Empty State Unificado */
-.results-empty-state {
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    text-align: center;
-    padding: 48px 24px;
-    border: 1px dashed #d1d5db;
-    border-radius: 12px;
-    background: #fafafa;
-}
-
-.results-empty-state .empty-icon {
-    font-size: 40px;
-    color: #9ca3af;
     margin-bottom: 16px;
-}
-
-.results-empty-state h4 {
-    font-size: 18px;
-    font-weight: 600;
-    color: #1f2937;
-    margin-bottom: 8px;
-}
-
-.results-empty-state p {
-    font-size: 14px;
-    color: #6b7280;
-    max-width: 420px;
-    margin-bottom: 24px;
-    line-height: 1.5;
-}
-
-/* Footer de Tabla */
-.table-footer {
-    display: flex;
-    justify-content: space-between;
-    align-items: flex-start;
-    margin-top: 1rem;
-    padding-top: 1rem;
-    border-top: 1px solid #e5e7eb;
-    flex-wrap: wrap;
-    gap: 1rem;
-}
-
-.table-footer .pagination-wrapper {
-    flex: 1;
-    min-width: 300px;
-}
-
-/* Sección de Resultados Disponibles */
-.available-results-section {
-    margin-top: 2rem;
-}
-
-/* Modal Mejorado - Asociación de Resultados */
-.modal-container.modal-sm {
-    max-width: 600px;
-    width: 90%;
-}
-
-.modal-body {
-    max-height: 60vh;
-    overflow-y: auto;
-}
-
-/* Header de Sección */
-.section-header {
-    margin-bottom: 1rem;
-}
-
-.section-title {
-    font-size: 0.9rem;
-    font-weight: 600;
-    color: var(--text);
-    margin: 0 0 0.25rem 0;
-}
-
-.section-subtitle {
-    font-size: 0.8rem;
-    color: #6b7280;
-    margin: 0;
-    line-height: 1.4;
-}
-
-/* Lista de Resultados con Checkboxes */
-.results-list {
-    border: 1px solid #e5e7eb;
-    border-radius: 6px;
-    padding: 8px;
-    max-height: 300px;
-    overflow-y: auto;
-}
-
-.list-item {
-    display: flex;
-    gap: 10px;
-    padding: 10px;
-    border-radius: 4px;
-    cursor: pointer;
-    transition: background-color 0.2s ease;
-}
-
-.list-item:hover {
-    background: #f9fafb;
-}
-
-.list-checkbox {
-    margin-top: 2px;
-    accent-color: var(--primary);
-}
-
-.list-content {
-    flex: 1;
-}
-
-.list-code {
-    font-size: 0.75rem;
-    font-weight: 600;
-    color: var(--primary);
-    margin-bottom: 2px;
-}
-
-.list-name {
-    font-size: 0.875rem;
-    color: #374151;
-    line-height: 1.3;
-}
-
-/* Feedback de Selección */
-.selection-info {
-    margin-top: 12px;
-    padding: 8px 12px;
-    background: #f3f4f6;
-    border-radius: 4px;
     font-size: 13px;
-    color: #6b7280;
-    text-align: center;
-}
-
-/* Sección de Resultados en Modal de Detalles */
-.empty-section {
-    text-align: center;
-    padding: 1.5rem 1rem;
-}
-
-.empty-section .empty-icon {
-    font-size: 2rem;
-    color: #9ca3af;
-    margin-bottom: 0.5rem;
-}
-
-.empty-section .empty-text {
-    color: #6b7280;
-    font-size: 0.875rem;
-    margin: 0;
-}
-
-.results-summary {
-    display: flex;
-    gap: 1.5rem;
-    margin-bottom: 1rem;
-    padding: 0.75rem;
-    background: #f8fafc;
-    border-radius: 6px;
-    border: 1px solid #e5e7eb;
-}
-
-.summary-item {
-    text-align: center;
-}
-
-.summary-value {
-    display: block;
-    font-size: 1.125rem;
-    font-weight: 600;
-    color: var(--primary);
-    line-height: 1;
-}
-
-.summary-label {
-    font-size: 0.75rem;
-    color: #6b7280;
-    text-transform: lowercase;
-}
-
-.results-list-small {
-    max-height: 200px;
-    overflow-y: auto;
-    border: 1px solid #e5e7eb;
-    border-radius: 6px;
-    padding: 0.5rem;
-}
-
-.result-item {
-    display: grid;
-    grid-template-columns: auto 1fr auto;
-    gap: 0.75rem;
-    padding: 0.5rem;
-    border-bottom: 1px solid #f3f4f6;
-    align-items: center;
-}
-
-.result-item:last-child {
-    border-bottom: none;
-}
-
-.result-code {
-    font-size: 0.75rem;
-    font-weight: 600;
-    color: var(--primary);
-    background: rgba(59, 130, 246, 0.1);
-    padding: 0.25rem 0.5rem;
-    border-radius: 4px;
-    text-align: center;
-    min-width: 80px;
-}
-
-.result-name {
-    font-size: 0.875rem;
-    color: #374151;
-    line-height: 1.3;
-}
-
-.result-duration {
-    font-size: 0.75rem;
-    color: #6b7280;
-    font-weight: 500;
-    text-align: right;
-    min-width: 50px;
-}
-
-/* Responsive para resultados en modal */
-@media (max-width: 768px) {
-    .results-summary {
-        flex-direction: column;
-        gap: 0.75rem;
-    }
-    
-    .result-item {
-        grid-template-columns: 1fr;
-        gap: 0.25rem;
-        text-align: left;
-    }
-    
-    .result-code,
-    .result-duration {
-        text-align: left;
-        min-width: auto;
-    }
-}
-
-/* Mensaje de Acción */
-.action-message {
     display: flex;
     align-items: center;
-    gap: 0.75rem;
-    padding: 0.75rem 1rem;
-    background: #f0f9ff;
-    border: 1px solid #bae6fd;
-    border-radius: 6px;
+    gap: 8px;
 }
 
-.action-icon {
-    color: var(--primary);
-    font-size: 1rem;
-}
-
-.action-content {
-    font-size: 0.875rem;
-    color: var(--text);
-    font-weight: 500;
-}
-
-/* Responsive para métricas */
-@media (max-width: 768px) {
-    .metrics-grid {
-        grid-template-columns: 1fr 1fr;
-        gap: 0.75rem;
-    }
-    
-    .metric-status {
-        grid-column: span 2;
-        justify-content: center;
-    }
-    
-    .competencia-identity .d-flex {
-        flex-direction: column;
-        align-items: flex-start;
-    }
-    
-    .competencia-identity .text-right {
-        text-align: left;
-        margin-top: 1rem;
-    }
-}
-
-@media (max-width: 576px) {
-    .metrics-grid {
-        grid-template-columns: 1fr;
-    }
-    
-    .metric-status {
-        grid-column: span 1;
-    }
-}
-
-/* ===== ESTILOS MEJORADOS PARA BOTONES DE GESTIÓN ===== */
-/* Estilos minimalistas igual que programas - ya definidos arriba */
-
-/* Botón Asignar (Verde) - Mejorado */
-.vista-competencias .btn-asignar {
-    color: #059669;
-    border-color: #059669;
-    background: linear-gradient(135deg, rgba(5, 150, 105, 0.05), rgba(5, 150, 105, 0.02));
-}
-
-.btn-asignar:hover {
-    color: #047857;
-    background: linear-gradient(135deg, rgba(5, 150, 105, 0.1), rgba(5, 150, 105, 0.05));
-    border-color: #047857;
-    transform: translateY(-1px);
-    box-shadow: 0 4px 8px rgba(5, 150, 105, 0.2);
-}
-
-.btn-asignar:active {
-    transform: translateY(0);
-    box-shadow: 0 2px 4px rgba(5, 150, 105, 0.2);
-}
-
-/* Botón Desasignar (Rojo) - Mejorado */
-.vista-competencias .btn-desasignar {
+.vista-competencias .modal-alert.alert-danger {
+    background: #fef2f2;
+    border: 1px solid #fecaca;
     color: #dc2626;
-    border-color: #dc2626;
-    background: linear-gradient(135deg, rgba(220, 38, 38, 0.05), rgba(220, 38, 38, 0.02));
 }
 
-.btn-desasignar:hover {
-    color: #b91c1c;
-    background: linear-gradient(135deg, rgba(220, 38, 38, 0.1), rgba(220, 38, 38, 0.05));
-    border-color: #b91c1c;
-    transform: translateY(-1px);
-    box-shadow: 0 4px 8px rgba(220, 38, 38, 0.2);
+.vista-competencias .modal-alert.alert-warning {
+    background: #fffbeb;
+    border: 1px solid #fed7aa;
+    color: #d97706;
 }
 
-.btn-desasignar:active {
-    transform: translateY(0);
-    box-shadow: 0 2px 4px rgba(220, 38, 38, 0.2);
+.vista-competencias .modal-alert.alert-info {
+    background: #eff6ff;
+    border: 1px solid #dbeafe;
+    color: #2563eb;
 }
 
-/* Force override para asegurar estilos en tablas - Estilo minimalista como programas */
-.vista-competencias .cell-accion .btn-action,
-.vista-competencias .cell-accion button.btn-action,
-.vista-competencias td.cell-accion .btn-action,
-.vista-competencias tr td .btn-action,
-.vista-competencias .modern-table td .btn-action,
-.vista-competencias .modern-table td button {
-    border-radius: 4px;
-    border: none;
-    display: inline-flex;
-    align-items: center;
-    justify-content: center;
-    transition: all 0.2s ease;
-    font-size: 0.875rem;
-    line-height: 1;
-    padding: 0;
-    margin: 0 2px;
-}
-
-.vista-competencias .cell-accion .btn-action.btn-asignar,
-.vista-competencias .cell-accion button.btn-action.btn-asignar,
-.vista-competencias .modern-table td .btn-action.btn-asignar,
-.vista-competencias .modern-table td button.vista-competencias .btn-asignar {
-    background: rgba(16, 185, 129, 0.1);
-    color: var(--success);
-}
-
-.vista-competencias .cell-accion .btn-action.btn-desasignar,
-.vista-competencias .cell-accion button.btn-action.btn-desasignar,
-.vista-competencias .modern-table td .btn-action.btn-desasignar,
-.vista-competencias .modern-table td button.vista-competencias .btn-desasignar {
-    background: rgba(239, 68, 68, 0.1);
-    color: var(--danger);
-}
-
-/* Responsive para botones */
-@media (max-width: 768px) {
-    .vista-competencias .btn-action {
-        padding: 0.5rem 0.75rem;
-        font-size: 0.75rem;
-        min-width: 28px;
-        height: 28px;
-    }
-    
-    .btn-action i {
-        font-size: 0.7rem;
-    }
+/* Footer específico para competencias - evitar que se pegue a la tabla */
+.vista-competencias .app-footer {
+    margin-top: 3rem !important;
 }

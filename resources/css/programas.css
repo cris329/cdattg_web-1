@@ -22,10 +22,10 @@ No se permiten selectores globales para acciones.
 .vista-programas .content-wrapper {
     margin-left: 250px !important;
     background: var(--bg-light);
-    min-height: 100vh;
+    height: auto !important;
     display: flex;
     flex-direction: column;
-    padding: 0 0.5rem;
+    padding: 0 0.5rem 3rem 0.5rem !important;
 }
 
 .vista-programas .main-sidebar {
@@ -38,93 +38,90 @@ No se permiten selectores globales para acciones.
 }
 
 /* ===== HEADER ADMINISTRATIVO COMPACTO ===== */
-.vista-programas .admin-header .col-md-8 {
-    padding: 0 0.5rem;
+.admin-header .col-md-8 {
+    padding: 0 0.5rem !important;
 }
 
-.vista-programas .admin-header .col-md-4 {
-    padding: 0 0.5rem;
+.admin-header .col-md-4 {
+    padding: 0 0.5rem !important;
 }
 
-.vista-programas .admin-header {
-    background: white;
-    border-bottom: 1px solid var(--border);
-    padding: 1.25rem 0;
-    margin-bottom: 1rem;
-    box-shadow: 0 1px 2px rgba(0,0,0,0.04);
-    width: 100%;
-    flex-shrink: 0;
+.admin-header {
+    background: white !important;
+    border-bottom: 1px solid var(--border) !important;
+    padding: 1.25rem 0 !important;
+    margin-bottom: 1rem !important;
+    box-shadow: 0 1px 2px rgba(0,0,0,0.04) !important;
+    width: 100% !important;
+    flex-shrink: 0 !important;
 }
 
-.vista-programas .admin-header-content {
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-    padding: 0 0.5rem;
+.admin-header-content {
+    display: flex !important;
+    align-items: center !important;
+    justify-content: space-between !important;
+    padding: 0 0.5rem !important;
 }
 
-.vista-programas .admin-header-left {
-    display: flex;
-    align-items: center;
+.admin-header-left {
+    display: flex !important;
+    align-items: center !important;
 }
 
-.vista-programas .admin-header-text {
-    flex: 1;
+.admin-header-text {
+    flex: 1 !important;
 }
 
-.vista-programas .admin-header-icon {
-    width: 40px;
-    height: 40px;
-    background: var(--primary);
-    border-radius: 50%;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    color: white;
-    font-size: 1rem;
-    margin-right: 0.75rem;
-    flex-shrink: 0;
+.admin-header-icon {
+    width: 40px !important;
+    height: 40px !important;
+    background: var(--primary) !important;
+    border-radius: 50% !important;
+    display: flex !important;
+    align-items: center !important;
+    justify-content: center !important;
+    color: white !important;
+    font-size: 1rem !important;
+    margin-right: 0.75rem !important;
+    flex-shrink: 0 !important;
 }
 
-.vista-programas .admin-header-content {
-    flex: 1;
+.admin-header-title {
+    font-size: 1.25rem !important;
+    font-weight: 600 !important;
+    color: var(--text) !important;
+    margin-bottom: 0.125rem !important;
+    line-height: 1.2 !important;
 }
 
-.vista-programas .admin-header-title {
-    font-size: 1.25rem;
-    font-weight: 600;
-    color: var(--text);
-    margin-bottom: 0.125rem;
-    line-height: 1.2;
+.admin-header-subtitle {
+    font-size: 0.8rem !important;
+    color: var(--text-muted) !important;
+    margin-bottom: 0 !important;
+    line-height: 1.3 !important;
 }
 
-.vista-programas .admin-header-subtitle {
-    font-size: 0.8rem;
-    color: var(--text-muted);
-    margin-bottom: 0;
-    line-height: 1.3;
+.admin-breadcrumb {
+    background: transparent !important;
+    padding: 0 !important;
+    margin: 0 !important;
 }
 
-.vista-programas .admin-breadcrumb {
-    background: transparent;
-    padding: 0;
-    margin: 0;
-    display: inline-flex;
-    align-items: center;
+.breadcrumb {
+    background: transparent !important;
+    padding: 0 !important;
+    margin: 0 !important;
+    font-size: 0.875rem !important;
 }
 
-.vista-programas .admin-breadcrumb .breadcrumb {
-    background: transparent;
-    padding: 0;
-    margin: 0;
-    font-size: 0.75rem;
-    display: flex;
-    align-items: center;
-    flex-wrap: nowrap;
+.breadcrumb-item + .breadcrumb-item::before {
+    content: "/" !important;
+    color: var(--text-muted) !important;
 }
 
-.vista-programas .admin-breadcrumb .breadcrumb-item {
-    color: var(--text-muted);
+.breadcrumb-item.active {
+    color: var(--text) !important;
+    font-weight: 500 !important;
 }
 
 .vista-programas .admin-breadcrumb .breadcrumb-item a {
@@ -149,7 +146,7 @@ No se permiten selectores globales para acciones.
     box-shadow: var(--shadow);
     border: none;
     width: 100%;
-    flex: 1;
+    flex: 0 1 auto !important;
     display: flex;
     flex-direction: column;
     margin-bottom: 1rem;
@@ -214,6 +211,164 @@ No se permiten selectores globales para acciones.
     border: 1px solid var(--border);
     border-radius: 4px;
     font-size: 0.8rem;
+}
+
+/* Filtros adicionales */
+.vista-programas .filters-container {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    flex-wrap: wrap;
+}
+
+.vista-programas .filter-select {
+    padding: 0.5rem;
+    border: 1px solid var(--border);
+    border-radius: 4px;
+    font-size: 0.8rem;
+    background: white;
+    min-width: 150px;
+    transition: all 0.2s ease;
+}
+
+.vista-programas .filter-select:focus {
+    outline: none;
+    border-color: var(--primary-light);
+}
+
+.vista-programas .btn-clear-filters {
+    padding: 0.5rem;
+    border: 1px solid var(--danger);
+    border-radius: 4px;
+    background: white;
+    color: var(--danger);
+    font-size: 0.8rem;
+    cursor: pointer;
+    transition: all 0.2s ease;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    min-width: 32px;
+    height: 32px;
+}
+
+.vista-programas .btn-clear-filters:hover {
+    background: var(--danger);
+    color: white;
+}
+
+.vista-programas .loading-indicator {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    padding: 0.5rem 1rem;
+    background: var(--bg-light);
+    border: 1px solid var(--border);
+    border-radius: 4px;
+    font-size: 0.875rem;
+    color: var(--text-muted);
+    margin-bottom: 1rem;
+    animation: fadeIn 0.3s ease;
+}
+
+.vista-programas .loading-indicator i {
+    color: var(--primary);
+}
+
+@keyframes fadeIn {
+    from { opacity: 0; transform: translateY(-10px); }
+    to { opacity: 1; transform: translateY(0); }
+}
+
+/* Responsive */
+@media (max-width: 768px) {
+    .vista-programas .content-wrapper {
+        margin-left: 0 !important;
+    }
+    
+    .vista-programas .main-sidebar {
+        transform: translateX(-100%) !important;
+        transition: transform 0.3s ease !important;
+    }
+    
+    .vista-programas .main-sidebar.sidebar-open {
+        transform: translateX(0) !important;
+    }
+    
+    .vista-programas .admin-header {
+        padding: 0.5rem 0;
+    }
+    
+    .vista-programas .admin-header-icon {
+        width: 32px;
+        height: 32px;
+        font-size: 0.875rem;
+        margin-right: 0.5rem;
+    }
+    
+    .vista-programas .admin-header-title {
+        font-size: 1.125rem;
+    }
+    
+    .vista-programas .admin-header-subtitle {
+        font-size: 0.75rem;
+    }
+    
+    .toolbar {
+        flex-direction: column;
+        align-items: stretch;
+        gap: 0.5rem;
+    }
+    
+    .search-container {
+        min-width: auto;
+    }
+    
+    .filters-container {
+        justify-content: center;
+        flex-wrap: wrap;
+    }
+    
+    .filter-select {
+        min-width: 140px;
+        flex: 1;
+        min-width: 120px;
+    }
+    
+    .actions-group {
+        flex-direction: column;
+    }
+    
+    .vista-programas .btn-action {
+        width: 100%;
+    }
+    
+    .modern-table {
+        table-layout: auto;
+    }
+    
+    .modern-table th,
+    .modern-table td {
+        white-space: normal;
+    }
+}
+
+@media (max-width: 480px) {
+    .vista-programas .filters-container {
+        flex-direction: column;
+        align-items: stretch;
+    }
+    
+    .filter-select {
+        min-width: auto;
+        width: 100%;
+    }
+    
+    .vista-programas .btn-clear-filters {
+        align-self: center;
+        width: auto;
+        min-width: 80px;
+    }
 }
 
 /* Button Primary */
@@ -1610,6 +1765,219 @@ No se permiten selectores globales para acciones.
 
 .toast-minimal.info .toast-icon { 
     color: #2563eb;   /* azul suave */
+}
+
+/* ===== MODALES UNIFICADOS - PROGRAMAS ===== */
+/* Overlay base para todas las modales */
+.vista-programas .modal-overlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background-color: rgba(0, 0, 0, 0.5);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    z-index: 1050;
+    padding: 20px;
+}
+
+/* Contenedor principal unificado */
+.vista-programas .modal-container {
+    width: 100%;
+    max-width: 600px;
+    max-height: 90vh;
+    background: #ffffff;
+    border-radius: 12px;
+    display: flex;
+    flex-direction: column;
+    overflow: hidden;
+    box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.1), 0 10px 10px -5px rgba(0, 0, 0, 0.04);
+}
+
+/* Modal grande para formularios */
+.vista-programas .modal-container.modal-lg {
+    max-width: 800px;
+}
+
+/* Header unificado */
+.vista-programas .modal-header {
+    padding: 20px 24px 16px 24px;
+    border-bottom: 1px solid #e5e7eb;
+    background: #ffffff;
+    flex-shrink: 0;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+}
+
+.vista-programas .modal-title {
+    font-size: 18px;
+    font-weight: 600;
+    margin: 0;
+    color: #1f2937;
+    line-height: 1.2;
+}
+
+/* Botón de cierre unificado */
+.vista-programas .modal-close {
+    width: 32px;
+    height: 32px;
+    border-radius: 6px;
+    border: none;
+    background: transparent;
+    font-size: 18px;
+    color: #6b7280;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: all 0.2s ease;
+    opacity: 0.7;
+}
+
+.vista-programas .modal-close:hover {
+    background: #f1f5f9;
+    color: #111827;
+    opacity: 1;
+}
+
+/* Body unificado */
+.vista-programas .modal-body {
+    flex: 1;
+    overflow-y: auto;
+    padding: 24px;
+}
+
+/* Footer específico para programas - evitar que se pegue a la tabla */
+.vista-programas .app-footer {
+    margin-top: 3rem !important;
+}
+
+/* Footer unificado */
+.vista-programas .modal-footer {
+    padding: 16px 24px 20px 24px;
+    border-top: 1px solid #e5e7eb;
+    background: #ffffff;
+    flex-shrink: 0;
+    display: flex;
+    justify-content: flex-end;
+    gap: 12px;
+}
+
+/* Botones unificados */
+.vista-programas .btn-modal {
+    padding: 10px 16px;
+    border-radius: 6px;
+    font-size: 14px;
+    font-weight: 500;
+    border: 1px solid transparent;
+    cursor: pointer;
+    transition: all 0.2s ease;
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    text-decoration: none;
+}
+
+.vista-programas .btn-modal.btn-secondary {
+    background: #ffffff;
+    color: #374151;
+    border-color: #d1d5db;
+}
+
+.vista-programas .btn-modal.btn-secondary:hover {
+    background: #f9fafb;
+    color: #374151;
+}
+
+.vista-programas .btn-modal.btn-primary {
+    background: var(--primary);
+    color: white;
+    border-color: var(--primary);
+}
+
+.vista-programas .btn-modal.btn-primary:hover {
+    background: var(--primary-light);
+    color: white;
+}
+
+.vista-programas .btn-modal.btn-danger {
+    background: #dc2626;
+    color: white;
+    border-color: #dc2626;
+}
+
+.vista-programas .btn-modal.btn-danger:hover {
+    background: #b91c1c;
+    color: white;
+}
+
+.vista-programas .btn-modal.btn-success {
+    background: #10b981;
+    color: white;
+    border-color: #10b981;
+}
+
+.vista-programas .btn-modal.btn-success:hover {
+    background: #059669;
+    color: white;
+}
+
+/* Estados especiales */
+.vista-programas .btn-modal:disabled {
+    opacity: 0.6;
+    cursor: not-allowed;
+}
+
+/* Secciones dentro del modal */
+.vista-programas .modal-section {
+    margin-bottom: 24px;
+}
+
+.vista-programas .modal-section:last-child {
+    margin-bottom: 0;
+}
+
+.vista-programas .section-title {
+    font-size: 14px;
+    font-weight: 600;
+    color: #374151;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+    margin: 0 0 12px 0;
+    padding-bottom: 8px;
+    border-bottom: 1px solid #f1f5f9;
+}
+
+/* Alertas en modales */
+.vista-programas .modal-alert {
+    padding: 12px 16px;
+    border-radius: 6px;
+    margin-bottom: 16px;
+    font-size: 13px;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+}
+
+.vista-programas .modal-alert.alert-danger {
+    background: #fef2f2;
+    border: 1px solid #fecaca;
+    color: #dc2626;
+}
+
+.vista-programas .modal-alert.alert-warning {
+    background: #fffbeb;
+    border: 1px solid #fed7aa;
+    color: #d97706;
+}
+
+.vista-programas .modal-alert.alert-info {
+    background: #eff6ff;
+    border: 1px solid #dbeafe;
+    color: #2563eb;
 }
 
 /* ===== NOTIFICACIONES ===== */

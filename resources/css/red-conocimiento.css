@@ -22,10 +22,10 @@ No se permiten selectores globales para acciones.
 .vista-red-conocimiento .content-wrapper {
     margin-left: 250px !important;
     background: var(--bg-light);
-    min-height: 100vh;
+    height: auto !important;
     display: flex;
     flex-direction: column;
-    padding: 0 0.5rem;
+    padding: 0 0.5rem 3rem 0.5rem !important;
 }
 
 .vista-red-conocimiento .main-sidebar {
@@ -149,7 +149,7 @@ No se permiten selectores globales para acciones.
     box-shadow: var(--shadow);
     border: none;
     width: 100%;
-    flex: 1;
+    flex: 0 1 auto !important;
     display: flex;
     flex-direction: column;
     margin-bottom: 1rem;
@@ -1440,6 +1440,11 @@ No se permiten selectores globales para acciones.
     flex: 1;
     overflow-y: auto;
     padding: 24px;
+}
+
+/* Footer específico para redes de conocimiento - evitar que se pegue a la tabla */
+.vista-red-conocimiento .app-footer {
+    margin-top: 3rem !important;
 }
 
 /* Footer unificado */

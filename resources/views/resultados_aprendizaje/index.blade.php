@@ -1,5 +1,9 @@
 @extends('adminlte::page')
 
+@section('css')
+    @vite(['resources/css/resultados-aprendizaje.css'])
+@endsection
+
 @section('title', 'Resultados de Aprendizaje')
 
 @section('content_header')

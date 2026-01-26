@@ -47,7 +47,9 @@ class GuiaAprendizajeForm extends Component
     // Para relaciones
     public $resultadosSeleccionados = [];
     public $resultadosDisponibles = [];
+    public $resultadosAprendizaje = [];
     public $searchResultado = '';
+    public $selectAll = false;
     
     protected $listeners = [
         'closeModal' => 'handleCloseModal',
@@ -62,6 +64,8 @@ class GuiaAprendizajeForm extends Component
             $this->loadGuiaData();
         }
         
+        // Cargar todos los resultados de aprendizaje para el Blade
+        $this->resultadosAprendizaje = ResultadosAprendizaje::orderBy('codigo')->get();
         $this->cargarResultadosDisponibles();
     }
 
@@ -123,6 +127,29 @@ class GuiaAprendizajeForm extends Component
             unset($this->resultadosSeleccionados[$key]);
             $this->resultadosSeleccionados = array_values($this->resultadosSeleccionados);
             $this->cargarResultadosDisponibles();
+        }
+    }
+    
+    public function limpiarSeleccion()
+    {
+        $this->resultadosSeleccionados = [];
+        $this->selectAll = false;
+        $this->cargarResultadosDisponibles();
+    }
+    
+    public function seleccionarTodos()
+    {
+        $this->resultadosSeleccionados = $this->resultadosDisponibles->pluck('id')->toArray();
+        $this->selectAll = true;
+        $this->cargarResultadosDisponibles();
+    }
+    
+    public function updatedSelectAll()
+    {
+        if ($this->selectAll) {
+            $this->seleccionarTodos();
+        } else {
+            $this->limpiarSeleccion();
         }
     }
 

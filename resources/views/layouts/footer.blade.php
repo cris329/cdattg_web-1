@@ -14,7 +14,7 @@
     <div class="footer-container" style="
         max-width: 1400px !important;
         margin: 0 auto !important;
-        padding: 20px 24px !important;
+        padding: 40px 24px !important;
         display: grid !important;
         grid-template-columns: 1fr 1fr 1fr !important;
         align-items: center !important;

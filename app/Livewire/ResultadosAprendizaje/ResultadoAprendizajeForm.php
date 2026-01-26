@@ -61,7 +61,11 @@ class ResultadoAprendizajeForm extends Component
         $this->codigo = $resultado->codigo;
         $this->nombre = $resultado->nombre;
         $this->duracion = $resultado->duracion;
-        $this->competencia_id = $resultado->competencias->first()?->id;
+        
+        // Cargar la primera competencia si existe, si no dejar como null
+        $primeraCompetencia = $resultado->competencias->first();
+        $this->competencia_id = $primeraCompetencia ? $primeraCompetencia->id : null;
+        
         $this->status = $resultado->status;
     }
 

@@ -178,77 +178,160 @@
             
             <!-- Bloque 5 - Resultados de Aprendizaje -->
             <div class="section-block">
-                <h6 class="section-title">Resultados de Aprendizaje Asociados</h6>
-                <div class="row g-3">
-                    <div class="col-md-12">
-                        <div class="form-group">
-                            <label class="form-label-erp">Búsqueda de Resultados</label>
-                            <div class="input-group-erp">
-                                <input type="text" 
-                                       wire:model.live="searchResultado" 
-                                       class="form-control-erp"
-                                       placeholder="Buscar resultados de aprendizaje...">
-                                <span class="input-group-text-erp">
-                                    <i class="fas fa-search"></i>
-                                </span>
-                            </div>
-                        </div>
+                <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 1rem;">
+                    <h6 class="section-title" style="margin-bottom: 0;">Gestión de Resultados de Aprendizaje</h6>
+                    <div style="display: flex; gap: 0.5rem;">
+                        <span style="font-size: 0.875rem; color: #6b7280; padding: 0.25rem 0.75rem; background: #f8fafc; border-radius: 4px;">
+                            {{ count($resultadosSeleccionados) }} seleccionados
+                        </span>
+                        <span style="font-size: 0.875rem; color: #6b7280; padding: 0.25rem 0.75rem; background: #f0fdf4; border-radius: 4px;">
+                            {{ $resultadosDisponibles->count() }} disponibles
+                        </span>
                     </div>
                 </div>
                 
-                <div class="row g-3">
-                    <div class="col-md-6">
-                        <div class="form-group">
-                            <label class="form-label-erp">Seleccionados ({{ count($resultadosSeleccionados) }})</label>
-                            <div class="resultados-list">
-                                @if(count($resultadosSeleccionados) > 0)
-                                    @foreach($resultadosSeleccionados as $resultadoId)
-                                        @php
-                                            $resultado = $resultadosAprendizaje->where('id', $resultadoId)->first();
-                                        @endphp
-                                        @if($resultado)
-                                            <div class="resultado-item">
-                                                <span class="resultado-codigo">{{ $resultado->codigo }}</span>
-                                                <span class="resultado-nombre">{{ Str::limit($resultado->nombre, 50) }}</span>
-                                                <button type="button" wire:click="quitarResultado({{ $resultadoId }})" class="btn-remove-erp">
-                                                    <i class="fas fa-times"></i>
-                                                </button>
-                                            </div>
-                                        @endif
-                                    @endforeach
-                                @else
-                                    <div class="empty-resultados-erp">
-                                        <i class="fas fa-inbox"></i>
-                                        <span>No hay resultados seleccionados</span>
-                                    </div>
-                                @endif
-                            </div>
-                        </div>
-                    </div>
-                    <div class="col-md-6">
-                        <div class="form-group">
-                            <label class="form-label-erp">Disponibles</label>
-                            <div class="resultados-list">
-                                @if($resultadosDisponibles->count() > 0)
-                                    @foreach($resultadosDisponibles as $resultado)
-                                        <div class="resultado-item">
-                                            <span class="resultado-codigo">{{ $resultado->codigo }}</span>
-                                            <span class="resultado-nombre">{{ Str::limit($resultado->nombre, 50) }}</span>
-                                            <button type="button" wire:click="agregarResultado({{ $resultado->id }})" class="btn-add-erp">
-                                                <i class="fas fa-plus"></i>
-                                            </button>
-                                        </div>
-                                    @endforeach
-                                @else
-                                    <div class="empty-resultados-erp">
-                                        <i class="fas fa-search"></i>
-                                        <span>No hay resultados disponibles</span>
-                                    </div>
-                                @endif
-                            </div>
-                        </div>
+                <!-- Filtro de búsqueda -->
+                <div class="form-group" style="margin-bottom: 1rem;">
+                    <div class="input-group-erp">
+                        <input type="text" 
+                               wire:model.live="searchResultado" 
+                               class="form-control-erp"
+                               placeholder="Buscar resultados por código o descripción...">
+                        <span class="input-group-text-erp">
+                            <i class="fas fa-search"></i>
+                        </span>
                     </div>
                 </div>
+                
+                <!-- Tabla de Resultados Disponibles -->
+                <div class="form-group">
+                    <label class="form-label-erp">Resultados Disponibles para Asignar</label>
+                    <div class="table-scroll-wrapper" style="max-height: 200px; overflow-y: auto; border: 1px solid #e5e7eb; border-radius: 6px;">
+                        <table class="modern-table" style="margin: 0;">
+                            <thead style="position: sticky; top: 0; background: #f9fafb; z-index: 10;">
+                                <tr>
+                                    <th style="width: 50px; min-width: 50px; max-width: 50px; text-align: center; vertical-align: middle; padding-left: 20px; padding-right: 8px;">
+                                        <input type="checkbox" 
+                                               wire:model.live="selectAll" 
+                                               class="form-check-input">
+                                    </th>
+                                    <th>Código</th>
+                                    <th>Nombre</th>
+                                    <th>Estado</th>
+                                    <th style="width: 80px;">Acción</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                @forelse ($resultadosDisponibles as $resultado)
+                                    <tr>
+                                        <td style="width: 50px; min-width: 50px; max-width: 50px; text-align: center; vertical-align: middle; padding-left: 20px; padding-right: 8px; position: relative;">
+                                            <input type="checkbox" 
+                                                   wire:model.live="resultadosSeleccionados" 
+                                                   value="{{ $resultado->id }}"
+                                                   class="form-check-input">
+                                        </td>
+                                        <td style="font-weight: 500; font-size: 0.875rem;">{{ $resultado->codigo }}</td>
+                                        <td style="font-size: 0.875rem;">{{ Str::limit($resultado->nombre, 60) }}</td>
+                                        <td>
+                                            <span class="badge-modern {{ $resultado->status ? 'badge-active' : 'badge-inactive' }}">
+                                                {{ $resultado->status ? 'Activo' : 'Inactivo' }}
+                                            </span>
+                                        </td>
+                                        <td style="text-align: center;">
+                                            <button type="button" 
+                                                    wire:click="agregarResultado({{ $resultado->id }})" 
+                                                    class="btn-action btn-success" 
+                                                    title="Asignar resultado">
+                                                <i class="fas fa-plus"></i>
+                                            </button>
+                                        </td>
+                                    </tr>
+                                @empty
+                                    <tr>
+                                        <td colspan="5" style="text-align: center; padding: 2rem;">
+                                            <div style="color: #6b7280;">
+                                                <i class="fas fa-search fa-2x mb-2"></i>
+                                                <p>No hay resultados disponibles</p>
+                                                <small style="font-size: 0.75rem;">Intenta ajustar el término de búsqueda</small>
+                                            </div>
+                                        </td>
+                                    </tr>
+                                @endforelse
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+                
+                <!-- Tabla de Resultados Seleccionados -->
+                <div class="form-group">
+                    <label class="form-label-erp">Resultados Asignados a la Guía</label>
+                    <div class="table-scroll-wrapper" style="max-height: 200px; overflow-y: auto; border: 1px solid #e5e7eb; border-radius: 6px;">
+                        <table class="modern-table" style="margin: 0;">
+                            <thead style="position: sticky; top: 0; background: #f9fafb; z-index: 10;">
+                                <tr>
+                                    <th>Código</th>
+                                    <th>Nombre</th>
+                                    <th>Estado</th>
+                                    <th style="width: 80px;">Acción</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                @forelse ($resultadosSeleccionados as $resultadoId)
+                                    @php
+                                        $resultado = $resultadosAprendizaje->where('id', $resultadoId)->first();
+                                    @endphp
+                                    @if($resultado)
+                                        <tr>
+                                            <td style="font-weight: 500; font-size: 0.875rem;">{{ $resultado->codigo }}</td>
+                                            <td style="font-size: 0.875rem;">{{ Str::limit($resultado->nombre, 60) }}</td>
+                                            <td>
+                                                <span class="badge-modern {{ $resultado->status ? 'badge-active' : 'badge-inactive' }}">
+                                                    {{ $resultado->status ? 'Activo' : 'Inactivo' }}
+                                                </span>
+                                            </td>
+                                            <td style="text-align: center;">
+                                                <button type="button" 
+                                                        wire:click="quitarResultado({{ $resultadoId }})" 
+                                                        class="btn-action btn-danger" 
+                                                        title="Quitar resultado">
+                                                    <i class="fas fa-minus"></i>
+                                                </button>
+                                            </td>
+                                        </tr>
+                                    @endif
+                                @empty
+                                    <tr>
+                                        <td colspan="4" style="text-align: center; padding: 2rem;">
+                                            <div style="color: #6b7280;">
+                                                <i class="fas fa-inbox fa-2x mb-2"></i>
+                                                <p>No hay resultados asignados</p>
+                                                <small style="font-size: 0.75rem;">Selecciona resultados de la tabla de disponibles</small>
+                                            </div>
+                                        </td>
+                                    </tr>
+                                @endforelse
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+                
+                <!-- Acciones Masivas -->
+                @if(count($resultadosSeleccionados) > 0)
+                    <div style="display: flex; justify-content: flex-end; gap: 0.5rem; margin-top: 1rem;">
+                        <button type="button" 
+                                wire:click="limpiarSeleccion" 
+                                class="btn-erp btn-secondary">
+                            <i class="fas fa-times"></i>
+                            Limpiar Selección
+                        </button>
+                        <button type="button" 
+                                wire:click="seleccionarTodos" 
+                                class="btn-erp btn-primary">
+                            <i class="fas fa-check-double"></i>
+                            Seleccionar Todos
+                        </button>
+                    </div>
+                @endif
             </div>
             
             <!-- Bloque 6 - Estado -->

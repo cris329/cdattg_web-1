@@ -26,6 +26,11 @@ class ResultadoAprendizajeIndex extends Component
     public $showCompetenciasModal = false;
     public $selectedResultado = null;
     public $selectedId = null;
+    
+    // Propiedades para gestión de competencias
+    public $searchCompetencias = '';
+    public $competenciasSeleccionadas = [];
+    public $selectAll = false;
 
     protected $queryString = [
         'search' => ['except' => ''],
@@ -328,5 +333,117 @@ class ResultadoAprendizajeIndex extends Component
         }
         
         return number_format($horas, 0, ',', '.');
+    }
+    
+    // Métodos para gestión de competencias en la modal
+    public function getCompetenciasDisponibles()
+    {
+        $query = Competencia::query();
+        
+        // Aplicar búsqueda
+        if ($this->searchCompetencias) {
+            $query->where(function($q) {
+                $q->where('codigo', 'like', '%' . $this->searchCompetencias . '%')
+                  ->orWhere('nombre', 'like', '%' . $this->searchCompetencias . '%');
+            });
+        }
+        
+        // Excluir competencias ya asignadas al resultado actual
+        if ($this->selectedResultado) {
+            $competenciasAsignadas = $this->selectedResultado->competencias->pluck('id')->toArray();
+            $query->whereNotIn('id', $competenciasAsignadas);
+        }
+        
+        return $query->orderBy('codigo')->get();
+    }
+    
+    public function refreshCompetencias()
+    {
+        $this->searchCompetencias = '';
+        $this->competenciasSeleccionadas = [];
+        $this->selectAll = false;
+    }
+    
+    public function asignarCompetencia($competenciaId)
+    {
+        if (!$this->selectedResultado) return;
+        
+        $competencia = Competencia::find($competenciaId);
+        if (!$competencia) return;
+        
+        // Verificar si ya está asignada
+        if (!$this->selectedResultado->competencias()->where('competencias.id', $competenciaId)->exists()) {
+            $this->selectedResultado->competencias()->attach($competenciaId, [
+                'user_create_id' => auth()->id(),
+                'user_edit_id' => auth()->id(),
+            ]);
+            
+            $this->dispatch('notify', [
+                'type' => 'success',
+                'message' => 'Competencia asignada correctamente'
+            ]);
+        }
+        
+        $this->refreshCompetencias();
+    }
+    
+    public function desasignarCompetencia($competenciaId)
+    {
+        if (!$this->selectedResultado) return;
+        
+        $this->selectedResultado->competencias()->detach($competenciaId);
+        
+        $this->dispatch('notify', [
+            'type' => 'success',
+            'message' => 'Competencia desasignada correctamente'
+        ]);
+        
+        $this->refreshCompetencias();
+    }
+    
+    public function asignarSeleccionadas()
+    {
+        if (!$this->selectedResultado || empty($this->competenciasSeleccionadas)) return;
+        
+        foreach ($this->competenciasSeleccionadas as $competenciaId) {
+            // Verificar si ya está asignada
+            if (!$this->selectedResultado->competencias()->where('competencias.id', $competenciaId)->exists()) {
+                $this->selectedResultado->competencias()->attach($competenciaId, [
+                    'user_create_id' => auth()->id(),
+                    'user_edit_id' => auth()->id(),
+                ]);
+            }
+        }
+        
+        $this->dispatch('notify', [
+            'type' => 'success',
+            'message' => count($this->competenciasSeleccionadas) . ' competencias asignadas correctamente'
+        ]);
+        
+        $this->refreshCompetencias();
+    }
+    
+    public function desasignarTodas()
+    {
+        if (!$this->selectedResultado) return;
+        
+        $competenciasCount = $this->selectedResultado->competencias->count();
+        $this->selectedResultado->competencias()->detach();
+        
+        $this->dispatch('notify', [
+            'type' => 'success',
+            'message' => $competenciasCount . ' competencias desasignadas correctamente'
+        ]);
+        
+        $this->refreshCompetencias();
+    }
+    
+    public function updatedSelectAll()
+    {
+        if ($this->selectAll) {
+            $this->competenciasSeleccionadas = $this->getCompetenciasDisponibles()->pluck('id')->toArray();
+        } else {
+            $this->competenciasSeleccionadas = [];
+        }
     }
 }

@@ -15,8 +15,37 @@
                    placeholder="Buscar por código, nombre...">
         </div>
         
+        <!-- Filtros adicionales -->
+        <div class="filters-container">
+            <select wire:model.live="statusFilter" class="filter-select">
+                <option value="">Todos los estados</option>
+                <option value="1">Activos</option>
+                <option value="0">Inactivos</option>
+            </select>
+            
+            <select wire:model.live="redConocimientoFilter" class="filter-select">
+                <option value="">Todas las redes</option>
+                @foreach($redesConocimiento as $red)
+                    <option value="{{ $red->id }}">{{ $red->nombre }}</option>
+                @endforeach
+            </select>
+            
+            <select wire:model.live="nivelFilter" class="filter-select">
+                <option value="">Todos los niveles</option>
+                @foreach($nivelesFormacion as $nivel)
+                    <option value="{{ $nivel->id }}">{{ $nivel->name }}</option>
+                @endforeach
+            </select>
+            
+            @if ($search || $statusFilter !== '' || $redConocimientoFilter !== '' || $nivelFilter !== '')
+                <button wire:click="clearFilters" class="btn-clear-filters" title="Limpiar filtros">
+                    <i class="fas fa-times"></i>
+                </button>
+            @endif
+        </div>
+        
         <div class="results-selector">
-            <select wire:model="perPage" class="results-select">
+            <select wire:model.live="perPage" class="results-select">
                 <option value="10">10 resultados</option>
                 <option value="15">15 resultados</option>
                 <option value="25">25 resultados</option>
@@ -30,6 +59,32 @@
                 Nuevo Programa
             </button>
         @endcan
+    </div>
+
+    <!-- Indicador de carga -->
+    <div wire:loading wire:target="search" class="loading-indicator" style="display: none;">
+        <i class="fas fa-spinner fa-spin"></i>
+        Buscando...
+    </div>
+
+    <div wire:loading wire:target="statusFilter" class="loading-indicator" style="display: none;">
+        <i class="fas fa-spinner fa-spin"></i>
+        Filtrando por estado...
+    </div>
+
+    <div wire:loading wire:target="redConocimientoFilter" class="loading-indicator" style="display: none;">
+        <i class="fas fa-spinner fa-spin"></i>
+        Filtrando por red...
+    </div>
+
+    <div wire:loading wire:target="nivelFilter" class="loading-indicator" style="display: none;">
+        <i class="fas fa-spinner fa-spin"></i>
+        Filtrando por nivel...
+    </div>
+
+    <div wire:loading wire:target="perPage" class="loading-indicator" style="display: none;">
+        <i class="fas fa-spinner fa-spin"></i>
+        Actualizando resultados...
     </div>
 
     <!-- Tabla ERP - Solución Definitiva (1 sola tabla) -->
@@ -159,44 +214,53 @@
 
     <!-- Modal Confirmación Eliminación -->
     @if ($showDeleteModal && $selectedPrograma)
-        <div class="modal fade show d-block" tabindex="-1" style="background-color: rgba(0,0,0,0.5);">
-            <div class="modal-dialog modal-sm" style="margin-top: 50px; margin-bottom: 50px;">
-                <div class="modal-content">
-                    <!-- 1️⃣ Header neutro -->
-                    <div class="modal-header-simple">
-                        <h5 class="modal-title text-danger">Eliminar programa</h5>
-                        <button class="modal-close" wire:click="closeDeleteModal">✕</button>
+        <div class="modal-overlay" wire:click="closeDeleteModal">
+            <div class="modal-container" wire:click.stop>
+                
+                <!-- Header -->
+                <div class="modal-header">
+                    <h5 class="modal-title">Eliminar Programa</h5>
+                </div>
+                
+                <!-- Body -->
+                <div class="modal-body">
+                    <!-- Alerta de advertencia -->
+                    <div class="modal-alert alert-danger">
+                        <i class="fas fa-exclamation-triangle"></i>
+                        <span>Esta acción es permanente y no se puede deshacer.</span>
                     </div>
                     
-                    <div class="modal-body" style="padding: 1.5rem 1.5rem;">
-                        <!-- 2️⃣ Mensaje principal -->
-                        <p class="confirm-text">
+                    <!-- Información del elemento -->
+                    <div class="modal-section">
+                        <h6 class="section-title">Información del Programa</h6>
+                        <div style="display: grid; gap: 8px;">
+                            <div><strong>Código:</strong> {{ $selectedPrograma->codigo }}</div>
+                            <div><strong>Nombre:</strong> {{ $selectedPrograma->nombre }}</div>
+                            <div><strong>Red de Conocimiento:</strong> {{ $selectedPrograma->redConocimiento->nombre ?? 'Sin asignar' }}</div>
+                        </div>
+                    </div>
+                    
+                    <!-- Mensaje de confirmación -->
+                    <div class="modal-section">
+                        <p style="margin: 0; color: #6b7280; font-size: 14px;">
                             ¿Está seguro de que desea eliminar este programa?
                         </p>
-                        
-                        <!-- 3️⃣ Información mínima -->
-                        <div class="confirm-details">
-                            <div><strong>Código:</strong> {{ $selectedPrograma->codigo }}</div>
-                            <div><strong>Programa:</strong> {{ $selectedPrograma->nombre }}</div>
-                            <div><strong>Red:</strong> {{ $selectedPrograma->redConocimiento->nombre ?? 'Sin asignar' }}</div>
-                        </div>
-                        
-                        <!-- 4️⃣ Advertencia discreta -->
-                        <p class="confirm-warning">
-                            Esta acción es permanente y no se puede deshacer.
-                        </p>
                     </div>
-                    
-                    <!-- 5️⃣ Acciones claras -->
-                    <div class="modal-actions">
-                        <button class="btn btn-outline-secondary" wire:click="closeDeleteModal">
-                            Cancelar
-                        </button>
-                        <button class="btn btn-danger" wire:click="deletePrograma({{ $selectedPrograma->id }})" 
-                                wire:loading.attr="disabled">
-                            Eliminar
-                        </button>
-                    </div>
+                </div>
+                
+                <!-- Footer -->
+                <div class="modal-footer">
+                    <button class="btn-modal btn-secondary" wire:click="closeDeleteModal">
+                        <i class="fas fa-times"></i>
+                        Cancelar
+                    </button>
+                    <button class="btn-modal btn-danger" wire:click="deletePrograma({{ $selectedPrograma->id }})" 
+                            wire:loading.attr="disabled">
+                        <i wire:loading.remove wire:target="deletePrograma" class="fas fa-trash"></i>
+                        <span wire:loading.remove wire:target="deletePrograma">Eliminar</span>
+                        <i wire:loading wire:target="deletePrograma" class="fas fa-spinner fa-spin"></i>
+                        <span wire:loading wire:target="deletePrograma">Eliminando...</span>
+                    </button>
                 </div>
             </div>
         </div>
@@ -204,25 +268,24 @@
 
     <!-- Modal Crear/Editar -->
     @if ($showCreateModal || $showEditModal)
-        <div class="modal fade show d-block" tabindex="-1" style="background-color: rgba(0,0,0,0.5);">
-            <div class="modal-dialog modal-lg">
-                <div class="modal-content modal-erp-container">
-                    <div class="modal-header-erp">
-                        <h5 class="modal-title-erp">
-                            {{ $showCreateModal ? 'Crear Programa' : 'Editar Programa' }}
-                        </h5>
-                        <button wire:click="closeCreateModal; closeEditModal" type="button" class="btn-close-erp">
-                            <i class="fas fa-times"></i>
-                        </button>
-                    </div>
-                    <div class="modal-body-erp">
-                        @if ($showCreateModal)
-                            <livewire:programas.programa-form />
-                        @endif
-                        @if ($showEditModal && $selectedPrograma)
-                            <livewire:programas.programa-form :programaId="$selectedPrograma->id" />
-                        @endif
-                    </div>
+        <div class="modal-overlay" wire:click="closeCreateEditModals">
+            <div class="modal-container modal-lg" wire:click.stop>
+                
+                <!-- Header -->
+                <div class="modal-header">
+                    <h5 class="modal-title">
+                        {{ $showCreateModal ? 'Crear Programa' : 'Editar Programa' }}
+                    </h5>
+                </div>
+                
+                <!-- Body -->
+                <div class="modal-body">
+                    @if ($showCreateModal)
+                        <livewire:programas.programa-form />
+                    @endif
+                    @if ($showEditModal && $selectedPrograma)
+                        <livewire:programas.programa-form :programaId="$selectedPrograma->id" />
+                    @endif
                 </div>
             </div>
         </div>
@@ -231,294 +294,131 @@
     <!-- Modal Ver Detalles -->
     @if ($showShowModal && $selectedPrograma)
         <div class="modal-overlay" wire:click="$set('showShowModal', false)">
-            <div class="modal-container" wire:click.stop>
+            <div class="modal-container modal-lg" wire:click.stop>
                 
-                <!-- HEADER SIMPLE UNIFICADO -->
-                <div class="modal-header-simple">
-                    <div>
-                        <h4 class="modal-title">{{ $selectedPrograma->nombre }}</h4>
-                        <p class="modal-subtitle">
-                            <span class="code-pill">{{ $selectedPrograma->codigo }}</span>
-                            {{ $selectedPrograma->redConocimiento->nombre ?? '' }} · {{ $selectedPrograma->nivelFormacion->name ?? '' }}
-                        </p>
-                    </div>
-
-                    <button class="modal-close" wire:click="$set('showShowModal', false)">
-                        ✕
-                    </button>
+                <!-- Header -->
+                <div class="modal-header">
+                    <h5 class="modal-title">{{ $selectedPrograma->nombre }}</h5>
+                    <button class="modal-close" wire:click="$set('showShowModal', false)">✕</button>
                 </div>
-
-                <!-- BODY (SCROLL AQUÍ) -->
+                
+                <!-- Body -->
                 <div class="modal-body">
-                    <div class="modal-content-wrapper">
-                        
-                        <!-- Sección: Información General -->
-                        <div class="section-card">
-                            <h6 class="section-title">Información General</h6>
-                            <div class="info-grid">
-                                <div class="info-item">
-                                    <div class="info-label">Código</div>
-                                    <div class="info-value">{{ $selectedPrograma->codigo }}</div>
+                    <!-- Sección: Información General -->
+                    <div class="modal-section">
+                        <h6 class="section-title">Información General</h6>
+                        <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(250px, 1fr)); gap: 16px;">
+                            <div>
+                                <div style="font-size: 12px; color: #6b7280; text-transform: uppercase; margin-bottom: 4px;">Código</div>
+                                <div style="font-size: 14px; color: #1f2937; font-weight: 500;">{{ $selectedPrograma->codigo }}</div>
+                            </div>
+                            <div>
+                                <div style="font-size: 12px; color: #6b7280; text-transform: uppercase; margin-bottom: 4px;">Red de Conocimiento</div>
+                                <div style="font-size: 14px; color: #1f2937; font-weight: 500;">{{ $selectedPrograma->redConocimiento->nombre ?? '' }}</div>
+                            </div>
+                            <div>
+                                <div style="font-size: 12px; color: #6b7280; text-transform: uppercase; margin-bottom: 4px;">Nivel de Formación</div>
+                                <div style="font-size: 14px; color: #1f2937; font-weight: 500;">{{ $selectedPrograma->nivelFormacion->name ?? '' }}</div>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <!-- Sección: Distribución de Horas -->
+                    <div class="modal-section">
+                        <h6 class="section-title">Distribución de Horas</h6>
+                        <div style="display: flex; gap: 20px; flex-wrap: wrap;">
+                            <div style="display: flex; align-items: center; gap: 8px;">
+                                <span style="font-size: 16px;">⏱</span>
+                                <div>
+                                    <div style="font-size: 12px; color: #6b7280; text-transform: uppercase;">Total</div>
+                                    <div style="font-size: 16px; font-weight: 600; color: #1f2937;">{{ $selectedPrograma->horas_totales }}h</div>
                                 </div>
-                                <div class="info-item">
-                                    <div class="info-label">Red de Conocimiento</div>
-                                    <div class="info-value">{{ $selectedPrograma->redConocimiento->nombre ?? '' }}</div>
+                            </div>
+                            <div style="display: flex; align-items: center; gap: 8px;">
+                                <span style="font-size: 16px;">📘</span>
+                                <div>
+                                    <div style="font-size: 12px; color: #6b7280; text-transform: uppercase;">Lectiva</div>
+                                    <div style="font-size: 16px; font-weight: 600; color: #1f2937;">{{ $selectedPrograma->horas_etapa_lectiva }}h</div>
                                 </div>
-                                <div class="info-item">
-                                    <div class="info-label">Nivel de Formación</div>
-                                    <div class="info-value">{{ $selectedPrograma->nivelFormacion->name ?? '' }}</div>
+                            </div>
+                            <div style="display: flex; align-items: center; gap: 8px;">
+                                <span style="font-size: 16px;">🏭</span>
+                                <div>
+                                    <div style="font-size: 12px; color: #6b7280; text-transform: uppercase;">Productiva</div>
+                                    <div style="font-size: 16px; font-weight: 600; color: #1f2937;">{{ $selectedPrograma->horas_etapa_productiva }}h</div>
                                 </div>
                             </div>
                         </div>
-                        
-                        <!-- Sección: Distribución de Horas -->
-                        <div class="section-card">
-                            <h6 class="section-title">Distribución de horas</h6>
-                            
-                            <div class="hours-inline">
-                                <div class="hour-inline-item">
-                                    <span class="hour-icon">⏱</span>
-                                    <span class="hour-label">Total</span>
-                                    <strong class="hour-value">{{ $selectedPrograma->horas_totales }}h</strong>
-                                </div>
-
-                                <div class="hour-inline-item">
-                                    <span class="hour-icon">📘</span>
-                                    <span class="hour-label">Lectiva</span>
-                                    <strong class="hour-value">{{ $selectedPrograma->horas_etapa_lectiva }}h</strong>
-                                </div>
-
-                                <div class="hour-inline-item">
-                                    <span class="hour-icon">🏭</span>
-                                    <span class="hour-label">Productiva</span>
-                                    <strong class="hour-value">{{ $selectedPrograma->horas_etapa_productiva }}h</strong>
-                                </div>
-
-                                @if (($selectedPrograma->horas_etapa_lectiva + $selectedPrograma->horas_etapa_productiva) == $selectedPrograma->horas_totales)
-                                    <div class="hour-inline-status">
-                                        ✓ Distribución válida
-                                    </div>
-                                @endif
-                            </div>
-                        </div>
-                        
-                        <!-- Sección: Estado del Programa -->
-                        <div class="section-card">
-                            <h6 class="section-title">Estado del programa</h6>
-                            <div class="status-section">
-                                <div class="status-display">
-                                    <span class="badge-status {{ (int) $selectedPrograma->status === 1 ? 'badge-active' : 'badge-inactive' }}">
-                                        <i class="fas fa-{{ (int) $selectedPrograma->status === 1 ? 'check' : 'times' }} me-1"></i>
-                                        {{ (int) $selectedPrograma->status === 1 ? 'Activo' : 'Inactivo' }}
-                                    </span>
-                                </div>
-                                <div class="status-description">
-                                    Este programa {{ (int) $selectedPrograma->status === 1 ? 'puede' : 'no puede' }} ser usado en fichas de formación activas
-                                </div>
-                            </div>
-                        </div>
-                        
-                        <!-- Sección: Acciones -->
-                        <div class="section-card section-actions">
-                            <h6 class="section-title">Acciones</h6>
-                            <div class="quick-actions">
-                                @can('programa.edit')
-                                    <button wire:click="openEditModal({{ $selectedPrograma->id }})" 
-                                            class="btn btn-warning">
-                                        <i class="fas fa-edit me-2"></i>
-                                        Editar programa
-                                    </button>
-                                @endcan
-                                <button wire:click="toggleStatus({{ $selectedPrograma->id }}") 
-                                        class="btn {{ (int) $selectedPrograma->status === 1 ? 'btn-danger' : 'btn-success' }}">
-                                    <i class="fas fa-sync-alt me-2"></i>
-                                    {{ (int) $selectedPrograma->status === 1 ? 'Desactivar programa' : 'Activar programa' }}
-                                </button>
-                            </div>
-                        </div>
-                        
-                        <!-- Sección: Auditoría -->
-                        <div class="section-card">
-                            <h6 class="section-title">Auditoría</h6>
-                            <div class="audit-section">
-                                <div class="audit-block">
-                                    <div class="audit-label">Creado por</div>
-                                    <div class="audit-info">
-                                        <div class="audit-user">{{ $selectedPrograma->userCreated->name ?? 'Sistema' }}</div>
-                                        <div class="audit-date">{{ $selectedPrograma->created_at->format('d/m/Y H:i') }}</div>
-                                    </div>
-                                </div>
-                                <div class="audit-block">
-                                    <div class="audit-label">Última edición</div>
-                                    <div class="audit-info">
-                                        <div class="audit-user">{{ $selectedPrograma->userEdited->name ?? 'Sin edición' }}</div>
-                                        <div class="audit-date">{{ $selectedPrograma->updated_at->format('d/m/Y H:i') }}</div>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-                        
-                        <!-- Competencias Asociadas -->
-                        @if ($selectedPrograma->competencias->count() > 0)
-                            <div class="section-card">
-                                <h6 class="section-title">Competencias Asociadas ({{ $selectedPrograma->competencias->count() }})</h6>
-                                <div class="competencies-list">
-                                    @foreach ($selectedPrograma->competencias->take(3) as $competencia)
-                                        <div class="competency-item">
-                                            <span class="competency-code">{{ $competencia->codigo }}</span>
-                                            <span class="competency-name">{{ $competencia->nombre }}</span>
-                                        </div>
-                                    @endforeach
-                                </div>
-                                @if ($selectedPrograma->competencias->count() > 3)
-                                    <div class="text-muted small mt-2">
-                                        ... y {{ $selectedPrograma->competencias->count() - 3 }} más
-                                    </div>
-                                @endif
+                        @if (($selectedPrograma->horas_etapa_lectiva + $selectedPrograma->horas_etapa_productiva) == $selectedPrograma->horas_totales)
+                            <div style="margin-top: 8px; color: #10b981; font-size: 13px;">
+                                ✓ Distribución válida
                             </div>
                         @endif
-                        
+                    </div>
+                    
+                    <!-- Sección: Estado del Programa -->
+                    <div class="modal-section">
+                        <h6 class="section-title">Estado del Programa</h6>
+                        <div style="display: flex; align-items: center; gap: 12px;">
+                            <span class="badge-status {{ (int) $selectedPrograma->status === 1 ? 'badge-active' : 'badge-inactive' }}" style="padding: 6px 10px; border-radius: 6px; font-size: 12px; font-weight: 600; display: inline-flex; align-items: center; text-transform: uppercase;">
+                                <i class="fas fa-{{ (int) $selectedPrograma->status === 1 ? 'check' : 'times' }}" style="margin-right: 4px;"></i>
+                                {{ (int) $selectedPrograma->status === 1 ? 'Activo' : 'Inactivo' }}
+                            </span>
+                            <span style="font-size: 13px; color: #6b7280; font-style: italic;">
+                                Este programa {{ (int) $selectedPrograma->status === 1 ? 'puede' : 'no puede' }} ser usado en fichas de formación activas
+                            </span>
+                        </div>
+                    </div>
+                    
+                    <!-- Sección: Acciones -->
+                    <div class="modal-section">
+                        <h6 class="section-title">Acciones</h6>
+                        <div style="display: flex; gap: 12px;">
+                            @can('programa.edit')
+                                <button class="btn-modal btn-primary" wire:click="openEditModal({{ $selectedPrograma->id }})">
+                                    <i class="fas fa-edit"></i>
+                                    Editar Programa
+                                </button>
+                            @endcan
+                            <button class="btn-modal {{ (int) $selectedPrograma->status === 1 ? 'btn-danger' : 'btn-success' }}" 
+                                    wire:click="toggleStatus({{ $selectedPrograma->id }})" 
+                                    wire:loading.attr="disabled">
+                                <i wire:loading.remove wire:target="toggleStatus" class="fas fa-sync-alt"></i>
+                                <span wire:loading.remove wire:target="toggleStatus">
+                                    {{ (int) $selectedPrograma->status === 1 ? 'Desactivar Programa' : 'Activar Programa' }}
+                                </span>
+                                <i wire:loading wire:target="toggleStatus" class="fas fa-spinner fa-spin"></i>
+                                <span wire:loading wire:target="toggleStatus">Procesando...</span>
+                            </button>
+                        </div>
+                    </div>
+                    
+                    <!-- Sección: Auditoría -->
+                    <div class="modal-section">
+                        <h6 class="section-title">Auditoría</h6>
+                        <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 20px;">
+                            <div>
+                                <div style="font-size: 12px; color: #9ca3af; text-transform: uppercase; margin-bottom: 4px;">Creado por</div>
+                                <div style="font-size: 13px; color: #374151; font-weight: 500;">{{ $selectedPrograma->userCreated->name ?? 'Sistema' }}</div>
+                                <div style="font-size: 12px; color: #6b7280;">{{ $selectedPrograma->created_at->format('d/m/Y H:i') }}</div>
+                            </div>
+                            <div>
+                                <div style="font-size: 12px; color: #9ca3af; text-transform: uppercase; margin-bottom: 4px;">Última edición</div>
+                                <div style="font-size: 13px; color: #374151; font-weight: 500;">{{ $selectedPrograma->userEdited->name ?? 'Sin edición' }}</div>
+                                <div style="font-size: 12px; color: #6b7280;">{{ $selectedPrograma->updated_at->format('d/m/Y H:i') }}</div>
+                            </div>
+                        </div>
                     </div>
                 </div>
-
+                
+                <!-- Footer -->
+                <div class="modal-footer">
+                    <button class="btn-modal btn-secondary" wire:click="$set('showShowModal', false)">
+                        <i class="fas fa-times"></i>
+                        Cerrar
+                    </button>
+                </div>
             </div>
         </div>
     @endif
-
-    <!-- CSS para modal de eliminación -->
-    <style>
-    /* 🎨 CSS para modal de eliminación limpio y profesional */
-    .modal-header-simple {
-        display: flex;
-        justify-content: space-between;
-        align-items: center;
-        padding: 16px 20px;
-        border-bottom: 1px solid #e5e7eb;
-    }
-
-    .modal-close {
-        background: none;
-        border: none;
-        font-size: 20px;
-        cursor: pointer;
-        padding: 4px;
-        color: #6b7280;
-    }
-
-    .modal-close:hover {
-        color: #374151;
-    }
-
-    .confirm-text {
-        font-size: 16px;
-        font-weight: 500;
-        margin-top: 8px;
-        margin-bottom: 16px;
-        color: #111827;
-    }
-
-    .confirm-details {
-        font-size: 14px;
-        color: #374151;
-        display: flex;
-        flex-direction: column;
-        gap: 6px;
-        padding-left: 8px;
-        border-left: 3px solid #e5e7eb;
-        margin: 12px 0;
-    }
-
-    .confirm-warning {
-        font-size: 13px;
-        color: #6b7280;
-        margin-bottom: 20px;
-        font-style: italic;
-    }
-
-    .modal-actions {
-        display: flex;
-        justify-content: flex-end;
-        gap: 12px;
-        padding: 16px 20px;
-        border-top: 1px solid #e5e7eb;
-    }
-
-    .modal-actions .btn {
-        padding: 8px 16px;
-        font-weight: 500;
-        border-radius: 6px;
-    }
-
-    .btn-outline-secondary {
-        background: white;
-        border: 1px solid #d1d5db;
-        color: #374151;
-    }
-
-    .btn-outline-secondary:hover {
-        background: #f9fafb;
-        border-color: #9ca3af;
-    }
-
-    .btn-danger {
-        background: #dc2626;
-        border: 1px solid #dc2626;
-        color: white;
-    }
-
-    .btn-danger:hover {
-        background: #b91c1c;
-        border-color: #b91c1c;
-    }
-
-    .btn-danger:disabled {
-        background: #9ca3af;
-        border-color: #9ca3af;
-        cursor: not-allowed;
-    }
-    </style>
-
-    <!-- JavaScript -->
-    <script>
-    document.addEventListener('livewire:initialized', () => {
-        Livewire.on('notify', (payload) => {
-            const data = payload[0];
-            showToast(data.message, data.type);
-        });
-        
-        Livewire.on('programaCreado', function() {
-            showToast('Programa creado correctamente', 'success');
-        });
-        
-        Livewire.on('programaActualizado', function() {
-            showToast('Programa actualizado correctamente', 'success');
-        });
-        
-        Livewire.on('programaEliminado', function() {
-            showToast('Programa eliminado correctamente', 'warning');
-        });
-        
-        // Función para mostrar toast minimalista ERP
-        function showToast(message, type = 'info') {
-            const toast = document.querySelector('.toast-minimal');
-            const icon = toast.querySelector('.toast-icon');
-            const text = toast.querySelector('.toast-text');
-
-            const icons = {
-                success: '✓',
-                warning: '↻',
-                error: '✕',
-                info: 'ℹ'
-            };
-
-            toast.className = `toast-minimal show ${type}`;
-            icon.textContent = icons[type] ?? 'ℹ';
-            text.textContent = message;
-
-            setTimeout(() => {
-                toast.classList.remove('show');
-            }, 4000);
-        }
-    });
-    </script>
 </div>

@@ -1,140 +1,47 @@
 @extends('adminlte::page')
 
+@section('title', 'Instructores')
+
 @section('css')
-    <link href="{{ asset('css/parametros.css') }}" rel="stylesheet">
+    @vite(['resources/css/instructores.css'])
 @endsection
 
 @section('content_header')
-    <x-page-header 
-        icon="fa-chalkboard-teacher" 
-        title="Instructores"
-        subtitle="Gestión de instructores del sistema"
-        :breadcrumb="[
-            ['label' => 'Inicio', 'url' => route('verificarLogin'), 'icon' => 'fa-home'],
-            ['label' => 'Instructores', 'active' => true, 'icon' => 'fa-chalkboard-teacher']
-        ]"
-    />
+    <div class="admin-header">
+        <div class="admin-header-content">
+            <div class="admin-header-left">
+                <div class="admin-header-icon">
+                    <i class="fas fa-chalkboard-teacher"></i>
+                </div>
+                <div class="admin-header-text">
+                    <h1 class="admin-header-title">Instructores</h1>
+                    <p class="admin-header-subtitle">Gestiona y administra los instructores del SENA</p>
+                </div>
+            </div>
+            <nav aria-label="breadcrumb" class="admin-breadcrumb">
+                <ol class="breadcrumb mb-0">
+                    <li class="breadcrumb-item">
+                        <a href="{{ route('verificarLogin') }}">
+                            <i class="fas fa-home me-1"></i>Inicio
+                        </a>
+                    </li>
+                    <li class="breadcrumb-item active" aria-current="page">
+                        <i class="fas fa-chalkboard-teacher me-1"></i>Instructores
+                    </li>
+                </ol>
+            </nav>
+        </div>
+    </div>
 @endsection
 
 @section('content')
-    <section class="content mt-4">
-        <div class="container-fluid">
-            <div class="row">
-                <div class="col-12">
-                    <x-session-alerts />
-                    
-                    <x-create-card 
-                        url="{{ route('instructor.create') }}"
-                        title="Crear Instructor"
-                        icon="fa-plus-circle"
-                        permission="CREAR INSTRUCTOR"
-                    />
-
-                    <x-data-table 
-                        title="Lista de Instructores"
-                        searchable="true"
-                        searchAction="{{ route('instructor.index') }}"
-                        searchPlaceholder="Buscar instructor..."
-                        searchValue="{{ request('search') }}"
-                        :columns="[
-                            ['label' => '#', 'width' => '5%'],
-                            ['label' => 'Nombre', 'width' => '25%'],
-                            ['label' => 'Documento', 'width' => '15%'],
-                            ['label' => 'Especialidades', 'width' => '20%'],
-                            ['label' => 'Estado', 'width' => '10%'],
-                            ['label' => 'Acciones', 'width' => '25%', 'class' => 'text-center']
-                        ]"
-                        :pagination="$instructores->links()"
-                    >
-                                        @forelse ($instructores as $instructor)
-                                            <tr>
-                                                <td class="px-4">{{ $loop->iteration }}</td>
-                                                <td class="px-4 font-weight-medium">
-                                                    {{ $instructor->persona->primer_nombre }} 
-                                                    {{ $instructor->persona->primer_apellido }}
-                                                </td>
-                                                <td class="px-4">{{ $instructor->persona->numero_documento }}</td>
-                                                <td class="px-4">
-                                                    @php
-                                                        $especialidades = $instructor->especialidades ?? [];
-                                                        $especialidadPrincipalId = $especialidades['principal'] ?? null;
-                                                        $especialidadesSecundariasIds = $especialidades['secundarias'] ?? [];
-                                                        
-                                                        // Convertir IDs a nombres
-                                                        $especialidadPrincipalNombre = null;
-                                                        if ($especialidadPrincipalId) {
-                                                            $redConocimiento = \App\Models\RedConocimiento::find($especialidadPrincipalId);
-                                                            $especialidadPrincipalNombre = $redConocimiento ? $redConocimiento->nombre : null;
-                                                        }
-                                                        
-                                                        $especialidadesSecundariasNombres = [];
-                                                        if (!empty($especialidadesSecundariasIds)) {
-                                                            $redesConocimiento = \App\Models\RedConocimiento::whereIn('id', $especialidadesSecundariasIds)->get();
-                                                            $especialidadesSecundariasNombres = $redesConocimiento->pluck('nombre')->toArray();
-                                                        }
-                                                    @endphp
-                                                    @if($especialidadPrincipalNombre)
-                                                        <div class="d-inline-block px-2 py-1 rounded-pill bg-primary-light text-primary mr-1 mb-1 font-weight-medium">
-                                                            {{ $especialidadPrincipalNombre }}
-                                                        </div>
-                                                    @endif
-                                                    @if(count($especialidadesSecundariasNombres) > 0)
-                                                        @foreach(array_slice($especialidadesSecundariasNombres, 0, 2) as $especialidadNombre)
-                                                            <div class="d-inline-block px-2 py-1 rounded-pill bg-secondary-light text-secondary mr-1 mb-1 font-weight-medium">{{ $especialidadNombre }}</div>
-                                                        @endforeach
-                                                        @if(count($especialidadesSecundariasNombres) > 2)
-                                                            <div class="d-inline-block px-2 py-1 rounded-pill bg-light text-muted mr-1 mb-1 font-weight-medium">+{{ count($especialidadesSecundariasNombres) - 2 }}</div>
-                                                        @endif
-                                                    @endif
-                                                    @if(!$especialidadPrincipalNombre && count($especialidadesSecundariasNombres) === 0)
-                                                        <span class="text-muted">Sin especialidades</span>
-                                                    @endif
-                                                </td>
-                                                <td class="px-4">
-                                                    <x-status-badge :status="$instructor->status" />
-                                                </td>
-                                                <td class="px-4 text-center">
-                                                    <x-action-buttons 
-                                                        :show="true"
-                                                        :edit="true"
-                                                        :delete="true"
-                                                        showUrl="{{ route('instructor.show', $instructor->id) }}"
-                                                        editUrl="{{ route('instructor.edit', $instructor->id) }}"
-                                                        deleteUrl="{{ route('instructor.destroy', $instructor->id) }}"
-                                                        showPermission="VER INSTRUCTOR"
-                                                        editPermission="EDITAR INSTRUCTOR"
-                                                        deletePermission="ELIMINAR INSTRUCTOR"
-                                                        :custom="[
-                                                            [
-                                                                'url' => route('instructor.gestionarEspecialidades', $instructor->id),
-                                                                'title' => 'Gestionar especialidades',
-                                                                'icon' => 'fas fa-graduation-cap',
-                                                                'color' => 'text-primary',
-                                                                'permission' => 'GESTIONAR ESPECIALIDADES INSTRUCTOR'
-                                                            ],
-                                                            [
-                                                                'url' => route('instructor.fichasAsignadas', $instructor->id),
-                                                                'title' => 'Ver fichas asignadas',
-                                                                'icon' => 'fas fa-clipboard-list',
-                                                                'color' => 'text-success',
-                                                                'permission' => 'VER FICHAS ASIGNADAS'
-                                                            ]
-                                                        ]"
-                                                    />
-                                                </td>
-                                            </tr>
-                                        @empty
-                                            <x-empty-state 
-                                                message="No hay instructores registrados"
-                                                image="img/no-data.svg"
-                                                :colspan="6"
-                                            />
-                                        @endforelse
-                    </x-data-table>
-                </div>
-            </div>
+    <div class="vista-instructores">
+        <div class="main-card">
+            <x-session-alerts />
+            
+            <livewire:instructores.instructor-index />
         </div>
-    </section>
+    </div>
 @endsection
 
 @section('footer')
@@ -143,4 +50,98 @@
 
 @section('js')
     @vite(['resources/js/pages/instructores-index.js'])
+    
+    <script>
+    // Toast notifications system
+    window.addEventListener('notify', function(event) {
+        const { type, message } = event.detail;
+        showToast(type, message);
+    });
+
+    // Livewire event listeners
+    Livewire.on('notify', function(data) {
+        showToast(data.type, data.message);
+    });
+
+    function showToast(type, message) {
+        const toast = document.querySelector('.vista-instructores .toast.toast-minimal');
+        const icon = toast.querySelector('.toast-icon');
+        const text = toast.querySelector('.toast-text');
+        
+        // Set content
+        text.textContent = message;
+        
+        // Set icon based on type
+        icon.className = 'toast-icon fas';
+        switch(type) {
+            case 'success':
+                icon.classList.add('fa-check-circle');
+                toast.className = 'vista-instructores toast toast-minimal success';
+                break;
+            case 'error':
+                icon.classList.add('fa-exclamation-circle');
+                toast.className = 'vista-instructores toast toast-minimal error';
+                break;
+            case 'warning':
+                icon.classList.add('fa-exclamation-triangle');
+                toast.className = 'vista-instructores toast toast-minimal warning';
+                break;
+            case 'info':
+            default:
+                icon.classList.add('fa-info-circle');
+                toast.className = 'vista-instructores toast toast-minimal info';
+                break;
+        }
+        
+        // Show toast
+        toast.classList.add('show');
+        
+        // Hide after 4 seconds
+        setTimeout(() => {
+            toast.classList.remove('show');
+        }, 4000);
+    }
+
+    // Initialize Select2 when Livewire updates
+    document.addEventListener('livewire:initialized', () => {
+        initializeSelect2();
+    });
+
+    document.addEventListener('livewire:updated', () => {
+        initializeSelect2();
+    });
+
+    function initializeSelect2() {
+        // Initialize Select2 for selects that are not already initialized
+        $('.vista-instructores .form-control-erp[multiple]').not('.select2-hidden-accessible').select2({
+            theme: 'bootstrap4',
+            width: '100%'
+        });
+        
+        $('.vista-instructores .form-control-erp:not([multiple])').not('.select2-hidden-accessible').not('[wire\\:ignore]').select2({
+            theme: 'bootstrap4',
+            width: '100%'
+        });
+    }
+
+    // Handle modal close with Escape key
+    document.addEventListener('keydown', function(event) {
+        if (event.key === 'Escape') {
+            const modals = document.querySelectorAll('.vista-instructores .modal-overlay');
+            modals.forEach(modal => {
+                if (modal.style.display !== 'none') {
+                    Livewire.dispatch('closeModal');
+                }
+            });
+        }
+    });
+
+    // Auto-focus search input
+    document.addEventListener('DOMContentLoaded', function() {
+        const searchInput = document.querySelector('.vista-instructores .search-input');
+        if (searchInput) {
+            searchInput.focus();
+        }
+    });
+    </script>
 @endsection

@@ -7,6 +7,8 @@ use Livewire\WithPagination;
 use App\Models\ProgramaFormacion;
 use App\Models\RedConocimiento;
 use App\Models\Parametro;
+use App\Models\NivelFormacion;
+use App\Models\Tema;
 use App\Services\ProgramaFormacionService;
 use Livewire\Attributes\On;
 
@@ -18,6 +20,11 @@ class ProgramaIndex extends Component
     public $perPage = 10;  // Valor por defecto más razonable
     public $sortField = 'created_at';
     public $sortDirection = 'desc';
+    
+    // Filtros adicionales
+    public $redConocimientoFilter = '';
+    public $nivelFilter = '';
+    public $statusFilter = '';
     
     public $showCreateModal = false;
     public $showEditModal = false;
@@ -45,15 +52,31 @@ class ProgramaIndex extends Component
 
     public function render()
     {
-        $programas = ProgramaFormacion::with(['redConocimiento', 'nivelFormacion'])
+        $query = ProgramaFormacion::with(['redConocimiento', 'nivelFormacion'])
             ->when($this->search, function ($query) {
                 $query->where('codigo', 'like', '%' . $this->search . '%')
                       ->orWhere('nombre', 'like', '%' . $this->search . '%');
             })
-            ->orderBy($this->sortField, $this->sortDirection)
-            ->paginate($this->perPage);
+            ->when($this->redConocimientoFilter, function ($query) {
+                $query->where('red_conocimiento_id', $this->redConocimientoFilter);
+            })
+            ->when($this->nivelFilter, function ($query) {
+                $query->where('nivel_formacion_id', $this->nivelFilter);
+            })
+            ->when($this->statusFilter !== '', function ($query) {
+                $query->where('status', $this->statusFilter);
+            })
+            ->orderBy($this->sortField, $this->sortDirection);
 
-        return view('livewire.programas.programa-index', compact('programas'));
+        $programas = $query->paginate($this->perPage);
+
+        // Obtener datos para los filtros
+        $redesConocimiento = RedConocimiento::orderBy('nombre')->get();
+        
+        // Obtener niveles de formación usando el mismo método que el formulario
+        $nivelesFormacion = Parametro::whereIn('name', ['TÉCNICO', 'TECNÓLOGO', 'AUXILIAR', 'OPERARIO'])->orderBy('name')->get();
+
+        return view('livewire.programas.programa-index', compact('programas', 'redesConocimiento', 'nivelesFormacion'));
     }
 
     public function sortBy($field)
@@ -66,6 +89,11 @@ class ProgramaIndex extends Component
         }
     }
 
+    public function clearFilters()
+    {
+        $this->reset(['search', 'redConocimientoFilter', 'nivelFilter', 'statusFilter']);
+    }
+
     public function openCreateModal()
     {
         $this->showCreateModal = true;
@@ -74,6 +102,19 @@ class ProgramaIndex extends Component
     public function closeCreateModal()
     {
         $this->showCreateModal = false;
+    }
+
+    public function closeEditModal()
+    {
+        $this->showEditModal = false;
+        $this->selectedPrograma = null;
+    }
+
+    public function closeCreateEditModals()
+    {
+        $this->showCreateModal = false;
+        $this->showEditModal = false;
+        $this->selectedPrograma = null;
     }
 
     public function openEditModal($programaId)
@@ -85,12 +126,6 @@ class ProgramaIndex extends Component
         if ($this->showShowModal) {
             $this->showShowModal = false;
         }
-    }
-
-    public function closeEditModal()
-    {
-        $this->showEditModal = false;
-        $this->selectedPrograma = null;
     }
 
     public function openShowModal($programaId)
@@ -194,9 +229,9 @@ class ProgramaIndex extends Component
                 'message' => "Programa {$statusText} correctamente"
             ]);
 
-            // Cerrar modal si está abierto y es el mismo programa
+            // Actualizar el programa seleccionado para reflejar el cambio en el modal
             if ($this->showShowModal && $this->selectedPrograma && $this->selectedPrograma->id == $programaId) {
-                $this->showShowModal = false;
+                $this->selectedPrograma = $programa;
             }
         }
     }
