@@ -62,8 +62,21 @@ function setupLivewireListener() {
     
     console.log('🔥 Setting up Livewire notify listener');
     
+    // Bandera para evitar duplicaciones
+    let lastNotifyTime = 0;
+    const NOTIFY_DEBOUNCE_TIME = 100; // 100ms
+    
     // Configurar nuevo listener (Livewire 3 no tiene .off)
     Livewire.on('notify', (data) => {
+        const currentTime = Date.now();
+        
+        // Evitar duplicaciones rápidas
+        if (currentTime - lastNotifyTime < NOTIFY_DEBOUNCE_TIME) {
+            console.log('🚫 Duplicate notify prevented');
+            return;
+        }
+        lastNotifyTime = currentTime;
+        
         console.log('📢 Livewire notify received:', data);
         console.log('Data type:', typeof data);
         console.log('Data keys:', data ? Object.keys(data) : 'null');

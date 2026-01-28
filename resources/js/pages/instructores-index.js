@@ -2,7 +2,7 @@
  * Script específico para la página de índice de instructores
  */
 import { TableActionsHandler } from '../modules/table-actions.js';
-import { AlertHandler } from '../modules/alert-handler.js';
+// AlertHandler eliminado para evitar duplicación de notificaciones
 
 document.addEventListener('DOMContentLoaded', () => {
     // Inicializar manejador de acciones de tabla
@@ -14,12 +14,12 @@ document.addEventListener('DOMContentLoaded', () => {
         alertHideDelay: 5000
     });
     
-    // Inicializar manejador de alertas
-    const alertHandler = new AlertHandler({
-        autoHide: true,
-        hideDelay: 5000,
-        alertSelector: '.alert'
-    });
+    // AlertHandler eliminado - el sistema global de notificaciones maneja todo
+    // const alertHandler = new AlertHandler({
+    //     autoHide: true,
+    //     hideDelay: 5000,
+    //     alertSelector: '.alert'
+    // });
     
     // Inicializar tooltips
     $('[data-toggle="tooltip"]').tooltip();

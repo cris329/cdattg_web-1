@@ -44,18 +44,18 @@
                 });
             @endif
 
-            // Notificación de información
-            @if (session('info'))
-                Swal.fire({
-                    icon: 'info',
-                    title: 'Información',
-                    text: '{{ session('info') }}',
-                    confirmButtonText: 'Entendido',
-                    confirmButtonColor: '#17a2b8',
-                    timer: 3000,
-                    timerProgressBar: true
-                });
-            @endif
+            // Notificación de información - Comentada para evitar duplicación
+            // @if (session('info'))
+            //     Swal.fire({
+            //         icon: 'info',
+            //         title: 'Información',
+            //         text: '{{ session('info') }}',
+            //         confirmButtonText: 'Entendido',
+            //         confirmButtonColor: '#17a2b8',
+            //         timer: 3000,
+            //         timerProgressBar: true
+            //     });
+            // @endif
 
             // Errores de validación
             @if ($errors->any())

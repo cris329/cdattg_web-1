@@ -280,6 +280,26 @@ No se permiten selectores globales para acciones.
     to { opacity: 1; transform: translateY(0); }
 }
 
+/* Info Items */
+.info-item {
+    padding: 0.5rem 0;
+    border-bottom: 1px solid var(--border-light);
+    font-size: 0.875rem;
+}
+
+.info-item:last-child {
+    border-bottom: none;
+}
+
+.info-item strong {
+    color: var(--text);
+    font-weight: 600;
+}
+
+.info-item:not(:first-child) {
+    margin-top: 0.25rem;
+}
+
 /* Responsive */
 @media (max-width: 768px) {
     .vista-programas .content-wrapper {
