@@ -7,12 +7,28 @@ use Illuminate\Support\Facades\Log;
 
 class InstructorFichaCaracterizacionRepository
 {
-    public function getInstructorFichaCaracterizacion($instructorId)
+    public function getInstructorFichaCaracterizacion($instructorId, bool $onlyActive = false)
     {
         Log::info('=== DEBUG INSTRUCTORFICHACARACTERIZACIONREPOSITORY ===');
         Log::info('Buscando fichas para instructor_id: ' . $instructorId);
         
-        $fichas = InstructorFichaCaracterizacion::where('instructor_id', $instructorId)->get();
+        $fichas = InstructorFichaCaracterizacion::query()
+            ->with([
+                'ficha.programaFormacion',
+                'ficha.sede',
+                'ficha.ambiente',
+                'ficha.instructor.persona',
+                'ficha.modalidadFormacion',
+                'ficha.jornadaFormacion.parametro',
+                'ficha.aprendices',
+            ])
+            ->where('instructor_id', $instructorId)
+            ->when($onlyActive, function ($query) {
+                $query->whereHas('ficha', function ($q) {
+                    $q->where('status', 1);
+                });
+            })
+            ->get();
         
         Log::info('Cantidad de fichas encontradas: ' . $fichas->count());
         

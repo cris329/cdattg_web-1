@@ -23,12 +23,12 @@
                 <option value="0">Inactivos</option>
             </select>
             
-            <select wire:model.live="redConocimientoFilter" class="filter-select">
+            {{-- <select wire:model.live="redConocimientoFilter" class="filter-select">
                 <option value="">Todas las redes</option>
                 @foreach($redesConocimiento as $red)
                     <option value="{{ $red->id }}">{{ $red->nombre }}</option>
                 @endforeach
-            </select>
+            </select> --}}
             
             <select wire:model.live="nivelFilter" class="filter-select">
                 <option value="">Todos los niveles</option>
@@ -72,10 +72,10 @@
         Filtrando por estado...
     </div>
 
-    <div wire:loading wire:target="redConocimientoFilter" class="loading-indicator" style="display: none;">
+    {{-- <div wire:loading wire:target="redConocimientoFilter" class="loading-indicator" style="display: none;">
         <i class="fas fa-spinner fa-spin"></i>
         Filtrando por red...
-    </div>
+    </div> --}}
 
     <div wire:loading wire:target="nivelFilter" class="loading-indicator" style="display: none;">
         <i class="fas fa-spinner fa-spin"></i>
@@ -104,14 +104,14 @@
                             <i class="fas fa-sort-{{ $sortDirection === 'asc' ? 'up' : 'down' }} sort-icon"></i>
                         @endif
                     </th>
-                    <th class="red">Red de Conocimiento</th>
+                    {{-- <th class="red">Red de Conocimiento</th> --}}
                     <th class="nivel">Nivel</th>
-                    <th class="sortable horas-total" wire:click="sortBy('horas_totales')">
+                    {{-- <th class="sortable horas-total" wire:click="sortBy('horas_totales')">
                         Horas Totales
                         @if ($sortField === 'horas_totales')
                             <i class="fas fa-sort-{{ $sortDirection === 'asc' ? 'up' : 'down' }} sort-icon"></i>
                         @endif
-                    </th>
+                    </th> --}}
                     <th class="estado">Estado</th>
                     <th class="th-actions sticky-actions">ACCIONES</th>
                 </tr>
@@ -123,13 +123,13 @@
                             <span class="badge-modern badge-primary">{{ $programa->codigo }}</span>
                         </td>
                         <td class="nombre fw-medium">{{ $programa->nombre }}</td>
-                        <td class="red">
+                        {{-- <td class="red">
                             @if ($programa->redConocimiento)
                                 <span class="badge-modern badge-info">{{ $programa->redConocimiento->nombre }}</span>
                             @else
                                 <span class="badge-modern badge-secondary">Sin asignar</span>
                             @endif
-                        </td>
+                        </td> --}}
                         <td class="nivel">
                             @if ($programa->nivelFormacion)
                                 <span class="badge-modern badge-success">{{ $programa->nivelFormacion->name }}</span>
@@ -137,9 +137,9 @@
                                 <span class="badge-modern badge-warning">Sin asignar</span>
                             @endif
                         </td>
-                        <td class="horas-total">
+                        {{-- <td class="horas-total">
                             <span class="badge-modern badge-primary">{{ $programa->horas_totales }}h</span>
-                        </td>
+                        </td> --}}
                         <td class="estado">
                             <button
                                 wire:click="toggleStatus({{ $programa->id }})"
@@ -236,7 +236,7 @@
                         <div style="display: grid; gap: 8px;">
                             <div><strong>Código:</strong> {{ $selectedPrograma->codigo }}</div>
                             <div><strong>Nombre:</strong> {{ $selectedPrograma->nombre }}</div>
-                            <div><strong>Red de Conocimiento:</strong> {{ $selectedPrograma->redConocimiento->nombre ?? 'Sin asignar' }}</div>
+                            {{-- <div><strong>Red de Conocimiento:</strong> {{ $selectedPrograma->redConocimiento->nombre ?? 'Sin asignar' }}</div> --}}
                         </div>
                     </div>
                     
@@ -312,10 +312,10 @@
                                 <div style="font-size: 12px; color: #6b7280; text-transform: uppercase; margin-bottom: 4px;">Código</div>
                                 <div style="font-size: 14px; color: #1f2937; font-weight: 500;">{{ $selectedPrograma->codigo }}</div>
                             </div>
-                            <div>
+                            {{-- <div>
                                 <div style="font-size: 12px; color: #6b7280; text-transform: uppercase; margin-bottom: 4px;">Red de Conocimiento</div>
                                 <div style="font-size: 14px; color: #1f2937; font-weight: 500;">{{ $selectedPrograma->redConocimiento->nombre ?? '' }}</div>
-                            </div>
+                            </div> --}}
                             <div>
                                 <div style="font-size: 12px; color: #6b7280; text-transform: uppercase; margin-bottom: 4px;">Nivel de Formación</div>
                                 <div style="font-size: 14px; color: #1f2937; font-weight: 500;">{{ $selectedPrograma->nivelFormacion->name ?? '' }}</div>
@@ -324,7 +324,7 @@
                     </div>
                     
                     <!-- Sección: Distribución de Horas -->
-                    <div class="modal-section">
+                    {{-- <div class="modal-section">
                         <h6 class="section-title">Distribución de Horas</h6>
                         <div style="display: flex; gap: 20px; flex-wrap: wrap;">
                             <div style="display: flex; align-items: center; gap: 8px;">
@@ -354,7 +354,7 @@
                                 ✓ Distribución válida
                             </div>
                         @endif
-                    </div>
+                    </div> --}}
                     
                     <!-- Sección: Estado del Programa -->
                     <div class="modal-section">

@@ -190,11 +190,11 @@
                         @if(isset($aprendiz->asistencia))
                             {{ Carbon\Carbon::parse($aprendiz->asistencia->hora_ingreso)->format('h:i A') }}
                         @else
-                            @if($aprendiz->id && $evidencia->id)
+                            @if($aprendiz->id && isset($asistenciaId))
                                 {{-- Buscar la asistencia directamente --}}
                                 @php
                                     $asistencia = \App\Models\AsistenciaAprendiz::where('aprendiz_ficha_id', $aprendiz->id)
-                                        ->where('evidencia_id', $evidencia->id)
+                                        ->where('asistencia_id', $asistenciaId)
                                         ->whereDate('created_at', now()->format('Y-m-d'))
                                         ->first();
                                 @endphp

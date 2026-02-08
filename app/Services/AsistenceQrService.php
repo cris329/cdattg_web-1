@@ -34,6 +34,9 @@ class AsistenceQrService
         // Log para debugging
         Log::info('=== DEBUG ASISTENCEQRSERVICE GETINSTRUCTORFICHAINDEX ===');
         Log::info('User persona_id: ' . ($user->persona_id ?? 'NULL'));
+
+        $roleNames = $user?->getRoleNames() ?? collect();
+        $isOnlyInstructor = $user && $user->hasRole('INSTRUCTOR') && $roleNames->count() === 1;
         
         $instructor = $this->instructorRepository->getInstructor($user->persona_id);
         
@@ -48,7 +51,10 @@ class AsistenceQrService
             return null;
         }
 
-        $fichas = $this->instructorFichaCaracterizacionRepository->getInstructorFichaCaracterizacion($instructor->id);
+        $fichas = $this->instructorFichaCaracterizacionRepository->getInstructorFichaCaracterizacion(
+            $instructor->id,
+            $isOnlyInstructor
+        );
         
         Log::info('Fichas obtenidas del repositorio: ' . ($fichas ? 'TIENE DATOS' : 'NULL'));
         if ($fichas) {
@@ -72,11 +78,12 @@ class AsistenceQrService
      * @param mixed $user
      * @return array
      */
-    public function obtenerDatosCaracterizacion(int $caracterizacionId, $user): array
+    public function obtenerDatosCaracterizacion(int $caracterizacionId, $user, ?int $asistenciaId = null): array
     {
         Log::info('=== DEBUG OBTENER DATOS CARACTERIZACION ===');
         Log::info('Caracterizacion ID: ' . $caracterizacionId);
         Log::info('User ID: ' . ($user ? $user->id : 'NULL'));
+        Log::info('Asistencia ID (filtro tabla): ' . ($asistenciaId ?? 'NULL'));
         
         $fichaCaracterizacion = \App\Models\FichaCaracterizacion::with([
             'diasFormacion.dia',
@@ -148,13 +155,20 @@ class AsistenceQrService
 
                 $asistenciaHoy = null;
                 if ($instructorFichaId) {
-                    $asistenciaHoy = \App\Models\AsistenciaAprendiz::where('aprendiz_ficha_id', $aprendiz->id)
-                        ->where('instructor_ficha_id', $instructorFichaId)
-                        ->whereDate('created_at', $fechaActual)
-                        ->first();
+                    $query = \App\Models\AsistenciaAprendiz::where('aprendiz_ficha_id', $aprendiz->id)
+                        ->where('instructor_ficha_id', $instructorFichaId);
+
+                    if ($asistenciaId) {
+                        $query->where('asistencia_id', $asistenciaId);
+                    } else {
+                        $query->whereDate('created_at', $fechaActual);
+                    }
+
+                    $asistenciaHoy = $query->first();
                 }
 
                 $persona->asistenciaHoy = $asistenciaHoy;
+                $persona->aprendiz_id = $aprendiz->id; // Agregar el ID del aprendiz
 
                 if ($persona->asistenciaHoy) {
                     $persona->asistenciaHoy->formatted_hora_ingreso = \Carbon\Carbon::parse($persona->asistenciaHoy->hora_ingreso)->format('h:i A');

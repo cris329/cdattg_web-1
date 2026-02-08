@@ -33,27 +33,33 @@ class UsersSeeder extends Seeder
                 'role' => 'ADMINISTRADOR',
             ],
             [
-                'email' => 'instructor@dataguaviare.com',
+                'email' => 'coordinador@dataguaviare.com',
                 'password' => 'Guaviare25.',
                 'persona_id' => 4,
+                'role' => 'COORDINADOR',
+            ],
+            [
+                'email' => 'instructor@dataguaviare.com',
+                'password' => 'Guaviare25.',
+                'persona_id' => 5,
                 'role' => 'INSTRUCTOR',
             ],
             [
                 'email' => 'aprendiz1@dataguaviare.com',
                 'password' => 'Guaviare25!',
-                'persona_id' => 5,
+                'persona_id' => 6,
                 'role' => 'APRENDIZ',
             ],
             [
                 'email' => 'aprendiz2@dataguaviare.com',
                 'password' => 'Guaviare25!',
-                'persona_id' => 6,
+                'persona_id' => 7,
                 'role' => 'APRENDIZ',
             ],
             [
                 'email' => 'proveedor@dataguaviare.com',
                 'password' => 'Guaviare25.',
-                'persona_id' => 7,
+                'persona_id' => 8,
                 'role' => 'PROVEEDOR',
             ],
         ];

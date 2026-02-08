@@ -45,7 +45,7 @@
             <div class="section-block">
                 <h6 class="section-title">Clasificación</h6>
                 <div class="row g-3">
-                    <div class="col-md-6">
+                    {{-- <div class="col-md-6">
                         <div class="form-group">
                             <label for="red_conocimiento_id" class="form-label-erp">Red de Conocimiento</label>
                             <select id="red_conocimiento_id"
@@ -63,7 +63,7 @@
                                 <div class="invalid-feedback-erp">{{ $message }}</div>
                             @enderror
                         </div>
-                    </div>
+                    </div> --}}
                     <div class="col-md-6">
                         <div class="form-group">
                             <label for="nivel_formacion_id" class="form-label-erp">Nivel de Formación</label>
@@ -86,7 +86,7 @@
                 </div>
             </div>
             
-            <!-- Bloque 3 - Duración -->
+            {{-- <!-- Bloque 3 - Duración -->
             <div class="section-block">
                 <h6 class="section-title">Distribución de Horas</h6>
                 <p class="section-subtitle">La suma de horas lectiva y productiva debe coincidir con el total.</p>
@@ -175,7 +175,7 @@
                     </div>
                 </div>
             </div>
-        </div>
+        </div> --}}
         
         <!-- Footer ERP -->
         <div class="modal-footer-erp">

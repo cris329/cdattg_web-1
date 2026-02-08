@@ -3,10 +3,9 @@
 namespace Database\Seeders;
 
 use App\Models\Persona;
+use Database\Seeders\Concerns\TruncatesTables;
 use Illuminate\Database\Seeder;
 use Illuminate\Support\Facades\DB;
-use Database\Factories\PersonaFactory;
-use Database\Seeders\Concerns\TruncatesTables;
 
 class PersonaSeeder extends Seeder
 {
@@ -100,6 +99,30 @@ class PersonaSeeder extends Seeder
             ['id' => 4],
             [
                 'tipo_documento' => $tipoDocumentoCedula,
+                'numero_documento' => 555125555,
+                'primer_nombre' => 'COORDINADOR',
+                'segundo_nombre' => 'DEMO',
+                'primer_apellido' => 'CDATTG',
+                'segundo_apellido' => 'PRUEBAS',
+                'fecha_nacimiento' => '1985-04-10',
+                'genero' => $generoMasculino,
+                'telefono' => null,
+                'celular' => '3021255555',
+                'email' => 'coordinador@dataguaviare.com',
+                'pais_id' => 1,
+                'departamento_id' => 95,
+                'municipio_id' => 1,
+                'direccion' => 'CALLE 12 #13-56',
+                'status' => 1,
+                'user_create_id' => null,
+                'user_edit_id' => null,
+            ]
+        );
+
+        Persona::updateOrCreate(
+            ['id' => 5],
+            [
+                'tipo_documento' => $tipoDocumentoCedula,
                 'numero_documento' => 555555555,
                 'primer_nombre' => 'INSTRUCTOR',
                 'segundo_nombre' => 'DEMO',
@@ -121,7 +144,7 @@ class PersonaSeeder extends Seeder
         );
 
         Persona::updateOrCreate(
-            ['id' => 5],
+            ['id' => 6],
             [
                 'tipo_documento' => $tipoDocumentoCedula,
                 'numero_documento' => 444444444,
@@ -145,7 +168,7 @@ class PersonaSeeder extends Seeder
         );
 
         Persona::updateOrCreate(
-            ['id' => 6],
+            ['id' => 7],
             [
                 'tipo_documento' => $tipoDocumentoCedula,
                 'numero_documento' => 333333333,
@@ -169,7 +192,7 @@ class PersonaSeeder extends Seeder
         );
 
         Persona::updateOrCreate(
-            ['id' => 7],
+            ['id' => 8],
             [
                 'tipo_documento' => $tipoDocumentoCedula,
                 'numero_documento' => 222222222,

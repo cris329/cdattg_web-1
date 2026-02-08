@@ -10,6 +10,7 @@ use App\Models\Regional;
 use App\Models\Sede;
 use App\Services\FichaService;
 use Livewire\Attributes\On;
+use Illuminate\Support\Facades\Auth;
 
 class FichaIndex extends Component
 {
@@ -110,7 +111,9 @@ class FichaIndex extends Component
             'sede', 
             'instructor.persona',
             'ambiente'
-        ])->find($fichaId);
+        ])
+            ->withCount('aprendices')
+            ->find($fichaId);
         
         if ($this->selectedFicha) {
             $this->showEditModal = true;
@@ -126,7 +129,9 @@ class FichaIndex extends Component
             'instructor.persona',
             'ambiente',
             'aprendices.persona'
-        ])->find($fichaId);
+        ])
+            ->withCount('aprendices')
+            ->find($fichaId);
         
         if ($this->selectedFicha) {
             $this->showShowModal = true;
@@ -135,7 +140,7 @@ class FichaIndex extends Component
 
     public function openDeleteModal($fichaId)
     {
-        $this->selectedFicha = FichaCaracterizacion::find($fichaId);
+        $this->selectedFicha = FichaCaracterizacion::withCount('aprendices')->find($fichaId);
         
         if ($this->selectedFicha) {
             $this->showDeleteModal = true;
@@ -225,7 +230,9 @@ class FichaIndex extends Component
         \Log::info('Abriendo gestión de aprendices - Ficha ID: ' . $fichaId);
         
         // Cargar la ficha con todas las relaciones necesarias incluyendo aprendices
-        $this->selectedFicha = FichaCaracterizacion::with(['programaFormacion', 'sede', 'instructor.persona', 'ambiente', 'aprendices.persona'])->find($fichaId);
+        $this->selectedFicha = FichaCaracterizacion::with(['programaFormacion', 'sede', 'instructor.persona', 'ambiente', 'aprendices.persona'])
+            ->withCount('aprendices')
+            ->find($fichaId);
         
         // Log para depuración - qué se cargó
         \Log::info('Ficha cargada:', [
@@ -260,19 +267,52 @@ class FichaIndex extends Component
             \Log::info('=== CARGANDO PERSONAS DISPONIBLES ===');
             \Log::info('Ficha seleccionada:', ['ficha_id' => $this->selectedFicha->id, 'ficha_codigo' => $this->selectedFicha->ficha]);
             
-            // Obtener personas que no tienen rol de aprendiz en esta ficha específica
-            // SIN LÍMITE para mostrar todas las disponibles
+            // Obtener IDs de personas relacionadas con esta ficha
+            $personasRelacionadasIds = [];
+            
+            // 1. Aprendices activos en esta ficha
+            $aprendicesIds = $this->selectedFicha->aprendices()
+                ->where('estado', 1)
+                ->pluck('persona_id')
+                ->toArray();
+            
+            // 2. Instructor líder de la ficha
+            $instructorLiderId = $this->selectedFicha->instructor ? $this->selectedFicha->instructor->persona_id : null;
+            
+            // 3. Instructores asignados a la ficha
+            $instructoresAsignadosIds = $this->selectedFicha->instructorFicha()
+                ->with('instructor.persona')
+                ->get()
+                ->pluck('instructor.persona_id')
+                ->toArray();
+            
+            // Combinar todos los IDs relacionados
+            $personasRelacionadasIds = array_merge($aprendicesIds, [$instructorLiderId], $instructoresAsignadosIds);
+            $personasRelacionadasIds = array_filter($personasRelacionadasIds); // Eliminar nulos
+            $personasRelacionadasIds = array_unique($personasRelacionadasIds); // Eliminar duplicados
+            
+            \Log::info('Personas relacionadas con esta ficha:', [
+                'aprendices_ids' => $aprendicesIds,
+                'instructor_lider_id' => $instructorLiderId,
+                'instructores_asignados_ids' => $instructoresAsignadosIds,
+                'todos_ids' => $personasRelacionadasIds,
+                'total_relacionados' => count($personasRelacionadasIds)
+            ]);
+            
+            // Obtener personas que NO son aprendices en NINGUNA ficha
+            // Y que NO están relacionadas con esta ficha específica
             $this->personasDisponibles = \App\Models\Persona::where('status', 1)
                 ->whereNotIn('id', function ($query) {
                     $query->select('persona_id')
                         ->from('aprendices')
-                        ->where('ficha_caracterizacion_id', $this->selectedFicha->id);
+                        ->where('estado', 1); // Solo aprendices activos en cualquier ficha
                 })
+                ->whereNotIn('id', $personasRelacionadasIds) // Excluir personas relacionadas con esta ficha
                 ->orderBy('primer_nombre')
                 ->orderBy('primer_apellido')
-                ->get(); // Eliminado el limit(50)
+                ->get();
             
-            \Log::info('Personas disponibles cargadas (SIN LÍMITE):', [
+            \Log::info('Personas disponibles cargadas (personas que NO son aprendices en ninguna ficha Y que NO están relacionadas con esta ficha):', [
                 'count' => $this->personasDisponibles->count(),
                 'personas' => $this->personasDisponibles->take(5)->map(function($persona) { // Solo primeras 5 para log
                     return [
@@ -289,6 +329,13 @@ class FichaIndex extends Component
             
             \Log::info('Total personas activas en sistema:', [
                 'count' => $totalPersonasActivas
+            ]);
+            
+            // Verificar aprendices activos en TODAS las fichas
+            $totalAprendicesActivos = \App\Models\Aprendiz::where('estado', 1)->count();
+            
+            \Log::info('Total aprendices activos en todas las fichas:', [
+                'count' => $totalAprendicesActivos
             ]);
             
             // Verificar aprendices actuales de esta ficha
@@ -310,10 +357,11 @@ class FichaIndex extends Component
             // Verificar la cuenta matemática
             \Log::info('Verificación matemática:', [
                 'total_personas_activas' => $totalPersonasActivas,
-                'aprendices_en_ficha' => $totalAprendicesFicha,
-                'personas_disponibles_esperadas' => $totalPersonasActivas - $totalAprendicesFicha,
+                'total_aprendices_activos' => $totalAprendicesActivos,
+                'personas_relacionadas_ficha' => count($personasRelacionadasIds),
+                'personas_disponibles_esperadas' => $totalPersonasActivas - $totalAprendicesActivos - count($personasRelacionadasIds),
                 'personas_disponibles_reales' => $this->personasDisponibles->count(),
-                'diferencia' => ($totalPersonasActivas - $totalAprendicesFicha) - $this->personasDisponibles->count()
+                'diferencia' => ($totalPersonasActivas - $totalAprendicesActivos - count($personasRelacionadasIds)) - $this->personasDisponibles->count()
             ]);
             
             \Log::info('=== FIN CARGA PERSONAS DISPONIBLES ===');
@@ -900,7 +948,33 @@ class FichaIndex extends Component
 
     public function render()
     {
+        $user = Auth::user();
+        $roleNames = $user?->getRoleNames() ?? collect();
+        $isOnlyInstructor = $user && $user->hasRole('INSTRUCTOR') && $roleNames->count() === 1;
+
+        $instructorId = null;
+        if ($isOnlyInstructor) {
+            $instructorId = \App\Models\Instructor::where('persona_id', $user->persona_id)->value('id');
+        }
+
         $query = FichaCaracterizacion::with(['programaFormacion', 'sede', 'instructor.persona', 'ambiente', 'aprendices.persona'])
+            ->withCount('aprendices')
+            ->when($isOnlyInstructor, function ($query) use ($instructorId) {
+                if (!$instructorId) {
+                    $query->whereRaw('1 = 0');
+                    return;
+                }
+
+                // Para INSTRUCTOR (solo rol), mostrar únicamente fichas activas
+                $query->where('status', 1);
+
+                $query->where(function ($q) use ($instructorId) {
+                    $q->where('instructor_id', $instructorId)
+                        ->orWhereHas('instructorFicha', function ($sub) use ($instructorId) {
+                            $sub->where('instructor_id', $instructorId);
+                        });
+                });
+            })
             ->when($this->search, function ($query) {
                 $query->where('ficha', 'like', '%' . $this->search . '%')
                     ->orWhereHas('programaFormacion', function ($q) {
@@ -918,7 +992,7 @@ class FichaIndex extends Component
             ->when($this->sedeFilter, function ($query) {
                 $query->where('sede_id', $this->sedeFilter);
             })
-            ->when($this->statusFilter !== '', function ($query) {
+            ->when(!$isOnlyInstructor && $this->statusFilter !== '', function ($query) {
                 $query->where('status', $this->statusFilter);
             })
             ->orderBy('id', 'desc');

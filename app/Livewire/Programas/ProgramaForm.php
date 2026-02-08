@@ -21,19 +21,19 @@ class ProgramaForm extends Component
     #[Validate('required|string|max:255')]
     public $nombre = '';
 
-    #[Validate('required|exists:red_conocimientos,id')]
+    #[Validate('nullable|exists:red_conocimientos,id')]
     public $red_conocimiento_id = '';
 
     #[Validate('required|exists:parametros,id')]
     public $nivel_formacion_id = '';
 
-    #[Validate('required|integer|min:1')]
+    #[Validate('nullable|integer|min:1')]
     public $horas_totales = '';
 
-    #[Validate('required|integer|min:1')]
+    #[Validate('nullable|integer|min:1')]
     public $horas_etapa_lectiva = '';
 
-    #[Validate('required|integer|min:1')]
+    #[Validate('nullable|integer|min:1')]
     public $horas_etapa_productiva = '';
 
     // Estado para validación visual
@@ -96,6 +96,19 @@ class ProgramaForm extends Component
             // Asegurar que el código sea string
             $this->codigo = (string) $this->codigo;
             
+            // Convertir '' a null para claves foráneas y campos numéricos
+            foreach ([
+                'red_conocimiento_id',
+                'nivel_formacion_id',
+                'horas_totales',
+                'horas_etapa_lectiva',
+                'horas_etapa_productiva'
+            ] as $field) {
+                if ($this->$field === '') {
+                    $this->$field = null;
+                }
+            }
+
             // VALIDACIÓN SIMPLE - Solo usar rules()
             $validated = $this->validate();
             
@@ -108,10 +121,10 @@ class ProgramaForm extends Component
             }
             
             // Validación de negocio simple
-            if (($validated['horas_etapa_lectiva'] + $validated['horas_etapa_productiva']) != $validated['horas_totales']) {
-                $this->addError('horas_totales', 'La suma de horas lectiva y productiva debe coincidir con el total.');
-                return;
-            }
+            // if (($validated['horas_etapa_lectiva'] + $validated['horas_etapa_productiva']) != $validated['horas_totales']) {
+            //     $this->addError('horas_totales', 'La suma de horas lectiva y productiva debe coincidir con el total.');
+            //     return;
+            // }
             
             // FORZAR ESTADO ACTIVO POR DEFECTO
             $validated['status'] = true;
@@ -141,6 +154,19 @@ class ProgramaForm extends Component
             // Asegurar que el código sea string
             $this->codigo = (string) $this->codigo;
             
+            // Convertir '' a null para claves foráneas y campos numéricos
+            foreach ([
+                'red_conocimiento_id',
+                'nivel_formacion_id',
+                'horas_totales',
+                'horas_etapa_lectiva',
+                'horas_etapa_productiva'
+            ] as $field) {
+                if ($this->$field === '') {
+                    $this->$field = null;
+                }
+            }
+
             // VALIDACIÓN SIMPLE - Solo usar rules()
             $validated = $this->validate();
             

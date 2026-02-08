@@ -11,6 +11,7 @@ use App\Models\ProgramaFormacion;
 use App\Models\Regional;
 use App\Services\AprendizService;
 use Livewire\Attributes\On;
+use Illuminate\Support\Facades\Auth;
 
 class AprendizIndex extends Component
 {
@@ -61,6 +62,13 @@ class AprendizIndex extends Component
             'fichaCaracterizacion.programaFormacion',
             'fichaCaracterizacion.sede.regional'
         ]);
+
+        // Si el usuario es instructor, filtrar solo sus aprendices asignados
+        if (Auth::user()->hasRole('instructor')) {
+            $query->whereHas('fichaCaracterizacion', function($q) {
+                $q->where('instructor_id', Auth::user()->instructor?->id);
+            });
+        }
 
         // Búsqueda
         if ($this->search) {

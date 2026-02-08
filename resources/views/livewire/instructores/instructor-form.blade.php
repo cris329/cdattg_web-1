@@ -1,4 +1,25 @@
 <form wire:submit="save" class="instructor-form">
+    {{-- Notificación Livewire --}}
+    <div 
+        x-data="{ show: false, message: '', type: '' }"
+        x-on:notify.window="
+            show = true; 
+            message = $event.detail.message; 
+            type = $event.detail.type; 
+            setTimeout(() => show = false, 4000);
+        "
+        x-show="show"
+        x-transition
+        class="alert"
+        :class="{
+            'alert-success': type === 'success',
+            'alert-danger': type === 'error',
+            'alert-warning': type === 'warning'
+        }"
+        style="margin-bottom: 1rem;"
+    >
+        <span x-text="message"></span>
+    </div>
     <!-- Sección 1: Selección de Persona (solo en creación) -->
     @if (!$isEdit)
         <div class="modal-section">
@@ -6,11 +27,12 @@
                 <i class="fas fa-user"></i>
                 Selección de Persona
             </h6>
-            
+
             @if ($personasDisponibles->isEmpty())
                 <div class="alert alert-warning">
                     <i class="fas fa-exclamation-triangle"></i>
-                    No hay personas disponibles sin rol de instructor. Debe registrar nuevas personas o liberar el rol de un instructor existente.
+                    No hay personas disponibles sin rol de instructor. Debe registrar nuevas personas o liberar el rol
+                    de un instructor existente.
                 </div>
             @else
                 <div class="form-group">
@@ -18,11 +40,9 @@
                         Persona
                     </label>
                     <div wire:ignore>
-                        <select wire:model="persona_id" 
-                                id="persona_id" 
-                                class="form-control-erp @error('persona_id') is-invalid @enderror" 
-                                required 
-                                data-placeholder="-- Selecciona una persona --">
+                        <select wire:model="persona_id" id="persona_id"
+                            class="form-control-erp select2-persona @error('persona_id') is-invalid @enderror" required
+                            data-placeholder="-- Selecciona una persona --">
                             <option value="">-- Selecciona una persona --</option>
                             @foreach ($personasDisponibles as $persona)
                                 <option value="{{ $persona->id }}">
@@ -39,12 +59,12 @@
         </div>
     @endif
 
-    <!-- Sección 2: Información Laboral -->
+    {{-- {{-- <!-- Sección 2: Información Laboral -->
     <div class="modal-section">
         <h6 class="section-title">
             <i class="fas fa-briefcase"></i>
             Información Laboral
-        </h6>
+        </h6> --}}
         
         <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 1rem;">
             <div class="form-group">
@@ -62,7 +82,7 @@
                     <div class="invalid-feedback">{{ $message }}</div>
                 @enderror
             </div>
-            
+        {{--  
             <div class="form-group">
                 <label for="centro_formacion_id" class="form-label">Centro de Formación</label>
                 <select wire:model="centro_formacion_id" 
@@ -208,7 +228,7 @@
                     <div style="display: flex; gap: 0.5rem; margin-bottom: 0.5rem;">
                         <input type="text" 
                                wire:model="titulos_obtenidos.{{ $index }}" 
-                               class="form-control-erp @error('titulos_obtenidos.'.$index) is-invalid @enderror"
+                               class="form-control-erp @error('titulos_obtenidos.' . $index) is-invalid @enderror"
                                placeholder="Nombre del título">
                         <button type="button" 
                                 wire:click="removeCampo('titulos_obtenidos', {{ $index }})"
@@ -217,7 +237,7 @@
                             <i class="fas fa-trash"></i>
                         </button>
                     </div>
-                    @error('titulos_obtenidos.'.$index)
+                    @error('titulos_obtenidos.' . $index)
                         <div class="invalid-feedback">{{ $message }}</div>
                     @enderror
                 @endforeach
@@ -237,7 +257,7 @@
                     <div style="display: flex; gap: 0.5rem; margin-bottom: 0.5rem;">
                         <input type="text" 
                                wire:model="instituciones_educativas.{{ $index }}" 
-                               class="form-control-erp @error('instituciones_educativas.'.$index) is-invalid @enderror"
+                               class="form-control-erp @error('instituciones_educativas.' . $index) is-invalid @enderror"
                                placeholder="Nombre de la institución">
                         <button type="button" 
                                 wire:click="removeCampo('instituciones_educativas', {{ $index }})"
@@ -246,7 +266,7 @@
                             <i class="fas fa-trash"></i>
                         </button>
                     </div>
-                    @error('instituciones_educativas.'.$index)
+                    @error('instituciones_educativas.' . $index)
                         <div class="invalid-feedback">{{ $message }}</div>
                     @enderror
                 @endforeach
@@ -266,7 +286,7 @@
                     <div style="display: flex; gap: 0.5rem; margin-bottom: 0.5rem;">
                         <input type="text" 
                                wire:model="certificaciones_tecnicas.{{ $index }}" 
-                               class="form-control-erp @error('certificaciones_tecnicas.'.$index) is-invalid @enderror"
+                               class="form-control-erp @error('certificaciones_tecnicas.' . $index) is-invalid @enderror"
                                placeholder="Nombre de la certificación">
                         <button type="button" 
                                 wire:click="removeCampo('certificaciones_tecnicas', {{ $index }})"
@@ -275,7 +295,7 @@
                             <i class="fas fa-trash"></i>
                         </button>
                     </div>
-                    @error('certificaciones_tecnicas.'.$index)
+                    @error('certificaciones_tecnicas.' . $index)
                         <div class="invalid-feedback">{{ $message }}</div>
                     @enderror
                 @endforeach
@@ -295,7 +315,7 @@
                     <div style="display: flex; gap: 0.5rem; margin-bottom: 0.5rem;">
                         <input type="text" 
                                wire:model="cursos_complementarios.{{ $index }}" 
-                               class="form-control-erp @error('cursos_complementarios.'.$index) is-invalid @enderror"
+                               class="form-control-erp @error('cursos_complementarios.' . $index) is-invalid @enderror"
                                placeholder="Nombre del curso">
                         <button type="button" 
                                 wire:click="removeCampo('cursos_complementarios', {{ $index }})"
@@ -304,7 +324,7 @@
                             <i class="fas fa-trash"></i>
                         </button>
                     </div>
-                    @error('cursos_complementarios.'.$index)
+                    @error('cursos_complementarios.' . $index)
                         <div class="invalid-feedback">{{ $message }}</div>
                     @enderror
                 @endforeach
@@ -333,7 +353,7 @@
                 <div style="display: flex; gap: 0.5rem; margin-bottom: 0.5rem;">
                     <input type="text" 
                            wire:model="areas_experticia.{{ $index }}" 
-                           class="form-control-erp @error('areas_experticia.'.$index) is-invalid @enderror"
+                           class="form-control-erp @error('areas_experticia.' . $index) is-invalid @enderror"
                            placeholder="Describe un área de experticia">
                     <button type="button" 
                             wire:click="removeCampo('areas_experticia', {{ $index }})"
@@ -342,7 +362,7 @@
                         <i class="fas fa-trash"></i>
                     </button>
                 </div>
-                @error('areas_experticia.'.$index)
+                @error('areas_experticia.' . $index)
                     <div class="invalid-feedback">{{ $message }}</div>
                 @enderror
             @endforeach
@@ -362,7 +382,7 @@
                 <div style="display: flex; gap: 0.5rem; margin-bottom: 0.5rem;">
                     <input type="text" 
                            wire:model="competencias_tic.{{ $index }}" 
-                           class="form-control-erp @error('competencias_tic.'.$index) is-invalid @enderror"
+                           class="form-control-erp @error('competencias_tic.' . $index) is-invalid @enderror"
                            placeholder="Describe una competencia TIC">
                     <button type="button" 
                             wire:click="removeCampo('competencias_tic', {{ $index }})"
@@ -371,7 +391,7 @@
                         <i class="fas fa-trash"></i>
                     </button>
                 </div>
-                @error('competencias_tic.'.$index)
+                @error('competencias_tic.' . $index)
                     <div class="invalid-feedback">{{ $message }}</div>
                 @enderror
             @endforeach
@@ -391,11 +411,11 @@
                 <div style="display: grid; grid-template-columns: 1fr 1fr auto; gap: 0.5rem; margin-bottom: 0.5rem;">
                     <input type="text" 
                            wire:model="idiomas.{{ $index }}.idioma" 
-                           class="form-control-erp @error('idiomas.'.$index.'.idioma') is-invalid @enderror"
+                           class="form-control-erp @error('idiomas.' . $index . '.idioma') is-invalid @enderror"
                            placeholder="Idioma">
                     <input type="text" 
                            wire:model="idiomas.{{ $index }}.nivel" 
-                           class="form-control-erp @error('idiomas.'.$index.'.nivel') is-invalid @enderror"
+                           class="form-control-erp @error('idiomas.' . $index . '.nivel') is-invalid @enderror"
                            placeholder="Nivel">
                     <button type="button" 
                             wire:click="removeCampo('idiomas', {{ $index }})"
@@ -404,10 +424,10 @@
                         <i class="fas fa-trash"></i>
                     </button>
                 </div>
-                @error('idiomas.'.$index.'.idioma')
+                @error('idiomas.' . $index . '.idioma')
                     <div class="invalid-feedback">{{ $message }}</div>
                 @enderror
-                @error('idiomas.'.$index.'.nivel')
+                @error('idiomas.' . $index . '.nivel')
                     <div class="invalid-feedback">{{ $message }}</div>
                 @enderror
             @endforeach
@@ -522,20 +542,16 @@
                 @enderror
             </div>
         </div>
-    </div>
+    </div> --}}
 
     <!-- Footer del formulario -->
     <div class="modal-footer">
-        <button type="button" 
-                wire:click="$dispatch('closeModal')" 
-                class="btn-erp btn-secondary">
+        <button type="button" wire:click="$dispatch('closeModal')" class="btn-erp btn-secondary">
             <i class="fas fa-times"></i>
             Cancelar
         </button>
-        
-        <button type="submit" 
-                class="btn-erp btn-primary"
-                wire:loading.attr="disabled">
+
+        <button type="submit" class="btn-erp btn-primary" wire:loading.attr="disabled">
             <i wire:loading.remove wire:target="save" class="fas fa-save"></i>
             <span wire:loading.remove wire:target="save">
                 {{ $isEdit ? 'Actualizar Instructor' : 'Crear Instructor' }}
@@ -547,19 +563,63 @@
 </form>
 
 @push('scripts')
-<script>
-document.addEventListener('DOMContentLoaded', function() {
-    // Inicializar Select2 para selects múltiples
-    $('.form-control-erp[multiple]').select2({
-        theme: 'bootstrap4',
-        width: '100%'
+    <script>
+        function initSelect2Persona() {
+            // Elimina select2 si ya está inicializado
+            if ($('.select2-persona').hasClass('select2-hidden-accessible')) {
+                $('.select2-persona').select2('destroy');
+            }
+            $('.select2-persona').select2({
+                theme: 'bootstrap4',
+                width: '100%',
+                placeholder: '-- Selecciona una persona --',
+                minimumInputLength: 1,
+                dropdownAutoWidth: true,
+                allowClear: true,
+                language: {
+                    inputTooShort: function () {
+                        return 'Escribe para buscar por nombre o documento';
+                    },
+                    noResults: function () {
+                        return 'No se encontraron personas';
+                    }
+                }
+            }).on('change', function(e) {
+                @this.set('persona_id', $(this).val());
+            });
+        }
+
+        document.addEventListener('DOMContentLoaded', function() {
+            // Inicializar Select2 para selects múltiples
+            $('.form-control-erp[multiple]').select2({
+                theme: 'bootstrap4',
+                width: '100%'
+            });
+
+            // Inicializar Select2 para selects simples
+            $('.form-control-erp:not([multiple])').not('[wire\\:ignore]').select2({
+                theme: 'bootstrap4',
+                width: '100%'
+            });
+
+            // Inicializar Select2 para persona (con wire:ignore)
+            initSelect2Persona();
+        });
+
+        // Reinicializa select2 cada vez que Livewire actualiza el DOM
+        document.addEventListener('livewire:load', function () {
+            initSelect2Persona();
+        });
+        document.addEventListener('livewire:update', function () {
+            initSelect2Persona();
+        });
+
+        window.addEventListener('showInstructorModal', function() {
+            setTimeout(initSelect2Persona, 100); // Espera a que el DOM esté listo
+        });
+    </script>
+    <!-- Disparar evento de notificación desde Livewire a Alpine -->
+    Livewire.on('notify', data => {
+        window.dispatchEvent(new CustomEvent('notify', { detail: data }));
     });
-    
-    // Inicializar Select2 para selects simples
-    $('.form-control-erp:not([multiple])').not('[wire\\:ignore]').select2({
-        theme: 'bootstrap4',
-        width: '100%'
-    });
-});
-</script>
 @endpush

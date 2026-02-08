@@ -36,3 +36,4 @@ sonar-project.properties
 *.sqlite
 database/testing.sqlite
 /coverage
+/public/asistencia_pdfs

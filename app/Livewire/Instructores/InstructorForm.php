@@ -94,9 +94,16 @@ class InstructorForm extends Component
 
     private function cargarDatosSelects()
     {
-        // Personas disponibles sin rol de instructor
+        // Personas disponibles: no tienen rol de instructor ni registro en instructors
         $this->personasDisponibles = Persona::query()
             ->whereDoesntHave('instructor')
+            ->whereNotExists(function ($query) {
+                $query->select(\DB::raw(1))
+                    ->from('model_has_roles')
+                    ->join('roles', 'model_has_roles.role_id', '=', 'roles.id')
+                    ->whereRaw('model_has_roles.model_id = personas.id')
+                    ->where('roles.name', 'INSTRUCTOR');
+            })
             ->when($this->isEdit && $this->instructor, function($query) {
                 $query->orWhere('id', $this->instructor->persona_id);
             })
@@ -277,40 +284,78 @@ class InstructorForm extends Component
 
     public function save()
     {
-        $this->validate();
-
         try {
+            \Log::info('[InstructorForm] Intentando guardar instructor', [
+                'isEdit' => $this->isEdit,
+                'persona_id' => $this->persona_id,
+                'regional_id' => $this->regional_id,
+                // Puedes agregar más campos si lo necesitas
+            ]);
+
+            $this->validate();
+
+            // Verifica si hay personas disponibles antes de crear
+            if (!$this->isEdit && ($this->personasDisponibles->isEmpty() || !$this->persona_id)) {
+                \Log::warning('[InstructorForm] No hay personas disponibles para crear instructor.', [
+                    'personasDisponibles' => $this->personasDisponibles,
+                    'persona_id' => $this->persona_id,
+                ]);
+                $this->dispatch('notify', [
+                    'type' => 'error',
+                    'message' => 'No hay personas disponibles para crear instructor.',
+                ]);
+                return;
+            }
+
             // Preparar datos para el servicio
             $datos = $this->prepareDataForService();
+            \Log::info('[InstructorForm] Datos preparados para guardar', $datos);
 
             if ($this->isEdit) {
                 // Actualizar instructor existente
                 $this->instructorService->actualizar($this->instructor->id, $datos);
-                
+
+                \Log::info('[InstructorForm] Instructor actualizado correctamente', [
+                    'instructor_id' => $this->instructor->id,
+                ]);
+
                 $this->dispatch('notify', [
                     'type' => 'success',
                     'message' => 'Instructor actualizado correctamente',
                 ]);
-                
                 $this->dispatch('instructorActualizado');
             } else {
                 // Crear nuevo instructor
                 $instructor = $this->instructorService->crear($datos, $this->jornadas);
-                
+
+                \Log::info('[InstructorForm] Instructor creado correctamente', [
+                    'instructor_id' => $instructor->id ?? null,
+                ]);
+
                 $this->dispatch('notify', [
                     'type' => 'success',
                     'message' => 'Instructor creado correctamente',
                 ]);
-                
                 $this->dispatch('instructorCreado');
             }
 
             // Cerrar modal
             $this->dispatch('closeModal');
-            
+
+        } catch (\Illuminate\Validation\ValidationException $e) {
+            \Log::error('[InstructorForm] Error de validación', [
+                'errors' => $e->errors(),
+                'message' => $e->getMessage(),
+            ]);
+            $this->dispatch('notify', [
+                'type' => 'error',
+                'message' => 'Error de validación: ' . $e->getMessage(),
+            ]);
         } catch (\Exception $e) {
-            Log::error('Error guardando instructor: ' . $e->getMessage());
-            
+            \Log::error('[InstructorForm] Error guardando instructor', [
+                'exception' => $e,
+                'message' => $e->getMessage(),
+            ]);
             $this->dispatch('notify', [
                 'type' => 'error',
                 'message' => 'Error al guardar instructor: ' . $e->getMessage(),

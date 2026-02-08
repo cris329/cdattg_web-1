@@ -7,6 +7,7 @@ use App\Models\Instructor;
 use App\Models\Persona;
 use App\Models\User;
 use Illuminate\Contracts\Pagination\LengthAwarePaginator;
+use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Hash;
@@ -35,7 +36,10 @@ class InstructorService
             'instructorFichas' => function($q) {
                 $q->with('ficha.programaFormacion');
             }
-        ]);
+        ])
+            ->whereHas('user.roles', function (Builder $roleQuery) {
+                $roleQuery->where('name', 'INSTRUCTOR');
+            });
 
         // Filtro de búsqueda
         if (!empty($filtros['search'])) {
@@ -53,13 +57,21 @@ class InstructorService
         }
 
         // Filtro por estado
-        if (isset($filtros['estado']) && $filtros['estado'] !== 'todos') {
-            $query->where('status', $filtros['estado'] === 'activos');
+        $estado = $this->normalizarFiltroEstado($filtros['estado'] ?? 'todos');
+        if ($estado !== null) {
+            $query->where('status', $estado);
         }
 
         // Filtro por especialidad
         if (!empty($filtros['especialidad'])) {
-            $query->whereJsonContains('especialidades', $filtros['especialidad']);
+            $especialidadId = (int) $filtros['especialidad'];
+
+            $query->where(function (Builder $especialidadQuery) use ($especialidadId) {
+                $especialidadQuery
+                    ->whereJsonContains('especialidades->principal', $especialidadId)
+                    ->orWhereJsonContains('especialidades->secundarias', $especialidadId)
+                    ->orWhereJsonContains('especialidades', $especialidadId);
+            });
         }
 
         // Filtro por regional
@@ -67,9 +79,64 @@ class InstructorService
             $query->where('regional_id', $filtros['regional']);
         }
 
-        $perPage = $filtros['per_page'] ?? 15;
+        $perPage = max((int) ($filtros['per_page'] ?? 15), 1);
 
-        return $query->orderBy('id', 'desc')->paginate($perPage)->withQueryString();
+        $this->aplicarOrdenamiento(
+            $query,
+            $filtros['sort_field'] ?? null,
+            $filtros['sort_direction'] ?? 'desc'
+        );
+
+        return $query->paginate($perPage)->withQueryString();
+    }
+
+    private function normalizarFiltroEstado(mixed $estado): ?bool
+    {
+        if ($estado === null || $estado === '' || $estado === 'todos') {
+            return null;
+        }
+
+        if (is_bool($estado)) {
+            return $estado;
+        }
+
+        if (is_int($estado)) {
+            return $estado === 1;
+        }
+
+        $estadoNormalizado = strtolower(trim((string) $estado));
+
+        if (in_array($estadoNormalizado, ['1', 'true', 'activo', 'activos'], true)) {
+            return true;
+        }
+
+        if (in_array($estadoNormalizado, ['0', 'false', 'inactivo', 'inactivos'], true)) {
+            return false;
+        }
+
+        return null;
+    }
+
+    private function aplicarOrdenamiento(Builder $query, ?string $sortField, string $sortDirection): void
+    {
+        $direction = strtolower($sortDirection) === 'asc' ? 'asc' : 'desc';
+
+        if ($sortField === 'nombre') {
+            $query
+                ->join('personas', 'instructors.persona_id', '=', 'personas.id')
+                ->orderBy('personas.primer_nombre', $direction)
+                ->orderBy('personas.primer_apellido', $direction)
+                ->select('instructors.*');
+
+            return;
+        }
+
+        if ($sortField === 'created_at') {
+            $query->orderBy('instructors.created_at', $direction);
+            return;
+        }
+
+        $query->orderBy('instructors.id', 'desc');
     }
 
     /**
@@ -429,4 +496,3 @@ class InstructorService
         });
     }
 }
-

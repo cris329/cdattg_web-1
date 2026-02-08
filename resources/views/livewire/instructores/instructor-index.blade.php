@@ -23,12 +23,12 @@
                 <option value="0">Inactivos</option>
             </select>
             
-            <select wire:model.live="especialidadFilter" class="filter-select">
+            {{-- <select wire:model.live="especialidadFilter" class="filter-select">
                 <option value="">Todas las especialidades</option>
                 @foreach($especialidades as $id => $nombre)
                     <option value="{{ $id }}">{{ $nombre }}</option>
                 @endforeach
-            </select>
+            </select> --}}
             
             <select wire:model.live="regionalFilter" class="filter-select">
                 <option value="">Todas las regionales</option>
@@ -92,20 +92,14 @@
         <table class="modern-table">
             <thead>
                 <tr>
-                    <th class="sortable codigo" wire:click="sortBy('created_at')">
-                        #
-                        @if ($sortField === 'created_at')
-                            <i class="fas fa-sort-{{ $sortDirection === 'asc' ? 'up' : 'down' }} sort-icon"></i>
-                        @endif
-                    </th>
-                    <th class="sortable nombre" wire:click="sortBy('nombre')">
-                        Nombre
-                        @if ($sortField === 'nombre')
-                            <i class="fas fa-sort-{{ $sortDirection === 'asc' ? 'up' : 'down' }} sort-icon"></i>
-                        @endif
-                    </th>
+                    <th class="sortable codigo" wire:click="sortBy('created_at')"># @if ($sortField === 'created_at')
+                        <i class="fas fa-sort-{{ $sortDirection === 'asc' ? 'up' : 'down' }} sort-icon"></i>
+                    @endif </th>
+                    <th class="sortable nombre" wire:click="sortBy('nombre')">Nombre @if ($sortField === 'nombre')
+                        <i class="fas fa-sort-{{ $sortDirection === 'asc' ? 'up' : 'down' }} sort-icon"></i>
+                    @endif </th>
                     <th class="documento">Documento</th>
-                    <th class="especialidades">Especialidades</th>
+                    {{-- <th class="especialidades">Especialidades</th> --}}
                     <th class="regional">Regional</th>
                     <th class="estado">Estado</th>
                     <th class="th-actions sticky-actions">ACCIONES</th>
@@ -114,53 +108,46 @@
             <tbody>
                 @forelse ($instructores as $instructor)
                     <tr>
-                        <td class="codigo">
-                            <span class="badge-modern badge-primary">{{ $loop->iteration }}</span>
-                        </td>
+                        <td class="codigo"><span class="badge-modern badge-primary">{{ $loop->iteration }}</span></td>
                         <td class="nombre fw-medium">
-                            {{ $instructor->persona->primer_nombre }} 
-                            {{ $instructor->persona->segundo_nombre ?? '' }}
-                            {{ $instructor->persona->primer_apellido }}
-                            {{ $instructor->persona->segundo_apellido ?? '' }}
+                            {{ $instructor->persona->primer_nombre ?? $instructor->primer_nombre }} 
+                            {{ $instructor->persona->segundo_nombre ?? $instructor->segundo_nombre ?? '' }}
+                            {{ $instructor->persona->primer_apellido ?? $instructor->primer_apellido }}
+                            {{ $instructor->persona->segundo_apellido ?? $instructor->segundo_apellido ?? '' }}
                         </td>
-                        <td class="documento">{{ $instructor->persona->numero_documento }}</td>
-                        <td class="especialidades">
-                            @php
-                                $especialidades = $this->obtenerEspecialidadesFormateadas($instructor);
-                            @endphp
-                            
-                            @if($especialidades['principal'])
-                                <span class="badge-modern badge-primary">
-                                    {{ $especialidades['principal'] }}
-                                </span>
-                            @endif
-                            
-                            @foreach(array_slice($especialidades['secundarias'], 0, 2) as $especialidad)
-                                <span class="badge-modern badge-info">
-                                    {{ $especialidad }}
-                                </span>
-                            @endforeach
-                            
-                            @if(count($especialidades['secundarias']) > 2)
-                                <span class="badge-modern badge-secondary">
-                                    +{{ count($especialidades['secundarias']) - 2 }}
-                                </span>
-                            @endif
-                            
-                            @if(!$especialidades['principal'] && count($especialidades['secundarias']) === 0)
+                        <td class="documento">{{ $instructor->persona->numero_documento ?? $instructor->numero_documento }}</td>
+                        {{-- <td class="especialidades">
+                            @if(isset($instructor->especialidades))
+                                @php
+                                    $especialidades = $this->obtenerEspecialidadesFormateadas($instructor);
+                                @endphp
+                                @if($especialidades['principal'])
+                                    <span class="badge-modern badge-primary">{{ $especialidades['principal'] }}</span>
+                                @endif
+                                @foreach(array_slice($especialidades['secundarias'], 0, 2) as $especialidad)
+                                    <span class="badge-modern badge-info">{{ $especialidad }}</span>
+                                @endforeach
+                                @if(count($especialidades['secundarias']) > 2)
+                                    <span class="badge-modern badge-secondary">+{{ count($especialidades['secundarias']) - 2 }}</span>
+                                @endif
+                                @if(!$especialidades['principal'] && count($especialidades['secundarias']) === 0)
+                                    <span class="badge-modern badge-secondary">Sin especialidades</span>
+                                @endif
+                            @else
                                 <span class="badge-modern badge-secondary">Sin especialidades</span>
                             @endif
-                        </td>
-                        <td class="regional">{{ $instructor->regional->nombre ?? 'N/A' }}</td>
+                        </td> --}}
+                        <td class="regional">{{ $instructor->regional->nombre ?? $instructor->regional_nombre ?? 'N/A' }}</td>
                         <td class="estado">
-                            <button
-                                wire:click="toggleStatus({{ $instructor->id }})"
-                                wire:loading.attr="disabled"
-                                class="badge-toggle {{ $instructor->status ? 'badge-success' : 'badge-danger' }}"
-                                title="Cambiar estado">
-                                <i class="fas fa-sync-alt me-1"></i>
-                                {{ $instructor->status ? 'Activo' : 'Inactivo' }}
-                            </button>
+                            @if(isset($instructor->status))
+                                <button wire:click="toggleStatus({{ $instructor->id }})" wire:loading.attr="disabled"
+                                    class="badge-toggle {{ $instructor->status ? 'badge-success' : 'badge-danger' }}" title="Cambiar estado">
+                                    <i class="fas fa-sync-alt me-1"></i>
+                                    {{ $instructor->status ? 'Activo' : 'Inactivo' }}
+                                </button>
+                            @else
+                                <span class="badge-modern badge-info">Solo Rol</span>
+                            @endif
                         </td>
                         <td class="td-actions sticky-actions">
                             @can('VER INSTRUCTOR')
@@ -171,13 +158,13 @@
                                 </button>
                             @endcan
                             
-                            @can('GESTIONAR ESPECIALIDADES INSTRUCTOR')
+                            {{-- @can('GESTIONAR ESPECIALIDADES INSTRUCTOR')
                                 <button wire:click="openEspecialidadesModal({{ $instructor->id }})" 
                                         class="btn-action btn-relations" 
                                         title="Gestionar especialidades">
                                     <i class="fas fa-graduation-cap"></i>
                                 </button>
-                            @endcan
+                            @endcan --}}
                             
                             @can('VER FICHAS ASIGNADAS')
                                 <button wire:click="openFichasModal({{ $instructor->id }})" 
@@ -206,15 +193,15 @@
                     </tr>
                 @empty
                     <tr>
-                        <td colspan="7">
+                        <td colspan="8">
                             <div class="empty-state">
                                 <i class="fas fa-chalkboard-teacher"></i>
-                                <h3>No hay instructores registrados</h3>
+                                <h3>No hay instructores ni personas con rol de instructor</h3>
                                 <p>
                                     @if($search || $statusFilter !== '' || $especialidadFilter !== '' || $regionalFilter !== '')
                                         No hay resultados con los filtros aplicados. Intenta ajustar los criterios de búsqueda.
                                     @else
-                                        Comienza creando el primer instructor del sistema.
+                                        Comienza creando el primer instructor o asigna el rol de instructor a una persona.
                                     @endif
                                 </p>
                                 @if(!$search && $statusFilter === '' && $especialidadFilter === '' && $regionalFilter === '')
@@ -315,7 +302,7 @@
                                 <div style="font-size: 12px; color: #6b7280; text-transform: uppercase; margin-bottom: 4px;">Regional</div>
                                 <div style="font-size: 14px; color: #1f2937; font-weight: 500;">{{ $selectedInstructor->regional->nombre ?? 'N/A' }}</div>
                             </div>
-                            <div>
+                            {{-- <div>
                                 <div style="font-size: 12px; color: #6b7280; text-transform: uppercase; margin-bottom: 4px;">Centro de Formación</div>
                                 <div style="font-size: 14px; color: #1f2937; font-weight: 500;">{{ $selectedInstructor->centroFormacion->nombre ?? 'N/A' }}</div>
                             </div>
@@ -328,11 +315,11 @@
                                 <div style="font-size: 14px; color: #1f2937; font-weight: 500;">
                                     {{ $selectedInstructor->anos_experiencia ?? 0 }} años / {{ $selectedInstructor->experiencia_instructor_meses ?? 0 }} meses
                                 </div>
-                            </div>
+                            </div> --}}
                         </div>
                     </div>
                     
-                    <!-- Sección: Especialidades -->
+                    {{-- <!-- Sección: Especialidades -->
                     <div class="modal-section">
                         <h6 class="section-title">Especialidades</h6>
                         @php
@@ -529,7 +516,7 @@
                                 </div>
                             </div>
                         </div>
-                    </div>
+                    </div> --}}
                     
                     <!-- Sección: Estado del Instructor -->
                     <div class="modal-section">
@@ -852,10 +839,10 @@
                                 <div style="font-size: 1.5rem; font-weight: 700; color: var(--success);">{{ $fichasAsignadas->where('ficha.status', true)->count() }}</div>
                                 <div style="font-size: 0.875rem; color: #6b7280;">Activas</div>
                             </div>
-                            <div style="text-align: center; padding: 1rem; background: var(--bg-light); border-radius: 8px;">
+                            {{-- <div style="text-align: center; padding: 1rem; background: var(--bg-light); border-radius: 8px;">
                                 <div style="font-size: 1.5rem; font-weight: 700; color: var(--warning);">{{ $fichasAsignadas->sum('total_horas_instructor') ?? 0 }}</div>
                                 <div style="font-size: 0.875rem; color: #6b7280;">Horas Asignadas</div>
-                            </div>
+                            </div> --}}
                         </div>
                     </div>
 

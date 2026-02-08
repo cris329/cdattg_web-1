@@ -532,15 +532,15 @@ return [
             ],
         ],
         [
-            'text' => 'Fichas y Jornadas',
+            'text' => 'Fichas',
             'icon' => 'fas fa-fw fa-file-alt',
-            'can' => ['VER FICHA CARACTERIZACION', 'VER JORNADA'],
+            'can' => ['VER FICHA CARACTERIZACION', 'VER JORNADA', 'VER FICHAS ASIGNADAS'],
             'submenu' => [
                 [
                     'text' => 'Fichas de Caracterización',
                     'icon' => 'fas fa-fw fa-file-alt',
                     'route' => 'fichaCaracterizacion.index',
-                    'can' => ['VER FICHA CARACTERIZACION'],
+                    'can' => ['VER FICHA CARACTERIZACION', 'VER FICHAS ASIGNADAS'],
                 ],
                 [
                     'text' => 'Jornadas de Formación',
@@ -603,21 +603,8 @@ return [
                 [
                     'text' => 'Consultar Asistencias',
                     'icon' => 'fas fa-fw fa-clipboard-check',
-                    'can' => ['VER ASISTENCIA', $permisoVerProgramaCaracterizacion],
-                    'submenu' => [
-                        [
-                            'text' => 'Consultas',
-                            'url' => 'consulta',
-                            'icon' => 'fas fa-fw fa-search',
-                            'can' => 'VER CONSULTA',
-                        ],
-                        [
-                            'text' => 'Consulta Personalizada',
-                            'url' => '#',
-                            'icon' => 'fas fa-fw fa-filter',
-                            'can' => $permisoVerProgramaCaracterizacion,
-                        ],
-                    ],
+                    'can' => ['VER ASISTENCIA'],
+                    'route' => 'asistencia.consulta',
                 ],
             ],
         ],
@@ -627,6 +614,7 @@ return [
         // ========================================
         [
             'header' => 'INFRAESTRUCTURA',
+            'can' => ['VER REGIONAL', 'VER CENTROS DE FORMACION'],
         ],
         [
             'text' => 'Organización Territorial',
@@ -884,6 +872,7 @@ return [
         // ========================================
         [
             'header' => 'CONFIGURACIÓN',
+            'can' => [$permisoVerParametro, $permisoVerTema, 'ASIGNAR PERMISOS'],
         ],
         [
             'text' => 'Sistema',

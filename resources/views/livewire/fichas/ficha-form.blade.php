@@ -1,4 +1,25 @@
 <div class="modal-erp-container">
+    {{-- Notificación Livewire --}}
+    <div 
+        x-data="{ show: false, message: '', type: '' }"
+        x-on:notify.window="
+            show = true; 
+            message = $event.detail.message; 
+            type = $event.detail.type; 
+            setTimeout(() => show = false, 4000);
+        "
+        x-show="show"
+        x-transition
+        class="alert"
+        :class="{
+            'alert-success': type === 'success',
+            'alert-danger': type === 'error',
+            'alert-warning': type === 'warning'
+        }"
+        style="margin-bottom: 1rem;"
+    >
+        <span x-text="message"></span>
+    </div>
     <form wire:submit="save">
         <!-- Contenido principal -->
         <div class="modal-body-erp">
@@ -97,7 +118,7 @@
 
                 <div class="col-md-6">
                     <div class="form-group mb-3">
-                        <label for="instructor_id" class="form-label fw-bold">Instructor Principal <span class="text-danger">*</span></label>
+                        <label for="instructor_id" class="form-label fw-bold">Instructor Líder <span class="text-danger">*</span></label>
                         <select wire:model="instructor_id" 
                                 id="instructor_id" 
                                 class="form-control select2 @error('instructor_id') is-invalid @enderror"
@@ -187,7 +208,7 @@
                     </div>
                 </div>
 
-                <div class="col-md-6">
+                {{-- <div class="col-md-6">
                     <div class="form-group mb-3">
                         <label for="total_horas" class="form-label fw-bold">Total de Horas <span class="text-danger">*</span></label>
                         <input type="number" 
@@ -202,7 +223,7 @@
                             <div class="invalid-feedback">{{ $message }}</div>
                         @enderror
                     </div>
-                </div>
+                </div> --}}
             </div>
 
             <!-- Días de Formación -->

@@ -12,6 +12,7 @@ use App\Models\Regional;
 use App\Services\FichaService;
 use Livewire\Attributes\On;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Validation\ValidationException;
 
 class FichaForm extends Component
 {
@@ -140,11 +141,18 @@ class FichaForm extends Component
 
     public function save()
     {
-        $this->validate();
-        
         try {
+            \Log::info('[FichaForm] Intentando guardar ficha', [
+                'isEdit' => $this->isEdit,
+                'ficha_codigo' => $this->ficha_codigo,
+                'programa_formacion_id' => $this->programa_formacion_id,
+                // Puedes agregar más campos si lo necesitas
+            ]);
+
+            $this->validate();
+
             DB::beginTransaction();
-            
+
             $data = [
                 'ficha' => $this->ficha_codigo,
                 'programa_formacion_id' => $this->programa_formacion_id,
@@ -160,10 +168,10 @@ class FichaForm extends Component
                 'user_create_id' => auth()->id(),
                 'user_edit_id' => auth()->id(),
             ];
-            
+
             if ($this->isEdit && $this->ficha) {
                 $this->ficha->update($data);
-                
+
                 // Actualizar días de formación
                 \App\Models\FichaDiasFormacion::where('ficha_id', $this->ficha->id)->delete();
                 foreach ($this->dias_formacion as $diaId) {
@@ -172,19 +180,26 @@ class FichaForm extends Component
                         'dia_id' => (int) $diaId,
                     ]);
                 }
-                
+
                 $message = 'Ficha actualizada exitosamente';
                 $this->dispatch('fichaActualizada');
+                \Log::info('[FichaForm] Ficha actualizada correctamente', [
+                    'ficha_id' => $this->ficha->id,
+                ]);
             } else {
                 // Verificar que no exista una ficha con el mismo código
-                $existingFicha = FichaCaracterizacion::where('ficha', $this->ficha_codigo)->first();
+                $existingFicha = \App\Models\FichaCaracterizacion::where('ficha', $this->ficha_codigo)->first();
                 if ($existingFicha) {
+                    \Log::warning('[FichaForm] Ya existe una ficha con este código', [
+                        'ficha_codigo' => $this->ficha_codigo,
+                    ]);
                     $this->dispatch('notify', ['type' => 'error', 'message' => 'Ya existe una ficha con este código']);
+                    DB::rollBack();
                     return;
                 }
-                
-                $ficha = FichaCaracterizacion::create($data);
-                
+
+                $ficha = \App\Models\FichaCaracterizacion::create($data);
+
                 // Guardar días de formación
                 foreach ($this->dias_formacion as $diaId) {
                     \App\Models\FichaDiasFormacion::create([
@@ -192,24 +207,44 @@ class FichaForm extends Component
                         'dia_id' => (int) $diaId,
                     ]);
                 }
-                
+
                 $message = 'Ficha creada exitosamente';
                 $this->dispatch('fichaCreada');
+                \Log::info('[FichaForm] Ficha creada correctamente', [
+                    'ficha_id' => $ficha->id ?? null,
+                ]);
             }
-            
+
             DB::commit();
-            
+
             $this->dispatch('notify', ['type' => 'success', 'message' => $message]);
             $this->dispatch('closeModal');
-            
+
             // Limpiar formulario si es creación
             if (!$this->isEdit) {
                 $this->resetForm();
             }
-            
-        } catch (\Exception $e) {
+
+        } catch (\Illuminate\Validation\ValidationException $e) {
+            \Log::error('[FichaForm] Error de validación', [
+                'errors' => $e->errors(),
+                'message' => $e->getMessage(),
+            ]);
+            $this->dispatch('notify', [
+                'type' => 'error',
+                'message' => 'Error de validación: ' . $e->getMessage(),
+            ]);
             DB::rollBack();
-            $this->dispatch('notify', ['type' => 'error', 'message' => 'Error al guardar la ficha: ' . $e->getMessage()]);
+        } catch (\Exception $e) {
+            \Log::error('[FichaForm] Error guardando ficha', [
+                'exception' => $e,
+                'message' => $e->getMessage(),
+            ]);
+            $this->dispatch('notify', [
+                'type' => 'error',
+                'message' => 'Error al guardar la ficha: ' . $e->getMessage(),
+            ]);
+            DB::rollBack();
         }
     }
 
@@ -246,7 +281,7 @@ class FichaForm extends Component
             'fecha_fin' => 'required|date|after_or_equal:fecha_inicio',
             'modalidad_formacion_id' => 'required|exists:parametros,id',
             'jornada_id' => 'required|exists:parametros_temas,id',
-            'total_horas' => 'required|integer|min:1|max:9999',
+            'total_horas' => 'nullable|integer|min:1|max:9999',
             'dias_formacion' => 'required|array|min:1',
             'dias_formacion.*' => 'exists:parametros,id',
             'status' => 'required|boolean',

@@ -89,29 +89,72 @@ class AsistenceQrController extends Controller
      * @param int $id El ID de la caracterización.
      * @return \Illuminate\View\View|\Illuminate\Http\RedirectResponse La vista de selección de caracterización o redirección de error.
      */
-    public function caracterSelected(InstructorFichaCaracterizacion $caracterizacion, $evidencia_id = null)
+    public function caracterSelected(InstructorFichaCaracterizacion $caracterizacion, $asistencia_id = null)
     {
         try {
             Log::info('=== DEBUG CARACTERSELECTED ===');
             Log::info('Caracterizacion ID desde route: ' . $caracterizacion->id);
             Log::info('Caracterizacion tipo: ' . get_class($caracterizacion));
-            Log::info('Evidencia ID: ' . ($evidencia_id ?? 'NULL'));
+
+            // Soportar asistencia_id por querystring: /caracterSelected/{caracterizacion}?asistencia_id=123
+            if (!$asistencia_id) {
+                $asistencia_id = request()->query('asistencia_id');
+            }
+
+            Log::info('Asistencia ID (route/query): ' . ($asistencia_id ?? 'NULL'));
             
-            // Si no se proporciona evidencia, buscar la primera disponible o crear una por defecto
-            if (!$evidencia_id) {
-                $evidencia = \App\Models\Evidencias::first();
-                if (!$evidencia) {
-                    // Crear una evidencia por defecto si no existe ninguna
+            // Si no se proporciona asistencia, buscar la asistencia activa o crear una nueva
+            if (!$asistencia_id) {
+                Log::info('Buscando asistencia activa para ficha_id: ' . $caracterizacion->ficha_id);
+                
+                // Buscar asistencia activa para esta ficha
+                $asistencia = \App\Models\Asistencia::deFicha($caracterizacion->ficha_id)
+                    ->activa()
+                    ->first();
+                
+                Log::info('Resultado búsqueda asistencia activa: ' . ($asistencia ? 'ENCONTRADA ID: ' . $asistencia->id : 'NO ENCONTRADA'));
+                
+                if (!$asistencia) {
+                    // No hay asistencia activa, crear una nueva
+                    Log::info('Creando nueva evidencia y asistencia...');
+                    
                     $evidencia = \App\Models\Evidencias::create([
                         'nombre' => 'Evidencia por defecto',
                         'id_estado' => 1,
                         'fecha_evidencia' => now(),
                         'user_create_id' => Auth::id(),
+                        'user_edit_id' => Auth::id(),
                     ]);
+                    
+                    Log::info('Evidencia creada: ' . $evidencia->id);
+                    
+                    $asistencia = \App\Models\Asistencia::create([
+                        'evidencia_id' => $evidencia->id,
+                        'instructor_ficha_id' => $caracterizacion->ficha_id,
+                        'fecha' => now()->toDateString(),
+                        'hora_inicio' => now(),
+                        'is_finished' => false,
+                        'user_create_id' => Auth::id(),
+                        'user_edit_id' => Auth::id(),
+                    ]);
+                    
+                    Log::info('Nueva asistencia creada: ' . $asistencia->id);
+                } else {
+                    Log::info('Asistencia activa encontrada: ' . $asistencia->id);
                 }
             } else {
-                $evidencia = \App\Models\Evidencias::findOrFail($evidencia_id);
+                // Se proporcionó asistencia_id, buscar esa asistencia específica
+                $asistencia = \App\Models\Asistencia::find($asistencia_id);
+                
+                if (!$asistencia) {
+                    return redirect()->back()->with('error', 'Asistencia no encontrada.');
+                }
+                
+                Log::info('Asistencia específica encontrada: ' . $asistencia->id);
             }
+            
+            // Obtener la evidencia desde la asistencia
+            $evidencia = $asistencia->evidencia;
             
             Log::info('Evidencia encontrada/creada: ' . ($evidencia ? 'SI' : 'NO'));
             if ($evidencia) {
@@ -125,7 +168,8 @@ class AsistenceQrController extends Controller
             Log::info('Ficha ID a buscar en servicio: ' . $caracterizacion->ficha_id);
             $datosCaracterizacion = $this->asistenceQrService->obtenerDatosCaracterizacion(
                 $caracterizacion->ficha_id, // Usar ficha_id en lugar de id
-                Auth::user()
+                Auth::user(),
+                $asistencia?->id
             );
 
             if (!$datosCaracterizacion['fichaCaracterizacion']) {
@@ -135,12 +179,16 @@ class AsistenceQrController extends Controller
             // Comentado: Obtener RAP actual
             // $rapActual = $caracterizacion->ficha->programaFormacion->competenciaActual()->rapActual();
 
+            Log::info('Pasando a la vista - asistencia ID: ' . ($asistencia ? $asistencia->id : 'NULL'));
+            Log::info('Pasando a la vista - asistencia está finalizada: ' . ($asistencia ? ($asistencia->is_finished ? 'SI' : 'NO') : 'SIN ASISTENCIA'));
+
             return view('qr_asistence.index', [
                 'caracterizacion' => $caracterizacion,
                 'fichaCaracterizacion' => $datosCaracterizacion['fichaCaracterizacion'],
                 'aprendizPersonaConAsistencia' => $datosCaracterizacion['aprendices'],
                 'horarioHoy' => $datosCaracterizacion['horarioHoy'],
-                'evidencia' => $evidencia,
+                'asistencia' => $asistencia, // Cambiado de evidencia a asistencia
+                'evidencia' => $evidencia, // Agregar evidencia a la vista
                 // Comentado: Variables de competencias
                 // 'guiaAprendizajeActual' => $guiaAprendizajeActual,
                 // 'rapActual' => $rapActual,
@@ -169,34 +217,52 @@ class AsistenceQrController extends Controller
      */
     public function store(Request $request)
     {
-       $data = $request->all();
+        $data = $request->all();
 
-       if(!$data){
-        return back()->with('Error', 'No hay datos registrados.');
-       }
+        if(!$data){
+            return back()->with('Error', 'No hay datos registrados.');
+        }
 
-       foreach( $data['asistencia'] as $asistence ){
+        // Obtener la asistencia activa para esta ficha
+        $asistenciaActiva = \App\Models\Asistencia::deFicha($data['caracterizacion_id'])
+            ->activa()
+            ->first();
 
-        $asistenceData = json_decode($asistence, true);
-        Log::info($asistenceData);
+        // Verificar si hay asistencia activa y si está finalizada
+        if (!$asistenciaActiva) {
+            return back()->with('error', 'No hay una sesión de asistencia activa para esta ficha.');
+        }
 
-        $asistencia = AsistenciaAprendiz::create([
-            'caracterizacion_id' => $data['caracterizacion_id'],
-            'nombres' => $asistenceData['nombres'],
-            'apellidos' => $asistenceData['apellidos'],
-            'numero_identificacion' => $asistenceData['identificacion'],
-            'hora_ingreso' => $asistenceData['hora_ingreso'],
-        ]);
+        if ($asistenciaActiva->is_finished) {
+            return back()->with('error', 'La asistencia ya fue finalizada. No se pueden registrar más ingresos.');
+        }
 
-       }
+        foreach($data['asistencia'] as $asistence){
+            $asistenceData = json_decode($asistence, true);
+            Log::info($asistenceData);
 
+            // Crear registro de asistencia del aprendiz
+            $asistenciaAprendiz = AsistenciaAprendiz::create([
+                'asistencia_id' => $asistenciaActiva->id, // Usar asistencia_id en lugar de evidencia_id
+                'instructor_ficha_id' => $data['caracterizacion_id'],
+                'aprendiz_ficha_id' => $asistenceData['aprendiz_ficha_id'] ?? null,
+                'hora_ingreso' => $asistenceData['hora_ingreso'],
+                'user_create_id' => auth()->id(),
+                'user_edit_id' => auth()->id(),
+            ]);
 
-        if (!empty($asistencia) || $asistencia !== null) {
+            Log::info('Asistencia de aprendiz registrada:', [
+                'asistencia_id' => $asistenciaActiva->id,
+                'aprendiz_ficha_id' => $asistenciaAprendiz->aprendiz_ficha_id,
+                'hora_ingreso' => $asistenciaAprendiz->hora_ingreso
+            ]);
+        }
+
+        if (!empty($asistenciaAprendiz) || $asistenciaAprendiz !== null) {
             return back()->with('success', 'Asistencia registrada exitosamente.');
         } else {
             return back()->with('error', 'Error al registrar la asistencia.');
         }
-
     }
 
 
@@ -704,8 +770,30 @@ class AsistenceQrController extends Controller
                 $aprendizFichaId = $aprendiz->id; // Usar el aprendiz original como fallback
             }
 
-            // 6. Verificar si el aprendiz ya tiene una asistencia de entrada para hoy con este instructor_ficha_id
-            $asistenciaExistente = AsistenciaAprendiz::where('aprendiz_ficha_id', $aprendizFichaId)
+            // 6. Obtener la sesión activa (Asistencia) para esta ficha y usarla como origen de verdad
+            $asistenciaActiva = \App\Models\Asistencia::deFicha($fichaId)
+                ->activa()
+                ->first();
+
+            if (!$asistenciaActiva) {
+                DB::rollBack();
+                return response()->json([
+                    'status' => 'error',
+                    'message' => 'No hay una sesión de asistencia activa para esta ficha.'
+                ], 409);
+            }
+
+            if ($asistenciaActiva->is_finished) {
+                DB::rollBack();
+                return response()->json([
+                    'status' => 'error',
+                    'message' => 'La sesión de asistencia ya fue finalizada. No se pueden registrar más ingresos o salidas.'
+                ], 409);
+            }
+
+            // 7. Verificar si el aprendiz ya tiene una asistencia de entrada para hoy en ESTA sesión
+            $asistenciaExistente = AsistenciaAprendiz::where('asistencia_id', $asistenciaActiva->id)
+                ->where('aprendiz_ficha_id', $aprendizFichaId)
                 ->where('instructor_ficha_id', $instructorFichaId)
                 ->whereDate('created_at', $fechaActual)
                 ->whereNotNull('hora_ingreso')
@@ -751,22 +839,22 @@ class AsistenceQrController extends Controller
                 }
             }
 
-            // 7. Si no tiene asistencia de entrada, registrarla
+            // 8. Si no tiene asistencia de entrada, registrarla
             Log::info('Creando nuevo registro de asistencia...');
-            Log::info('Evidencia ID a usar: ' . $evidenciaId);
+            Log::info('Asistencia activa ID a usar: ' . $asistenciaActiva->id);
             Log::info('Instructor Ficha ID: ' . $instructorFichaId);
             Log::info('Aprendiz Ficha ID: ' . $aprendizFichaId);
             
             $asistencia = AsistenciaAprendiz::create([
+                'asistencia_id' => $asistenciaActiva->id,
                 'instructor_ficha_id' => $instructorFichaId,
                 'aprendiz_ficha_id' => $aprendizFichaId,
-                'evidencia_id' => $evidenciaId, // Asignar el ID de la evidencia
                 'hora_ingreso' => $horaIngreso,
                 'hora_salida' => null,
             ]);
             
             Log::info('Asistencia creada con ID: ' . $asistencia->id);
-            Log::info('Evidencia ID guardado en asistencia: ' . $asistencia->evidencia_id);
+            Log::info('Asistencia ID guardado en asistencia_aprendices: ' . $asistencia->asistencia_id);
             Log::info('Hora de ingreso guardada: ' . $asistencia->hora_ingreso);
 
             // Disparar evento de WebSocket para notificar el escaneo de QR
@@ -981,6 +1069,219 @@ class AsistenceQrController extends Controller
     }
 
     /**
+     * Guarda un mensaje de alerta en la sesión de Laravel
+     *
+     * @param \Illuminate\Http\Request $request
+     * @return \Illuminate\Http\JsonResponse
+     */
+    public function setSessionAlert(Request $request)
+    {
+        try {
+            $request->validate([
+                'key' => 'required|string|in:success,error,warning,info',
+                'message' => 'required|string|max:255',
+            ]);
+
+            $key = $request->input('key');
+            $message = $request->input('message');
+
+            // Guardar en sesión
+            session()->flash($key, $message);
+
+            return response()->json([
+                'status' => 'success',
+                'message' => 'Alerta guardada en sesión'
+            ]);
+
+        } catch (\Exception $e) {
+            Log::error('Error al guardar alerta en sesión: ' . $e->getMessage());
+            return response()->json([
+                'status' => 'error',
+                'message' => 'Error al guardar alerta en sesión'
+            ], 500);
+        }
+    }
+
+    /**
+     * Registra asistencia para múltiples aprendices seleccionados
+     *
+     * @param \Illuminate\Http\Request $request
+     * @return \Illuminate\Http\JsonResponse
+     */
+    public function registrarAsistenciaSeleccionados(Request $request)
+    {
+        try {
+            $request->validate([
+                'ficha_id' => 'required|integer',
+                'caracterizacion_id' => 'required|integer',
+                'asistencia_id' => 'required|integer',
+                'aprendices_seleccionados' => 'nullable|array',
+                'documento_manual' => 'nullable|string|max:20',
+            ]);
+
+            $fichaId = $request->input('ficha_id');
+            $caracterizacionId = $request->input('caracterizacion_id');
+            $asistenciaId = $request->input('asistencia_id');
+            $aprendicesSeleccionados = $request->input('aprendices_seleccionados', []);
+            $documentoManual = $request->input('documento_manual');
+
+            Log::info('=== REGISTRAR ASISTENCIA SELECCIONADOS ===');
+            Log::info('Ficha ID: ' . $fichaId);
+            Log::info('Caracterización ID: ' . $caracterizacionId);
+            Log::info('Asistencia ID: ' . $asistenciaId);
+            Log::info('Aprendices seleccionados: ' . json_encode($aprendicesSeleccionados));
+            Log::info('Documento manual: ' . $documentoManual);
+
+            // Obtener la asistencia activa
+            $asistencia = \App\Models\Asistencia::find($asistenciaId);
+            if (!$asistencia) {
+                return response()->json([
+                    'status' => 'error',
+                    'message' => 'Sesión de asistencia no encontrada.'
+                ], 404);
+            }
+
+            $registrosExitosos = 0;
+            $errores = [];
+            $aprendicesActualizados = [];
+
+            // Procesar aprendices seleccionados con checkbox
+            foreach ($aprendicesSeleccionados as $aprendizData) {
+                $aprendizId = $aprendizData['aprendiz_id'];
+                
+                try {
+                    $aprendiz = \App\Models\Aprendiz::find($aprendizId);
+                    if (!$aprendiz) {
+                        $errores[] = "Aprendiz ID {$aprendizId} no encontrado";
+                        continue;
+                    }
+
+                    // Verificar si ya tiene asistencia hoy
+                    $asistenciaExistente = \App\Models\AsistenciaAprendiz::where('asistencia_id', $asistenciaId)
+                        ->where('aprendiz_ficha_id', $aprendizId)
+                        ->first();
+
+                    if ($asistenciaExistente) {
+                        if ($asistenciaExistente->hora_salida) {
+                            // Ya tiene entrada y salida, mostrar error
+                            $errores[] = "El aprendiz {$aprendiz->persona->getNombreCompletoAttribute()} ya tiene asistencia completa (entrada y salida) registrada";
+                            continue;
+                        } else {
+                            // Tiene entrada pero no salida, registrar salida
+                            $asistenciaExistente->hora_salida = now();
+                            $asistenciaExistente->save(); // Eliminar user_edit_id que no existe
+                            
+                            $registrosExitosos++;
+                            Log::info('Salida registrada para aprendiz ID: ' . $aprendizId);
+                            
+                            // Agregar a lista de actualizados
+                            $aprendicesActualizados[] = [
+                                'documento' => $aprendiz->persona->numero_documento,
+                                'hora_salida' => $asistenciaExistente->hora_salida->format('h:i A')
+                            ];
+                        }
+                    } else {
+                        // No tiene asistencia, crear registro de entrada
+                        $nuevaAsistencia = \App\Models\AsistenciaAprendiz::create([
+                            'asistencia_id' => $asistenciaId,
+                            'instructor_ficha_id' => $asistencia->instructor_ficha_id,
+                            'aprendiz_ficha_id' => $aprendizId,
+                            'hora_ingreso' => now(),
+                            'user_create_id' => auth()->id(),
+                        ]);
+
+                        $registrosExitosos++;
+                        Log::info('Entrada registrada para aprendiz ID: ' . $aprendizId);
+                        
+                        // Agregar a lista de actualizados
+                        $aprendicesActualizados[] = [
+                            'documento' => $aprendiz->persona->numero_documento,
+                            'hora_ingreso' => $nuevaAsistencia->hora_ingreso->format('h:i A')
+                        ];
+                    }
+
+                } catch (\Exception $e) {
+                    Log::error('Error registrando asistencia para aprendiz ID ' . $aprendizId . ': ' . $e->getMessage());
+                    $errores[] = "Error al registrar asistencia para aprendiz ID {$aprendizId}";
+                }
+            }
+
+            // Procesar documento manual si se ingresó
+            if ($documentoManual) {
+                try {
+                    // Buscar aprendiz por documento
+                    $persona = \App\Models\Persona::where('numero_documento', $documentoManual)->first();
+                    if ($persona) {
+                        $aprendiz = \App\Models\Aprendiz::where('persona_id', $persona->id)
+                            ->where('ficha_caracterizacion_id', $fichaId)
+                            ->first();
+
+                        if ($aprendiz) {
+                            // Verificar si ya tiene asistencia
+                            $asistenciaExistente = \App\Models\AsistenciaAprendiz::where('asistencia_id', $asistenciaId)
+                                ->where('aprendiz_ficha_id', $aprendiz->id)
+                                ->first();
+
+                            if ($asistenciaExistente) {
+                                if ($asistenciaExistente->hora_salida) {
+                                    // Ya tiene entrada y salida, mostrar error
+                                    $errores[] = "El aprendiz con documento {$documentoManual} ya tiene asistencia completa (entrada y salida) registrada";
+                                } else {
+                                    // Tiene entrada pero no salida, registrar salida
+                                    $asistenciaExistente->hora_salida = now();
+                                    $asistenciaExistente->save(); // Eliminar user_edit_id que no existe
+                                    
+                                    $registrosExitosos++;
+                                    Log::info('Salida manual registrada para documento: ' . $documentoManual);
+                                }
+                            } else {
+                                // No tiene asistencia, crear registro de entrada
+                                \App\Models\AsistenciaAprendiz::create([
+                                    'asistencia_id' => $asistenciaId,
+                                    'instructor_ficha_id' => $asistencia->instructor_ficha_id,
+                                    'aprendiz_ficha_id' => $aprendiz->id,
+                                    'hora_ingreso' => now(),
+                                    'user_create_id' => auth()->id(),
+                                ]);
+
+                                $registrosExitosos++;
+                                Log::info('Entrada manual registrada para documento: ' . $documentoManual);
+                            }
+                        } else {
+                            $errores[] = "No se encontró aprendiz con documento {$documentoManual} en esta ficha";
+                        }
+                    } else {
+                        $errores[] = "No se encontró persona con documento {$documentoManual}";
+                    }
+                } catch (\Exception $e) {
+                    Log::error('Error registrando asistencia manual para documento ' . $documentoManual . ': ' . $e->getMessage());
+                    $errores[] = "Error al registrar asistencia manual para documento {$documentoManual}";
+                }
+            }
+
+            $message = "Se registraron {$registrosExitosos} asistencias correctamente.";
+            if (!empty($errores)) {
+                $message .= " Errores: " . implode(', ', $errores);
+            }
+
+            return response()->json([
+                'status' => 'success',
+                'message' => $message,
+                'registros_exitosos' => $registrosExitosos,
+                'errores' => $errores,
+                'aprendices_actualizados' => $aprendicesActualizados
+            ]);
+
+        } catch (\Exception $e) {
+            Log::error('Error general en registrarAsistenciaSeleccionados: ' . $e->getMessage());
+            return response()->json([
+                'status' => 'error',
+                'message' => 'Error al procesar la solicitud: ' . $e->getMessage()
+            ], 500);
+        }
+    }
+
+    /**
      * Finaliza la asistencia del día, genera PDF y bloquea hasta el día siguiente
      *
      * @param \Illuminate\Http\Request $request
@@ -992,17 +1293,71 @@ class AsistenceQrController extends Controller
             $request->validate([
                 'ficha_id' => 'required|integer',
                 'caracterizacion_id' => 'required|integer',
-                'evidencia_id' => 'required|integer',
+                'asistencia_id' => 'required|integer',
+                'observaciones' => 'nullable|string',
+                'observaciones_aprendices' => 'nullable|array',
             ]);
 
             $fichaId = $request->input('ficha_id');
             $caracterizacionId = $request->input('caracterizacion_id');
-            $evidenciaId = $request->input('evidencia_id');
+            $asistenciaId = $request->input('asistencia_id');
+            $observaciones = $request->input('observaciones');
+            $observacionesAprendices = $request->input('observaciones_aprendices', []);
             
             Log::info('=== FINALIZANDO ASISTENCIA ===');
             Log::info('Ficha ID: ' . $fichaId);
             Log::info('Caracterización ID: ' . $caracterizacionId);
-            Log::info('Evidencia ID: ' . $evidenciaId);
+            Log::info('Asistencia ID: ' . $asistenciaId);
+            Log::info('Observaciones: ' . $observaciones);
+            Log::info('Observaciones aprendices: ' . json_encode($observacionesAprendices));
+            
+            // Obtener la asistencia
+            $asistencia = \App\Models\Asistencia::find($asistenciaId);
+            
+            if (!$asistencia) {
+                return response()->json([
+                    'status' => 'error',
+                    'message' => 'Asistencia no encontrada.'
+                ], 404);
+            }
+            
+            // Guardar observaciones generales antes de finalizar
+            if ($observaciones !== null) {
+                $asistencia->observaciones = $observaciones;
+                $asistencia->save();
+            }
+            
+            // Guardar observaciones de aprendices
+            foreach ($observacionesAprendices as $aprendizId => $obsText) {
+                $aprendiz = \App\Models\Aprendiz::find($aprendizId);
+                if ($aprendiz) {
+                    // Buscar si ya existe registro de asistencia para este aprendiz
+                    $asistenciaAprendiz = \App\Models\AsistenciaAprendiz::where('asistencia_id', $asistenciaId)
+                        ->where('aprendiz_ficha_id', $aprendizId)
+                        ->first();
+                    
+                    if ($asistenciaAprendiz) {
+                        // Actualizar observaciones si existe
+                        $asistenciaAprendiz->observaciones = $obsText;
+                        $asistenciaAprendiz->save();
+                    } else {
+                        // Crear nuevo registro si no existe
+                        \App\Models\AsistenciaAprendiz::create([
+                            'asistencia_id' => $asistenciaId,
+                            'instructor_ficha_id' => $asistencia->instructor_ficha_id,
+                            'aprendiz_ficha_id' => $aprendizId,
+                            'hora_ingreso' => null,
+                            'observaciones' => $obsText,
+                            'user_create_id' => auth()->id(),
+                        ]);
+                    }
+                    
+                    Log::info('Guardadas observaciones para aprendiz ID: ' . $aprendizId . ' - ' . $obsText);
+                }
+            }
+            
+            // Finalizar la asistencia
+            $asistencia->finalizar();
             
             // Obtener datos de la ficha
             $fichaCaracterizacion = \App\Models\FichaCaracterizacion::with([
@@ -1024,18 +1379,17 @@ class AsistenceQrController extends Controller
                 'instructor.persona'
             ])->find($caracterizacionId);
             
-            // Obtener evidencia
-            $evidencia = \App\Models\Evidencias::find($evidenciaId);
+            // Obtener evidencia desde la asistencia
+            $evidencia = $asistencia->evidencia;
             
             // Obtener todos los aprendices de la ficha
             $todosLosAprendices = \App\Models\Aprendiz::with('persona')
                 ->where('ficha_caracterizacion_id', $fichaId)
                 ->get();
             
-            // Obtener aprendices con asistencia hoy
+            // Obtener aprendices con asistencia de esta sesión (usando asistencia_id)
             $aprendicesConAsistencia = \App\Models\AsistenciaAprendiz::with('aprendiz.persona')
-                ->where('evidencia_id', $evidenciaId)
-                ->whereDate('created_at', now()->format('Y-m-d'))
+                ->where('asistencia_id', $asistenciaId) // Cambiado de evidencia_id a asistencia_id
                 ->get();
             
             Log::info('Aprendices con asistencia encontrados: ' . $aprendicesConAsistencia->count());
@@ -1075,7 +1429,8 @@ class AsistenceQrController extends Controller
                 $evidencia,
                 $asistieron,
                 $noAsistieron,
-                $todosLosAprendices
+                $todosLosAprendices,
+                $asistenciaId
             );
             
             Log::info('PDF generado correctamente');
@@ -1103,7 +1458,7 @@ class AsistenceQrController extends Controller
     /**
      * Genera PDF con el reporte de asistencia
      */
-    private function generarPdfAsistencia($fichaCaracterizacion, $caracterizacion, $evidencia, $asistieron, $noAsistieron, $todosLosAprendices)
+    private function generarPdfAsistencia($fichaCaracterizacion, $caracterizacion, $evidencia, $asistieron, $noAsistieron, $todosLosAprendices, int $asistenciaId)
     {
         try {
             // Generar nombre de archivo
@@ -1121,6 +1476,7 @@ class AsistenceQrController extends Controller
                 'fichaCaracterizacion' => $fichaCaracterizacion,
                 'caracterizacion' => $caracterizacion,
                 'evidencia' => $evidencia,
+                'asistenciaId' => $asistenciaId,
                 'asistieron' => $asistieron,
                 'noAsistieron' => $noAsistieron,
                 'todosLosAprendices' => $todosLosAprendices,

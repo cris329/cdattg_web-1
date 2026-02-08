@@ -354,7 +354,6 @@ class RolePermissionSeeder extends Seeder
             'EDITAR APRENDIZ',
             'ELIMINAR APRENDIZ',
             'CAMBIAR ESTADO APRENDIZ',
-
         ];
     }
 
@@ -453,6 +452,7 @@ class RolePermissionSeeder extends Seeder
         return [
             'VER INGRESO SALIDA',
             'TOMAR ASISTENCIA',
+            'VER ASISTENCIA'
         ];
     }
 
@@ -520,23 +520,11 @@ class RolePermissionSeeder extends Seeder
             [
                 'TOMAR ASISTENCIA',
                 'VER APRENDIZ',
-                'VER INSTRUCTOR',
                 'VER FICHAS ASIGNADAS',
+                'VER FICHA CARACTERIZACION',
                 'VER FICHA DE CARACTERIZACION',
-                'EDITAR FICHA DE CARACTERIZACION',
-                'GESTIONAR DIAS FICHA',
-                'GESTIONAR APRENDICES FICHA',
-                'CAMBIAR ESTADO FICHA',
-                'programa.index',
-                'programa.show',
-                'programa.search',
-                'programa.create',
-            ],
-            $this->getPermisosResultadosAprendizaje(),
-            [
-                'VER COMPETENCIA',
-            ],
-            $this->getPermisosInventarioBasicos()
+                'VER ASISTENCIA'
+            ]
         );
     }
 
@@ -592,18 +580,13 @@ class RolePermissionSeeder extends Seeder
     private function getPermisosCoordinador(): array
     {
         return array_merge(
-            $this->getPermisosInventarioBasicos(),
-            [
-                'programa.index',
-                'programa.show',
-                'programa.search',
-                'programa.create',
-                'programa.edit',
-                'programa.delete',
-            ],
-            // Agregar permisos de resultados de aprendizaje y competencias
-            $this->getPermisosResultadosAprendizaje(),
-            $this->getPermisosCompetencias()
+            $this->getPermisosProgramas(),
+            $this->getPermisosInstructores(),
+            $this->getPermisosFichas(),
+            $this->getPermisosPersonas(),
+            $this->getPermisosRedesConocimiento(),
+            $this->getPermisosAprendices(),
+            $this->getPermisosControlSeguimiento(),
         );
     }
 

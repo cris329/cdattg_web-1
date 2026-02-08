@@ -3,6 +3,19 @@
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\AsistenciaAprendicesController;
 use App\Http\Controllers\AsistenceQrController;
+use App\Http\Controllers\AsistenciaConsultaController;
+
+Route::middleware(['permission:VER ASISTENCIA'])->group(function () {
+    Route::get('/asistencia/consulta', function () {
+        return view('asistencias.consulta');
+    })->name('asistencia.consulta');
+
+    Route::get('/asistencia/consulta/{asistencia}', [AsistenciaConsultaController::class, 'show'])
+        ->name('asistencia.consulta.show');
+
+    Route::get('/asistencia/consulta/{asistencia}/pdf', [AsistenciaConsultaController::class, 'pdf'])
+        ->name('asistencia.consulta.pdf');
+});
 
 Route::resource('asistencia', AsistenciaAprendicesController::class)
     ->except(['index'])
@@ -29,14 +42,11 @@ Route::middleware(['permission:TOMAR ASISTENCIA'])->group(function () {
     Route::post('/asistence/setNewExit', [AsistenceQrController::class, 'setNewExitAsistenceWeb'])->name('asistence.setNewExit');
     Route::post('/asistence/setNewEntrance', [AsistenceQrController::class, 'setNewEntranceAsistenceWeb'])->name('asistence.setNewEntrance');
     Route::post('/asistence/finalizar-asistencia', [AsistenceQrController::class, 'finalizar_asistencia'])->name('asistence.finalizarAsistencia');
+    Route::post('/asistence/registrar-seleccionados', [AsistenceQrController::class, 'registrarAsistenciaSeleccionados'])->name('asistence.registrarSeleccionados');
+    Route::post('/asistencia/set-session-alert', [AsistenceQrController::class, 'setSessionAlert'])->name('asistencia.setSessionAlert');
     Route::post('/asistence/agregar-actividad', [AsistenceQrController::class, 'agregar_actividad'])->name('asistence.agregarActividad');
     Route::put('/asistence/terminar-actividad', [AsistenceQrController::class, 'terminar_actividad'])->name('asistence.terminarActividad');
     
     // Rutas para gestión de evidencias (asistencia QR)
     Route::post('/evidencias/store-simple', [AsistenceQrController::class, 'storeEvidencia'])->name('evidencias.store.simple');
 });
-
-
-
-
-

@@ -96,10 +96,67 @@ class InstructorIndex extends Component
             'especialidad' => $this->especialidadFilter,
             'regional' => $this->regionalFilter,
             'per_page' => $this->perPage,
+            'sort_field' => $this->sortField,
+            'sort_direction' => $this->sortDirection,
         ];
 
-        // Usar el servicio existente para obtener los instructores
-        $instructores = $this->instructorService->listarConFiltros($filtros);
+        // Instructores registrados
+        $instructoresRegistrados = $this->instructorService->listarConFiltros($filtros);
+
+        // Personas con rol de instructor (model_has_roles)
+        $personasConRol = \DB::table('model_has_roles')
+            ->join('personas', 'model_has_roles.model_id', '=', 'personas.id')
+            ->join('roles', 'model_has_roles.role_id', '=', 'roles.id')
+            ->where('roles.name', 'INSTRUCTOR')
+            ->whereNotExists(function ($query) {
+                $query->select(\DB::raw(1))
+                    ->from('instructors')
+                    ->whereRaw('instructors.persona_id = personas.id');
+            })
+            // Filtros de búsqueda
+            ->when($this->search, function ($query) {
+                $query->where(function ($q) {
+                    $q->where('personas.numero_documento', 'like', '%' . $this->search . '%')
+                      ->orWhere('personas.primer_nombre', 'like', '%' . $this->search . '%')
+                      ->orWhere('personas.primer_apellido', 'like', '%' . $this->search . '%');
+                });
+            })
+            ->select('personas.*')
+            ->get();
+
+        // Mapear personas con rol para que tengan estructura similar
+        $personasConRol = $personasConRol->map(function ($persona) {
+            $persona->origen = 'rol';
+            return $persona;
+        });
+
+        // Mapear instructores registrados para marcar origen
+        $instructoresRegistrados = $instructoresRegistrados->map(function ($instructor) {
+            $instructor->origen = 'instructor';
+            return $instructor;
+        });
+
+        // Combinar ambos conjuntos
+        $todos = $instructoresRegistrados->concat($personasConRol);
+
+        // Ordenar y paginar manualmente
+        $todos = $todos->sortByDesc(function ($item) {
+            return $item->created_at ?? $item->id;
+        })->values();
+
+        // Paginar manualmente
+        $page = $this->page ?? 1;
+        $perPage = $this->perPage;
+        $total = $todos->count();
+        $items = $todos->slice(($page - 1) * $perPage, $perPage);
+
+        $instructores = new \Illuminate\Pagination\LengthAwarePaginator(
+            $items,
+            $total,
+            $perPage,
+            $page,
+            ['path' => \Request::url(), 'query' => \Request::query()]
+        );
 
         return view('livewire.instructores.instructor-index', [
             'instructores' => $instructores,

@@ -1,4 +1,9 @@
 <div>
+    @php
+        $roleNames = auth()->user()?->getRoleNames() ?? collect();
+        $isOnlyInstructor = auth()->user() && auth()->user()->hasRole('INSTRUCTOR') && $roleNames->count() === 1;
+    @endphp
+
     <!-- Toast Minimalista ERP -->
     <div class="toast toast-minimal">
         <i class="toast-icon"></i>
@@ -9,48 +14,48 @@
     <div class="toolbar">
         <div class="search-container">
             <i class="fas fa-search search-icon"></i>
-            <input type="text" 
-                   wire:model.live.debounce.300ms="search" 
-                   class="search-input" 
-                   placeholder="Buscar por ficha, programa, sede...">
+            <input type="text" wire:model.live.debounce.300ms="search" class="search-input"
+                placeholder="Buscar por ficha, programa, sede...">
         </div>
-        
+
         <!-- Filtros adicionales -->
         <div class="filters-container">
-            <select wire:model.live="statusFilter" class="filter-select">
-                <option value="">Todos los estados</option>
-                <option value="1">Activas</option>
-                <option value="0">Inactivas</option>
-            </select>
-            
+            @if (!$isOnlyInstructor)
+                <select wire:model.live="statusFilter" class="filter-select">
+                    <option value="">Todos los estados</option>
+                    <option value="1">Activas</option>
+                    <option value="0">Inactivas</option>
+                </select>
+            @endif
+
             <select wire:model.live="programaFilter" class="filter-select">
                 <option value="">Todos los programas</option>
-                @foreach($programas as $programa)
+                @foreach ($programas as $programa)
                     <option value="{{ $programa->id }}">{{ $programa->nombre }}</option>
                 @endforeach
             </select>
-            
+
             <select wire:model.live="regionalFilter" class="filter-select">
                 <option value="">Todas las regionales</option>
-                @foreach($regionales as $regional)
+                @foreach ($regionales as $regional)
                     <option value="{{ $regional->id }}">{{ $regional->nombre }}</option>
                 @endforeach
             </select>
-            
+
             <select wire:model.live="sedeFilter" class="filter-select">
                 <option value="">Todas las sedes</option>
-                @foreach($sedes as $sede)
+                @foreach ($sedes as $sede)
                     <option value="{{ $sede->id }}">{{ $sede->sede }}</option>
                 @endforeach
             </select>
-            
-            @if ($search || $statusFilter !== '' || $programaFilter !== '' || $regionalFilter !== '' || $sedeFilter !== '')
+
+            @if ($search || (!$isOnlyInstructor && $statusFilter !== '') || $programaFilter !== '' || $regionalFilter !== '' || $sedeFilter !== '')
                 <button wire:click="clearFilters" class="btn-clear-filters">
                     <i class="fas fa-times"></i>
                 </button>
             @endif
         </div>
-        
+
         <div class="results-selector">
             <select wire:model.live="perPage" class="results-select">
                 <option value="10">10 resultados</option>
@@ -59,13 +64,13 @@
                 <option value="50">50 resultados</option>
             </select>
         </div>
-        
+
         <div class="actions-container">
-    <button wire:click="openCreateModal" class="btn-primary-modern">
-        <i class="fas fa-plus"></i>
-        Nueva Ficha
-    </button>
-</div>
+            <button wire:click="openCreateModal" class="btn-primary-modern">
+                <i class="fas fa-plus"></i>
+                Nueva Ficha
+            </button>
+        </div>
     </div>
 
     <!-- Indicador de carga -->
@@ -74,10 +79,12 @@
         Buscando...
     </div>
 
-    <div wire:loading wire:target="statusFilter" class="loading-indicator" style="display: none;">
-        <i class="fas fa-spinner fa-spin"></i>
-        Filtrando por estado...
-    </div>
+    @if (!$isOnlyInstructor)
+        <div wire:loading wire:target="statusFilter" class="loading-indicator" style="display: none;">
+            <i class="fas fa-spinner fa-spin"></i>
+            Filtrando por estado...
+        </div>
+    @endif
 
     <div wire:loading wire:target="programaFilter" class="loading-indicator" style="display: none;">
         <i class="fas fa-spinner fa-spin"></i>
@@ -120,7 +127,9 @@
                     <th class="instructor">Instructor Líder</th>
                     <th class="sede">Sede</th>
                     <th class="ambiente">Ambiente</th>
-                    <th class="estado">Estado</th>
+                    @if (!$isOnlyInstructor)
+                        <th class="estado">Estado</th>
+                    @endif
                     <th class="th-actions sticky-actions">ACCIONES</th>
                 </tr>
             </thead>
@@ -128,106 +137,111 @@
                 @forelse ($fichas as $ficha)
                     <tr>
                         <td class="codigo">
-                            <span class="badge-modern badge-primary">{{ ($fichas->currentPage() - 1) * $fichas->perPage() + $loop->iteration }}</span>
+                            <span
+                                class="badge-modern badge-primary">{{ ($fichas->currentPage() - 1) * $fichas->perPage() + $loop->iteration }}</span>
                         </td>
                         <td class="ficha fw-medium">
                             <span class="badge-modern badge-info">{{ $ficha->ficha }}</span>
                         </td>
                         <td class="programa">
-                            @if($ficha->programaFormacion)
+                            @if ($ficha->programaFormacion)
                                 <span class="badge-modern badge-success">{{ $ficha->programaFormacion->nombre }}</span>
                             @else
                                 <span class="badge-modern badge-warning">Sin programa</span>
                             @endif
                         </td>
                         <td class="instructor">
-                            @if($ficha->instructor && $ficha->instructor->persona)
+                            @if ($ficha->instructor && $ficha->instructor->persona)
                                 <div>
-                                    <strong>{{ $ficha->instructor->persona->primer_nombre }} {{ $ficha->instructor->persona->primer_apellido }}</strong>
-                                    <br><small class="text-muted">{{ $ficha->instructor->persona->numero_documento }}</small>
+                                    <strong>{{ $ficha->instructor->persona->primer_nombre }}
+                                        {{ $ficha->instructor->persona->primer_apellido }}</strong>
+                                    <br><small
+                                        class="text-muted">{{ $ficha->instructor->persona->numero_documento }}</small>
                                 </div>
                             @else
                                 <span class="badge-modern badge-secondary">Sin asignar</span>
                             @endif
                         </td>
                         <td class="sede">
-                            @if($ficha->sede)
+                            @if ($ficha->sede)
                                 <span class="badge-modern badge-primary">{{ $ficha->sede->sede }}</span>
                             @else
                                 <span class="badge-modern badge-secondary">Sin sede</span>
                             @endif
                         </td>
                         <td class="ambiente">
-                            @if($ficha->ambiente)
+                            @if ($ficha->ambiente)
                                 <span class="badge-modern badge-info">{{ $ficha->ambiente->title }}</span>
                             @else
                                 <span class="badge-modern badge-secondary">Sin ambiente</span>
                             @endif
                         </td>
-                        <td class="estado">
-                            <button wire:click="toggleStatus({{ $ficha->id }})"
-                                wire:loading.attr="disabled"
-                                class="badge-toggle {{ $ficha->status ? 'badge-success' : 'badge-danger' }}">
-                                <i class="fas fa-sync-alt me-1"></i>
-                                {{ $ficha->status ? 'Activa' : 'Inactiva' }}
-                            </button>
-                        </td>
+                        @if (!$isOnlyInstructor)
+                            <td class="estado">
+                                @if (auth()->user()->can('EDITAR FICHA DE CARACTERIZACION'))
+                                    <button wire:click="toggleStatus({{ $ficha->id }})" wire:loading.attr="disabled"
+                                        class="badge-toggle {{ $ficha->status ? 'badge-success' : 'badge-danger' }}">
+                                        <i class="fas fa-sync-alt me-1"></i>
+                                        {{ $ficha->status ? 'Activa' : 'Inactiva' }}
+                                    </button>
+                                @else
+                                    <span
+                                        class="badge-modern {{ $ficha->status ? 'badge-success' : 'badge-danger' }}">{{ $ficha->status ? 'Activa' : 'Inactiva' }}
+                                    </span>
+                                @endif
+                            </td>
+                        @endif
                         <td class="td-actions sticky-actions">
-    @if(auth()->user()->can('VER FICHA DE CARACTERIZACION'))
-        <button wire:click="openShowModal({{ $ficha->id }})" 
-                class="btn-action btn-view"
-                title="Ver detalles">
-            <i class="fas fa-eye"></i>
-        </button>
-    @endif
-    
-    @if(auth()->user()->can('EDITAR FICHA DE CARACTERIZACION'))
-        <button wire:click="openEditModal({{ $ficha->id }})" 
-                class="btn-action btn-edit"
-                title="Editar ficha">
-            <i class="fas fa-edit"></i>
-        </button>
-    @endif
-    
-    @if(auth()->user()->can('GESTIONAR APRENDICES FICHA'))
-        <button wire:click="openGestionarAprendicesDirect({{ $ficha->id }})" 
-                class="btn-action btn-users"
-                title="Gestionar aprendices">
-            <i class="fas fa-users"></i>
-        </button>
-    @endif
-    
-    @if(auth()->user()->can('GESTIONAR INSTRUCTORES FICHA'))
-        <button wire:click="openGestionarInstructoresDirect({{ $ficha->id }})" 
-                class="btn-action btn-instructor"
-                title="Gestionar instructores">
-            <i class="fas fa-chalkboard-teacher"></i>
-        </button>
-    @endif
-    
-    @if(auth()->user()->can('ELIMINAR FICHA DE CARACTERIZACION'))
-        <button wire:click="openDeleteModal({{ $ficha->id }})" 
-                class="btn-action btn-delete"
-                title="Eliminar ficha">
-            <i class="fas fa-trash"></i>
-        </button>
-    @endif
-</td>
+                            @if (auth()->user()->can('VER FICHA DE CARACTERIZACION'))
+                                <button wire:click="openShowModal({{ $ficha->id }})" class="btn-action btn-view"
+                                    title="Ver detalles">
+                                    <i class="fas fa-eye"></i>
+                                </button>
+                            @endif
+
+                            @if (auth()->user()->can('EDITAR FICHA DE CARACTERIZACION'))
+                                <button wire:click="openEditModal({{ $ficha->id }})" class="btn-action btn-edit"
+                                    title="Editar ficha">
+                                    <i class="fas fa-edit"></i>
+                                </button>
+                            @endif
+
+                            @if (auth()->user()->can('GESTIONAR APRENDICES FICHA'))
+                                <button wire:click="openGestionarAprendicesDirect({{ $ficha->id }})"
+                                    class="btn-action btn-users" title="Gestionar aprendices">
+                                    <i class="fas fa-users"></i>
+                                </button>
+                            @endif
+
+                            @if (auth()->user()->can('GESTIONAR INSTRUCTORES FICHA'))
+                                <button wire:click="openGestionarInstructoresDirect({{ $ficha->id }})"
+                                    class="btn-action btn-instructor" title="Gestionar instructores">
+                                    <i class="fas fa-chalkboard-teacher"></i>
+                                </button>
+                            @endif
+
+                            @if (auth()->user()->can('ELIMINAR FICHA DE CARACTERIZACION'))
+                                <button wire:click="openDeleteModal({{ $ficha->id }})"
+                                    class="btn-action btn-delete" title="Eliminar ficha">
+                                    <i class="fas fa-trash"></i>
+                                </button>
+                            @endif
+                        </td>
                     </tr>
                 @empty
                     <tr>
-                        <td colspan="8">
+                        <td colspan="{{ $isOnlyInstructor ? 7 : 8 }}">
                             <div class="empty-state">
                                 <i class="fas fa-folder-open"></i>
                                 <h3>No hay fichas registradas</h3>
                                 <p>
-                                    @if($search || $statusFilter !== '' || $programaFilter !== '' || $regionalFilter !== '' || $sedeFilter !== '')
+                                    @if ($search || (!$isOnlyInstructor && $statusFilter !== '') || $programaFilter !== '' || $regionalFilter !== '' || $sedeFilter !== '')
                                         No se encontraron resultados con los filtros aplicados.
                                     @else
                                         Comienza registrando una nueva ficha en el sistema.
                                     @endif
                                 </p>
-                                @if(!$search && $statusFilter === '' && $programaFilter === '' && $regionalFilter === '' && $sedeFilter === '')
+                                @if (!$search && ($isOnlyInstructor || $statusFilter === '') && $programaFilter === '' && $regionalFilter === '' && $sedeFilter === '')
                                     @can('CREAR FICHA CARACTERIZACION')
                                         <button wire:click="openCreateModal" class="btn-primary">
                                             <i class="fas fa-plus"></i>
@@ -242,37 +256,35 @@
             </tbody>
         </table>
     </div>
-        
-        <!-- Paginación (siempre visible) -->
-        <div class="pagination-wrapper">
-            <div class="pagination-modern">
-                <div class="pagination-info">
-                    Mostrando {{ $fichas->firstItem() ?? 0 }} a {{ $fichas->lastItem() ?? 0 }} 
-                    de {{ $fichas->total() }} resultados
-                </div>
-                <div class="pagination-links">
-                    {{ $fichas->links('pagination::bootstrap-4') }}
-                </div>
+
+    <!-- Paginación (siempre visible) -->
+    <div class="pagination-wrapper">
+        <div class="pagination-modern">
+            <div class="pagination-info">
+                Mostrando {{ $fichas->firstItem() ?? 0 }} a {{ $fichas->lastItem() ?? 0 }}
+                de {{ $fichas->total() }} resultados
+            </div>
+            <div class="pagination-links">
+                {{ $fichas->links('pagination::bootstrap-4') }}
             </div>
         </div>
+    </div>
 
     <!-- Modal Crear/Editar -->
     @if ($showCreateModal || $showEditModal)
         <div class="modal-overlay" wire:click="closeCreateEditModals">
             <div class="modal-container modal-xl" wire:click.stop>
-                
+
                 <!-- Header -->
                 <div class="modal-header">
                     <h5 class="modal-title">
                         {{ $showCreateModal ? 'Crear Ficha' : 'Editar Ficha' }}
                     </h5>
                 </div>
-                
+
                 <!-- Body -->
                 <div class="modal-body">
-                    <livewire:fichas.ficha-form 
-                        :ficha="$selectedFicha" 
-                        :is-edit="$showEditModal" />
+                    <livewire:fichas.ficha-form :ficha="$selectedFicha" :is-edit="$showEditModal" />
                 </div>
             </div>
         </div>
@@ -282,7 +294,7 @@
     @if ($showShowModal && $selectedFicha)
         <div class="modal-overlay" wire:click="$set('showShowModal', false)">
             <div class="modal-container modal-lg" wire:click.stop>
-                
+
                 <!-- Header -->
                 <div class="modal-header">
                     <h5 class="modal-title">
@@ -290,92 +302,115 @@
                     </h5>
                     <button class="modal-close" wire:click="$set('showShowModal', false)">✕</button>
                 </div>
-                
+
                 <!-- Body -->
                 <div class="modal-body">
                     <!-- Sección: Información Básica -->
                     <div class="modal-section">
                         <h6 class="section-title">Información Básica</h6>
-                        <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(250px, 1fr)); gap: 16px;">
+                        <div
+                            style="display: grid; grid-template-columns: repeat(auto-fit, minmax(250px, 1fr)); gap: 16px;">
                             <div>
-                                <div style="font-size: 12px; color: #6b7280; text-transform: uppercase; margin-bottom: 4px;">Código de Ficha</div>
+                                <div
+                                    style="font-size: 12px; color: #6b7280; text-transform: uppercase; margin-bottom: 4px;">
+                                    Código de Ficha</div>
                                 <div style="font-size: 14px; color: #1f2937; font-weight: 500;">
                                     <span class="badge-modern badge-info">{{ $selectedFicha->ficha }}</span>
                                 </div>
                             </div>
                             <div>
-                                <div style="font-size: 12px; color: #6b7280; text-transform: uppercase; margin-bottom: 4px;">Programa de Formación</div>
+                                <div
+                                    style="font-size: 12px; color: #6b7280; text-transform: uppercase; margin-bottom: 4px;">
+                                    Programa de Formación</div>
                                 <div style="font-size: 14px; color: #1f2937; font-weight: 500;">
                                     {{ $selectedFicha->programaFormacion?->nombre ?? 'N/A' }}
                                 </div>
                             </div>
                             <div>
-                                <div style="font-size: 12px; color: #6b7280; text-transform: uppercase; margin-bottom: 4px;">Estado</div>
+                                <div
+                                    style="font-size: 12px; color: #6b7280; text-transform: uppercase; margin-bottom: 4px;">
+                                    Estado</div>
                                 <div style="font-size: 14px; color: #1f2937; font-weight: 500;">
-                                    <span class="badge-modern {{ $selectedFicha->status ? 'badge-success' : 'badge-danger' }}">
+                                    <span
+                                        class="badge-modern {{ $selectedFicha->status ? 'badge-success' : 'badge-danger' }}">
                                         {{ $selectedFicha->status ? 'Activa' : 'Inactiva' }}
                                     </span>
                                 </div>
                             </div>
                         </div>
                     </div>
-                    
+
                     <!-- Sección: Asignaciones -->
                     <div class="modal-section">
                         <h6 class="section-title">Asignaciones</h6>
-                        <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(250px, 1fr)); gap: 16px;">
+                        <div
+                            style="display: grid; grid-template-columns: repeat(auto-fit, minmax(250px, 1fr)); gap: 16px;">
                             <div>
-                                <div style="font-size: 12px; color: #6b7280; text-transform: uppercase; margin-bottom: 4px;">Instructor Líder</div>
+                                <div
+                                    style="font-size: 12px; color: #6b7280; text-transform: uppercase; margin-bottom: 4px;">
+                                    Instructor Líder</div>
                                 <div style="font-size: 14px; color: #1f2937; font-weight: 500;">
-                                    @if($selectedFicha->instructor && $selectedFicha->instructor->persona)
-                                        {{ $selectedFicha->instructor->persona->primer_nombre }} {{ $selectedFicha->instructor->persona->primer_apellido }}
+                                    @if ($selectedFicha->instructor && $selectedFicha->instructor->persona)
+                                        {{ $selectedFicha->instructor->persona->primer_nombre }}
+                                        {{ $selectedFicha->instructor->persona->primer_apellido }}
                                     @else
                                         <span class="badge-modern badge-secondary">Sin asignar</span>
                                     @endif
                                 </div>
                             </div>
                             <div>
-                                <div style="font-size: 12px; color: #6b7280; text-transform: uppercase; margin-bottom: 4px;">Sede</div>
+                                <div
+                                    style="font-size: 12px; color: #6b7280; text-transform: uppercase; margin-bottom: 4px;">
+                                    Sede</div>
                                 <div style="font-size: 14px; color: #1f2937; font-weight: 500;">
                                     {{ $selectedFicha->sede?->sede ?? 'N/A' }}
                                 </div>
                             </div>
                             <div>
-                                <div style="font-size: 12px; color: #6b7280; text-transform: uppercase; margin-bottom: 4px;">Ambiente</div>
+                                <div
+                                    style="font-size: 12px; color: #6b7280; text-transform: uppercase; margin-bottom: 4px;">
+                                    Ambiente</div>
                                 <div style="font-size: 14px; color: #1f2937; font-weight: 500;">
                                     {{ $selectedFicha->ambiente?->title ?? 'N/A' }}
                                 </div>
                             </div>
                         </div>
                     </div>
-                    
+
                     <!-- Sección: Días de Formación -->
                     <div class="modal-section">
                         <h6 class="section-title">Días de Formación</h6>
-                        <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(250px, 1fr)); gap: 16px;">
+                        <div
+                            style="display: grid; grid-template-columns: repeat(auto-fit, minmax(250px, 1fr)); gap: 16px;">
                             <div style="grid-column: 1 / -1;">
-                                <div style="font-size: 12px; color: #6b7280; text-transform: uppercase; margin-bottom: 8px;">Días de la Semana</div>
+                                <div
+                                    style="font-size: 12px; color: #6b7280; text-transform: uppercase; margin-bottom: 8px;">
+                                    Días de la Semana</div>
                                 <div style="font-size: 14px; color: #1f2937; font-weight: 500;">
                                     @php
                                         $diasSemana = [
                                             12 => 'LUNES',
-                                            13 => 'MARTES', 
+                                            13 => 'MARTES',
                                             14 => 'MIÉRCOLES',
                                             15 => 'JUEVES',
                                             16 => 'VIERNES',
                                             17 => 'SÁBADO',
                                             18 => 'DOMINGO',
                                         ];
-                                        
-                                        $diasFicha = \App\Models\FichaDiasFormacion::where('ficha_id', $selectedFicha->id)
+
+                                        $diasFicha = \App\Models\FichaDiasFormacion::where(
+                                            'ficha_id',
+                                            $selectedFicha->id,
+                                        )
                                             ->pluck('dia_id')
                                             ->toArray();
                                     @endphp
-                                    
-                                    @if(!empty($diasFicha))
-                                        @foreach($diasFicha as $diaId)
-                                            @if(isset($diasSemana[$diaId]))
-                                                <span class="badge-modern badge-info" style="margin-right: 4px; margin-bottom: 4px;">
+
+                                    @if (!empty($diasFicha))
+                                        @foreach ($diasFicha as $diaId)
+                                            @if (isset($diasSemana[$diaId]))
+                                                <span class="badge-modern badge-info"
+                                                    style="margin-right: 4px; margin-bottom: 4px;">
                                                     {{ $diasSemana[$diaId] }}
                                                 </span>
                                             @endif
@@ -387,25 +422,33 @@
                             </div>
                         </div>
                     </div>
-                    
+
                     <!-- Sección: Estadísticas -->
                     <div class="modal-section">
                         <h6 class="section-title">Estadísticas</h6>
-                        <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(250px, 1fr)); gap: 16px;">
+                        <div
+                            style="display: grid; grid-template-columns: repeat(auto-fit, minmax(250px, 1fr)); gap: 16px;">
                             <div>
-                                <div style="font-size: 12px; color: #6b7280; text-transform: uppercase; margin-bottom: 4px;">Número de Aprendices</div>
+                                <div
+                                    style="font-size: 12px; color: #6b7280; text-transform: uppercase; margin-bottom: 4px;">
+                                    Número de Aprendices</div>
                                 <div style="font-size: 14px; color: #1f2937; font-weight: 500;">
-                                    <span class="badge-modern badge-primary">{{ $selectedFicha->aprendices_count ?? 0 }}</span>
+                                    <span
+                                        class="badge-modern badge-primary">{{ $selectedFicha->aprendices_count ?? 0 }}</span>
                                 </div>
                             </div>
                             <div>
-                                <div style="font-size: 12px; color: #6b7280; text-transform: uppercase; margin-bottom: 4px;">Fecha de Creación</div>
+                                <div
+                                    style="font-size: 12px; color: #6b7280; text-transform: uppercase; margin-bottom: 4px;">
+                                    Fecha de Creación</div>
                                 <div style="font-size: 14px; color: #1f2937; font-weight: 500;">
                                     {{ $selectedFicha->created_at->format('d/m/Y H:i') }}
                                 </div>
                             </div>
                             <div>
-                                <div style="font-size: 12px; color: #6b7280; text-transform: uppercase; margin-bottom: 4px;">Última Actualización</div>
+                                <div
+                                    style="font-size: 12px; color: #6b7280; text-transform: uppercase; margin-bottom: 4px;">
+                                    Última Actualización</div>
                                 <div style="font-size: 14px; color: #1f2937; font-weight: 500;">
                                     {{ $selectedFicha->updated_at->format('d/m/Y H:i') }}
                                 </div>
@@ -413,7 +456,7 @@
                         </div>
                     </div>
                 </div>
-                
+
                 <!-- Footer -->
                 <div class="modal-footer">
                     <button class="btn-modal btn-secondary" wire:click="$set('showShowModal', false)">
@@ -429,7 +472,7 @@
     @if ($showGestionarAprendicesModal && $selectedFicha)
         <div class="modal-overlay" wire:click="closeGestionarAprendicesModal">
             <div class="modal-container modal-xl" wire:click.stop>
-                
+
                 <!-- Header -->
                 <div class="modal-header">
                     <h5 class="modal-title">
@@ -438,7 +481,7 @@
                     </h5>
                     <button class="modal-close" wire:click="closeGestionarAprendicesModal">✕</button>
                 </div>
-                
+
                 <!-- Body -->
                 <div class="modal-body">
                     <!-- Sección: Aprendices Asignados -->
@@ -449,18 +492,21 @@
                             <div class="card">
                                 <div class="card-header">
                                     <h6 class="card-title mb-0">
-                                        <i class="fas fa-user-check mr-2"></i> 
+                                        <i class="fas fa-user-check mr-2"></i>
                                         Lista de Aprendices
                                     </h6>
-                                    <span class="badge-modern badge-info">{{ $selectedFicha->aprendices->count() ?? 0 }}</span>
+                                    <span
+                                        class="badge-modern badge-info">{{ $selectedFicha->aprendices->count() ?? 0 }}</span>
                                 </div>
                                 <div class="card-body" style="max-height: 400px; overflow-y: auto;">
-                                    @if($selectedFicha->aprendices->count() > 0)
+                                    @if ($selectedFicha->aprendices->count() > 0)
                                         <table class="table table-hover table-sm">
                                             <thead class="table-light">
                                                 <tr>
                                                     <th width="40px">
-                                                        <input type="checkbox" wire:model.live="selectAllAprendicesAsignados" class="form-check-input">
+                                                        <input type="checkbox"
+                                                            wire:model.live="selectAllAprendicesAsignados"
+                                                            class="form-check-input">
                                                     </th>
                                                     <th>Documento</th>
                                                     <th>Nombre Completo</th>
@@ -470,22 +516,22 @@
                                                 </tr>
                                             </thead>
                                             <tbody>
-                                                @foreach($selectedFicha->aprendices ?? [] as $aprendiz)
+                                                @foreach ($selectedFicha->aprendices ?? [] as $aprendiz)
                                                     <tr>
                                                         <td class="text-center">
-                                                            <input type="checkbox" 
-                                                                    wire:model.live="selectedAprendicesAsignados" 
-                                                                    value="{{ $aprendiz->id }}" 
-                                                                    class="form-check-input">
+                                                            <input type="checkbox"
+                                                                wire:model.live="selectedAprendicesAsignados"
+                                                                value="{{ $aprendiz->id }}" class="form-check-input">
                                                         </td>
                                                         <td>{{ $aprendiz->persona->numero_documento }}</td>
                                                         <td>
                                                             <strong>
-                                                                {{ $aprendiz->persona->primer_nombre }} {{ $aprendiz->persona->primer_apellido }}
-                                                                @if($aprendiz->persona->segundo_nombre)
+                                                                {{ $aprendiz->persona->primer_nombre }}
+                                                                {{ $aprendiz->persona->primer_apellido }}
+                                                                @if ($aprendiz->persona->segundo_nombre)
                                                                     {{ $aprendiz->persona->segundo_nombre }}
                                                                 @endif
-                                                                @if($aprendiz->persona->segundo_apellido)
+                                                                @if ($aprendiz->persona->segundo_apellido)
                                                                     {{ $aprendiz->persona->segundo_apellido }}
                                                                 @endif
                                                             </strong>
@@ -493,7 +539,7 @@
                                                         <td>{{ $aprendiz->persona->email ?? 'N/A' }}</td>
                                                         <td>{{ $aprendiz->persona->telefono ?? 'N/A' }}</td>
                                                         <td>
-                                                            @if($aprendiz->estado)
+                                                            @if ($aprendiz->estado)
                                                                 <span class="badge-modern badge-success">Activo</span>
                                                             @else
                                                                 <span class="badge-modern badge-danger">Inactivo</span>
@@ -512,22 +558,24 @@
                                     @endif
                                 </div>
                             </div>
-                            
+
                             <!-- Panel de personas disponibles -->
                             <div class="card">
                                 <div class="card-header">
                                     <h6 class="card-title mb-0">
-                                        <i class="fas fa-user-plus mr-2"></i> 
+                                        <i class="fas fa-user-plus mr-2"></i>
                                         Personas Disponibles
                                     </h6>
-                                    <span class="badge-modern badge-success">{{ $personasDisponibles->count() ?? 0 }}</span>
+                                    <span
+                                        class="badge-modern badge-success">{{ $personasDisponibles->count() ?? 0 }}</span>
                                 </div>
                                 <div class="card-body" style="max-height: 400px; overflow-y: auto;">
-                                    @if(($personasDisponibles->count() ?? 0) > 0)
+                                    @if (($personasDisponibles->count() ?? 0) > 0)
                                         <!-- Búsqueda -->
                                         <div class="mb-3">
                                             <div class="input-group">
-                                                <input type="text" class="form-control" placeholder="Buscar persona..." wire:model.live="searchPersona">
+                                                <input type="text" class="form-control"
+                                                    placeholder="Buscar persona..." wire:model.live="searchPersona">
                                                 <div class="input-group-append">
                                                     <span class="input-group-text">
                                                         <i class="fas fa-search"></i>
@@ -535,33 +583,37 @@
                                                 </div>
                                             </div>
                                         </div>
-                                        
+
                                         <!-- Tabla -->
                                         <table class="table table-hover table-sm">
                                             <thead class="table-light">
                                                 <tr>
                                                     <th class="text-center" width="40px">
-                                                        <input type="checkbox" 
-                                                                wire:model.live="selectAllPersonas" 
-                                                                class="form-check-input">
+                                                        <input type="checkbox" wire:model.live="selectAllPersonas"
+                                                            class="form-check-input">
                                                     </th>
                                                     <th>Documento</th>
                                                     <th>Nombre</th>
                                                 </tr>
                                             </thead>
                                             <tbody>
-                                                @foreach($personasDisponibles as $persona)
-                                                    @if(!empty($searchPersona) ? str_contains(strtolower($persona->primer_nombre . ' ' . $persona->primer_apellido . ' ' . $persona->numero_documento), strtolower($searchPersona)) : true)
+                                                @foreach ($personasDisponibles as $persona)
+                                                    @if (
+                                                        !empty($searchPersona)
+                                                            ? str_contains(strtolower($persona->primer_nombre . ' ' . $persona->primer_apellido . ' ' . $persona->numero_documento),
+                                                                strtolower($searchPersona))
+                                                            : true)
                                                         <tr>
                                                             <td class="text-center">
-                                                                <input type="checkbox" 
-                                                                        wire:model.live="selectedPersonas" 
-                                                                        value="{{ $persona->id }}" 
-                                                                        class="form-check-input">
+                                                                <input type="checkbox"
+                                                                    wire:model.live="selectedPersonas"
+                                                                    value="{{ $persona->id }}"
+                                                                    class="form-check-input">
                                                             </td>
                                                             <td>{{ $persona->numero_documento }}</td>
                                                             <td>
-                                                                {{ $persona->primer_nombre }} {{ $persona->primer_apellido }}
+                                                                {{ $persona->primer_nombre }}
+                                                                {{ $persona->primer_apellido }}
                                                             </td>
                                                         </tr>
                                                     @endif
@@ -579,41 +631,54 @@
                             </div>
                         </div>
                     </div>
-                    
+
                     <!-- Sección: Acciones -->
-                    @if(($personasDisponibles->count() ?? 0) > 0 || ($selectedFicha->aprendices->count() ?? 0) > 0)
+                    @if (($personasDisponibles->count() ?? 0) > 0 || ($selectedFicha->aprendices->count() ?? 0) > 0)
                         <div class="modal-section">
                             <h6 class="section-title">Acciones</h6>
                             <div style="display: grid; gap: 16px;">
                                 <!-- Información de selección -->
-                                <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(250px, 1fr)); gap: 16px;">
+                                <div
+                                    style="display: grid; grid-template-columns: repeat(auto-fit, minmax(250px, 1fr)); gap: 16px;">
                                     <div>
-                                        <div style="font-size: 12px; color: #6b7280; text-transform: uppercase; margin-bottom: 4px;">Personas Seleccionadas</div>
+                                        <div
+                                            style="font-size: 12px; color: #6b7280; text-transform: uppercase; margin-bottom: 4px;">
+                                            Personas Seleccionadas</div>
                                         <div style="font-size: 14px; color: #1f2937; font-weight: 500;">
-                                            <span class="badge-modern badge-primary">{{ count($selectedPersonas) }}</span> de 
-                                            <span class="badge-modern badge-info">{{ $personasDisponibles->count() }}</span> disponibles
+                                            <span
+                                                class="badge-modern badge-primary">{{ count($selectedPersonas) }}</span>
+                                            de
+                                            <span
+                                                class="badge-modern badge-info">{{ $personasDisponibles->count() }}</span>
+                                            disponibles
                                         </div>
                                     </div>
-                                    @if(($selectedFicha->aprendices->count() ?? 0) > 0)
+                                    @if (($selectedFicha->aprendices->count() ?? 0) > 0)
                                         <div>
-                                            <div style="font-size: 12px; color: #6b7280; text-transform: uppercase; margin-bottom: 4px;">Aprendices Seleccionados</div>
+                                            <div
+                                                style="font-size: 12px; color: #6b7280; text-transform: uppercase; margin-bottom: 4px;">
+                                                Aprendices Seleccionados</div>
                                             <div style="font-size: 14px; color: #1f2937; font-weight: 500;">
-                                                <span class="badge-modern badge-warning">{{ count($selectedAprendicesAsignados) }}</span> de 
-                                                <span class="badge-modern badge-info">{{ $selectedFicha->aprendices->count() }}</span> asignados
+                                                <span
+                                                    class="badge-modern badge-warning">{{ count($selectedAprendicesAsignados) }}</span>
+                                                de
+                                                <span
+                                                    class="badge-modern badge-info">{{ $selectedFicha->aprendices->count() }}</span>
+                                                asignados
                                             </div>
                                         </div>
                                     @endif
                                 </div>
-                                
+
                                 <!-- Botones de acción -->
                                 <div style="display: flex; justify-content: flex-end; gap: 12px;">
-                                    @if(count($selectedAprendicesAsignados) > 0)
+                                    @if (count($selectedAprendicesAsignados) > 0)
                                         <button wire:click="desasignarAprendices" class="btn-modal btn-danger">
                                             <i class="fas fa-user-minus mr-2"></i>
                                             Desasignar Seleccionadas
                                         </button>
                                     @endif
-                                    @if(count($selectedPersonas) > 0)
+                                    @if (count($selectedPersonas) > 0)
                                         <button wire:click="asignarAprendices" class="btn-modal btn-success">
                                             <i class="fas fa-user-plus mr-2"></i>
                                             Asignar Seleccionadas
@@ -629,7 +694,7 @@
                         </div>
                     @endif
                 </div>
-                
+
                 <!-- Footer -->
                 <div class="modal-footer">
                     <!-- Footer vacío - solo el botón de cerrar en el header -->
@@ -642,7 +707,7 @@
     @if ($showGestionarInstructoresModal && $selectedFichaInstructores)
         <div class="modal-overlay" wire:click="closeGestionarInstructoresModal">
             <div class="modal-container modal-xl" wire:click.stop>
-                
+
                 <!-- Header -->
                 <div class="modal-header">
                     <h5 class="modal-title">
@@ -651,7 +716,7 @@
                     </h5>
                     <button class="modal-close" wire:click="closeGestionarInstructoresModal">✕</button>
                 </div>
-                
+
                 <!-- Body -->
                 <div class="modal-body">
                     <!-- Sección: Instructores Asignados -->
@@ -662,18 +727,21 @@
                             <div class="card">
                                 <div class="card-header">
                                     <h6 class="card-title mb-0">
-                                        <i class="fas fa-user-check mr-2"></i> 
+                                        <i class="fas fa-user-check mr-2"></i>
                                         Lista de Instructores
                                     </h6>
-                                    <span class="badge-modern badge-info">{{ $selectedFichaInstructores->instructorFicha->count() ?? 0 }}</span>
+                                    <span
+                                        class="badge-modern badge-info">{{ $selectedFichaInstructores->instructorFicha->count() ?? 0 }}</span>
                                 </div>
                                 <div class="card-body" style="max-height: 400px; overflow-y: auto;">
-                                    @if($selectedFichaInstructores->instructorFicha->count() > 0)
+                                    @if ($selectedFichaInstructores->instructorFicha->count() > 0)
                                         <table class="table table-hover table-sm">
                                             <thead class="table-light">
                                                 <tr>
                                                     <th width="40px">
-                                                        <input type="checkbox" wire:model.live="selectAllInstructoresAsignados" class="form-check-input">
+                                                        <input type="checkbox"
+                                                            wire:model.live="selectAllInstructoresAsignados"
+                                                            class="form-check-input">
                                                     </th>
                                                     <th>Documento</th>
                                                     <th>Nombre Completo</th>
@@ -682,35 +750,39 @@
                                                 </tr>
                                             </thead>
                                             <tbody>
-                                                @foreach($selectedFichaInstructores->instructorFicha ?? [] as $asignacion)
+                                                @foreach ($selectedFichaInstructores->instructorFicha ?? [] as $asignacion)
                                                     <tr>
                                                         <td class="text-center">
-                                                            <input type="checkbox" 
-                                                                    wire:model.live="selectedInstructoresAsignados" 
-                                                                    value="{{ $asignacion->id }}" 
-                                                                    class="form-check-input">
+                                                            <input type="checkbox"
+                                                                wire:model.live="selectedInstructoresAsignados"
+                                                                value="{{ $asignacion->id }}"
+                                                                class="form-check-input">
                                                         </td>
-                                                        <td>{{ $asignacion->instructor->persona->numero_documento }}</td>
+                                                        <td>{{ $asignacion->instructor->persona->numero_documento }}
+                                                        </td>
                                                         <td>
                                                             <strong>
-                                                                {{ $asignacion->instructor->persona->primer_nombre }} {{ $asignacion->instructor->persona->primer_apellido }}
-                                                                @if($asignacion->instructor->persona->segundo_nombre)
+                                                                {{ $asignacion->instructor->persona->primer_nombre }}
+                                                                {{ $asignacion->instructor->persona->primer_apellido }}
+                                                                @if ($asignacion->instructor->persona->segundo_nombre)
                                                                     {{ $asignacion->instructor->persona->segundo_nombre }}
                                                                 @endif
-                                                                @if($asignacion->instructor->persona->segundo_apellido)
+                                                                @if ($asignacion->instructor->persona->segundo_apellido)
                                                                     {{ $asignacion->instructor->persona->segundo_apellido }}
                                                                 @endif
                                                             </strong>
                                                         </td>
                                                         <td>
-                                                            @if($selectedFichaInstructores->instructor_id == $asignacion->instructor_id)
-                                                                <span class="badge-modern badge-primary">Principal</span>
+                                                            @if ($selectedFichaInstructores->instructor_id == $asignacion->instructor_id)
+                                                                <span
+                                                                    class="badge-modern badge-primary">Principal</span>
                                                             @else
-                                                                <span class="badge-modern badge-secondary">Auxiliar</span>
+                                                                <span
+                                                                    class="badge-modern badge-secondary">Auxiliar</span>
                                                             @endif
                                                         </td>
                                                         <td>
-                                                            @if($asignacion->instructor->persona->status)
+                                                            @if ($asignacion->instructor->persona->status)
                                                                 <span class="badge-modern badge-success">Activo</span>
                                                             @else
                                                                 <span class="badge-modern badge-danger">Inactivo</span>
@@ -729,22 +801,25 @@
                                     @endif
                                 </div>
                             </div>
-                            
+
                             <!-- Panel de instructores disponibles -->
                             <div class="card">
                                 <div class="card-header">
                                     <h6 class="card-title mb-0">
-                                        <i class="fas fa-user-plus mr-2"></i> 
+                                        <i class="fas fa-user-plus mr-2"></i>
                                         Instructores Disponibles
                                     </h6>
-                                    <span class="badge-modern badge-success">{{ $instructoresDisponibles->count() ?? 0 }}</span>
+                                    <span
+                                        class="badge-modern badge-success">{{ $instructoresDisponibles->count() ?? 0 }}</span>
                                 </div>
                                 <div class="card-body" style="max-height: 400px; overflow-y: auto;">
-                                    @if(($instructoresDisponibles->count() ?? 0) > 0)
+                                    @if (($instructoresDisponibles->count() ?? 0) > 0)
                                         <!-- Búsqueda -->
                                         <div class="mb-3">
                                             <div class="input-group">
-                                                <input type="text" class="form-control" placeholder="Buscar instructor..." wire:model.live="searchInstructor">
+                                                <input type="text" class="form-control"
+                                                    placeholder="Buscar instructor..."
+                                                    wire:model.live="searchInstructor">
                                                 <div class="input-group-append">
                                                     <span class="input-group-text">
                                                         <i class="fas fa-search"></i>
@@ -752,33 +827,42 @@
                                                 </div>
                                             </div>
                                         </div>
-                                        
+
                                         <!-- Tabla -->
                                         <table class="table table-hover table-sm">
                                             <thead class="table-light">
                                                 <tr>
                                                     <th class="text-center" width="40px">
-                                                        <input type="checkbox" 
-                                                                wire:model.live="selectAllInstructores" 
-                                                                class="form-check-input">
+                                                        <input type="checkbox" wire:model.live="selectAllInstructores"
+                                                            class="form-check-input">
                                                     </th>
                                                     <th>Documento</th>
                                                     <th>Nombre</th>
                                                 </tr>
                                             </thead>
                                             <tbody>
-                                                @foreach($instructoresDisponibles as $instructor)
-                                                    @if(!empty($searchInstructor) ? str_contains(strtolower($instructor->persona->primer_nombre . ' ' . $instructor->persona->primer_apellido . ' ' . $instructor->persona->numero_documento), strtolower($searchInstructor)) : true)
+                                                @foreach ($instructoresDisponibles as $instructor)
+                                                    @if (
+                                                        !empty($searchInstructor)
+                                                            ? str_contains(strtolower(
+                                                                    $instructor->persona->primer_nombre .
+                                                                        ' ' .
+                                                                        $instructor->persona->primer_apellido .
+                                                                        ' ' .
+                                                                        $instructor->persona->numero_documento),
+                                                                strtolower($searchInstructor))
+                                                            : true)
                                                         <tr>
                                                             <td class="text-center">
-                                                                <input type="checkbox" 
-                                                                        wire:model.live="selectedInstructores" 
-                                                                        value="{{ $instructor->id }}" 
-                                                                        class="form-check-input">
+                                                                <input type="checkbox"
+                                                                    wire:model.live="selectedInstructores"
+                                                                    value="{{ $instructor->id }}"
+                                                                    class="form-check-input">
                                                             </td>
                                                             <td>{{ $instructor->persona->numero_documento }}</td>
                                                             <td>
-                                                                {{ $instructor->persona->primer_nombre }} {{ $instructor->persona->primer_apellido }}
+                                                                {{ $instructor->persona->primer_nombre }}
+                                                                {{ $instructor->persona->primer_apellido }}
                                                             </td>
                                                         </tr>
                                                     @endif
@@ -796,72 +880,54 @@
                             </div>
                         </div>
                     </div>
-                    
-                    <!-- Sección: Información de la Ficha -->
-                    <div class="modal-section">
-                        <h6 class="section-title">Información de la Ficha</h6>
-                        <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(250px, 1fr)); gap: 16px;">
-                            <div>
-                                <div style="font-size: 12px; color: #6b7280; text-transform: uppercase; margin-bottom: 4px;">Programa de Formación</div>
-                                <div style="font-size: 14px; color: #1f2937; font-weight: 500;">
-                                    {{ $selectedFichaInstructores->programaFormacion->nombre ?? 'N/A' }}
-                                </div>
-                            </div>
-                            <div>
-                                <div style="font-size: 12px; color: #6b7280; text-transform: uppercase; margin-bottom: 4px;">Red de Conocimiento</div>
-                                <div style="font-size: 14px; color: #1f2937; font-weight: 500;">
-                                    {{ $selectedFichaInstructores->programaFormacion->redConocimiento->nombre ?? 'N/A' }}
-                                </div>
-                            </div>
-                            <div>
-                                <div style="font-size: 12px; color: #6b7280; text-transform: uppercase; margin-bottom: 4px;">Jornada</div>
-                                <div style="font-size: 14px; color: #1f2937; font-weight: 500;">
-                                    {{ $selectedFichaInstructores->jornadaFormacion->parametro->name ?? 'N/A' }}
-                                </div>
-                            </div>
-                            <div>
-                                <div style="font-size: 12px; color: #6b7280; text-transform: uppercase; margin-bottom: 4px;">Total Horas</div>
-                                <div style="font-size: 14px; color: #1f2937; font-weight: 500;">
-                                    {{ $selectedFichaInstructores->total_horas ?? 'N/A' }}
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                    
+
                     <!-- Sección: Acciones -->
-                    @if(($instructoresDisponibles->count() ?? 0) > 0 || ($selectedFichaInstructores->instructorFicha->count() ?? 0) > 0)
+                    @if (($instructoresDisponibles->count() ?? 0) > 0 || ($selectedFichaInstructores->instructorFicha->count() ?? 0) > 0)
                         <div class="modal-section">
                             <h6 class="section-title">Acciones</h6>
                             <div style="display: grid; gap: 16px;">
                                 <!-- Información de selección -->
-                                <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(250px, 1fr)); gap: 16px;">
+                                <div
+                                    style="display: grid; grid-template-columns: repeat(auto-fit, minmax(250px, 1fr)); gap: 16px;">
                                     <div>
-                                        <div style="font-size: 12px; color: #6b7280; text-transform: uppercase; margin-bottom: 4px;">Instructores Seleccionados</div>
+                                        <div
+                                            style="font-size: 12px; color: #6b7280; text-transform: uppercase; margin-bottom: 4px;">
+                                            Instructores Seleccionados</div>
                                         <div style="font-size: 14px; color: #1f2937; font-weight: 500;">
-                                            <span class="badge-modern badge-primary">{{ count($selectedInstructores) }}</span> de 
-                                            <span class="badge-modern badge-info">{{ $instructoresDisponibles->count() }}</span> disponibles
+                                            <span
+                                                class="badge-modern badge-primary">{{ count($selectedInstructores) }}</span>
+                                            de
+                                            <span
+                                                class="badge-modern badge-info">{{ $instructoresDisponibles->count() }}</span>
+                                            disponibles
                                         </div>
                                     </div>
-                                    @if(($selectedFichaInstructores->instructorFicha->count() ?? 0) > 0)
+                                    @if (($selectedFichaInstructores->instructorFicha->count() ?? 0) > 0)
                                         <div>
-                                            <div style="font-size: 12px; color: #6b7280; text-transform: uppercase; margin-bottom: 4px;">Instructores Asignados Seleccionados</div>
+                                            <div
+                                                style="font-size: 12px; color: #6b7280; text-transform: uppercase; margin-bottom: 4px;">
+                                                Instructores Asignados Seleccionados</div>
                                             <div style="font-size: 14px; color: #1f2937; font-weight: 500;">
-                                                <span class="badge-modern badge-warning">{{ count($selectedInstructoresAsignados) }}</span> de 
-                                                <span class="badge-modern badge-info">{{ $selectedFichaInstructores->instructorFicha->count() }}</span> asignados
+                                                <span
+                                                    class="badge-modern badge-warning">{{ count($selectedInstructoresAsignados) }}</span>
+                                                de
+                                                <span
+                                                    class="badge-modern badge-info">{{ $selectedFichaInstructores->instructorFicha->count() }}</span>
+                                                asignados
                                             </div>
                                         </div>
                                     @endif
                                 </div>
-                                
+
                                 <!-- Botones de acción -->
                                 <div style="display: flex; justify-content: flex-end; gap: 12px;">
-                                    @if(count($selectedInstructoresAsignados) > 0)
+                                    @if (count($selectedInstructoresAsignados) > 0)
                                         <button wire:click="desasignarInstructores" class="btn-modal btn-danger">
                                             <i class="fas fa-user-minus mr-2"></i>
                                             Desasignar Seleccionados
                                         </button>
                                     @endif
-                                    @if(count($selectedInstructores) > 0)
+                                    @if (count($selectedInstructores) > 0)
                                         <button wire:click="asignarInstructores" class="btn-modal btn-success">
                                             <i class="fas fa-user-plus mr-2"></i>
                                             Asignar Seleccionados
@@ -877,7 +943,7 @@
                         </div>
                     @endif
                 </div>
-                
+
                 <!-- Footer -->
                 <div class="modal-footer">
                     <!-- Footer vacío - solo el botón de cerrar en el header -->
@@ -890,12 +956,12 @@
     @if ($showDeleteModal && $selectedFicha)
         <div class="modal-overlay" wire:click="closeDeleteModal">
             <div class="modal-container" wire:click.stop>
-                
+
                 <!-- Header -->
                 <div class="modal-header">
                     <h5 class="modal-title">Eliminar Ficha</h5>
                 </div>
-                
+
                 <!-- Body -->
                 <div class="modal-body">
                     <!-- Alerta de advertencia -->
@@ -903,24 +969,26 @@
                         <i class="fas fa-exclamation-triangle"></i>
                         <span>Esta acción es permanente y no se puede deshacer.</span>
                     </div>
-                    
+
                     <!-- Información del elemento -->
                     <div class="modal-section">
                         <h6 class="section-title">Información de la Ficha</h6>
                         <div style="display: grid; gap: 8px;">
                             <div><strong>Ficha:</strong> {{ $selectedFicha->ficha }}</div>
-                            <div><strong>Programa:</strong> {{ $selectedFicha->programaFormacion?->nombre ?? 'N/A' }}</div>
+                            <div><strong>Programa:</strong> {{ $selectedFicha->programaFormacion?->nombre ?? 'N/A' }}
+                            </div>
                             <div><strong>Sede:</strong> {{ $selectedFicha->sede?->sede ?? 'N/A' }}</div>
                         </div>
                     </div>
-                    
-                    @if($selectedFicha->aprendices_count > 0)
+
+                    @if ($selectedFicha->aprendices_count > 0)
                         <div class="modal-alert alert-warning">
                             <i class="fas fa-exclamation-triangle"></i>
-                            <span>Esta ficha tiene {{ $selectedFicha->aprendices_count }} aprendices asignados. No se puede eliminar.</span>
+                            <span>Esta ficha tiene {{ $selectedFicha->aprendices_count }} aprendices asignados. No se
+                                puede eliminar.</span>
                         </div>
                     @endif
-                    
+
                     <!-- Mensaje de confirmación -->
                     <div class="modal-section">
                         <p style="margin: 0; color: #6b7280; font-size: 14px;">
@@ -928,16 +996,15 @@
                         </p>
                     </div>
                 </div>
-                
+
                 <!-- Footer -->
                 <div class="modal-footer">
                     <button class="btn-modal btn-secondary" wire:click="closeDeleteModal">
                         <i class="fas fa-times"></i>
                         Cancelar
                     </button>
-                    <button class="btn-modal btn-danger" wire:click="deleteFicha({{ $selectedFicha->id }})" 
-                            wire:loading.attr="disabled"
-                            @if($selectedFicha->aprendices_count > 0) disabled @endif>
+                    <button class="btn-modal btn-danger" wire:click="deleteFicha({{ $selectedFicha->id }})"
+                        wire:loading.attr="disabled" @if ($selectedFicha->aprendices_count > 0) disabled @endif>
                         <i wire:loading.remove wire:target="deleteFicha" class="fas fa-trash"></i>
                         <span wire:loading.remove wire:target="deleteFicha">Eliminar</span>
                         <i wire:loading wire:target="deleteFicha" class="fas fa-spinner fa-spin"></i>
