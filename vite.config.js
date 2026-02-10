@@ -76,6 +76,7 @@ export default defineConfig({
                 'global_notifications': 'resources/js/global-notifications.js',
                 'confirm-delete-modal': 'resources/js/modules/confirm-delete-modal.js',
                 'bootstrap': 'resources/js/bootstrap.js',
+                'global_modals': 'resources/js/global-modals.js'
             },
             refresh: true,
         }),
