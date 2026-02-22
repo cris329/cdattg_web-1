@@ -59,8 +59,6 @@ export default defineConfig({
                 'municipios': 'resources/js/municipios.js',
                 'parametros': 'resources/js/parametros.js',
                 'red-conocimiento': 'resources/js/red-conocimiento.js',
-                'sofia-validator-server': 'resources/js/sofia-validator-server.js',
-                'sofia-validator': 'resources/js/sofia-validator.js',
                 'tema': 'resources/js/tema.js',
                 // Asistencia files
                 'asistencia_index_qr': 'resources/js/Asistencia/index-qr.js',
